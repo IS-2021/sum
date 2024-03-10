@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json.schemastore.org/package.json",
+  "name": "sumatywny",
+  "version": "0.0.0",
+  "license": "Apache-2.0",
+  "scripts": {
+    "prepare": "husky"
+  },
+  "engines": {
+    "node": ">=20.11.0",
+    "pnpm": ">=8.15.4"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^19.0.3",
+    "@commitlint/config-conventional": "^19.0.3",
+    "husky": "^9.0.11"
+  }
+}
