@@ -9,6 +9,14 @@ module.exports = {
     '@vue/eslint-config-typescript',
     '@vue/eslint-config-prettier/skip-formatting',
   ],
+  rules: {
+    'vue/multi-word-component-names': [
+      'warn',
+      {
+        ignores: ['components/ui/**/*'],
+      },
+    ],
+  },
   overrides: [
     {
       files: ['e2e/**/*.{test,spec}.{js,ts,jsx,tsx}'],
