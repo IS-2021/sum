@@ -56,7 +56,7 @@ const onSubmit = form.handleSubmit((values) => {
           </FormItem>
         </FormField>
 
-        <Button type="submit" class="mt-8 w-full"> Submit </Button>
+        <Button :disabled="!form.meta.value.valid" type="submit" class="mt-8 w-full"> Submit </Button>
       </form>
     </div>
   </div>
