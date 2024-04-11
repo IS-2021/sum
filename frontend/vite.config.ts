@@ -4,6 +4,7 @@ import { defineConfig } from 'vite';
 import VueRouter from 'unplugin-vue-router/vite';
 import vue from '@vitejs/plugin-vue';
 import VueDevTools from 'vite-plugin-vue-devtools';
+import Layouts from 'vite-plugin-vue-layouts';
 
 import tailwind from 'tailwindcss';
 import autoprefixer from 'autoprefixer';
@@ -24,6 +25,7 @@ export default defineConfig({
         },
       ],
     }),
+    Layouts(),
     vue(),
     VueDevTools(),
   ],
