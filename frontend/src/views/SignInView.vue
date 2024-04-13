@@ -13,6 +13,7 @@ import {
 } from '@/components/ui/form';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { postAuthLogin } from '@/lib/api/auth/auth';
 
 const formSchema = toTypedSchema(
   z.object({
@@ -25,8 +26,12 @@ const form = useForm({
   validationSchema: formSchema,
 });
 
-const onSubmit = form.handleSubmit((values) => {
-  console.log(values);
+const onSubmit = form.handleSubmit(async (credentials) => {
+  const res = await postAuthLogin(credentials, {
+    validateStatus: (status) => status < 500,
+  });
+
+  console.log(res);
 });
 
 const isValid = form.meta.value.valid;
