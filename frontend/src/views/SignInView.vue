@@ -16,7 +16,7 @@ import { Input } from '@/components/ui/input';
 
 const formSchema = toTypedSchema(
   z.object({
-    email: z.string().email(),
+    username: z.string(),
     password: z.string().min(6),
   }),
 );
@@ -28,6 +28,8 @@ const form = useForm({
 const onSubmit = form.handleSubmit((values) => {
   console.log(values);
 });
+
+const isValid = !form.meta.value.valid;
 </script>
 
 <template>
@@ -37,11 +39,11 @@ const onSubmit = form.handleSubmit((values) => {
         <h1 class="text-xl text-center font-bold">Sign-In</h1>
         <FormField v-slot="{ componentField }" name="email">
           <FormItem>
-            <FormLabel>Email</FormLabel>
+            <FormLabel>Username</FormLabel>
             <FormControl>
-              <Input type="email" placeholder="E-mail" v-bind="componentField" />
+              <Input type="text" placeholder="Username" v-bind="componentField" />
             </FormControl>
-            <FormDescription class="sr-only">This is your E-mail. </FormDescription>
+            <FormDescription class="sr-only">This is your Username. </FormDescription>
             <FormMessage />
           </FormItem>
         </FormField>
@@ -56,7 +58,7 @@ const onSubmit = form.handleSubmit((values) => {
           </FormItem>
         </FormField>
 
-        <Button :disabled="!form.meta.value.valid" type="submit" class="mt-8 w-full"> Submit </Button>
+        <Button :disabled="isValid" type="submit" class="mt-8 w-full"> Submit </Button>
       </form>
     </div>
   </div>
