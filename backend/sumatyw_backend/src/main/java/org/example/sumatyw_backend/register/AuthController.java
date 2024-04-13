@@ -2,22 +2,18 @@ package org.example.sumatyw_backend.register;
 
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
-import org.example.sumatyw_backend.cities.City;
 import org.example.sumatyw_backend.cities.CityRepository;
 import org.example.sumatyw_backend.users.User;
-import org.example.sumatyw_backend.users.UserInputDTO;
 import org.example.sumatyw_backend.users.UserDTOMapper;
+import org.example.sumatyw_backend.users.UserInputDTO;
 import org.example.sumatyw_backend.users.UserRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
-import java.util.Optional;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/auth")
@@ -42,21 +38,6 @@ public class AuthController {
 
         String hashedPassword = passwordEncoder.encode(newUser.getPassword());
         newUser.setPassword(hashedPassword);
-        newUser.setRestaurant(userInputDTO.restaurant());
-
-
-
-        if (userInputDTO.restaurant() != null) {
-            newUser.setActive(false);
-            Optional<City> city = cityRepository.findByName(userInputDTO.restaurant().getAddress().getCity().getName());
-            if (city.isEmpty()) {
-                cityRepository.save(userInputDTO.restaurant().getAddress().getCity());
-            } else {
-                newUser.getRestaurant().getAddress().setCity(city.get());
-            }
-        }
-
-
 
         newUser =  userRepository.save(newUser);
 
@@ -64,6 +45,12 @@ public class AuthController {
             Map.of("userId", newUser.getUserId().toString()),
             HttpStatus.CREATED
         );
+    }
+
+    @PutMapping("/{id}/change-password")
+    private String changePassword(@PathVariable("id") UUID id, @RequestBody PasswordDTO passwordDTO) {
+
+        return "";
     }
 
 

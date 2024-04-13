@@ -34,7 +34,7 @@ public class User implements UserDetails {
     private boolean isActive;
     @Enumerated(EnumType.STRING)
     private Role role;
-    @OneToOne(cascade = CascadeType.PERSIST)
+    @OneToOne
     @JoinColumn(name = "restaurant_id")
     private Restaurant restaurant;
     @ManyToOne

@@ -29,7 +29,6 @@ public record UserInputDTO(
      @NotNull(message = "User role number cannot be blank")
 //     @Pattern(regexp = "\\bROLE_USER\\b",
 //              message = "User role must be 'USER_ROLE'")
-     Role role,
-     Restaurant restaurant
+     Role role
 ) {
 }
