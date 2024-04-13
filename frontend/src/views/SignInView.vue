@@ -29,7 +29,7 @@ const onSubmit = form.handleSubmit((values) => {
   console.log(values);
 });
 
-const isValid = !form.meta.value.valid;
+const isValid = form.meta.value.valid;
 </script>
 
 <template>
@@ -58,7 +58,7 @@ const isValid = !form.meta.value.valid;
           </FormItem>
         </FormField>
 
-        <Button :disabled="isValid" type="submit" class="mt-8 w-full"> Submit </Button>
+        <Button :disabled="!isValid" type="submit" class="mt-8 w-full"> Submit </Button>
       </form>
     </div>
   </div>
