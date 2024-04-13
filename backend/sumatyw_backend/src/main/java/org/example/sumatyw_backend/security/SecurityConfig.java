@@ -2,6 +2,7 @@ package org.example.sumatyw_backend.security;
 
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.web.client.HttpMessageConvertersRestClientCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -13,6 +14,11 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import java.util.Arrays;
+import java.util.List;
 
 
 @Configuration
@@ -23,20 +29,19 @@ public class SecurityConfig {
     private final CustomUserDetails userDetailsService;
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http, HttpMessageConvertersRestClientCustomizer httpMessageConvertersRestClientCustomizer) throws Exception {
         http
-//            .cors(httpSecurityCorsConfigurer -> {
-//                CorsConfiguration configuration = new CorsConfiguration();
-//                configuration.setAllowedOriginPatterns(List.of("http://localhost*"));
-//                configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-//                configuration.setAllowedHeaders(List.of("*"));
-//                configuration.setAllowCredentials(true);
-//
-//                UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-//                source.registerCorsConfiguration("/**", configuration);
-//                httpSecurityCorsConfigurer.configurationSource(source);
-//            })
-            .cors(AbstractHttpConfigurer::disable)
+            .cors(httpSecurityCorsConfigurer -> {
+                CorsConfiguration configuration = new CorsConfiguration();
+                configuration.setAllowedOriginPatterns(List.of("http://localhost*"));
+                configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+                configuration.setAllowCredentials(true);
+                configuration.addAllowedHeader("*");
+
+                UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+                source.registerCorsConfiguration("/**", configuration);
+                httpSecurityCorsConfigurer.configurationSource(source);
+            })
             .csrf(AbstractHttpConfigurer::disable)
             .authorizeHttpRequests(authorize -> authorize
                 .requestMatchers(HttpMethod.GET, "/users/{id}").hasAnyRole("USER", "ADMIN")
