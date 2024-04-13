@@ -1,0 +1,12 @@
+version: '3.9'
+services:
+  database:
+    container_name: mariadb-sql
+    image: mariadb:11.0.2
+    restart: no
+    environment:
+      - MARIADB_ROOT_PASSWORD="root"
+    volumes:
+      - ./data:/var/lib/mysql
+    ports:
+      - "9020:3306"
