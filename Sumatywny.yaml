@@ -1,0 +1,1426 @@
+openapi: 3.0.2
+info:
+  title: Sumatywny
+  version: 1.0.0
+paths:
+  /users:
+    get:
+      tags:
+        - users
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/UserDTO"
+          description: Returns all users
+      description: ""
+  "/users/{id}":
+    description: ""
+    get:
+      tags:
+        - users
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserDTO"
+          description: Returns user with given id
+        "404":
+          $ref: "#/components/responses/NotFound_404"
+      description: ""
+    put:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UserInputDTO"
+        required: true
+      tags:
+        - users
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserDTO"
+          description: OK
+        "422":
+          $ref: "#/components/responses/ValidationFailed_422"
+      description: ""
+    delete:
+      tags:
+        - users
+      responses:
+        "204":
+          description: Deleted
+        "404":
+          $ref: "#/components/responses/NotFound_404"
+      description: ""
+    parameters:
+      - name: id
+        description: User ID
+        schema:
+          $ref: "#/components/schemas/UUID"
+        in: path
+        required: true
+  /restaurants:
+    get:
+      tags:
+        - restaurants
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/RestaurantDTO"
+          description: Returns all restaurants
+      description: ""
+    post:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RestaurantInputDTO"
+        required: true
+      responses:
+        "200":
+          description: Restaurant created
+        "422":
+          $ref: "#/components/responses/ValidationFailed_422"
+  /auth/login:
+    post:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CredentialsDTO"
+        required: true
+      tags:
+        - auth
+      responses:
+        "204":
+          description: Successful login
+        "403":
+          description: Invalid credentials
+  /auth/register:
+    post:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UserInputDTO"
+        required: true
+      tags:
+        - auth
+      responses:
+        "201":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserDTO"
+          description: Created
+        "422":
+          $ref: "#/components/responses/ValidationFailed_422"
+  /auth/logout:
+    get:
+      tags:
+        - auth
+      responses:
+        "204":
+          description: Ends user session
+  /users/me:
+    description: Returns the current user's data
+    get:
+      tags:
+        - users
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserDTO"
+          description: Returns the data of the currently logged in user
+        "404":
+          $ref: "#/components/responses/NotFound_404"
+      description: ""
+  "/users/{id}/favourites":
+    description: ""
+    get:
+      tags:
+        - favourites
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/RestaurantDTO"
+          description: Returns user's favourite restaurants
+      description: ""
+    post:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UUID"
+        required: true
+      tags:
+        - favourites
+      responses:
+        "200":
+          description: Adds specified by id restaurant to user's favourites
+        "404":
+          $ref: "#/components/responses/NotFound_404"
+        "422":
+          $ref: "#/components/responses/ValidationFailed_422"
+      description: ""
+    parameters:
+      - name: id
+        description: User ID
+        schema:
+          $ref: "#/components/schemas/UUID"
+        in: path
+        required: true
+  "/reports/restaurants/{id}":
+    description: ""
+    get:
+      tags:
+        - reports_restaurants
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ReportDTO"
+          description: Get restaurant report
+        "404":
+          $ref: "#/components/responses/NotFound_404"
+      description: ""
+    put:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ReportDTO"
+        required: true
+      tags:
+        - reports_restaurants
+      parameters:
+        - name: id
+          schema:
+            type: string
+          in: path
+          required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ReportDTO"
+              examples:
+                restaurant reports:
+                  value:
+                    cause: Food surplus from event catering
+                    restaurant_id: a4cf80a5-9b28-4b3c-a1e7-8fd6e628e85d
+                    user_id: 7d4a813d-0bc4-4e7e-97d2-37d15ff90c25
+          description: OK
+        "404":
+          $ref: "#/components/responses/NotFound_404"
+        "422":
+          $ref: "#/components/responses/ValidationFailed_422"
+    delete:
+      tags:
+        - reports_restaurants
+      parameters:
+        - name: id
+          schema:
+            type: string
+          in: path
+          required: true
+      responses:
+        "204":
+          description: Deleted
+        "404":
+          $ref: "#/components/responses/NotFound_404"
+    parameters:
+      - name: id
+        schema:
+          $ref: "#/components/schemas/UUID"
+        in: path
+        required: true
+  /ingredients:
+    get:
+      tags:
+        - ingredients
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/IngredientDTO"
+          description: Get list of ingredients
+      description: ""
+    post:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/IngredientInputDTO"
+        required: true
+      tags:
+        - ingredients
+      responses:
+        "201":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/IngredientDTO"
+          description: Created
+        "422":
+          $ref: "#/components/responses/ValidationFailed_422"
+      description: ""
+    parameters:
+      - name: mealId
+        description: ""
+        schema:
+          $ref: "#/components/schemas/UUID"
+        in: query
+        required: false
+      - name: restaurantId
+        description: ""
+        schema:
+          $ref: "#/components/schemas/UUID"
+        in: query
+        required: false
+  "/bookings/{id}":
+    get:
+      tags:
+        - bookings
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BookingDTO"
+          description: Get booking
+        "404":
+          $ref: "#/components/responses/NotFound_404"
+      description: ""
+    put:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BookingDTO"
+        required: true
+      tags:
+        - bookings
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BookingDTO"
+          description: OK
+        "404":
+          $ref: "#/components/responses/NotFound_404"
+        "422":
+          $ref: "#/components/responses/ValidationFailed_422"
+      description: ""
+    delete:
+      tags:
+        - bookings
+      responses:
+        "204":
+          description: Deleted
+        "404":
+          $ref: "#/components/responses/NotFound_404"
+      description: ""
+    parameters:
+      - name: id
+        description: Booking ID
+        schema:
+          $ref: "#/components/schemas/UUID"
+        in: path
+        required: true
+  /bookings:
+    get:
+      tags:
+        - bookings
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/BookingDTO"
+          description: Get list of bookings
+    post:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BookingInputDTO"
+        required: true
+      tags:
+        - bookings
+      responses:
+        "201":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BookingDTO"
+          description: Created
+        "422":
+          $ref: "#/components/responses/ValidationFailed_422"
+  /reports/restaurants:
+    get:
+      tags:
+        - reports_restaurants
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ReportDTO"
+          description: Get list of restaurant reports
+    post:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ReportsInputDTO"
+        required: true
+      tags:
+        - reports_restaurants
+      responses:
+        "201":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ReportDTO"
+          description: Created
+        "422":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HttpException"
+          description: Validation failed
+  "/ingredients/{id}":
+    get:
+      tags:
+        - ingredients
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/IngredientDTO"
+              examples:
+                ingredient:
+                  value:
+                    name: Organic Spinach
+                    type: Leafy Green
+                    ingredient_id: b7f16302-9f97-4bb9-a3bb-fb55ddc5477e
+          description: Get ingredient
+        "404":
+          $ref: "#/components/responses/NotFound_404"
+    put:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/IngredientDTO"
+        required: true
+      tags:
+        - ingredients
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/IngredientDTO"
+              examples:
+                ingredients:
+                  value:
+                    name: Organic Apple
+                    type: Fruit
+                    ingredient_id: 0e7f7a5d-ae1b-4d92-bc39-92dc0363a1ff
+          description: OK
+        "404":
+          $ref: "#/components/responses/NotFound_404"
+        "422":
+          $ref: "#/components/responses/ValidationFailed_422"
+    delete:
+      tags:
+        - ingredients
+      responses:
+        "204":
+          description: Deleted
+        "404":
+          $ref: "#/components/responses/NotFound_404"
+    parameters:
+      - name: id
+        description: Ingredient id
+        schema:
+          $ref: "#/components/schemas/UUID"
+        in: path
+        required: true
+  /opinions:
+    get:
+      tags:
+        - opinions
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/OpinionDTO"
+              examples:
+                opinions:
+                  value:
+                    - user_id: 1a3e6f89-2b4c-567d-8e9a-0123456789ab
+                      restaurant_id: ab123456-c789-d012-e345-678f90123456
+                      is_positive: true
+                      opinion_id: fe901234-5678-abcd-ef12-345678901234
+                    - user_id: 2b4c6d8f-9a1b-234c-567d-89a0bcde1234
+                      restaurant_id: bc234567-d890-1e23-456f-789a01234567
+                      is_positive: true
+                      opinion_id: dc345678-9012-34ab-cdef-123456789012
+          description: Get list of opinion
+    post:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/OpinionInputDTO"
+        required: true
+      tags:
+        - opinions
+      responses:
+        "201":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OpinionDTO"
+              examples:
+                opinions:
+                  value:
+                    user_id: 1a3e6f89-2b4c-567d-8e9a-0123456789ab
+                    restaurant_id: ab123456-c789-d012-e345-678f90123456
+                    is_positive: true
+                    opinion_id: fe901234-5678-abcd-ef12-345678901234
+          description: Created
+        "422":
+          $ref: "#/components/responses/ValidationFailed_422"
+  /reports/users:
+    get:
+      tags:
+        - reports_users
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ReportDTO"
+          description: Get list of reported users
+    post:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ReportsInputDTO"
+        required: true
+      tags:
+        - reports_users
+      responses:
+        "201":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ReportDTO"
+          description: Created
+        "422":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HttpException"
+          description: Validation failed
+  "/reports/users/{id}":
+    description: ""
+    get:
+      tags:
+        - reports_users
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ReportDTO"
+          description: Get user report
+        "404":
+          $ref: "#/components/responses/NotFound_404"
+      description: ""
+    put:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ReportDTO"
+        required: true
+      tags:
+        - reports_users
+      parameters:
+        - name: id
+          schema:
+            type: string
+          in: path
+          required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ReportDTO"
+          description: OK
+        "404":
+          $ref: "#/components/responses/NotFound_404"
+        "422":
+          $ref: "#/components/responses/ValidationFailed_422"
+    delete:
+      tags:
+        - reports_users
+      parameters:
+        - name: id
+          schema:
+            type: string
+          in: path
+          required: true
+      responses:
+        "204":
+          description: Deleted
+        "404":
+          $ref: "#/components/responses/NotFound_404"
+    parameters:
+      - name: id
+        schema:
+          $ref: "#/components/schemas/UUID"
+        in: path
+        required: true
+  /meals:
+    get:
+      tags:
+        - meals
+      parameters:
+        - name: restaurantId
+          description: ""
+          schema:
+            $ref: "#/components/schemas/UUID"
+          in: query
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/MealDTO"
+          description: Get list of meals
+      description: ""
+    post:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/MealInputDTO"
+        required: true
+      tags:
+        - meals
+      parameters:
+        - name: restaurantId
+          description: ""
+          schema:
+            $ref: "#/components/schemas/UUID"
+          in: query
+          required: false
+      responses:
+        "201":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MealDTO"
+          description: Created
+        "422":
+          $ref: "#/components/responses/ValidationFailed_422"
+  "/meals/{id}":
+    get:
+      tags:
+        - meals
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MealDTO"
+          description: Get meal
+        "404":
+          $ref: "#/components/responses/NotFound_404"
+    put:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/MealDTO"
+        required: true
+      tags:
+        - meals
+      responses:
+        "200":
+          description: OK
+        "404":
+          $ref: "#/components/responses/NotFound_404"
+        "422":
+          $ref: "#/components/responses/ValidationFailed_422"
+      description: ""
+    delete:
+      tags:
+        - meals
+      responses:
+        "204":
+          description: Deleted
+        "404":
+          $ref: "#/components/responses/NotFound_404"
+    parameters:
+      - name: id
+        description: Meal ID
+        schema:
+          $ref: "#/components/schemas/UUID"
+        in: path
+        required: true
+  /users/delete/favourites:
+    post:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/DeleteFavouriteRestaurantsDTO"
+        required: true
+      tags:
+        - favourites
+      responses:
+        "204":
+          description: Removes specified by id restaurants from user's favourites
+        "422":
+          $ref: "#/components/responses/ValidationFailed_422"
+  "/opinions/{id}":
+    put:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/OpinionDTO"
+        required: true
+      tags:
+        - opinions
+      parameters:
+        - name: id
+          description: Opinion ID
+          schema:
+            $ref: "#/components/schemas/UUID"
+          in: path
+          required: true
+      responses:
+        "200":
+          description: OK
+        "404":
+          $ref: "#/components/responses/NotFound_404"
+        "422":
+          $ref: "#/components/responses/ValidationFailed_422"
+    parameters:
+      - name: id
+        description: Opinion ID
+        schema:
+          $ref: "#/components/schemas/UUID"
+        in: path
+        required: true
+  /admin: {}
+  /admin/users:
+    get:
+      tags:
+        - admin_users
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/UserDTO"
+          description: Get list of users
+  /admin/restaurants:
+    get:
+      tags:
+        - admin_restaurants
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/RestaurantDTO"
+          description: Get list of restaurants.
+  "/admin/users/{id}":
+    get:
+      tags:
+        - admin_users
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserDTO"
+          description: Get user
+        "404":
+          $ref: "#/components/responses/NotFound_404"
+    put:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UserDTO"
+        required: true
+      tags:
+        - admin_users
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserDTO"
+          description: Get user
+        "404":
+          $ref: "#/components/responses/NotFound_404"
+        "422":
+          description: Validation failed
+    parameters:
+      - name: id
+        schema:
+          $ref: "#/components/schemas/UUID"
+        in: path
+        required: true
+  "/admin/restaurants/{id}":
+    get:
+      tags:
+        - admin_restaurants
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RestaurantDTO"
+          description: Get restaurant
+        "404":
+          $ref: "#/components/responses/NotFound_404"
+    put:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RestaurantDTO"
+        required: true
+      tags:
+        - admin_restaurants
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RestaurantDTO"
+          description: OK
+        "422":
+          description: Validation failed
+    parameters:
+      - name: id
+        schema:
+          $ref: "#/components/schemas/UUID"
+        in: path
+        required: true
+  /admin/reports:
+    get:
+      tags:
+        - admin_reports
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ReportDTO"
+          description: Get list of reports
+  "/admin/reports/{id}":
+    get:
+      tags:
+        - admin_reports
+      parameters:
+        - name: id
+          schema:
+            $ref: "#/components/schemas/UUID"
+          in: path
+          required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ReportDTO"
+          description: Get report
+        "404":
+          $ref: "#/components/responses/NotFound_404"
+      description: ""
+    put:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ReportDTO"
+        required: true
+      tags:
+        - admin_reports
+      parameters:
+        - name: id
+          schema:
+            $ref: "#/components/schemas/UUID"
+          in: path
+          required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ReportDTO"
+          description: OK
+        "422":
+          description: Validation failed
+    parameters:
+      - name: id
+        schema:
+          $ref: "#/components/schemas/UUID"
+        in: path
+        required: true
+  "/restaurants/{id}":
+    get:
+      tags:
+        - restaurants
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RestaurantDTO"
+          description: Get restaurant
+        "404":
+          $ref: "#/components/responses/NotFound_404"
+    put:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RestaurantDTO"
+        required: true
+      tags:
+        - restaurants
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RestaurantDTO"
+          description: OK
+        "404":
+          $ref: "#/components/responses/NotFound_404"
+        "422":
+          $ref: "#/components/responses/ValidationFailed_422"
+    delete:
+      tags:
+        - restaurants
+      responses:
+        "204":
+          description: Deleted
+        "404":
+          $ref: "#/components/responses/NotFound_404"
+    parameters:
+      - name: id
+        schema:
+          $ref: "#/components/schemas/UUID"
+        in: path
+        required: true
+  "/auth/{id}/change-password":
+    put:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PasswordDTO"
+        required: true
+      responses:
+        "200":
+          description: Password updated
+        "404":
+          $ref: "#/components/responses/NotFound_404"
+        "422":
+          $ref: "#/components/responses/ValidationFailed_422"
+    parameters:
+      - name: id
+        description: User ID
+        schema:
+          $ref: "#/components/schemas/UUID"
+        in: path
+        required: true
+components:
+  schemas:
+    RestaurantDTO:
+      title: Root Type for RestaurantDTO
+      description: ""
+      type: object
+      properties:
+        id:
+          $ref: "#/components/schemas/UUID"
+        address_id:
+          $ref: "#/components/schemas/UUID"
+        name:
+          type: string
+        phoneNumber:
+          type: string
+        user_id:
+          $ref: "#/components/schemas/UUID"
+      example:
+        id: "1"
+        address_id: "1"
+        name: name
+        phoneNumber: "122333421"
+        user_id: "1"
+    OpinionDTO:
+      description: ""
+      required:
+        - user_id
+        - restaurant_id
+        - is_positive
+        - opinion_id
+      type: object
+      properties:
+        user_id:
+          $ref: "#/components/schemas/UUID"
+          description: ""
+        restaurant_id:
+          $ref: "#/components/schemas/UUID"
+          description: ""
+        is_positive:
+          description: ""
+          type: boolean
+        opinion_id:
+          $ref: "#/components/schemas/UUID"
+          description: ""
+    MealInputDTO:
+      description: ""
+      required:
+        - restaurant_id
+        - name
+        - description
+      type: object
+      properties:
+        name:
+          description: ""
+          type: string
+        description:
+          description: ""
+          type: string
+        restaurant_id:
+          $ref: "#/components/schemas/UUID"
+          description: ""
+    MealDTO:
+      description: ""
+      required:
+        - restaurant_id
+        - name
+        - description
+        - id
+      type: object
+      properties:
+        name:
+          description: ""
+          type: string
+        description:
+          description: ""
+          type: string
+        restaurant_id:
+          $ref: "#/components/schemas/UUID"
+          description: ""
+        id:
+          $ref: "#/components/schemas/UUID"
+          description: ""
+    BookingInputDTO:
+      description: ""
+      required:
+        - user_id
+        - meal_id
+      type: object
+      properties:
+        user_id:
+          $ref: "#/components/schemas/UUID"
+          description: ""
+        meal_id:
+          $ref: "#/components/schemas/UUID"
+          description: ""
+    OpinionInputDTO:
+      description: ""
+      required:
+        - user_id
+        - restaurant_id
+        - is_positive
+      type: object
+      properties:
+        user_id:
+          $ref: "#/components/schemas/UUID"
+          description: ""
+        restaurant_id:
+          $ref: "#/components/schemas/UUID"
+          description: ""
+        is_positive:
+          description: ""
+          type: boolean
+    IngredientInputDTO:
+      description: ""
+      required:
+        - name
+        - type
+      type: object
+      properties:
+        name:
+          description: ""
+          type: string
+        type:
+          description: ""
+          type: string
+    HttpException:
+      anyOf:
+        - required:
+            - message
+          type: object
+          properties:
+            message:
+              description: ""
+              type: string
+      description: ""
+      type: object
+    ReportsInputDTO:
+      description: ""
+      required:
+        - cause
+        - restaurant_id
+        - user_id
+      type: object
+      properties:
+        cause:
+          description: ""
+          type: string
+        restaurant_id:
+          $ref: "#/components/schemas/UUID"
+          description: ""
+          x-faker: datatype.uuid
+        user_id:
+          $ref: "#/components/schemas/UUID"
+          description: ""
+          x-faker: datatype.uuid
+    UUID:
+      format: uuid
+      description: ""
+      type: string
+    ReportDTO:
+      description: ""
+      required:
+        - cause
+        - restaurant_id
+        - user_id
+        - timestamp
+        - id
+      type: object
+      properties:
+        cause:
+          description: ""
+          type: string
+        restaurant_id:
+          $ref: "#/components/schemas/UUID"
+          description: ""
+        user_id:
+          $ref: "#/components/schemas/UUID"
+          description: ""
+        timestamp:
+          $ref: "#/components/schemas/timestamp"
+          description: ""
+          x-faker: time.recent
+        id:
+          $ref: "#/components/schemas/UUID"
+          description: ""
+    BookingDTO:
+      description: ""
+      required:
+        - user_id
+        - meal_id
+        - timestamp
+        - id
+      type: object
+      properties:
+        user_id:
+          $ref: "#/components/schemas/UUID"
+          description: ""
+        meal_id:
+          $ref: "#/components/schemas/UUID"
+          description: ""
+        timestamp:
+          $ref: "#/components/schemas/timestamp"
+          description: ""
+        picked_up_timestamp:
+          $ref: "#/components/schemas/timestamp"
+          description: ""
+        id:
+          $ref: "#/components/schemas/UUID"
+          description: ""
+    timestamp:
+      description: ""
+      type: integer
+      example: 1710000000000
+      x-faker: time.recent
+    IngredientDTO:
+      description: ""
+      required:
+        - name
+        - type
+        - id
+      type: object
+      properties:
+        name:
+          description: ""
+          type: string
+          x-faker: name.firstName
+        type:
+          description: ""
+          type: string
+        id:
+          $ref: "#/components/schemas/UUID"
+          description: ""
+          x-faker: datatype.uuid
+      example:
+        name: Cheese
+        type: dairy
+        ingredient_id: 1488098b-8777-417f-a45a-78c7361502d8
+    Role:
+      description: ""
+      enum:
+        - admin
+        - user
+        - restaurant
+      type: string
+    UserDTO:
+      title: Root Type for UserDTO
+      description: User object.
+      required:
+        - email
+        - firstName
+        - password
+        - phoneNumber
+        - role
+        - secondName
+        - username
+        - id
+      type: object
+      properties:
+        username:
+          type: string
+          example: kowalski420
+          x-faker: internet.userName
+        password:
+          format: password
+          type: string
+          x-faker: internet.password
+        email:
+          format: email
+          type: string
+          x-faker: internet.email
+        role:
+          $ref: "#/components/schemas/Role"
+        firstName:
+          type: string
+          example: Jan
+          x-faker: name.firstName
+        secondName:
+          type: string
+          example: Kowalski
+          x-faker: name.lastName
+        phoneNumber:
+          type: string
+          example: +48 420-320-210
+          x-faker:
+            phone.phoneNumber:
+              - "###-###-###"
+        id:
+          $ref: "#/components/schemas/UUID"
+          description: ""
+    UserInputDTO:
+      title: Root Type for UserDTO
+      description: User object.
+      required:
+        - email
+        - firstName
+        - password
+        - phoneNumber
+        - role
+        - secondName
+        - username
+      type: object
+      properties:
+        username:
+          type: string
+          example: kowalski420
+          x-faker: internet.userName
+        password:
+          format: password
+          type: string
+          x-faker: internet.password
+        email:
+          format: email
+          type: string
+          x-faker: internet.email
+        role:
+          $ref: "#/components/schemas/Role"
+        firstName:
+          type: string
+          example: Jan
+          x-faker: name.firstName
+        secondName:
+          type: string
+          example: Kowalski
+          x-faker: name.lastName
+        phoneNumber:
+          type: string
+          example: +48 420-320-210
+          x-faker:
+            phone.phoneNumber:
+              - "###-###-###"
+    DeleteFavouriteRestaurantsDTO:
+      description: ""
+      required:
+        - user_id
+        - restaurant_ids
+      type: object
+      properties:
+        user_id:
+          $ref: "#/components/schemas/UUID"
+          description: ""
+        restaurant_ids:
+          description: ""
+          type: array
+          items:
+            $ref: "#/components/schemas/UUID"
+    PasswordDTO:
+      description: ""
+      required:
+        - password
+      type: object
+      properties:
+        password:
+          description: ""
+          type: string
+    RestaurantInputDTO:
+      title: Root Type for RestaurantDTO
+      description: ""
+      type: object
+      properties:
+        address_id:
+          $ref: "#/components/schemas/UUID"
+        name:
+          type: string
+        phoneNumber:
+          type: string
+        user_id:
+          $ref: "#/components/schemas/UUID"
+      example:
+        id: "1"
+        address_id: "1"
+        name: name
+        phoneNumber: "122333421"
+        user_id: "1"
+    CredentialsDTO:
+      description: ""
+      required:
+        - username
+        - password
+      type: object
+      properties:
+        username:
+          description: ""
+          type: string
+        password:
+          description: ""
+          type: string
+  responses:
+    NotFound_404:
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/HttpException"
+          examples:
+            not_found:
+              value:
+                message: Not found
+      description: Not found
+    ValidationFailed_422:
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/HttpException"
+          examples:
+            validation_failed:
+              value:
+                message: Invalid input data
+      description: Validation failed
+tags:
+  - name: bookings
+    description: ""
+  - name: ingredients
+    description: ""
+  - name: opinions
+    description: ""
+  - name: reports_restaurants
+    description: Restaurants reported by users
+  - name: restaurants
+    description: ""
+  - name: users
+    description: ""
+  - name: reports_users
+    description: Users reported by restaurants
+  - name: meals
+    description: ""
+  - name: favourites
+    description: ""
+x-json-schema-faker:
+  locale: pl
+  useExamplesValue: true
+  fillProperties: false
