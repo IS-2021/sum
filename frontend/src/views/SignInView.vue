@@ -37,7 +37,7 @@ const isValid = form.meta.value.valid;
     <div class="w-80 mx-auto border border-neutral-800 p-8 rounded">
       <form @submit="onSubmit" class="space-y-4">
         <h1 class="text-xl text-center font-bold">Sign-In</h1>
-        <FormField v-slot="{ componentField }" name="email">
+        <FormField v-slot="{ componentField }" name="username">
           <FormItem>
             <FormLabel>Username</FormLabel>
             <FormControl>
