@@ -13,6 +13,7 @@ import {
 } from '@/components/ui/form';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { postAuthLogin } from '@/lib/api/auth/auth';
 
 const formSchema = toTypedSchema(
   z.object({
@@ -25,8 +26,12 @@ const form = useForm({
   validationSchema: formSchema,
 });
 
-const onSubmit = form.handleSubmit((values) => {
-  console.log(values);
+const onSubmit = form.handleSubmit(async (credentials) => {
+  const res = await postAuthLogin(credentials, {
+    validateStatus: (status) => status < 500,
+  });
+
+  console.log(res);
 });
 
 const isValid = form.meta.value.valid;
@@ -37,7 +42,7 @@ const isValid = form.meta.value.valid;
     <div class="w-80 mx-auto border border-neutral-800 p-8 rounded">
       <form @submit="onSubmit" class="space-y-4">
         <h1 class="text-xl text-center font-bold">Sign-In</h1>
-        <FormField v-slot="{ componentField }" name="email">
+        <FormField v-slot="{ componentField }" name="username">
           <FormItem>
             <FormLabel>Username</FormLabel>
             <FormControl>
