@@ -53,7 +53,7 @@ const isValid = form.meta.value.valid;
             <FormControl>
               <Input type="text" placeholder="Username" v-bind="componentField" />
             </FormControl>
-            <FormDescription class="sr-only">This is your Username. </FormDescription>
+            <FormDescription class="sr-only">This is your Username.</FormDescription>
             <FormMessage />
           </FormItem>
         </FormField>
@@ -63,13 +63,18 @@ const isValid = form.meta.value.valid;
             <FormControl>
               <Input type="password" placeholder="Password" v-bind="componentField" />
             </FormControl>
-            <FormDescription class="sr-only"> This is your password. </FormDescription>
+            <FormDescription class="sr-only"> This is your password.</FormDescription>
             <FormMessage />
           </FormItem>
         </FormField>
 
-        <Button :disabled="!isValid" type="submit" class="mt-8 w-full"> Submit </Button>
+        <Button :disabled="!isValid" type="submit" class="mt-8 w-full"> Submit</Button>
       </form>
+
+      <p class="w-full text-sm text-center mt-4">
+        Don't have an account?
+        <RouterLink to="/sign-up" class="underline">Sign up</RouterLink>
+      </p>
     </div>
   </div>
 </template>
