@@ -13,6 +13,15 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
+import { Role } from '@/lib/api-model';
+
+const props = defineProps({
+  role: {
+    type: String,
+    required: true,
+    validator: (value: string) => ['user', 'restaurant'].includes(value),
+  },
+});
 
 const formSchema = toTypedSchema(
   z.object({
@@ -29,11 +38,18 @@ const form = useForm({
   validationSchema: formSchema,
 });
 
+const role = props.role === 'restaurant' ? Role.restaurant : Role.user;
+
 const onSubmit = form.handleSubmit(async (formData) => {
+  console.log({
+    ...formData,
+    role,
+  });
+
   const res = await postAuthRegister(
     {
       ...formData,
-      role: 'user',
+      role,
     },
     {
       validateStatus: (status) => status < 500,
