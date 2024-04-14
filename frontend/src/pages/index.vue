@@ -3,7 +3,7 @@ import TheWelcome from '../components/TheWelcome.vue';
 </script>
 
 <template>
-  <main class="flex-grow">
+  <main>
     <TheWelcome />
   </main>
 </template>
