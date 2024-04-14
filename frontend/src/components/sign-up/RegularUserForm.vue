@@ -2,6 +2,7 @@
 import { toTypedSchema } from '@vee-validate/zod';
 import { z } from 'zod';
 import { useForm } from 'vee-validate';
+import { postAuthRegister } from '@/lib/api/auth/auth';
 import {
   FormControl,
   FormDescription,
@@ -29,7 +30,20 @@ const form = useForm({
 });
 
 const onSubmit = form.handleSubmit(async (formData) => {
-  console.log(formData);
+  const res = await postAuthRegister(
+    {
+      ...formData,
+      role: 'user',
+    },
+    {
+      validateStatus: (status) => status < 500,
+    },
+  );
+
+  if (res.status === 200) {
+    console.log('Successfully registered');
+  }
+  console.log(res);
 });
 
 const isValid = form.meta.value.valid;
