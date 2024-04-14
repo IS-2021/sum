@@ -14,17 +14,11 @@ import {
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Role } from '@/lib/api-model';
-
-const props = defineProps({
-  role: {
-    type: String,
-    required: true,
-    validator: (value: string) => ['user', 'restaurant'].includes(value),
-  },
-});
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 const formSchema = toTypedSchema(
   z.object({
+    role: z.enum([Role.restaurant, Role.user]).default(Role.user),
     firstName: z.string().min(1),
     secondName: z.string().min(1),
     email: z.string().email(),
@@ -38,18 +32,14 @@ const form = useForm({
   validationSchema: formSchema,
 });
 
-const role = props.role === 'restaurant' ? Role.restaurant : Role.user;
-
 const onSubmit = form.handleSubmit(async (formData) => {
   console.log({
     ...formData,
-    role,
   });
 
   const res = await postAuthRegister(
     {
       ...formData,
-      role,
     },
     {
       validateStatus: (status) => status < 500,
@@ -67,6 +57,22 @@ const isValid = form.meta.value.valid;
 
 <template>
   <form @submit="onSubmit" class="space-y-4">
+    <FormField v-slot="{ componentField }" name="role">
+      <FormItem>
+        <FormLabel>Who are you?</FormLabel>
+        <FormControl>
+          <Tabs v-bind="componentField" default-value="user">
+            <TabsList class="grid gap-4 grid-cols-2">
+              <TabsTrigger value="user">A regular user</TabsTrigger>
+              <TabsTrigger value="restaurant">A restaurant</TabsTrigger>
+            </TabsList>
+          </Tabs>
+        </FormControl>
+        <FormDescription class="sr-only">Your first name</FormDescription>
+        <FormMessage />
+      </FormItem>
+    </FormField>
+
     <div class="flex gap-4">
       <FormField v-slot="{ componentField }" name="firstName">
         <FormItem class="flex-grow">
