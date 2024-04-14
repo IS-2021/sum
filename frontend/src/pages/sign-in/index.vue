@@ -2,6 +2,7 @@
 import { toTypedSchema } from '@vee-validate/zod';
 import { useForm } from 'vee-validate';
 import * as z from 'zod';
+import { useHead } from '@unhead/vue';
 
 import {
   FormControl,
@@ -14,6 +15,10 @@ import {
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { postAuthLogin } from '@/lib/api/auth/auth';
+
+useHead({
+  title: 'Sign-In',
+});
 
 const formSchema = toTypedSchema(
   z.object({
