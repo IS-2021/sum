@@ -1,7 +1,3 @@
-<script setup lang="ts">
-
-</script>
-
 <template>
   <footer class="w-full bottom-0 border border-transparent bg-zinc-800 flex items-center justify-left p-10">
     <div class="flex flex-col items-center text-xs gap-3">
