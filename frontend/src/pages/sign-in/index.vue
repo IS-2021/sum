@@ -1,3 +1,8 @@
+<route lang="yaml">
+meta:
+  layout: centered
+</route>
+
 <script setup lang="ts">
 import { toTypedSchema } from '@vee-validate/zod';
 import { useForm } from 'vee-validate';
@@ -43,38 +48,36 @@ const isValid = form.meta.value.valid;
 </script>
 
 <template>
-  <div class="border border-neutral-900 grid items-center flex-grow">
-    <div class="w-80 mx-auto border border-neutral-800 p-8 rounded">
-      <form @submit="onSubmit" class="space-y-4">
-        <h1 class="text-xl text-center font-bold">Sign-In</h1>
-        <FormField v-slot="{ componentField }" name="username">
-          <FormItem>
-            <FormLabel>Username</FormLabel>
-            <FormControl>
-              <Input type="text" placeholder="Username" v-bind="componentField" />
-            </FormControl>
-            <FormDescription class="sr-only">This is your Username.</FormDescription>
-            <FormMessage />
-          </FormItem>
-        </FormField>
-        <FormField v-slot="{ componentField }" name="password">
-          <FormItem>
-            <FormLabel>Password</FormLabel>
-            <FormControl>
-              <Input type="password" placeholder="Password" v-bind="componentField" />
-            </FormControl>
-            <FormDescription class="sr-only"> This is your password.</FormDescription>
-            <FormMessage />
-          </FormItem>
-        </FormField>
+  <div class="w-80 mx-auto border border-neutral-800 p-8 rounded">
+    <form @submit="onSubmit" class="space-y-4">
+      <h1 class="text-xl text-center font-bold">Sign-In</h1>
+      <FormField v-slot="{ componentField }" name="username">
+        <FormItem>
+          <FormLabel>Username</FormLabel>
+          <FormControl>
+            <Input type="text" placeholder="Username" v-bind="componentField" />
+          </FormControl>
+          <FormDescription class="sr-only">This is your Username.</FormDescription>
+          <FormMessage />
+        </FormItem>
+      </FormField>
+      <FormField v-slot="{ componentField }" name="password">
+        <FormItem>
+          <FormLabel>Password</FormLabel>
+          <FormControl>
+            <Input type="password" placeholder="Password" v-bind="componentField" />
+          </FormControl>
+          <FormDescription class="sr-only"> This is your password.</FormDescription>
+          <FormMessage />
+        </FormItem>
+      </FormField>
 
-        <Button :disabled="!isValid" type="submit" class="mt-8 w-full"> Submit</Button>
-      </form>
+      <Button :disabled="!isValid" type="submit" class="mt-8 w-full"> Submit</Button>
+    </form>
 
-      <p class="w-full text-sm text-center mt-4">
-        Don't have an account?
-        <RouterLink to="/sign-up" class="underline">Sign up</RouterLink>
-      </p>
-    </div>
+    <p class="w-full text-sm text-center mt-4">
+      Don't have an account?
+      <RouterLink to="/sign-up" class="underline">Sign up</RouterLink>
+    </p>
   </div>
 </template>
