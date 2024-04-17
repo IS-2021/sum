@@ -19,7 +19,6 @@ public class UserController {
     @GetMapping()
     public ResponseEntity<List<UserDTO>> getUsers() {
         List<User> users = userService.getUsers();
-
         return new ResponseEntity<>(
             users.stream().map(UserDTOMapper::mapUserToUserDTO).toList(),
             HttpStatus.OK
@@ -28,16 +27,12 @@ public class UserController {
 
     @GetMapping("/{id}")
     public ResponseEntity getUserById(@PathVariable("id") UUID id) {
-        try {
-            User user = userService.getUserById(id);
+        User user = userService.getUserById(id);
 
-            return new ResponseEntity<>(
-                UserDTOMapper.mapUserToUserDTO(user),
-                HttpStatus.OK
-            );
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
-        }
+        return new ResponseEntity<>(
+            UserDTOMapper.mapUserToUserDTO(user),
+            HttpStatus.OK
+        );
     }
 
     @DeleteMapping("/{id}")
@@ -52,22 +47,11 @@ public class UserController {
 
     @PutMapping("{id}")
     public ResponseEntity updateUserById(@PathVariable("id") UUID id, @Valid @RequestBody UserInputDTO updatedUser) {
-        try {
-            User user = userService.updateUserById(id, UserDTOMapper.mapUserInputDTOToUser(updatedUser));
+        User user = userService.updateUserById(id, UserDTOMapper.mapUserInputDTOToUser(updatedUser));
 
-            return new ResponseEntity<>(
-                UserDTOMapper.mapUserToUserDTO(user),
-                HttpStatus.OK
-            );
-
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
-        }
+        return new ResponseEntity<>(
+            UserDTOMapper.mapUserToUserDTO(user),
+            HttpStatus.OK
+        );
     }
-
-    @PutMapping("{id}/activate")
-    public void activateUserAccountById(@PathVariable UUID id) {
-        userService.activateAccount(id);
-    }
-
 }
