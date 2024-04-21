@@ -1,5 +1,4 @@
-package org.example.sumatyw_backend.meals;
-
+package org.example.sumatyw_backend.ingredients;
 
 import jakarta.persistence.*;
 import lombok.*;

@@ -2,8 +2,11 @@ package org.example.sumatyw_backend.users;
 
 import lombok.AllArgsConstructor;
 import org.example.sumatyw_backend.cities.CityRepository;
+import org.example.sumatyw_backend.exceptions.ObjectNotFoundException;
 import org.example.sumatyw_backend.exceptions.ResourceAlreadyExistsException;
 import org.example.sumatyw_backend.exceptions.UserNotFoundException;
+import org.example.sumatyw_backend.restaurants.Restaurant;
+import org.example.sumatyw_backend.restaurants.RestaurantRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -18,6 +21,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final CityRepository cityRepository;
     private final PasswordEncoder passwordEncoder;
+    private final RestaurantRepository restaurantRepository;
 
     public User addUser(User user) {
 
@@ -35,10 +39,6 @@ public class UserService {
 
         user.setPassword(passwordEncoder.encode(user.getPassword()));
 
-        if (user.getRole().equals(Role.ROLE_RESTAURANT)) {
-            user.setActive(false);
-        }
-
         return userRepository.save(user);
     }
     public List<User> getUsers() {
@@ -52,13 +52,11 @@ public class UserService {
         return userRepository.findByEmail(email)
             .orElseThrow(() -> new UserNotFoundException("User not found with email: " + email));
     }
-    public boolean removeUserById(UUID id) {
-        Optional<User> optionalUser = userRepository.findById(id);
-        if (optionalUser.isPresent()) {
-            userRepository.delete(optionalUser.get());
-            return true;
-        }
-        return false;
+    public void  removeUserById(UUID id) {
+        userRepository.findById(id).orElseThrow(
+            () -> new UserNotFoundException("User not found with ID: " + id)
+        );
+        userRepository.deleteById(id);
     }
 
     public User updateUserById(UUID id, User updatedUser) {
@@ -92,5 +90,32 @@ public class UserService {
         } else {
             throw new UserNotFoundException("User not found with ID: " + id);
         }
+    }
+
+    public List<Restaurant> getFavouriteRestaurantsByUserId(UUID id) {
+        return userRepository.findAllFavouriteRestaurantsByUserId(id);
+    }
+
+    public void addFavouriteRestaurantByUserId(UUID userId, UUID restaurantId) {
+        restaurantRepository.findById(restaurantId)
+            .orElseThrow(() -> new ObjectNotFoundException("Restaurant not found with ID: " + restaurantId));
+
+        User existingUser = userRepository.findById(userId)
+            .orElseThrow(() -> new UserNotFoundException("User not found with ID: " + userId));
+
+        existingUser.getFavouriteRestaurants().add(
+            Restaurant.builder().restaurantId(restaurantId).build()
+        );
+
+        userRepository.save(existingUser);
+    }
+
+    public void removeFavouriteRestaurantsByUserId(DeleteFavouriteRestaurantsDTO deleteFavouriteRestaurantsDTO) {
+        User existingUser = userRepository.findById(deleteFavouriteRestaurantsDTO.userId())
+            .orElseThrow(() -> new UserNotFoundException("User not found with ID: " + deleteFavouriteRestaurantsDTO.userId()));
+
+        existingUser.getFavouriteRestaurants().removeIf(fr -> deleteFavouriteRestaurantsDTO.restaurantIds().contains(fr.getRestaurantId()));
+
+        userRepository.save(existingUser);
     }
 }

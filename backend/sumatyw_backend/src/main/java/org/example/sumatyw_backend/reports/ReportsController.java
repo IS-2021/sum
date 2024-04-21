@@ -1,6 +1,7 @@
 package org.example.sumatyw_backend.reports;
 
 
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.example.sumatyw_backend.restaurant_reports.RestaurantReportsService;
 import org.example.sumatyw_backend.user_reports.RestaurantReport;
@@ -8,10 +9,7 @@ import org.example.sumatyw_backend.user_reports.UserReport;
 import org.example.sumatyw_backend.user_reports.UserReportsService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @AllArgsConstructor
@@ -23,8 +21,8 @@ public class ReportsController {
 
     private final RestaurantReportsService restaurantReportsService;
 
-    @GetMapping("/restaurants")
-    public ResponseEntity<ReportDTO> addRestaurantReport(@RequestBody ReportInputDTO reportInputDTO) {
+    @PostMapping("/restaurants")
+    public ResponseEntity<ReportDTO> addRestaurantReport(@RequestBody @Valid ReportInputDTO reportInputDTO) {
         RestaurantReport restaurantReport = restaurantReportsService.addRestaurantReport(reportInputDTO);
 
             return new ResponseEntity<>(
@@ -33,8 +31,8 @@ public class ReportsController {
             );
     }
 
-    @GetMapping("/users")
-    public ResponseEntity<ReportDTO> addUserReport(@RequestBody ReportInputDTO reportInputDTO) {
+    @PostMapping("/users")
+    public ResponseEntity<ReportDTO> addUserReport(@RequestBody @Valid ReportInputDTO reportInputDTO) {
         UserReport userReport = userReportsService.addUserReport(reportInputDTO);
 
         return new ResponseEntity<>(

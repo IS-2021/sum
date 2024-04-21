@@ -24,9 +24,11 @@ public class Restaurant {
     private String phoneNumber;
     @OneToOne(mappedBy = "restaurant")
     private User user;
-    @OneToOne(cascade = CascadeType.PERSIST)
+    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
     @JoinColumn(name = "address_id")
     private Address address;
     @OneToMany(mappedBy = "restaurant")
     private List<Opinion> opinions;
+
+    private boolean isActive;
 }

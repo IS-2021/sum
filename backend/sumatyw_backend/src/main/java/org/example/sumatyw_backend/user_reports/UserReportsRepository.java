@@ -16,4 +16,5 @@ public interface UserReportsRepository extends JpaRepository<UserReport, UUID> {
     @Query("SELECT COUNT(r) > 0 FROM UserReport r WHERE r.user.id = :userId AND r.restaurant.id = :restaurantId AND r.isOpen = true")
     boolean existsByUserIdAndRestaurantId(@Param("userId") UUID userId, @Param("restaurantId") UUID restaurantId);
 
+    List<UserReport> findByIsOpenTrue();
 }

@@ -34,7 +34,7 @@ public class User implements UserDetails {
     private String password;
     @Column(unique = true)
     private String phoneNumber;
-    private boolean isActive;
+    private boolean isBlocked;
     @Enumerated(EnumType.STRING)
     private Role role;
     @OneToOne
@@ -45,6 +45,13 @@ public class User implements UserDetails {
     private City city;
     @OneToMany(mappedBy = "user")
     private List<Opinion> opinions;
+    @ManyToMany(cascade = CascadeType.ALL)
+    @JoinTable(
+        name = "favourites",
+        joinColumns = @JoinColumn(name = "user_id"),
+        inverseJoinColumns = @JoinColumn(name = "restaurant_id")
+    )
+    private List<Restaurant> favouriteRestaurants;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
