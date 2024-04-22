@@ -36,6 +36,7 @@
     "zod": "^3.22.4"
   },
   "devDependencies": {
+    "@faker-js/faker": "^8.4.1",
     "@playwright/test": "^1.43.0",
     "@rushstack/eslint-patch": "^1.8.0",
     "@tsconfig/node20": "^20.1.4",
@@ -51,6 +52,7 @@
     "eslint-plugin-playwright": "^1.5.4",
     "eslint-plugin-vue": "^9.23.0",
     "jsdom": "^24.0.0",
+    "msw": "^2.2.14",
     "npm-run-all2": "^6.1.2",
     "orval": "^6.27.1",
     "postcss": "^8.4.38",
