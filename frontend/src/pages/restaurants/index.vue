@@ -8,10 +8,10 @@ useHead({
 </script>
 
 <template>
-  <div class="w-full mx-auto px-4">
-    <h1 class="font-bold text-2xl mb-10">Restauracje w mieście: Łódź</h1>
+  <div class="w-full sm:max-w-screen-sm md:max-w-screen-md lg:max-w-screen-xl mx-auto px-4">
+    <h1 class="font-bold text-2xl mb-8">Restauracje w mieście: Łódź</h1>
 
-    <div class="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+    <div class="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
       <RestaurantCard
         image-src="https://media-cdn.tripadvisor.com/media/photo-s/1a/37/c1/76/crispy-kimchi-roll-tunczyk.jpg"
         name="Tabu Sushi"
