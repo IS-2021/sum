@@ -1,6 +1,6 @@
 <route lang="yaml">
 meta:
-  layout: centered
+layout: centered
 </route>
 
 <script setup lang="ts">
@@ -15,6 +15,7 @@ useHead({
 <template>
   <div class="mx-auto border border-neutral-800 p-8 rounded">
     <h1 class="text-xl text-center font-bold mb-8">Sign-Up</h1>
+
     <SignUpForm />
 
     <p class="w-full text-sm text-center mt-4">

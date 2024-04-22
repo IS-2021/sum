@@ -13,12 +13,15 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { Role } from '@/lib/api-model';
+import { Role, type ValidationFailed422Response } from '@/lib/api-model';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { AlertCircleIcon } from 'lucide-vue-next';
+import { ref } from 'vue';
 
 const formSchema = toTypedSchema(
   z.object({
-    role: z.enum([Role.restaurant, Role.user]).default(Role.user),
+    role: z.enum([Role.ROLE_RESTAURANT, Role.ROLE_USER]).default(Role.ROLE_USER),
     firstName: z.string().min(1),
     secondName: z.string().min(1),
     email: z.string().email(),
@@ -31,12 +34,9 @@ const formSchema = toTypedSchema(
 const form = useForm({
   validationSchema: formSchema,
 });
+const errorMessage = ref('');
 
 const onSubmit = form.handleSubmit(async (formData) => {
-  console.log({
-    ...formData,
-  });
-
   const res = await postAuthRegister(
     {
       ...formData,
@@ -47,24 +47,35 @@ const onSubmit = form.handleSubmit(async (formData) => {
   );
 
   if (res.status === 200) {
-    console.log('Successfully registered');
+    errorMessage.value = '';
+  } else if (res.status === 400) {
+    const { message } = res.data as unknown as ValidationFailed422Response;
+
+    errorMessage.value = message;
   }
-  console.log(res);
 });
 
 const isValid = form.meta.value.valid;
 </script>
 
 <template>
+  <Alert variant="destructive" v-if="errorMessage" class="mb-4">
+    <AlertCircleIcon class="h-4 w-4" />
+    <AlertTitle>There's an error</AlertTitle>
+    <AlertDescription>
+      {{ errorMessage }}
+    </AlertDescription>
+  </Alert>
+
   <form @submit="onSubmit" class="space-y-4">
     <FormField v-slot="{ componentField }" name="role">
       <FormItem>
         <FormLabel>Who are you?</FormLabel>
         <FormControl>
-          <Tabs v-bind="componentField" default-value="user">
+          <Tabs v-bind="componentField" default-value="ROLE_USER">
             <TabsList class="grid gap-4 grid-cols-2">
-              <TabsTrigger value="user">A regular user</TabsTrigger>
-              <TabsTrigger value="restaurant">A restaurant</TabsTrigger>
+              <TabsTrigger value="ROLE_USER">A regular user</TabsTrigger>
+              <TabsTrigger value="ROLE_RESTAURANT">A restaurant</TabsTrigger>
             </TabsList>
           </Tabs>
         </FormControl>

@@ -9,7 +9,7 @@ export type Role = (typeof Role)[keyof typeof Role];
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const Role = {
-  admin: 'admin',
-  user: 'user',
-  restaurant: 'restaurant',
+  ROLE_ADMIN: 'ROLE_ADMIN',
+  ROLE_USER: 'ROLE_USER',
+  ROLE_RESTAURANT: 'ROLE_RESTAURANT',
 } as const;
