@@ -21,6 +21,6 @@ const toggleFavourite = () => {
 </script>
 
 <template>
-  <Star v-if="isFavourite" fill="white" class="w-10 h-10" @click="toggleFavourite" />
-  <Star v-else class="w-10 h-10" @click="toggleFavourite" />
+  <Star v-if="isFavourite" fill="white" class="w-10 h-10 cursor-pointer" @click="toggleFavourite" />
+  <Star v-else class="w-10 h-10 cursor-pointer" @click="toggleFavourite" />
 </template>

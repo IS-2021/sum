@@ -4,14 +4,14 @@ import { ThumbsDown } from 'lucide-vue-next';
 import { ref } from 'vue';
 
 const isLiked = ref(true);
-const isUnliked = ref(false);
+const isDisliked = ref(false);
 
 const toggleLike = () => {
   isLiked.value = !isLiked.value;
 }
 
-const toggleUnlike = () => {
-  isUnliked.value = !isUnliked.value;
+const toggleDislike = () => {
+  isDisliked.value = !isDisliked.value;
 }
 </script>
 
@@ -27,9 +27,8 @@ const toggleUnlike = () => {
         <ThumbsUp v-else class="cursor-pointer" @click="toggleLike" />
       </div>
       <div class="flex items-center justify-center w-20">
-        <ThumbsDown v-if="isUnliked" fill="white" class="cursor-pointer" @click="toggleUnlike" />
-        <ThumbsDown v-else class="cursor-pointer" @click="toggleUnlike" />
-
+        <ThumbsDown v-if="isDisliked" fill="white" class="cursor-pointer" @click="toggleDislike" />
+        <ThumbsDown v-else class="cursor-pointer" @click="toggleDislike" />
       </div>
     </div>
   </div>

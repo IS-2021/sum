@@ -39,5 +39,17 @@ const isFavourite = ref(false);
       </div>
       <p class="flex">Address</p>
     </div>
+    <div class="mt-10">
+      <h1 class="text-2xl">Kategoria 1</h1>
+      <div class="w-full h-40 flex flex-row justify-between">
+        <div v-for="n in 4" v-bind:key="n" class="border h-full w-80 rounded-lg"></div>
+      </div>
+    </div>
+    <div class="mt-10">
+      <h1 class="text-2xl">Kategoria 2</h1>
+      <div class="w-full h-40 flex flex-row justify-between">
+        <div v-for="n in 4" v-bind:key="n" class="border h-full w-80 rounded-lg"></div>
+      </div>
+    </div>
   </div>
 </template>
