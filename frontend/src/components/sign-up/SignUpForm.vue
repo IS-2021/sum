@@ -37,10 +37,6 @@ const form = useForm({
 const errorMessage = ref('');
 
 const onSubmit = form.handleSubmit(async (formData) => {
-  console.log({
-    ...formData,
-  });
-
   const res = await postAuthRegister(
     {
       ...formData,
