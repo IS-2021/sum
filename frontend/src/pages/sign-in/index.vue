@@ -1,6 +1,6 @@
 <route lang="yaml">
 meta:
-layout: centered
+  layout: centered
 </route>
 
 <script setup lang="ts">
