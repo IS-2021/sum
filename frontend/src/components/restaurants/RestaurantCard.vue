@@ -18,7 +18,7 @@ const imgSrc = props.imageSrc ?? fallbackImgUrl;
 </script>
 
 <template>
-  <article class="bg-neutral-900 text-neutral-50 rounded text-xl space-y-3 p-4">
+  <article class="bg-neutral-900 text-neutral-50 rounded text-lg space-y-3 p-4">
     <AspectRatio :ratio="16 / 9">
       <img :src="imgSrc" :alt="imageAltText" class="rounded-md object-cover w-full h-full" />
     </AspectRatio>
@@ -26,16 +26,16 @@ const imgSrc = props.imageSrc ?? fallbackImgUrl;
     <header class="flex justify-between items-center">
       <p class="font-bold">{{ name }}</p>
 
-      <div class="flex gap-3 items-center">
-        <p>{{ rating }}%</p>
-        <ThumbsUpIcon />
-      </div>
+      <p class="flex gap-2 items-center">
+        <span class="leading-5">{{ rating }}%</span>
+        <ThumbsUpIcon class="w-5 h-5" />
+      </p>
     </header>
 
     <footer class="text-neutral-500">
-      <p class="flex items-center gap-3 justify-end">
-        {{ openingHours }} - {{ closingHours }}
-        <ClockIcon />
+      <p class="flex items-center gap-2 justify-end">
+        <span class="leading-5">{{ openingHours }} - {{ closingHours }}</span>
+        <ClockIcon class="w-5 h-5" />
       </p>
     </footer>
   </article>
