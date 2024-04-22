@@ -1234,9 +1234,9 @@ components:
     Role:
       description: ""
       enum:
-        - admin
-        - user
-        - restaurant
+        - ROLE_ADMIN
+        - ROLE_USER
+        - ROLE_RESTAURANT
       type: string
     UserDTO:
       title: Root Type for UserDTO

@@ -18,7 +18,7 @@ import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 const formSchema = toTypedSchema(
   z.object({
-    role: z.enum([Role.restaurant, Role.user]).default(Role.user),
+    role: z.enum([Role.ROLE_RESTAURANT, Role.ROLE_USER]).default(Role.ROLE_USER),
     firstName: z.string().min(1),
     secondName: z.string().min(1),
     email: z.string().email(),
@@ -61,10 +61,10 @@ const isValid = form.meta.value.valid;
       <FormItem>
         <FormLabel>Who are you?</FormLabel>
         <FormControl>
-          <Tabs v-bind="componentField" default-value="user">
+          <Tabs v-bind="componentField" default-value="ROLE_USER">
             <TabsList class="grid gap-4 grid-cols-2">
-              <TabsTrigger value="user">A regular user</TabsTrigger>
-              <TabsTrigger value="restaurant">A restaurant</TabsTrigger>
+              <TabsTrigger value="ROLE_USER">A regular user</TabsTrigger>
+              <TabsTrigger value="ROLE_RESTAURANT">A restaurant</TabsTrigger>
             </TabsList>
           </Tabs>
         </FormControl>
