@@ -13,9 +13,11 @@ useHead({
 
     <div class="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
       <RestaurantCard
+        image-src="https://media-cdn.tripadvisor.com/media/photo-s/1a/37/c1/76/crispy-kimchi-roll-tunczyk.jpg"
         name="Tabu Sushi"
         :rating="4.89"
         opening-hours="10:00"
+        :rating="95"
         closing-hours="22:00"
       />
     </div>

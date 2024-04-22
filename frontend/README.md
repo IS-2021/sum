@@ -62,3 +62,7 @@ pnpm test:e2e --debug
 ```sh
 pnpm lint
 ```
+
+
+# Images sources
+https://unsplash.com/photos/round-green-fruit-qSoh9dju8rg
