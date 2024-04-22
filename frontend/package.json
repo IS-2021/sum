@@ -16,6 +16,7 @@
     "api:generate": "pnpm orval --config ./orval.config.ts"
   },
   "dependencies": {
+    "@fontsource-variable/inter": "^5.0.18",
     "@tanstack/vue-query": "^5.29.0",
     "@unhead/vue": "^1.9.5",
     "@vee-validate/zod": "^4.12.6",
