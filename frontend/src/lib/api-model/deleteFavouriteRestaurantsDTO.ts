@@ -7,6 +7,6 @@
 import type { Uuid } from './uuid';
 
 export interface DeleteFavouriteRestaurantsDTO {
-  restaurant_ids: Uuid[];
-  user_id: Uuid;
+  restaurantIds: Uuid[];
+  userId: Uuid;
 }

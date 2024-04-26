@@ -21,6 +21,7 @@ import type { MaybeRef } from 'vue';
 import type {
   NotFound404Response,
   RestaurantDTO,
+  RestaurantInputDTO,
   Uuid,
   ValidationFailed422Response,
 } from '../../api-model';
@@ -77,6 +78,72 @@ export const useGetRestaurants = <
   return query;
 };
 
+export const postRestaurants = (
+  restaurantInputDTO: MaybeRef<RestaurantInputDTO>,
+  options?: AxiosRequestConfig,
+): Promise<AxiosResponse<void>> => {
+  restaurantInputDTO = unref(restaurantInputDTO);
+  return axios.default.post(`http://localhost:9090/restaurants`, restaurantInputDTO, options);
+};
+
+export const getPostRestaurantsMutationOptions = <
+  TError = AxiosError<ValidationFailed422Response>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof postRestaurants>>,
+    TError,
+    { data: RestaurantInputDTO },
+    TContext
+  >;
+  axios?: AxiosRequestConfig;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof postRestaurants>>,
+  TError,
+  { data: RestaurantInputDTO },
+  TContext
+> => {
+  const { mutation: mutationOptions, axios: axiosOptions } = options ?? {};
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof postRestaurants>>,
+    { data: RestaurantInputDTO }
+  > = (props) => {
+    const { data } = props ?? {};
+
+    return postRestaurants(data, axiosOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type PostRestaurantsMutationResult = NonNullable<
+  Awaited<ReturnType<typeof postRestaurants>>
+>;
+export type PostRestaurantsMutationBody = RestaurantInputDTO;
+export type PostRestaurantsMutationError = AxiosError<ValidationFailed422Response>;
+
+export const usePostRestaurants = <
+  TError = AxiosError<ValidationFailed422Response>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof postRestaurants>>,
+    TError,
+    { data: RestaurantInputDTO },
+    TContext
+  >;
+  axios?: AxiosRequestConfig;
+}): UseMutationReturnType<
+  Awaited<ReturnType<typeof postRestaurants>>,
+  TError,
+  { data: RestaurantInputDTO },
+  TContext
+> => {
+  const mutationOptions = getPostRestaurantsMutationOptions(options);
+
+  return useMutation(mutationOptions);
+};
 export const getRestaurantsId = (
   id: MaybeRef<Uuid>,
   options?: AxiosRequestConfig,
