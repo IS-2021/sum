@@ -38,6 +38,3 @@ fabric.properties
 
 # Built Visual Studio Code Extensions
 *.vsix
-
-#node_modules 
-/frontend/node_modules

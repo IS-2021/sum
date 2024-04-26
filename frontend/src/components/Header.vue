@@ -14,6 +14,9 @@ import { Button } from '@/components/ui/button';
         <li>
           <RouterLink to="/about">About</RouterLink>
         </li>
+        <li>
+          <RouterLink to="/restaurants">Restaurants</RouterLink>
+        </li>
         <li class="flex-grow"></li>
         <li>
           <Button as-child>
