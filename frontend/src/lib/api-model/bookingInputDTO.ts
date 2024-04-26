@@ -7,6 +7,6 @@
 import type { Uuid } from './uuid';
 
 export interface BookingInputDTO {
-  meal_id: Uuid;
-  user_id: Uuid;
+  mealId: Uuid;
+  userId: Uuid;
 }

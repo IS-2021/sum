@@ -10,5 +10,5 @@ export interface MealDTO {
   description: string;
   id: Uuid;
   name: string;
-  restaurant_id: Uuid;
+  restaurantId: Uuid;
 }

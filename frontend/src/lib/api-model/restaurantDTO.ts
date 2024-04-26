@@ -7,9 +7,11 @@
 import type { Uuid } from './uuid';
 
 export interface RestaurantDTO {
-  address_id?: Uuid;
-  id?: Uuid;
-  name?: string;
-  phoneNumber?: string;
-  user_id?: Uuid;
+  addressId: Uuid;
+  id: Uuid;
+  imageUrl?: string;
+  isActive: boolean;
+  name: string;
+  phoneNumber: string;
+  userId: Uuid;
 }

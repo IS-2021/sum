@@ -5,6 +5,8 @@
  * OpenAPI spec version: 1.0.0
  */
 
+export * from './addressInputDto';
+export * from './badRequest400Response';
 export * from './bookingDTO';
 export * from './bookingInputDTO';
 export * from './credentialsDTO';

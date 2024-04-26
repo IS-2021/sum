@@ -8,6 +8,6 @@ import type { Uuid } from './uuid';
 
 export interface ReportsInputDTO {
   cause: string;
-  restaurant_id: Uuid;
-  user_id: Uuid;
+  restaurantId: Uuid;
+  userId: Uuid;
 }

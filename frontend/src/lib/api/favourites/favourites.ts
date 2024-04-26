@@ -19,6 +19,7 @@ import type { AxiosError, AxiosRequestConfig, AxiosResponse } from 'axios';
 import { computed, unref } from 'vue';
 import type { MaybeRef } from 'vue';
 import type {
+  BadRequest400Response,
   DeleteFavouriteRestaurantsDTO,
   NotFound404Response,
   RestaurantDTO,
@@ -176,7 +177,7 @@ export const postUsersDeleteFavourites = (
 };
 
 export const getPostUsersDeleteFavouritesMutationOptions = <
-  TError = AxiosError<ValidationFailed422Response>,
+  TError = AxiosError<BadRequest400Response | NotFound404Response | ValidationFailed422Response>,
   TContext = unknown,
 >(options?: {
   mutation?: UseMutationOptions<
@@ -210,10 +211,12 @@ export type PostUsersDeleteFavouritesMutationResult = NonNullable<
   Awaited<ReturnType<typeof postUsersDeleteFavourites>>
 >;
 export type PostUsersDeleteFavouritesMutationBody = DeleteFavouriteRestaurantsDTO;
-export type PostUsersDeleteFavouritesMutationError = AxiosError<ValidationFailed422Response>;
+export type PostUsersDeleteFavouritesMutationError = AxiosError<
+  BadRequest400Response | NotFound404Response | ValidationFailed422Response
+>;
 
 export const usePostUsersDeleteFavourites = <
-  TError = AxiosError<ValidationFailed422Response>,
+  TError = AxiosError<BadRequest400Response | NotFound404Response | ValidationFailed422Response>,
   TContext = unknown,
 >(options?: {
   mutation?: UseMutationOptions<

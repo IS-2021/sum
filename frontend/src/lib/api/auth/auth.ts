@@ -20,8 +20,11 @@ import { unref } from 'vue';
 import type { MaybeRef } from 'vue';
 import type {
   CredentialsDTO,
+  NotFound404Response,
+  PasswordDTO,
   UserDTO,
   UserInputDTO,
+  Uuid,
   ValidationFailed422Response,
 } from '../../api-model';
 
@@ -200,4 +203,79 @@ export const useGetAuthLogout = <
   query.queryKey = unref(queryOptions).queryKey as QueryKey;
 
   return query;
+};
+
+export const putAuthIdChangePassword = (
+  id: MaybeRef<Uuid>,
+  passwordDTO: MaybeRef<PasswordDTO>,
+  options?: AxiosRequestConfig,
+): Promise<AxiosResponse<void>> => {
+  id = unref(id);
+  passwordDTO = unref(passwordDTO);
+  return axios.default.put(
+    `http://localhost:9090/auth/${id}/change-password`,
+    passwordDTO,
+    options,
+  );
+};
+
+export const getPutAuthIdChangePasswordMutationOptions = <
+  TError = AxiosError<NotFound404Response | ValidationFailed422Response>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof putAuthIdChangePassword>>,
+    TError,
+    { id: Uuid; data: PasswordDTO },
+    TContext
+  >;
+  axios?: AxiosRequestConfig;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof putAuthIdChangePassword>>,
+  TError,
+  { id: Uuid; data: PasswordDTO },
+  TContext
+> => {
+  const { mutation: mutationOptions, axios: axiosOptions } = options ?? {};
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof putAuthIdChangePassword>>,
+    { id: Uuid; data: PasswordDTO }
+  > = (props) => {
+    const { id, data } = props ?? {};
+
+    return putAuthIdChangePassword(id, data, axiosOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type PutAuthIdChangePasswordMutationResult = NonNullable<
+  Awaited<ReturnType<typeof putAuthIdChangePassword>>
+>;
+export type PutAuthIdChangePasswordMutationBody = PasswordDTO;
+export type PutAuthIdChangePasswordMutationError = AxiosError<
+  NotFound404Response | ValidationFailed422Response
+>;
+
+export const usePutAuthIdChangePassword = <
+  TError = AxiosError<NotFound404Response | ValidationFailed422Response>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof putAuthIdChangePassword>>,
+    TError,
+    { id: Uuid; data: PasswordDTO },
+    TContext
+  >;
+  axios?: AxiosRequestConfig;
+}): UseMutationReturnType<
+  Awaited<ReturnType<typeof putAuthIdChangePassword>>,
+  TError,
+  { id: Uuid; data: PasswordDTO },
+  TContext
+> => {
+  const mutationOptions = getPutAuthIdChangePasswordMutationOptions(options);
+
+  return useMutation(mutationOptions);
 };

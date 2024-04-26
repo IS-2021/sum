@@ -10,7 +10,7 @@ import type { Timestamp } from './timestamp';
 export interface ReportDTO {
   cause: string;
   id: Uuid;
-  restaurant_id: Uuid;
+  restaurantId: Uuid;
   timestamp: Timestamp;
-  user_id: Uuid;
+  userId: Uuid;
 }

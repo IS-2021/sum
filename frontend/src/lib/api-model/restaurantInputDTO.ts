@@ -4,11 +4,12 @@
  * Sumatywny
  * OpenAPI spec version: 1.0.0
  */
+import type { AddressInputDto } from './addressInputDto';
 import type { Uuid } from './uuid';
 
 export interface RestaurantInputDTO {
-  address_id?: Uuid;
+  addressInputDto: AddressInputDto;
   name?: string;
   phoneNumber?: string;
-  user_id?: Uuid;
+  userId?: Uuid;
 }
