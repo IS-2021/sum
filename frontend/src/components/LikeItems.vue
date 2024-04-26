@@ -3,15 +3,24 @@ import { ThumbsUp } from 'lucide-vue-next';
 import { ThumbsDown } from 'lucide-vue-next';
 import { ref } from 'vue';
 
-const isLiked = ref(true);
-const isDisliked = ref(false);
+const props = defineProps<{
+  isLiked: boolean | null
+}>()
+
+const isLiked = ref(props.isLiked);
+
+const emit = defineEmits<{
+  (e: 'isLikedChange', isLiked: Boolean | null): void
+}>()
 
 const toggleLike = () => {
-  isLiked.value = !isLiked.value;
+  !isLiked.value || isLiked.value === null ? isLiked.value = true : isLiked.value = null;
+  emit('isLikedChange', isLiked.value);
 }
 
 const toggleDislike = () => {
-  isDisliked.value = !isDisliked.value;
+  isLiked.value || isLiked.value === null ? isLiked.value = false : isLiked.value = null;
+  emit('isLikedChange', isLiked.value);
 }
 </script>
 
@@ -23,12 +32,14 @@ const toggleDislike = () => {
     </div>
     <div class="w-40 h-10 border-gray-50 flex flex-row mt-3.5 rounded-lg bg-neutral-800">
       <div class="flex items-center justify-center w-20">
-        <ThumbsUp v-if="isLiked" fill="white" class="cursor-pointer" @click="toggleLike" />
-        <ThumbsUp v-else class="cursor-pointer" @click="toggleLike" />
+        <ThumbsUp v-if="isLiked === null" class="cursor-pointer" @click="toggleLike" />
+        <ThumbsUp v-else-if="isLiked" fill="white" class="cursor-pointer" @click="toggleLike" />
+        <ThumbsUp v-else-if="!isLiked" class="cursor-pointer" @click="toggleLike" />
       </div>
       <div class="flex items-center justify-center w-20">
-        <ThumbsDown v-if="isDisliked" fill="white" class="cursor-pointer" @click="toggleDislike" />
-        <ThumbsDown v-else class="cursor-pointer" @click="toggleDislike" />
+        <ThumbsDown v-if="isLiked === null" class="cursor-pointer" @click="toggleDislike" />
+        <ThumbsDown v-else-if="!isLiked" fill="white" class="cursor-pointer" @click="toggleDislike" />
+        <ThumbsDown v-else-if="isLiked" class="cursor-pointer" @click="toggleDislike" />
       </div>
     </div>
   </div>

@@ -10,6 +10,6 @@ useHead({
 
 <template>
   <Header />
-  <RouterView class="min-h-screen my-10" />
+  <RouterView class="min-h-screen my-8" />
   <Footer />
 </template>
