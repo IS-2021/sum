@@ -1333,6 +1333,9 @@ components:
       description: ""
       required:
         - addressInputDto
+        - name
+        - phoneNumber
+        - userId
       type: object
       properties:
         name:

@@ -9,7 +9,7 @@ import type { Uuid } from './uuid';
 
 export interface RestaurantInputDTO {
   addressInputDto: AddressInputDto;
-  name?: string;
-  phoneNumber?: string;
-  userId?: Uuid;
+  name: string;
+  phoneNumber: string;
+  userId: Uuid;
 }
