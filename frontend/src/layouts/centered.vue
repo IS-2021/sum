@@ -10,7 +10,7 @@ useHead({
 
 <template>
   <Header />
-  <div class="grid items-center flex-grow min-h-screen my-10">
+  <div class="grid flex-grow min-h-screen my-10">
     <RouterView />
   </div>
   <Footer />
