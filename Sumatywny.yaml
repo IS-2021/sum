@@ -88,6 +88,8 @@ paths:
             schema:
               $ref: "#/components/schemas/RestaurantInputDTO"
         required: true
+      tags:
+        - restaurants
       responses:
         "200":
           description: Restaurant created
@@ -726,6 +728,10 @@ paths:
       responses:
         "204":
           description: Removes specified by id restaurants from user's favourites
+        "400":
+          $ref: "#/components/responses/BadRequest_400"
+        "404":
+          $ref: "#/components/responses/NotFound_404"
         "422":
           $ref: "#/components/responses/ValidationFailed_422"
   "/opinions/{id}":
@@ -980,6 +986,8 @@ paths:
             schema:
               $ref: "#/components/schemas/PasswordDTO"
         required: true
+      tags:
+        - auth
       responses:
         "200":
           description: Password updated
@@ -994,71 +1002,125 @@ paths:
           $ref: "#/components/schemas/UUID"
         in: path
         required: true
+  "/admin/reports/restaurants/{id}/":
+    get:
+      tags:
+        - admin_reports
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ReportDTO"
+          description: Report of clicked restaurant
+    put:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ReportDTO"
+        required: true
+      tags:
+        - admin_reports
+      responses:
+        "200":
+          description: Return report of clicked restaurant
+    parameters:
+      - name: id
+        schema:
+          $ref: "#/components/schemas/UUID"
+        in: path
+        required: true
+  /admin/reports/restaurants:
+    get:
+      tags:
+        - admin_reports
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ReportDTO"
+          description: All reports of every restaurant
+        "204":
+          description: No reports found
+  "/admin/reports/users/{id}/":
+    get:
+      tags:
+        - admin_reports
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ReportDTO"
+          description: Report of clicked user
+    put:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ReportDTO"
+        required: true
+      tags:
+        - admin_reports
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ReportDTO"
+          description: Report of clicked user
+    parameters:
+      - name: id
+        schema:
+          $ref: "#/components/schemas/UUID"
+        in: path
+        required: true
+  /admin/reports/users/:
+    get:
+      tags:
+        - admin_reports
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ReportDTO"
+          description: All reports of every user
+        "204":
+          description: No reports found
 components:
   schemas:
-    RestaurantDTO:
-      title: Root Type for RestaurantDTO
-      description: ""
-      type: object
-      properties:
-        id:
-          $ref: "#/components/schemas/UUID"
-        address_id:
-          $ref: "#/components/schemas/UUID"
-        name:
-          type: string
-        phoneNumber:
-          type: string
-        user_id:
-          $ref: "#/components/schemas/UUID"
-      example:
-        id: "1"
-        address_id: "1"
-        name: name
-        phoneNumber: "122333421"
-        user_id: "1"
     OpinionDTO:
       description: ""
       required:
-        - user_id
-        - restaurant_id
-        - is_positive
-        - opinion_id
+        - userId
+        - restaurantId
+        - isPositive
+        - opinionId
       type: object
       properties:
-        user_id:
-          $ref: "#/components/schemas/UUID"
-          description: ""
-        restaurant_id:
-          $ref: "#/components/schemas/UUID"
-          description: ""
-        is_positive:
+        isPositive:
           description: ""
           type: boolean
-        opinion_id:
+        opinionId:
           $ref: "#/components/schemas/UUID"
           description: ""
-    MealInputDTO:
-      description: ""
-      required:
-        - restaurant_id
-        - name
-        - description
-      type: object
-      properties:
-        name:
+        restaurantId:
+          $ref: "#/components/schemas/UUID"
           description: ""
-          type: string
-        description:
-          description: ""
-          type: string
-        restaurant_id:
+        userId:
           $ref: "#/components/schemas/UUID"
           description: ""
     MealDTO:
       description: ""
       required:
-        - restaurant_id
+        - restaurantId
         - name
         - description
         - id
@@ -1070,42 +1132,25 @@ components:
         description:
           description: ""
           type: string
-        restaurant_id:
+        id:
           $ref: "#/components/schemas/UUID"
           description: ""
-        id:
+        restaurantId:
           $ref: "#/components/schemas/UUID"
           description: ""
     BookingInputDTO:
       description: ""
       required:
-        - user_id
-        - meal_id
+        - userId
+        - mealId
       type: object
       properties:
-        user_id:
+        mealId:
           $ref: "#/components/schemas/UUID"
           description: ""
-        meal_id:
+        userId:
           $ref: "#/components/schemas/UUID"
           description: ""
-    OpinionInputDTO:
-      description: ""
-      required:
-        - user_id
-        - restaurant_id
-        - is_positive
-      type: object
-      properties:
-        user_id:
-          $ref: "#/components/schemas/UUID"
-          description: ""
-        restaurant_id:
-          $ref: "#/components/schemas/UUID"
-          description: ""
-        is_positive:
-          description: ""
-          type: boolean
     IngredientInputDTO:
       description: ""
       required:
@@ -1130,35 +1175,12 @@ components:
               type: string
       description: ""
       type: object
-    ReportsInputDTO:
-      description: ""
-      required:
-        - cause
-        - restaurant_id
-        - user_id
-      type: object
-      properties:
-        cause:
-          description: ""
-          type: string
-        restaurant_id:
-          $ref: "#/components/schemas/UUID"
-          description: ""
-          x-faker: datatype.uuid
-        user_id:
-          $ref: "#/components/schemas/UUID"
-          description: ""
-          x-faker: datatype.uuid
-    UUID:
-      format: uuid
-      description: ""
-      type: string
     ReportDTO:
       description: ""
       required:
         - cause
-        - restaurant_id
-        - user_id
+        - restaurantId
+        - userId
         - timestamp
         - id
       type: object
@@ -1166,12 +1188,6 @@ components:
         cause:
           description: ""
           type: string
-        restaurant_id:
-          $ref: "#/components/schemas/UUID"
-          description: ""
-        user_id:
-          $ref: "#/components/schemas/UUID"
-          description: ""
         timestamp:
           $ref: "#/components/schemas/timestamp"
           description: ""
@@ -1179,28 +1195,10 @@ components:
         id:
           $ref: "#/components/schemas/UUID"
           description: ""
-    BookingDTO:
-      description: ""
-      required:
-        - user_id
-        - meal_id
-        - timestamp
-        - id
-      type: object
-      properties:
-        user_id:
+        restaurantId:
           $ref: "#/components/schemas/UUID"
           description: ""
-        meal_id:
-          $ref: "#/components/schemas/UUID"
-          description: ""
-        timestamp:
-          $ref: "#/components/schemas/timestamp"
-          description: ""
-        picked_up_timestamp:
-          $ref: "#/components/schemas/timestamp"
-          description: ""
-        id:
+        userId:
           $ref: "#/components/schemas/UUID"
           description: ""
     timestamp:
@@ -1230,14 +1228,7 @@ components:
       example:
         name: Cheese
         type: dairy
-        ingredient_id: 1488098b-8777-417f-a45a-78c7361502d8
-    Role:
-      description: ""
-      enum:
-        - ROLE_ADMIN
-        - ROLE_USER
-        - ROLE_RESTAURANT
-      type: string
+        id: 1488098b-8777-417f-a45a-78c7361502d8
     UserDTO:
       title: Root Type for UserDTO
       description: User object.
@@ -1250,6 +1241,7 @@ components:
         - secondName
         - username
         - id
+        - isBlocked
       type: object
       properties:
         username:
@@ -1283,6 +1275,9 @@ components:
         id:
           $ref: "#/components/schemas/UUID"
           description: ""
+        isBlocked:
+          description: ""
+          type: boolean
     UserInputDTO:
       title: Root Type for UserDTO
       description: User object.
@@ -1324,21 +1319,6 @@ components:
           x-faker:
             phone.phoneNumber:
               - "###-###-###"
-    DeleteFavouriteRestaurantsDTO:
-      description: ""
-      required:
-        - user_id
-        - restaurant_ids
-      type: object
-      properties:
-        user_id:
-          $ref: "#/components/schemas/UUID"
-          description: ""
-        restaurant_ids:
-          description: ""
-          type: array
-          items:
-            $ref: "#/components/schemas/UUID"
     PasswordDTO:
       description: ""
       required:
@@ -1351,22 +1331,19 @@ components:
     RestaurantInputDTO:
       title: Root Type for RestaurantDTO
       description: ""
+      required:
+        - addressInputDto
       type: object
       properties:
-        address_id:
-          $ref: "#/components/schemas/UUID"
         name:
           type: string
         phoneNumber:
           type: string
-        user_id:
+        addressInputDto:
+          $ref: "#/components/schemas/AddressInputDto"
+          description: ""
+        userId:
           $ref: "#/components/schemas/UUID"
-      example:
-        id: "1"
-        address_id: "1"
-        name: name
-        phoneNumber: "122333421"
-        user_id: "1"
     CredentialsDTO:
       description: ""
       required:
@@ -1378,6 +1355,163 @@ components:
           description: ""
           type: string
         password:
+          description: ""
+          type: string
+    AddressInputDto:
+      description: ""
+      required:
+        - country
+        - city
+        - street
+        - number
+        - postalCode
+      type: object
+      properties:
+        country:
+          description: ""
+          type: string
+        city:
+          description: ""
+          type: string
+        street:
+          description: ""
+          type: string
+        number:
+          description: ""
+          type: string
+        postalCode:
+          description: ""
+          type: string
+    BookingDTO:
+      description: ""
+      required:
+        - userId
+        - mealId
+        - timestamp
+        - id
+      type: object
+      properties:
+        userId:
+          $ref: "#/components/schemas/UUID"
+          description: ""
+        mealId:
+          $ref: "#/components/schemas/UUID"
+          description: ""
+        timestamp:
+          $ref: "#/components/schemas/timestamp"
+          description: ""
+        pickedUpTimestamp:
+          $ref: "#/components/schemas/timestamp"
+          description: ""
+        id:
+          $ref: "#/components/schemas/UUID"
+          description: ""
+    DeleteFavouriteRestaurantsDTO:
+      description: ""
+      required:
+        - userId
+        - restaurantIds
+      type: object
+      properties:
+        userId:
+          $ref: "#/components/schemas/UUID"
+          description: ""
+        restaurantIds:
+          description: ""
+          type: array
+          items:
+            $ref: "#/components/schemas/UUID"
+    MealInputDTO:
+      description: ""
+      required:
+        - restaurantId
+        - name
+        - description
+      type: object
+      properties:
+        name:
+          description: ""
+          type: string
+        description:
+          description: ""
+          type: string
+        restaurantId:
+          $ref: "#/components/schemas/UUID"
+          description: ""
+    OpinionInputDTO:
+      description: ""
+      required:
+        - userId
+        - restaurantId
+        - isPositive
+      type: object
+      properties:
+        userId:
+          $ref: "#/components/schemas/UUID"
+          description: ""
+        restaurantId:
+          $ref: "#/components/schemas/UUID"
+          description: ""
+        isPositive:
+          description: ""
+          type: boolean
+    ReportsInputDTO:
+      description: ""
+      required:
+        - cause
+        - restaurantId
+        - userId
+      type: object
+      properties:
+        cause:
+          description: ""
+          type: string
+        restaurantId:
+          $ref: "#/components/schemas/UUID"
+          description: ""
+          x-faker: datatype.uuid
+        userId:
+          $ref: "#/components/schemas/UUID"
+          description: ""
+          x-faker: datatype.uuid
+    Role:
+      description: ""
+      enum:
+        - ROLE_ADMIN
+        - ROLE_USER
+        - ROLE_RESTAURANT
+      type: string
+    UUID:
+      format: uuid
+      description: ""
+      pattern: '^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$'
+      type: string
+      x-faker: datatype.uuid
+    RestaurantDTO:
+      title: Root Type for RestaurantDTO
+      description: ""
+      required:
+        - isActive
+        - addressId
+        - id
+        - name
+        - phoneNumber
+        - userId
+      type: object
+      properties:
+        id:
+          $ref: "#/components/schemas/UUID"
+        name:
+          type: string
+        phoneNumber:
+          type: string
+        isActive:
+          type: boolean
+        addressId:
+          $ref: "#/components/schemas/UUID"
+        userId:
+          $ref: "#/components/schemas/UUID"
+        imageUrl:
           description: ""
           type: string
   responses:
@@ -1401,6 +1535,8 @@ components:
               value:
                 message: Invalid input data
       description: Validation failed
+    BadRequest_400:
+      description: Bad requets
 tags:
   - name: bookings
     description: ""
@@ -1419,6 +1555,12 @@ tags:
   - name: meals
     description: ""
   - name: favourites
+    description: ""
+  - name: admin_reports
+    description: ""
+  - name: admin_restaurants
+    description: ""
+  - name: admin_users
     description: ""
 x-json-schema-faker:
   locale: pl
