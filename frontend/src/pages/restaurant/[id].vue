@@ -7,24 +7,14 @@ meta:
 import StarItem from '@/components/StarItem.vue';
 import LikeItems from '@/components/LikeItems.vue';
 import MealsByCategory from '@/components/MealsByCategory.vue';
+import { useRoute } from 'vue-router/auto';
 import { ref } from 'vue';
 import type { Ref } from 'vue';
+import { useGetRestaurantsId } from '@/lib/api/restaurants/restaurants';
 
-type UUID = string;
-
-interface Restaurant {
-  address: UUID,
-  id: UUID,
-  isActive: boolean,
-  name: string,
-  phoneNumber: string,
-  userId: UUID,
-  isFavourite: boolean
-}
-
-const props = defineProps<{
-  restaurant: Restaurant
-}>();
+const route = useRoute('/restaurant/[id]')
+const id = route.params.id;
+const restaurantObj = useGetRestaurantsId(id);
 
 const isFavourite = ref(false);
 const categories = ref(['Kategoria 1', 'Kategoria 2'])
