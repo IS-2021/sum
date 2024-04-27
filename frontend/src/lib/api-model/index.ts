@@ -13,6 +13,8 @@ export * from './credentialsDTO';
 export * from './deleteFavouriteRestaurantsDTO';
 export * from './getIngredientsParams';
 export * from './getMealsParams';
+export * from './getRestaurantsParams';
+export * from './hoursDTO';
 export * from './httpException';
 export * from './httpExceptionAnyOf';
 export * from './ingredientDTO';
