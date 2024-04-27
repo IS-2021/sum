@@ -12,6 +12,7 @@ export interface RestaurantDTO {
   imageUrl?: string;
   isActive: boolean;
   name: string;
+  orderNumber?: number;
   phoneNumber: string;
   userId: Uuid;
 }

@@ -12,7 +12,7 @@ import { Input } from '@/components/ui/input';
 import { toTypedSchema } from '@vee-validate/zod';
 import * as z from 'zod';
 import { useForm } from 'vee-validate';
-import { postAuthLogin } from '@/lib/api/auth/auth';
+import { postLogin } from '@/lib/api/auth/auth';
 import { ref } from 'vue';
 import type { ValidationFailed422Response } from '@/lib/api-model';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
@@ -31,7 +31,7 @@ const form = useForm({
 const errorMessage = ref('');
 
 const onSubmit = form.handleSubmit(async (credentials) => {
-  const res = await postAuthLogin(credentials, {
+  const res = await postLogin(credentials, {
     validateStatus: (status) => status < 500,
   });
 
