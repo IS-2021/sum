@@ -5,9 +5,11 @@
  * OpenAPI spec version: 1.0.0
  */
 import type { Uuid } from './uuid';
+import type { HoursDTO } from './hoursDTO';
 
 export interface RestaurantDTO {
   addressId: Uuid;
+  hours: HoursDTO;
   id: Uuid;
   imageUrl?: string;
   isActive: boolean;
