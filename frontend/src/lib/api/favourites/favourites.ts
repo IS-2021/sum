@@ -23,6 +23,7 @@ import type {
   DeleteFavouriteRestaurantsDTO,
   NotFound404Response,
   RestaurantDTO,
+  RestaurantFavouriteInputDTO,
   Uuid,
   ValidationFailed422Response,
 } from '../../api-model';
@@ -94,14 +95,92 @@ export const useGetUsersIdFavourites = <
   return query;
 };
 
-export const postUsersIdFavourites = (
+export const putUsersIdFavourites = (
   id: MaybeRef<Uuid>,
-  uuid: MaybeRef<Uuid>,
+  restaurantFavouriteInputDTO: MaybeRef<RestaurantFavouriteInputDTO[]>,
   options?: AxiosRequestConfig,
 ): Promise<AxiosResponse<void>> => {
   id = unref(id);
-  uuid = unref(uuid);
-  return axios.default.post(`http://localhost:9090/users/${id}/favourites`, uuid, options);
+  restaurantFavouriteInputDTO = unref(restaurantFavouriteInputDTO);
+  return axios.default.put(
+    `http://localhost:9090/users/${id}/favourites`,
+    restaurantFavouriteInputDTO,
+    options,
+  );
+};
+
+export const getPutUsersIdFavouritesMutationOptions = <
+  TError = AxiosError<NotFound404Response | ValidationFailed422Response>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof putUsersIdFavourites>>,
+    TError,
+    { id: Uuid; data: RestaurantFavouriteInputDTO[] },
+    TContext
+  >;
+  axios?: AxiosRequestConfig;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof putUsersIdFavourites>>,
+  TError,
+  { id: Uuid; data: RestaurantFavouriteInputDTO[] },
+  TContext
+> => {
+  const { mutation: mutationOptions, axios: axiosOptions } = options ?? {};
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof putUsersIdFavourites>>,
+    { id: Uuid; data: RestaurantFavouriteInputDTO[] }
+  > = (props) => {
+    const { id, data } = props ?? {};
+
+    return putUsersIdFavourites(id, data, axiosOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type PutUsersIdFavouritesMutationResult = NonNullable<
+  Awaited<ReturnType<typeof putUsersIdFavourites>>
+>;
+export type PutUsersIdFavouritesMutationBody = RestaurantFavouriteInputDTO[];
+export type PutUsersIdFavouritesMutationError = AxiosError<
+  NotFound404Response | ValidationFailed422Response
+>;
+
+export const usePutUsersIdFavourites = <
+  TError = AxiosError<NotFound404Response | ValidationFailed422Response>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof putUsersIdFavourites>>,
+    TError,
+    { id: Uuid; data: RestaurantFavouriteInputDTO[] },
+    TContext
+  >;
+  axios?: AxiosRequestConfig;
+}): UseMutationReturnType<
+  Awaited<ReturnType<typeof putUsersIdFavourites>>,
+  TError,
+  { id: Uuid; data: RestaurantFavouriteInputDTO[] },
+  TContext
+> => {
+  const mutationOptions = getPutUsersIdFavouritesMutationOptions(options);
+
+  return useMutation(mutationOptions);
+};
+export const postUsersIdFavourites = (
+  id: MaybeRef<Uuid>,
+  restaurantFavouriteInputDTO: MaybeRef<RestaurantFavouriteInputDTO>,
+  options?: AxiosRequestConfig,
+): Promise<AxiosResponse<void>> => {
+  id = unref(id);
+  restaurantFavouriteInputDTO = unref(restaurantFavouriteInputDTO);
+  return axios.default.post(
+    `http://localhost:9090/users/${id}/favourites`,
+    restaurantFavouriteInputDTO,
+    options,
+  );
 };
 
 export const getPostUsersIdFavouritesMutationOptions = <
@@ -111,21 +190,21 @@ export const getPostUsersIdFavouritesMutationOptions = <
   mutation?: UseMutationOptions<
     Awaited<ReturnType<typeof postUsersIdFavourites>>,
     TError,
-    { id: Uuid; data: Uuid },
+    { id: Uuid; data: RestaurantFavouriteInputDTO },
     TContext
   >;
   axios?: AxiosRequestConfig;
 }): UseMutationOptions<
   Awaited<ReturnType<typeof postUsersIdFavourites>>,
   TError,
-  { id: Uuid; data: Uuid },
+  { id: Uuid; data: RestaurantFavouriteInputDTO },
   TContext
 > => {
   const { mutation: mutationOptions, axios: axiosOptions } = options ?? {};
 
   const mutationFn: MutationFunction<
     Awaited<ReturnType<typeof postUsersIdFavourites>>,
-    { id: Uuid; data: Uuid }
+    { id: Uuid; data: RestaurantFavouriteInputDTO }
   > = (props) => {
     const { id, data } = props ?? {};
 
@@ -138,7 +217,7 @@ export const getPostUsersIdFavouritesMutationOptions = <
 export type PostUsersIdFavouritesMutationResult = NonNullable<
   Awaited<ReturnType<typeof postUsersIdFavourites>>
 >;
-export type PostUsersIdFavouritesMutationBody = Uuid;
+export type PostUsersIdFavouritesMutationBody = RestaurantFavouriteInputDTO;
 export type PostUsersIdFavouritesMutationError = AxiosError<
   NotFound404Response | ValidationFailed422Response
 >;
@@ -150,14 +229,14 @@ export const usePostUsersIdFavourites = <
   mutation?: UseMutationOptions<
     Awaited<ReturnType<typeof postUsersIdFavourites>>,
     TError,
-    { id: Uuid; data: Uuid },
+    { id: Uuid; data: RestaurantFavouriteInputDTO },
     TContext
   >;
   axios?: AxiosRequestConfig;
 }): UseMutationReturnType<
   Awaited<ReturnType<typeof postUsersIdFavourites>>,
   TError,
-  { id: Uuid; data: Uuid },
+  { id: Uuid; data: RestaurantFavouriteInputDTO },
   TContext
 > => {
   const mutationOptions = getPostUsersIdFavouritesMutationOptions(options);
