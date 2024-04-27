@@ -14,6 +14,7 @@ import org.example.sumatyw_backend.users.UserService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -37,13 +38,25 @@ public class UserReportsService {
         }
     }
 
-    public ReportDTO handleUserReport(UserReport userReport) {
+//    public ReportDTO handleUserReport(UserReport userReport) {
+//
+//        if(userReportsRepository.findById(userReport.getUserReportId()).isPresent()) {
+//            userReportsRepository.save(userReport);
+//            return ReportsDTOMapper.mapUserReportToReportDTO(userReport);
+//
+//        } else {
+//            throw new ObjectNotFoundException("User report not found.");
+//        }
+//
+//    }
 
+    public ReportDTO closeUserReport(UUID reportId) {
 
-        if(userReportsRepository.findById(userReport.getUserReportId()).isPresent()) {
-            userReportsRepository.save(userReport);
-            return ReportsDTOMapper.mapUserReportToReportDTO(userReport);
-
+        Optional<UserReport> userReport = userReportsRepository.findById(reportId);
+        if(userReport.isPresent()) {
+            userReport.get().setOpen(false);
+            userReportsRepository.save(userReport.get());
+            return ReportsDTOMapper.mapUserReportToReportDTO(userReport.get());
         } else {
             throw new ObjectNotFoundException("User report not found.");
         }

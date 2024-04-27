@@ -59,6 +59,15 @@ public class UserService {
         userRepository.deleteById(id);
     }
 
+    public UserDTO banUserById(UUID id) {
+
+        User user = userRepository.findById(id).orElseThrow();
+        user.setBlocked(true);
+        userRepository.save(user);
+
+        return UserDTOMapper.mapUserToUserDTO(user);
+    }
+
     public User updateUserById(UUID id, User updatedUser) {
         User existingUser = userRepository.findById(id).orElseThrow(() -> new UserNotFoundException("User not found with ID: " + id));
 

@@ -43,6 +43,15 @@ public class RestaurantService {
         return restaurantRepository.save(restaurant);
     }
 
+    public RestaurantDTO banRestaurantById(UUID id) {
+
+        Restaurant restaurant = restaurantRepository.findById(id).orElseThrow();
+        restaurant.setActive(false);
+
+        return RestaurantDTOMapper.mapRestaurantToRestaurantDTO(restaurant);
+
+    }
+
     public List<Restaurant> getAllRestaurants() {
         return restaurantRepository.findAll();
     }

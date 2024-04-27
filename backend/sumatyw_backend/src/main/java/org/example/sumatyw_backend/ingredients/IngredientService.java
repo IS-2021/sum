@@ -28,4 +28,11 @@ public class IngredientService {
         ingredientRepository.deleteById(id);
     }
 
+    public Ingredient updateIngredientById(UUID id, Ingredient ingredient) {
+        Ingredient existingIngredient = ingredientRepository.findById(id).orElseThrow(RuntimeException::new);
+        existingIngredient.setName(ingredient.getName());
+        existingIngredient.setType(ingredient.getType());
+        return ingredientRepository.save(existingIngredient);
+    }
+
 }

@@ -6,6 +6,7 @@ import org.example.sumatyw_backend.exceptions.ResourceAlreadyExistsException;
 import org.example.sumatyw_backend.reports.ReportDTO;
 import org.example.sumatyw_backend.reports.ReportInputDTO;
 import org.example.sumatyw_backend.reports.ReportsDTOMapper;
+import org.example.sumatyw_backend.restaurants.RestaurantDTOMapper;
 import org.example.sumatyw_backend.restaurants.RestaurantService;
 import org.example.sumatyw_backend.user_reports.RestaurantReport;
 import org.example.sumatyw_backend.users.UserService;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -37,6 +39,18 @@ public class RestaurantReportsService {
             restaurantReport.setOpen(true);
 
             return restaurantReportRepository.save(restaurantReport);
+        }
+    }
+
+    public ReportDTO closeRestaurantReport(UUID restaurantReportId) {
+
+        Optional<RestaurantReport> restaurantReport = restaurantReportRepository.findById(restaurantReportId);
+        if(restaurantReport.isPresent()) {
+            restaurantReport.get().setOpen(false);
+            restaurantReportRepository.save(restaurantReport.get());
+            return ReportsDTOMapper.mapRestaurantReportToReportDTO(restaurantReport.get());
+        } else {
+            throw new ObjectNotFoundException("This restaurant report does not exist.");
         }
     }
 

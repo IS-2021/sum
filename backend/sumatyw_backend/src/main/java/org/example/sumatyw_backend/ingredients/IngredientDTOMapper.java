@@ -5,7 +5,7 @@ public class IngredientDTOMapper {
         return Ingredient.builder().name(ingredientInputDTO.name()).type(ingredientInputDTO.type()).build();
     }
 
-    public IngredientDTO mapIngredientToIngredientDTO(Ingredient ingredient) {
+    public static IngredientDTO mapIngredientToIngredientDTO(Ingredient ingredient) {
         return new IngredientDTO(ingredient.getIngredientId(), ingredient.getName(), ingredient.getType());
     }
 }

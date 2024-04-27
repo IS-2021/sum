@@ -18,7 +18,6 @@ public class AuthController {
 
     @PostMapping("/register")
     public ResponseEntity<UserDTO> handleRegister(@Valid @RequestBody UserInputDTO userInputDTO) {
-
         User user = userService.addUser(UserDTOMapper.mapUserInputDTOToUser(userInputDTO));
 
         return new ResponseEntity<>(
@@ -28,8 +27,7 @@ public class AuthController {
     }
 
     @PutMapping("/{id}/change-password")
-    private ResponseEntity changePassword(@PathVariable("id") UUID id, @RequestBody PasswordDTO passwordDTO) {
-
+    private ResponseEntity<Void> changePassword(@PathVariable("id") UUID id, @RequestBody PasswordDTO passwordDTO) {
         userService.changePassword(id, passwordDTO.getPassword());
 
         return new ResponseEntity<>(
