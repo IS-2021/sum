@@ -3,6 +3,7 @@ package org.example.sumatyw_backend.restaurants;
 import jakarta.persistence.*;
 import lombok.*;
 import org.example.sumatyw_backend.addresses.Address;
+import org.example.sumatyw_backend.meals.Meal;
 import org.example.sumatyw_backend.opinions.Opinion;
 import org.example.sumatyw_backend.users.User;
 
@@ -24,9 +25,12 @@ public class Restaurant {
     private String phoneNumber;
     @OneToOne(mappedBy = "restaurant")
     private User user;
-    @OneToOne(cascade = CascadeType.PERSIST)
+    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
     @JoinColumn(name = "address_id")
     private Address address;
     @OneToMany(mappedBy = "restaurant")
     private List<Opinion> opinions;
+    @OneToMany(mappedBy = "restaurant")
+    private List<Meal> meals;
+    private boolean isActive;
 }

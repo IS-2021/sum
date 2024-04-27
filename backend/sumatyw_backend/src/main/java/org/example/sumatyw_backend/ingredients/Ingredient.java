@@ -1,10 +1,11 @@
-package org.example.sumatyw_backend.meals;
-
+package org.example.sumatyw_backend.ingredients;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.example.sumatyw_backend.meals.Meal;
 
 import java.util.UUID;
+import java.util.List;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -22,4 +23,7 @@ public class Ingredient {
     private String name;
 
     private String type;
+
+    @ManyToMany(mappedBy = "ingredients")
+    private List<Meal> meals;
 }

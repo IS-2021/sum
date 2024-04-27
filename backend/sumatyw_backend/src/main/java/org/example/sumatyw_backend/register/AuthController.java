@@ -2,17 +2,11 @@ package org.example.sumatyw_backend.register;
 
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
-import org.example.sumatyw_backend.cities.CityRepository;
-import org.example.sumatyw_backend.users.User;
-import org.example.sumatyw_backend.users.UserDTOMapper;
-import org.example.sumatyw_backend.users.UserInputDTO;
-import org.example.sumatyw_backend.users.UserRepository;
+import org.example.sumatyw_backend.users.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Map;
 import java.util.UUID;
 
 @RestController
@@ -20,37 +14,25 @@ import java.util.UUID;
 @AllArgsConstructor
 public class AuthController {
 
-    private final UserRepository userRepository;
-    private final PasswordEncoder passwordEncoder;
-    private final CityRepository cityRepository;
-
+    private final UserService userService;
 
     @PostMapping("/register")
-    public ResponseEntity<Map<String, String>> handleRegister(@Valid @RequestBody UserInputDTO userInputDTO) {
-        User newUser = UserDTOMapper.mapUserInputDTOToUser(userInputDTO);
-
-        if (this.userRepository.findByUsername(userInputDTO.username()).isPresent()) {
-            return new ResponseEntity<>(
-                Map.of("message", "User with given username already exists."),
-                HttpStatus.BAD_REQUEST
-            );
-        }
-
-        String hashedPassword = passwordEncoder.encode(newUser.getPassword());
-        newUser.setPassword(hashedPassword);
-
-        newUser =  userRepository.save(newUser);
+    public ResponseEntity<UserDTO> handleRegister(@Valid @RequestBody UserInputDTO userInputDTO) {
+        User user = userService.addUser(UserDTOMapper.mapUserInputDTOToUser(userInputDTO));
 
         return new ResponseEntity<>(
-            Map.of("userId", newUser.getUserId().toString()),
+            UserDTOMapper.mapUserToUserDTO(user),
             HttpStatus.CREATED
         );
     }
 
     @PutMapping("/{id}/change-password")
-    private String changePassword(@PathVariable("id") UUID id, @RequestBody PasswordDTO passwordDTO) {
+    private ResponseEntity<Void> changePassword(@PathVariable("id") UUID id, @RequestBody PasswordDTO passwordDTO) {
+        userService.changePassword(id, passwordDTO.getPassword());
 
-        return "";
+        return new ResponseEntity<>(
+            HttpStatus.OK
+        );
     }
 
 

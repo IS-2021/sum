@@ -1,4 +1,4 @@
-package org.example.sumatyw_backend.cities;
+package org.example.sumatyw_backend.restaurants;
 
 
 import jakarta.persistence.*;
@@ -12,12 +12,11 @@ import java.util.UUID;
 @Getter
 @Entity
 @Builder
-@Table(name="cities")
-public class City {
+@Table(name="restaurant_open")
+public class RestaurantOpenHours {
+
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID cityId;
-    private String name;
-    @Column(unique = true)
-    private String country;
+    private UUID restaurant_openId;
+
 }
