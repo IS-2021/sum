@@ -19,6 +19,8 @@ public record RestaurantInputDTO(
     @Valid
     AddressInputDTO addressInputDTO,
     @NotNull(message = "Restaurant owner user id cannot be blank")
-    UUID userId
+    UUID userId,
+    @NotNull(message = "Working hours can not be empty")
+    Hours hours
 ) {
 }

@@ -1,4 +1,4 @@
-package org.example.sumatyw_backend.users;
+package org.example.sumatyw_backend.favourites;
 
 import jakarta.validation.constraints.NotNull;
 

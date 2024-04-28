@@ -26,6 +26,8 @@ public class AuthController {
         );
     }
 
+
+
     @PutMapping("/{id}/change-password")
     private ResponseEntity<Void> changePassword(@PathVariable("id") UUID id, @RequestBody PasswordDTO passwordDTO) {
         userService.changePassword(id, passwordDTO.getPassword());

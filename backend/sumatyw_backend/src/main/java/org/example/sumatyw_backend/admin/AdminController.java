@@ -169,7 +169,7 @@ public class AdminController {
             return new ResponseEntity<>(mappedList,HttpStatus.OK);
 
         } catch (ObjectNotFoundException e) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
     }
 
