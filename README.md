@@ -11,5 +11,4 @@ Prerequisites:
 To setup the project:
 
 1. Clone the repository,
-2. Run `pnpm install` to install tooling,
-3. In ./dockerfiles directory run `docker-compose up`.
+2. Run `pnpm install` to install tooling.
