@@ -48,7 +48,7 @@ public class SecurityConfig {
             })
             .csrf(AbstractHttpConfigurer::disable)
             .authorizeHttpRequests(authorize -> authorize
-//                .requestMatchers(HttpMethod.GET, "/users/{id}").hasAnyRole("USER", "ADMIN")
+                .requestMatchers(HttpMethod.GET, "/users/{id}").hasAnyRole("USER", "ADMIN")
 //                .requestMatchers(HttpMethod.PUT, "/users/{id}").hasAnyRole("USER", "ADMIN")
 //                .requestMatchers("/login").permitAll()
 //                .requestMatchers("/auth/register").permitAll()
@@ -70,9 +70,12 @@ public class SecurityConfig {
             )
             .logout(httpSecurityLogoutConfigurer -> httpSecurityLogoutConfigurer
                 .logoutUrl("/logout")
-                .logoutSuccessUrl("/login?logout")
-                .permitAll()
+                .logoutSuccessHandler((request, response, authentication) -> {
+                    response.setStatus(200);
+                })
                 .invalidateHttpSession(true)
+                .deleteCookies("JSESSIONID")
+                .permitAll()
             )
 //            .formLogin(Customizer.withDefaults())
 //            .formLogin(AbstractAuthenticationFilterConfigurer::permitAll)
