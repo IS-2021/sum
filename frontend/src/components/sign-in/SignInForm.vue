@@ -36,6 +36,7 @@ const errorMessage = ref('');
 const onSubmit = form.handleSubmit(async (credentials) => {
   const res = await postLogin(credentials, {
     validateStatus: (status) => status < 500,
+    withCredentials: true,
   });
 
   if (res.status === 200) {
