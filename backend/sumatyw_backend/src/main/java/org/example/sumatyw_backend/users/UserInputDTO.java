@@ -23,7 +23,7 @@ public record UserInputDTO(
               message = "The user password is too weak")
      String password,
      @NotBlank(message = "User phone number cannot be blank")
-     @Size(max = 10, message = "User phone number cannot contain more than 10 digits")
+     @Size(max = 11, message = "User phone number cannot contain more than 11 digits")
      String phoneNumber,
      @NotNull(message = "User role number cannot be blank")
 //     @Pattern(regexp = "\\bROLE_USER\\b",

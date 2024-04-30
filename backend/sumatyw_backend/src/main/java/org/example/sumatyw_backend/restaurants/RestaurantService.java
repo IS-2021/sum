@@ -46,14 +46,22 @@ public class RestaurantService {
     public RestaurantDTO banRestaurantById(UUID id) {
 
         Restaurant restaurant = restaurantRepository.findById(id).orElseThrow();
-        restaurant.setActive(false);
+        restaurant.setBanned(true);
 
         return RestaurantDTOMapper.mapRestaurantToRestaurantDTO(restaurant);
 
     }
 
     public List<Restaurant> getAllRestaurants() {
-        return restaurantRepository.findAll();
+        return restaurantRepository.findAllByActiveTrue();
+    }
+
+    public RestaurantDTO activateRestaurantById(UUID id) {
+        Restaurant restaurant = restaurantRepository.findById(id).orElseThrow(
+            () -> new ObjectNotFoundException("Restaurant with id: " + id + " not found"));
+        restaurant.setActive(true);
+        restaurantRepository.save(restaurant);
+        return RestaurantDTOMapper.mapRestaurantToRestaurantDTO(restaurant);
     }
 
     public Restaurant getRestaurantById(UUID id) {
@@ -72,22 +80,23 @@ public class RestaurantService {
         Restaurant existingRestaurant = restaurantRepository.findById(id).orElseThrow(
             () -> new ObjectNotFoundException("Restaurant not found with ID: " + id));
 
-        if (restaurantRepository.findByPhoneNumber(restaurant.getPhoneNumber()).isPresent())
-            throw new ResourceAlreadyExistsException("Restaurant with phone number: '" + restaurant.getPhoneNumber() + "' already exists.");
+        if (!existingRestaurant.getPhoneNumber().equals(restaurant.getPhoneNumber())) {
+            if (restaurantRepository.findByPhoneNumber(restaurant.getPhoneNumber()).isEmpty())
+                existingRestaurant.setPhoneNumber(restaurant.getPhoneNumber());
+        }
 
         existingRestaurant.setName(restaurant.getName());
-        existingRestaurant.setPhoneNumber(restaurant.getPhoneNumber());
+        existingRestaurant.setHours(restaurant.getHours());
 
         return restaurantRepository.save(existingRestaurant);
     }
 
     public List<Restaurant> getAllPendingRestaurant() {
 
-        if(!restaurantRepository.findByIsActiveTrue().isEmpty()) {
-            return restaurantRepository.findByIsActiveTrue();
-        } else {
-            throw new ObjectNotFoundException("No pending restaurants present.");
-        }
+        return restaurantRepository.findAllByActiveFalse();
+    }
 
+    public void updateRestaurantImageUUID(Restaurant restaurant) {
+        restaurantRepository.save(restaurant);
     }
 }

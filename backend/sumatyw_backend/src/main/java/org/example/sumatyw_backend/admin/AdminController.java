@@ -34,7 +34,8 @@ public class AdminController {
 
     @GetMapping("/users")
     public ResponseEntity<List<UserDTO>> getUsers() {
-        List<User> users = userService.getUsers();
+
+        List<User> users = userService.getNotBannedUsers();
         return new ResponseEntity<>(
             users.stream().map(UserDTOMapper::mapUserToUserDTO).toList(),
             HttpStatus.OK
@@ -169,8 +170,14 @@ public class AdminController {
             return new ResponseEntity<>(mappedList,HttpStatus.OK);
 
         } catch (ObjectNotFoundException e) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
+    }
+
+    @PutMapping("/restaurants/{id}")
+    public ResponseEntity activateRestaurant(@PathVariable("id") UUID id) {
+
+        return new ResponseEntity<>(restaurantService.activateRestaurantById(id),HttpStatus.OK);
     }
 
 }

@@ -2,10 +2,8 @@ package org.example.sumatyw_backend.users;
 
 import lombok.AllArgsConstructor;
 import org.example.sumatyw_backend.cities.CityRepository;
-import org.example.sumatyw_backend.exceptions.ObjectNotFoundException;
 import org.example.sumatyw_backend.exceptions.ResourceAlreadyExistsException;
 import org.example.sumatyw_backend.exceptions.UserNotFoundException;
-import org.example.sumatyw_backend.restaurants.Restaurant;
 import org.example.sumatyw_backend.restaurants.RestaurantRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -41,8 +39,13 @@ public class UserService {
 
         return userRepository.save(user);
     }
+
     public List<User> getUsers() {
         return  userRepository.findAll();
+    }
+
+    public List<User> getNotBannedUsers() {
+        return  userRepository.findByBlockedFalse();
     }
     public User getUserById(UUID id) {
         return userRepository.findById(id)
@@ -101,30 +104,40 @@ public class UserService {
         }
     }
 
-    public List<Restaurant> getFavouriteRestaurantsByUserId(UUID id) {
-        return userRepository.findAllFavouriteRestaurantsByUserId(id);
-    }
+//    public List<Restaurant> getFavouriteRestaurantsByUserId(UUID id) {
+//        return userRepository.findAllFavouriteRestaurantsByUserId(id);
+//    }
 
-    public void addFavouriteRestaurantByUserId(UUID userId, UUID restaurantId) {
-        restaurantRepository.findById(restaurantId)
-            .orElseThrow(() -> new ObjectNotFoundException("Restaurant not found with ID: " + restaurantId));
+//    public void addFavouriteRestaurantByUserId(UUID userId, UUID restaurantId) {
+//        restaurantRepository.findById(restaurantId)
+//            .orElseThrow(() -> new ObjectNotFoundException("Restaurant not found with ID: " + restaurantId));
+//
+//        User existingUser = userRepository.findById(userId)
+//            .orElseThrow(() -> new UserNotFoundException("User not found with ID: " + userId));
+//
+//        existingUser.getFavouriteRestaurants().add(
+//            Restaurant.builder().restaurantId(restaurantId).build()
+//        );
+//
+//        userRepository.save(existingUser);
+//    }
+//
+//    public void removeFavouriteRestaurantsByUserId(DeleteFavouriteRestaurantsDTO deleteFavouriteRestaurantsDTO) {
+//        User existingUser = userRepository.findById(deleteFavouriteRestaurantsDTO.userId())
+//            .orElseThrow(() -> new UserNotFoundException("User not found with ID: " + deleteFavouriteRestaurantsDTO.userId()));
+//
+//        existingUser.getFavouriteRestaurants().removeIf(fr -> deleteFavouriteRestaurantsDTO.restaurantIds().contains(fr.getRestaurantId()));
+//
+//        userRepository.save(existingUser);
+//    }
 
-        User existingUser = userRepository.findById(userId)
-            .orElseThrow(() -> new UserNotFoundException("User not found with ID: " + userId));
-
-        existingUser.getFavouriteRestaurants().add(
-            Restaurant.builder().restaurantId(restaurantId).build()
-        );
-
-        userRepository.save(existingUser);
-    }
-
-    public void removeFavouriteRestaurantsByUserId(DeleteFavouriteRestaurantsDTO deleteFavouriteRestaurantsDTO) {
-        User existingUser = userRepository.findById(deleteFavouriteRestaurantsDTO.userId())
-            .orElseThrow(() -> new UserNotFoundException("User not found with ID: " + deleteFavouriteRestaurantsDTO.userId()));
-
-        existingUser.getFavouriteRestaurants().removeIf(fr -> deleteFavouriteRestaurantsDTO.restaurantIds().contains(fr.getRestaurantId()));
-
-        userRepository.save(existingUser);
-    }
+//    public void updateFavouriteRestaurantsOrder(UUID userId, List<RestaurantFavouriteInputDTO> favourites) {
+//        for (RestaurantFavouriteInputDTO fav : favourites) {
+//            Restaurant restaurantDB = restaurantRepository.findById(fav.restaurantId())
+//                .orElseThrow(() -> new ObjectNotFoundException("Restaurant not found with ID: " + fav.restaurantId()));
+//
+//            restaurantDB.setOrderNumber(fav.orderNumber());
+//            restaurantRepository.save(restaurantDB);
+//        }
+//    }
 }

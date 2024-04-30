@@ -2,9 +2,6 @@ package org.example.sumatyw_backend.users;
 
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
-import org.example.sumatyw_backend.restaurants.Restaurant;
-import org.example.sumatyw_backend.restaurants.RestaurantDTO;
-import org.example.sumatyw_backend.restaurants.RestaurantDTOMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -57,31 +54,36 @@ public class UserController {
         );
     }
 
-    @PostMapping("/{id}/favourites")
-    public ResponseEntity<Void> addFavouriteRestaurantByUserId(@PathVariable("id") UUID userId, @RequestBody UUID restaurantId) {
-        userService.addFavouriteRestaurantByUserId(userId, restaurantId);
+//    @PostMapping("/{id}/favourites")
+//    public ResponseEntity<Void> addFavouriteRestaurantByUserId(@PathVariable("id") UUID userId, @RequestBody UUID restaurantId) {
+//      //  userService.addFavouriteRestaurantByUserId(userId, restaurantId);
+//
+//        return new ResponseEntity<>(
+//            HttpStatus.OK
+//        );
+//    }
+//
+//    @GetMapping("/{id}/favourites")
+//    public ResponseEntity<List<RestaurantDTO>> getFavouriteRestaurantsByUserId(@PathVariable("id") UUID id) {
+//        List<Restaurant> restaurants = userService.getFavouriteRestaurantsByUserId(id);
+//
+//        return new ResponseEntity<>(
+//            restaurants.stream().map(RestaurantDTOMapper::mapRestaurantToRestaurantDTO).toList(),
+//            HttpStatus.OK
+//        );
+//    }
 
-        return new ResponseEntity<>(
-            HttpStatus.OK
-        );
-    }
+//    @PutMapping("{id}/favourites")
+//    public ResponseEntity<Void> updateFavouriteRestaurantsOrderByUserId(@PathVariable("id") UUID id, @RequestBody List<RestaurantFavouriteInputDTO> favourites) {
+//
+//    }
 
-    @GetMapping("/{id}/favourites")
-    public ResponseEntity<List<RestaurantDTO>> getFavouriteRestaurantsByUserId(@PathVariable("id") UUID id) {
-        List<Restaurant> restaurants = userService.getFavouriteRestaurantsByUserId(id);
-
-        return new ResponseEntity<>(
-            restaurants.stream().map(RestaurantDTOMapper::mapRestaurantToRestaurantDTO).toList(),
-            HttpStatus.OK
-        );
-    }
-
-    @DeleteMapping("/delete/favourites")
-    public ResponseEntity<Void> deleteFavouriteRestaurantsByUserId(@RequestBody DeleteFavouriteRestaurantsDTO deleteFavouriteRestaurantsDTO) {
-        userService.removeFavouriteRestaurantsByUserId(deleteFavouriteRestaurantsDTO);
-
-        return new ResponseEntity<>(
-            HttpStatus.NO_CONTENT
-        );
-    }
+//    @DeleteMapping("/delete/favourites")
+//    public ResponseEntity<Void> deleteFavouriteRestaurantsByUserId(@RequestBody DeleteFavouriteRestaurantsDTO deleteFavouriteRestaurantsDTO) {
+//        userService.removeFavouriteRestaurantsByUserId(deleteFavouriteRestaurantsDTO);
+//
+//        return new ResponseEntity<>(
+//            HttpStatus.NO_CONTENT
+//        );
+//    }
 }
