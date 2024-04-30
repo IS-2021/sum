@@ -1638,9 +1638,7 @@ components:
         saturday:
           - "10:00"
           - "24:00"
-        sunday:
-          - "12:00"
-          - "20:00"
+        sunday: []
   responses:
     NotFound_404:
       content:
