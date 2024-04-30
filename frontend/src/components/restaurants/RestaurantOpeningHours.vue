@@ -3,6 +3,7 @@ import type { HoursDTO } from '@/lib/api-model';
 import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card';
 import { ClockIcon } from 'lucide-vue-next';
 import { ref } from 'vue';
+import OpeningHoursRow from './OpeningHoursRow.vue';
 
 const props = defineProps<{ hours: HoursDTO }>();
 
@@ -29,7 +30,9 @@ if (currentDayHours && currentDayHours[1]) {
     </HoverCardTrigger>
     <HoverCardContent>
       <ul>
-        <li v-for="hours in Object.entries(props.hours)">{{ hours[0] }} - {{ hours[1] }}</li>
+        <li v-for="[day, [openingHours, closingHours]] in Object.entries(props.hours)">
+          <OpeningHoursRow :day="day" :opening-hours="openingHours" :closing-hours="closingHours" />
+        </li>
       </ul>
     </HoverCardContent>
   </HoverCard>
