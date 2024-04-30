@@ -1130,7 +1130,7 @@ paths:
         "403":
           description: Invalid credentials
   /logout:
-    get:
+    post:
       tags:
         - auth
       responses:
@@ -1560,9 +1560,6 @@ components:
         imageUrl:
           description: ""
           type: string
-        orderNumber:
-          description: ""
-          type: integer
         hours:
           $ref: "#/components/schemas/HoursDTO"
           description: ""
@@ -1638,9 +1635,7 @@ components:
         saturday:
           - "10:00"
           - "24:00"
-        sunday:
-          - "12:00"
-          - "20:00"
+        sunday: []
   responses:
     NotFound_404:
       content:
