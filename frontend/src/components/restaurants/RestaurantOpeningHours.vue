@@ -33,6 +33,8 @@ const isCurrentDay = (day: keyof HoursDTO) => {
       </p>
     </HoverCardTrigger>
     <HoverCardContent>
+      <p class="mb-2 text-md font-bold">Opening Hours</p>
+
       <ul>
         <li v-for="[day, [openingHours, closingHours]] in Object.entries(props.hours)">
           <OpeningHoursRow
