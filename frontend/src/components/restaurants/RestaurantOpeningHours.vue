@@ -7,9 +7,9 @@ import OpeningHoursRow from './OpeningHoursRow.vue';
 
 const props = defineProps<{ hours: HoursDTO }>();
 
-const currentDayHours = Object.entries(props.hours).find(
-  ([day]) => day === new Date().toLocaleDateString('en-US', { weekday: 'long' }).toLowerCase(),
-);
+const isCurrentDay = (day: string) => {
+  return day === new Date().toLocaleDateString('en-US', { weekday: 'long' }).toLowerCase();
+};
 
 let todayOpeningHours = ref('');
 if (currentDayHours && currentDayHours[1]) {

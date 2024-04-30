@@ -1,9 +1,8 @@
 <script setup lang="ts">
-import type { HoursDTO } from '@/lib/api-model';
 import { cn } from '@/lib/utils';
 
 const props = defineProps<{
-  day: keyof HoursDTO;
+  day: string;
   openingHours: string;
   closingHours: string;
   isCurrentDay: boolean;
