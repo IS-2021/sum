@@ -35,6 +35,14 @@ public class UserController {
         );
     }
 
+    @GetMapping("/me")
+    public ResponseEntity<UserDTO> getMe() {
+        return new ResponseEntity<>(
+            UserDTOMapper.mapUserToUserDTO(userService.getMeUser()),
+            HttpStatus.OK
+        );
+    }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteUserById(@PathVariable("id") UUID id) {
         userService.removeUserById(id);
@@ -53,37 +61,4 @@ public class UserController {
             HttpStatus.OK
         );
     }
-
-//    @PostMapping("/{id}/favourites")
-//    public ResponseEntity<Void> addFavouriteRestaurantByUserId(@PathVariable("id") UUID userId, @RequestBody UUID restaurantId) {
-//      //  userService.addFavouriteRestaurantByUserId(userId, restaurantId);
-//
-//        return new ResponseEntity<>(
-//            HttpStatus.OK
-//        );
-//    }
-//
-//    @GetMapping("/{id}/favourites")
-//    public ResponseEntity<List<RestaurantDTO>> getFavouriteRestaurantsByUserId(@PathVariable("id") UUID id) {
-//        List<Restaurant> restaurants = userService.getFavouriteRestaurantsByUserId(id);
-//
-//        return new ResponseEntity<>(
-//            restaurants.stream().map(RestaurantDTOMapper::mapRestaurantToRestaurantDTO).toList(),
-//            HttpStatus.OK
-//        );
-//    }
-
-//    @PutMapping("{id}/favourites")
-//    public ResponseEntity<Void> updateFavouriteRestaurantsOrderByUserId(@PathVariable("id") UUID id, @RequestBody List<RestaurantFavouriteInputDTO> favourites) {
-//
-//    }
-
-//    @DeleteMapping("/delete/favourites")
-//    public ResponseEntity<Void> deleteFavouriteRestaurantsByUserId(@RequestBody DeleteFavouriteRestaurantsDTO deleteFavouriteRestaurantsDTO) {
-//        userService.removeFavouriteRestaurantsByUserId(deleteFavouriteRestaurantsDTO);
-//
-//        return new ResponseEntity<>(
-//            HttpStatus.NO_CONTENT
-//        );
-//    }
 }

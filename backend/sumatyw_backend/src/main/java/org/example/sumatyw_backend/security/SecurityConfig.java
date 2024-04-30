@@ -6,12 +6,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.web.client.HttpMessageConvertersRestClientCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configurers.AbstractAuthenticationFilterConfigurer;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -48,7 +45,7 @@ public class SecurityConfig {
             })
             .csrf(AbstractHttpConfigurer::disable)
             .authorizeHttpRequests(authorize -> authorize
-                .requestMatchers(HttpMethod.GET, "/users/{id}").hasAnyRole("USER", "ADMIN")
+//                .requestMatchers(HttpMethod.GET, "/users/{id}").hasAnyRole("USER", "ADMIN")
 //                .requestMatchers(HttpMethod.PUT, "/users/{id}").hasAnyRole("USER", "ADMIN")
 //                .requestMatchers("/login").permitAll()
 //                .requestMatchers("/auth/register").permitAll()
@@ -76,21 +73,8 @@ public class SecurityConfig {
                 .invalidateHttpSession(true)
                 .deleteCookies("JSESSIONID")
                 .permitAll()
-            )
-//            .formLogin(Customizer.withDefaults())
-//            .formLogin(AbstractAuthenticationFilterConfigurer::permitAll)
-//            .logout(httpSecurityLogoutConfigurer -> httpSecurityLogoutConfigurer
-//                .logoutUrl("/logout")
-//                .logoutSuccessUrl("/login?logout")
-//                .permitAll()
-//                .invalidateHttpSession(true)
-//                .clearAuthentication(true)
-//            )
-//            .csrf(httpSecurityCsrfConfigurer ->
-//                httpSecurityCsrfConfigurer
-//                    .ignoringRequestMatchers("/api/**")
-//            );
-;
+            );
+
         return http.build();
     }
 

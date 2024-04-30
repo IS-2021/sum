@@ -5,6 +5,7 @@ import org.example.sumatyw_backend.cities.CityRepository;
 import org.example.sumatyw_backend.exceptions.ResourceAlreadyExistsException;
 import org.example.sumatyw_backend.exceptions.UserNotFoundException;
 import org.example.sumatyw_backend.restaurants.RestaurantRepository;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -62,13 +63,19 @@ public class UserService {
         userRepository.deleteById(id);
     }
 
-    public UserDTO banUserById(UUID id) {
+    public User getMeUser() {
 
+        User user = userRepository.findByUsername(
+            SecurityContextHolder.getContext().getAuthentication().getName()).orElseThrow(
+                () -> new UserNotFoundException("User not found with username: " + SecurityContextHolder.getContext().getAuthentication().getName()));
+
+        return user;
+    }
+
+    public void banUserById(UUID id) {
         User user = userRepository.findById(id).orElseThrow();
         user.setBlocked(true);
         userRepository.save(user);
-
-        return UserDTOMapper.mapUserToUserDTO(user);
     }
 
     public User updateUserById(UUID id, User updatedUser) {
@@ -103,41 +110,4 @@ public class UserService {
             throw new UserNotFoundException("User not found with ID: " + id);
         }
     }
-
-//    public List<Restaurant> getFavouriteRestaurantsByUserId(UUID id) {
-//        return userRepository.findAllFavouriteRestaurantsByUserId(id);
-//    }
-
-//    public void addFavouriteRestaurantByUserId(UUID userId, UUID restaurantId) {
-//        restaurantRepository.findById(restaurantId)
-//            .orElseThrow(() -> new ObjectNotFoundException("Restaurant not found with ID: " + restaurantId));
-//
-//        User existingUser = userRepository.findById(userId)
-//            .orElseThrow(() -> new UserNotFoundException("User not found with ID: " + userId));
-//
-//        existingUser.getFavouriteRestaurants().add(
-//            Restaurant.builder().restaurantId(restaurantId).build()
-//        );
-//
-//        userRepository.save(existingUser);
-//    }
-//
-//    public void removeFavouriteRestaurantsByUserId(DeleteFavouriteRestaurantsDTO deleteFavouriteRestaurantsDTO) {
-//        User existingUser = userRepository.findById(deleteFavouriteRestaurantsDTO.userId())
-//            .orElseThrow(() -> new UserNotFoundException("User not found with ID: " + deleteFavouriteRestaurantsDTO.userId()));
-//
-//        existingUser.getFavouriteRestaurants().removeIf(fr -> deleteFavouriteRestaurantsDTO.restaurantIds().contains(fr.getRestaurantId()));
-//
-//        userRepository.save(existingUser);
-//    }
-
-//    public void updateFavouriteRestaurantsOrder(UUID userId, List<RestaurantFavouriteInputDTO> favourites) {
-//        for (RestaurantFavouriteInputDTO fav : favourites) {
-//            Restaurant restaurantDB = restaurantRepository.findById(fav.restaurantId())
-//                .orElseThrow(() -> new ObjectNotFoundException("Restaurant not found with ID: " + fav.restaurantId()));
-//
-//            restaurantDB.setOrderNumber(fav.orderNumber());
-//            restaurantRepository.save(restaurantDB);
-//        }
-//    }
 }
