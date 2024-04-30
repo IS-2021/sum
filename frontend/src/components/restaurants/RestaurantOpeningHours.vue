@@ -18,6 +18,10 @@ if (currentDayHours && currentDayHours[1]) {
 } else {
   todayOpeningHours.value = 'Closed';
 }
+
+const isCurrentDay = (day: keyof HoursDTO) => {
+  return day === new Date().toLocaleDateString('en-US', { weekday: 'long' }).toLowerCase();
+};
 </script>
 
 <template>
@@ -31,7 +35,12 @@ if (currentDayHours && currentDayHours[1]) {
     <HoverCardContent>
       <ul>
         <li v-for="[day, [openingHours, closingHours]] in Object.entries(props.hours)">
-          <OpeningHoursRow :day="day" :opening-hours="openingHours" :closing-hours="closingHours" />
+          <OpeningHoursRow
+            :day="day"
+            :opening-hours="openingHours"
+            :closing-hours="closingHours"
+            :is-current-day="isCurrentDay(day)"
+          />
         </li>
       </ul>
     </HoverCardContent>
