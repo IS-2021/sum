@@ -7,10 +7,13 @@ meta:
 import StarItem from '@/components/StarItem.vue';
 import LikeItems from '@/components/LikeItems.vue';
 import MealsByCategory from '@/components/MealsByCategory.vue';
+import Address from '@/components/RestaurantAddress.vue';
+
 import { useRoute } from 'vue-router/auto';
 import { ref } from 'vue';
 import type { Ref } from 'vue';
 import { unref } from 'vue';
+
 import { useGetRestaurantsId } from '@/lib/api/restaurants/restaurants';
 
 
@@ -36,12 +39,12 @@ function getRestaurant() {
     </template>
     <div class="flex flex-col">
       <div class="flex flex-row flex-wrap">
-        <p class="pr-4 text-4xl">{{ restaurant?.name }}</p>
+        <p class="font-semibold pr-4 text-4xl">{{ restaurant?.name }}</p>
         <StarItem :isFavourite="isFavourite" />
         <div class="flex-grow"></div>
         <LikeItems :isLiked="isLiked" @click="getRestaurant" />
       </div>
-      <p class="flex">Address</p>
+      <Address />
     </div>
     <MealsByCategory :categories="categories" />
   </div>

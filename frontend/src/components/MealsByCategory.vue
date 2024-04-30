@@ -22,7 +22,7 @@ const categories = ref(props.categories)
     <h1 class="text-2xl mb-4">{{ category }}</h1>
     <div v-for="meal in meals" v-bind:key="meal.id" class="w-full space-y-3">
       <div class="flex flex-col border min-w-80 rounded-lg my-3 p-3">
-        <h1 class="font-bold text-lg mb-4">{{ meal.name }}</h1>
+        <h1 class="font-semibold text-lg mb-4">{{ meal.name }}</h1>
         <p class="text-xs font-thin mb-8">{{ meal.description }}</p>
         <Button>Book</Button>
       </div>
