@@ -4,15 +4,11 @@
  * Sumatywny
  * OpenAPI spec version: 1.0.0
  */
-import { useMutation, useQuery } from '@tanstack/vue-query';
+import { useMutation } from '@tanstack/vue-query';
 import type {
   MutationFunction,
-  QueryFunction,
-  QueryKey,
   UseMutationOptions,
   UseMutationReturnType,
-  UseQueryOptions,
-  UseQueryReturnType,
 } from '@tanstack/vue-query';
 import * as axios from 'axios';
 import type { AxiosError, AxiosRequestConfig, AxiosResponse } from 'axios';
@@ -234,52 +230,35 @@ export const usePostLogin = <TError = AxiosError<void>, TContext = unknown>(opti
 
   return useMutation(mutationOptions);
 };
-export const getLogout = (options?: AxiosRequestConfig): Promise<AxiosResponse<void>> => {
-  return axios.default.get(`http://localhost:9090/logout`, options);
+export const postLogout = (options?: AxiosRequestConfig): Promise<AxiosResponse<void>> => {
+  return axios.default.post(`http://localhost:9090/logout`, undefined, options);
 };
 
-export const getGetLogoutQueryKey = () => {
-  return ['http:', 'localhost:9090', 'logout'] as const;
-};
-
-export const getGetLogoutQueryOptions = <
-  TData = Awaited<ReturnType<typeof getLogout>>,
+export const getPostLogoutMutationOptions = <
   TError = AxiosError<unknown>,
+  TContext = unknown,
 >(options?: {
-  query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getLogout>>, TError, TData>>;
+  mutation?: UseMutationOptions<Awaited<ReturnType<typeof postLogout>>, TError, void, TContext>;
   axios?: AxiosRequestConfig;
-}) => {
-  const { query: queryOptions, axios: axiosOptions } = options ?? {};
+}): UseMutationOptions<Awaited<ReturnType<typeof postLogout>>, TError, void, TContext> => {
+  const { mutation: mutationOptions, axios: axiosOptions } = options ?? {};
 
-  const queryKey = getGetLogoutQueryKey();
-
-  const queryFn: QueryFunction<Awaited<ReturnType<typeof getLogout>>> = ({ signal }) =>
-    getLogout({ signal, ...axiosOptions });
-
-  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
-    Awaited<ReturnType<typeof getLogout>>,
-    TError,
-    TData
-  >;
-};
-
-export type GetLogoutQueryResult = NonNullable<Awaited<ReturnType<typeof getLogout>>>;
-export type GetLogoutQueryError = AxiosError<unknown>;
-
-export const useGetLogout = <
-  TData = Awaited<ReturnType<typeof getLogout>>,
-  TError = AxiosError<unknown>,
->(options?: {
-  query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getLogout>>, TError, TData>>;
-  axios?: AxiosRequestConfig;
-}): UseQueryReturnType<TData, TError> & { queryKey: QueryKey } => {
-  const queryOptions = getGetLogoutQueryOptions(options);
-
-  const query = useQuery(queryOptions) as UseQueryReturnType<TData, TError> & {
-    queryKey: QueryKey;
+  const mutationFn: MutationFunction<Awaited<ReturnType<typeof postLogout>>, void> = () => {
+    return postLogout(axiosOptions);
   };
 
-  query.queryKey = unref(queryOptions).queryKey as QueryKey;
+  return { mutationFn, ...mutationOptions };
+};
 
-  return query;
+export type PostLogoutMutationResult = NonNullable<Awaited<ReturnType<typeof postLogout>>>;
+
+export type PostLogoutMutationError = AxiosError<unknown>;
+
+export const usePostLogout = <TError = AxiosError<unknown>, TContext = unknown>(options?: {
+  mutation?: UseMutationOptions<Awaited<ReturnType<typeof postLogout>>, TError, void, TContext>;
+  axios?: AxiosRequestConfig;
+}): UseMutationReturnType<Awaited<ReturnType<typeof postLogout>>, TError, void, TContext> => {
+  const mutationOptions = getPostLogoutMutationOptions(options);
+
+  return useMutation(mutationOptions);
 };

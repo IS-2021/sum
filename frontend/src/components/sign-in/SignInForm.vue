@@ -17,6 +17,9 @@ import { ref } from 'vue';
 import type { ValidationFailed422Response } from '@/lib/api-model';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { AlertCircleIcon } from 'lucide-vue-next';
+import { useRouter } from 'vue-router/auto';
+
+const router = useRouter();
 
 const formSchema = toTypedSchema(
   z.object({
@@ -33,10 +36,12 @@ const errorMessage = ref('');
 const onSubmit = form.handleSubmit(async (credentials) => {
   const res = await postLogin(credentials, {
     validateStatus: (status) => status < 500,
+    withCredentials: true,
   });
 
   if (res.status === 200) {
     errorMessage.value = '';
+    await router.push('/');
   } else if (res.status === 400) {
     const { message } = res.data as unknown as ValidationFailed422Response;
 

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { Button } from '@/components/ui/button';
+import { postLogout } from '@/lib/api/auth/auth';
 </script>
 
 <template>
@@ -18,7 +19,8 @@ import { Button } from '@/components/ui/button';
           <RouterLink to="/restaurants">Restaurants</RouterLink>
         </li>
         <li class="flex-grow"></li>
-        <li>
+        <li class="flex gap-2">
+          <Button @click="postLogout">Log out</Button>
           <Button as-child>
             <RouterLink to="/sign-in">Sign in</RouterLink>
           </Button>

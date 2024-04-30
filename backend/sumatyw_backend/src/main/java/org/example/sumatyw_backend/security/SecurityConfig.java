@@ -1,5 +1,6 @@
 package org.example.sumatyw_backend.security;
 
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.web.client.HttpMessageConvertersRestClientCustomizer;
@@ -48,25 +49,33 @@ public class SecurityConfig {
             .csrf(AbstractHttpConfigurer::disable)
             .authorizeHttpRequests(authorize -> authorize
                 .requestMatchers(HttpMethod.GET, "/users/{id}").hasAnyRole("USER", "ADMIN")
-                .requestMatchers(HttpMethod.PUT, "/users/{id}").hasAnyRole("USER", "ADMIN")
-                .requestMatchers("/login").permitAll()
-                .requestMatchers("/auth/register").permitAll()
-                .requestMatchers( "/admin/**").hasAnyRole("ADMIN")
-                //.anyRequest().permitAll()
-                .anyRequest().authenticated()
+//                .requestMatchers(HttpMethod.PUT, "/users/{id}").hasAnyRole("USER", "ADMIN")
+//                .requestMatchers("/login").permitAll()
+//                .requestMatchers("/auth/register").permitAll()
+//                .requestMatchers( "/admin/**").hasAnyRole("ADMIN")
+                .anyRequest().permitAll()
+//                .anyRequest().authenticated()
             )
             .httpBasic(withDefaults())
             .formLogin(httpSecurityFormLoginConfigurer -> httpSecurityFormLoginConfigurer
                 .loginPage("/login")
-                .failureUrl("/login?error")
-               // .defaultSuccessUrl("/home", true)
+                .successHandler((request, response, authentication) -> {
+                    response.setStatus(200);
+                })
+                .failureHandler((request, response, authentication) -> {
+                    response.setContentType("text/html;charset=UTF-8");
+                    response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Authentication Failed. Wrong username or password or both");
+                })
                 .permitAll()
             )
             .logout(httpSecurityLogoutConfigurer -> httpSecurityLogoutConfigurer
                 .logoutUrl("/logout")
-                .logoutSuccessUrl("/login?logout")
-                .permitAll()
+                .logoutSuccessHandler((request, response, authentication) -> {
+                    response.setStatus(200);
+                })
                 .invalidateHttpSession(true)
+                .deleteCookies("JSESSIONID")
+                .permitAll()
             )
 //            .formLogin(Customizer.withDefaults())
 //            .formLogin(AbstractAuthenticationFilterConfigurer::permitAll)
