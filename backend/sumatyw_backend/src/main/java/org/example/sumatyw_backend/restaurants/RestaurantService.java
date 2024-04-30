@@ -56,6 +56,14 @@ public class RestaurantService {
         return restaurantRepository.findAllByActiveTrue();
     }
 
+    public RestaurantDTO activateRestaurantById(UUID id) {
+        Restaurant restaurant = restaurantRepository.findById(id).orElseThrow(
+            () -> new ObjectNotFoundException("Restaurant with id: " + id + " not found"));
+        restaurant.setActive(true);
+        restaurantRepository.save(restaurant);
+        return RestaurantDTOMapper.mapRestaurantToRestaurantDTO(restaurant);
+    }
+
     public Restaurant getRestaurantById(UUID id) {
         return restaurantRepository.findById(id)
             .orElseThrow(() -> new ObjectNotFoundException("Restaurant not found with ID: " + id));

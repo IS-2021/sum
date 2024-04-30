@@ -51,18 +51,18 @@ public class SecurityConfig {
                 .anyRequest().authenticated()
             )
             .httpBasic(withDefaults())
-//            .formLogin(httpSecurityFormLoginConfigurer -> httpSecurityFormLoginConfigurer
-//                .loginPage("/login")
-//                .failureUrl("/login?error")
-//               // .defaultSuccessUrl("/home", true)
-//                .permitAll()
-//            )
-//            .logout(httpSecurityLogoutConfigurer -> httpSecurityLogoutConfigurer
-//                .logoutUrl("/logout")
-//                .logoutSuccessUrl("/login?logout")
-//                .permitAll()
-//                .invalidateHttpSession(true)
-//            )
+            .formLogin(httpSecurityFormLoginConfigurer -> httpSecurityFormLoginConfigurer
+                .loginPage("/login")
+                .failureUrl("/login?error")
+               // .defaultSuccessUrl("/home", true)
+                .permitAll()
+            )
+            .logout(httpSecurityLogoutConfigurer -> httpSecurityLogoutConfigurer
+                .logoutUrl("/logout")
+                .logoutSuccessUrl("/login?logout")
+                .permitAll()
+                .invalidateHttpSession(true)
+            )
 //            .formLogin(Customizer.withDefaults())
 //            .formLogin(AbstractAuthenticationFilterConfigurer::permitAll)
 //            .logout(httpSecurityLogoutConfigurer -> httpSecurityLogoutConfigurer

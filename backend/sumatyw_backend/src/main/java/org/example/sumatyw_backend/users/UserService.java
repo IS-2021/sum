@@ -39,8 +39,13 @@ public class UserService {
 
         return userRepository.save(user);
     }
+
     public List<User> getUsers() {
         return  userRepository.findAll();
+    }
+
+    public List<User> getNotBannedUsers() {
+        return  userRepository.findByBlockedFalse();
     }
     public User getUserById(UUID id) {
         return userRepository.findById(id)

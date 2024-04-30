@@ -52,11 +52,11 @@ public class FavouriteController {
     }
 
     @PostMapping("/users/delete/favourites")
-    public ResponseEntity<List<Favourite>> deleteFavourite(@RequestBody DeleteFavouriteRestaurantsDTO deleteFavouriteRestaurantsDTO) {
+    public ResponseEntity<Void> deleteFavourite(@RequestBody DeleteFavouriteRestaurantsDTO deleteFavouriteRestaurantsDTO) {
+        favouriteService.deleteFavourite(deleteFavouriteRestaurantsDTO);
 
         return new ResponseEntity<>(
-            favouriteService.deleteFavourite(deleteFavouriteRestaurantsDTO),
-            HttpStatus.OK
+            HttpStatus.NO_CONTENT
         );
 
     }

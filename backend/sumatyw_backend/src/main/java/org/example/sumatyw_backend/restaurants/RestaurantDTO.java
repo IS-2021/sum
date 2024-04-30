@@ -10,6 +10,7 @@ public record RestaurantDTO(
     String phoneNumber,
     UUID userId,
     AddressDTO addressDTO,
-    Hours hours
+    Hours hours,
+    String imageUrl
 ) {
 }

@@ -35,7 +35,7 @@ public class User implements UserDetails {
     private String password;
     @Column(unique = true)
     private String phoneNumber;
-    private boolean isBlocked;
+    private boolean blocked;
     @Enumerated(EnumType.STRING)
     private Role role;
     @OneToOne(mappedBy = "user")

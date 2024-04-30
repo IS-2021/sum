@@ -2,16 +2,14 @@ package org.example.sumatyw_backend.favourites;
 
 import lombok.AllArgsConstructor;
 import org.example.sumatyw_backend.exceptions.ObjectNotFoundException;
+import org.example.sumatyw_backend.exceptions.ResourceAlreadyExistsException;
 import org.example.sumatyw_backend.restaurants.Restaurant;
 import org.example.sumatyw_backend.restaurants.RestaurantRepository;
 import org.example.sumatyw_backend.users.User;
 import org.example.sumatyw_backend.users.UserRepository;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 @AllArgsConstructor
@@ -25,6 +23,11 @@ public class FavouriteService {
             .orElseThrow(() -> new ObjectNotFoundException("User not found with ID: " + userId));
         Restaurant restaurantDB = restaurantRepository.findById(favouriteInputDTO.restaurantId())
             .orElseThrow(() -> new ObjectNotFoundException("Restaurant not found with ID: " + favouriteInputDTO.restaurantId()));
+
+        Optional<Favourite> favouriteDB = favouriteRepository.findByUserUserIdAndRestaurantRestaurantId(userId, favouriteInputDTO.restaurantId());
+
+        if (favouriteDB.isPresent())
+            throw new ResourceAlreadyExistsException("User with ID: " + userId + " already have restaurant with ID: " + favouriteInputDTO.restaurantId() + " in his favourites" );
 
         Favourite favourite = Favourite.builder()
             .user(User.builder().userId(userId).build())
@@ -67,20 +70,15 @@ public class FavouriteService {
         }
     }
 
-
-
-    public List<Favourite> deleteFavourite(DeleteFavouriteRestaurantsDTO deleteFavouriteRestaurantsDTO) {
+    public void deleteFavourite(DeleteFavouriteRestaurantsDTO deleteFavouriteRestaurantsDTO) {
 
         List<Favourite> favouriteList = favouriteRepository.findByUserUserId(deleteFavouriteRestaurantsDTO.userId());
         List<UUID> listOfIdsToDelete = deleteFavouriteRestaurantsDTO.restaurantIds();
 
-        for (Favourite favourite: favouriteList) {
+        for (Favourite favourite : favouriteList) {
             if (listOfIdsToDelete.contains(favourite.getRestaurant().getRestaurantId())) {
-                favouriteList.remove(favourite);
                 favouriteRepository.delete(favourite);
             }
         }
-        return favouriteList;
     }
-
 }

@@ -93,19 +93,21 @@ public class RestaurantController {
             throw  new InvalidDataException("Bad restaurant JSON");
         }
     }
+
     @PostMapping("/images/{id}")
     public ResponseEntity<String> addImage(@PathVariable("id") UUID restaurantId, @RequestParam("image") MultipartFile image) {
         Restaurant restaurant = restaurantService.getRestaurantById(restaurantId);
 
         try {
-           // System.out.println(Arrays.toString(image.getBytes()));
             String imageName = UUID.randomUUID().toString();
-            //File file = new File(IMAGE_UPLOAD_DIR + imageName + ".jpg");
-//            image.transferTo(file);
-
             FileOutputStream fos = new FileOutputStream(new File(IMAGE_UPLOAD_DIR + imageName + ".jpg"));
             fos.write(image.getBytes());
             fos.close();
+
+            if (!restaurant.getImageUUID().isEmpty()) {
+                File oldImageFile = new File(IMAGE_UPLOAD_DIR + restaurant.getImageUUID() + ".jpg");
+                oldImageFile.delete();
+            }
 
             restaurant.setImageUUID(imageName);
 
