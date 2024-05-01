@@ -23,7 +23,7 @@ const imgSrc = props.imageSrc ?? fallbackImgUrl;
 
 <template>
   <RouterLink :to="restaurantLink">
-    <article class="bg-neutral-900 text-neutral-50 rounded text-lg space-y-3 p-4">
+    <article class="bg-neutral-900 text-neutral-50 rounded text-lg space-y-3 p-4 h-full">
       <AspectRatio :ratio="16 / 9">
         <img :src="imgSrc" :alt="imageAltText" class="rounded-md object-cover w-full h-full" />
       </AspectRatio>
