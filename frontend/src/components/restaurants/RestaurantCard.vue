@@ -23,22 +23,22 @@ const imgSrc = props.imageSrc ?? fallbackImgUrl;
 
 <template>
   <RouterLink :to="restaurantLink">
-    <article class="bg-neutral-900 text-neutral-50 rounded text-lg space-y-3 p-4">
+    <article class="bg-neutral-900 text-neutral-50 rounded text-lg space-y-3 p-4 h-full">
       <AspectRatio :ratio="16 / 9">
         <img :src="imgSrc" :alt="imageAltText" class="rounded-md object-cover w-full h-full" />
       </AspectRatio>
 
       <header class="flex justify-between items-center">
         <p class="font-bold">{{ name }}</p>
+      </header>
+
+      <footer class="flex items-center justify-between text-neutral-500">
+        <RestaurantOpeningHours :hours="props.hours" />
 
         <p class="flex gap-2 items-center">
           <span class="leading-5">{{ rating }}%</span>
           <ThumbsUpIcon class="w-5 h-5" />
         </p>
-      </header>
-
-      <footer class="text-neutral-500">
-        <RestaurantOpeningHours :hours="props.hours" />
       </footer>
     </article>
   </RouterLink>

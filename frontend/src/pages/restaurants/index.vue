@@ -18,9 +18,9 @@ const restaurants = unref(data)?.data;
   </template>
   <template v-else-if="restaurants">
     <div class="w-full sm:max-w-screen-sm md:max-w-screen-md lg:max-w-screen-xl mx-auto px-4">
-      <h1 class="font-bold text-2xl mb-8">Restauracje w mieście: Łódź</h1>
+      <h1 class="font-bold text-2xl mb-8">Restaurants in: Łódź</h1>
 
-      <div class="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+      <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
         <RestaurantCard
           v-for="restaurant in restaurants"
           :key="restaurant.id"
