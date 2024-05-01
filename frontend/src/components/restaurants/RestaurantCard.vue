@@ -30,15 +30,15 @@ const imgSrc = props.imageSrc ?? fallbackImgUrl;
 
       <header class="flex justify-between items-center">
         <p class="font-bold">{{ name }}</p>
+      </header>
+
+      <footer class="flex items-center justify-between text-neutral-500">
+        <RestaurantOpeningHours :hours="props.hours" />
 
         <p class="flex gap-2 items-center">
           <span class="leading-5">{{ rating }}%</span>
           <ThumbsUpIcon class="w-5 h-5" />
         </p>
-      </header>
-
-      <footer class="text-neutral-500">
-        <RestaurantOpeningHours :hours="props.hours" />
       </footer>
     </article>
   </RouterLink>
