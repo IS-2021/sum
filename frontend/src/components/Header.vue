@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { Button } from '@/components/ui/button';
-import { postLogout } from '@/lib/api/auth/auth';
+import { useUser } from '@/components/providers/useUser';
+
+const { user, isSignedIn, signOut } = useUser();
 </script>
 
 <template>
@@ -20,8 +22,8 @@ import { postLogout } from '@/lib/api/auth/auth';
         </li>
         <li class="flex-grow"></li>
         <li class="flex gap-2">
-          <Button @click="postLogout">Log out</Button>
-          <Button as-child>
+          <Button v-if="isSignedIn" @click="signOut">Log out</Button>
+          <Button v-else as-child>
             <RouterLink to="/sign-in">Sign in</RouterLink>
           </Button>
         </li>
