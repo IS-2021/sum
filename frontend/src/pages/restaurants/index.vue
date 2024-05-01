@@ -28,8 +28,7 @@ const restaurants = unref(data)?.data;
           :image-src="restaurant.imageUrl"
           :name="restaurant.name"
           :rating="95"
-          opening-hours="12:00"
-          closing-hours="22:00"
+          :hours="restaurant.hours"
         />
       </div>
     </div>

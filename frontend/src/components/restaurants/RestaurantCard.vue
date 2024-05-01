@@ -1,15 +1,16 @@
 <script setup lang="ts">
-import { ThumbsUpIcon, ClockIcon } from 'lucide-vue-next';
+import { ThumbsUpIcon } from 'lucide-vue-next';
 import { AspectRatio } from '@/components/ui/aspect-ratio';
 import fallbackImgUrl from '@/assets/images/restaurant-image-1.jpg';
+import RestaurantOpeningHours from '@/components/restaurants/RestaurantOpeningHours.vue';
+import type { HoursDTO } from '@/lib/api-model';
 
 interface RestaurantCardProps {
   id: string;
   imageSrc?: string;
   name: string;
   rating: Number;
-  openingHours: string;
-  closingHours: string;
+  hours: HoursDTO;
 }
 
 const props = defineProps<RestaurantCardProps>();
@@ -37,10 +38,7 @@ const imgSrc = props.imageSrc ?? fallbackImgUrl;
       </header>
 
       <footer class="text-neutral-500">
-        <p class="flex items-center gap-2 justify-end">
-          <span class="leading-5">{{ openingHours }} - {{ closingHours }}</span>
-          <ClockIcon class="w-5 h-5" />
-        </p>
+        <RestaurantOpeningHours :hours="props.hours" />
       </footer>
     </article>
   </RouterLink>
