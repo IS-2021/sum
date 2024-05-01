@@ -17,6 +17,7 @@ public class UserDTOMapper {
 
     public static UserDTO mapUserToUserDTO(User user) {
         return new UserDTO(
+            user.getUserId().toString(),
             user.getFirstName(),
             user.getSecondName(),
             user.getUsername(),
