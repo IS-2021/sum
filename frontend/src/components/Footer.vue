@@ -14,9 +14,6 @@
             <RouterLink to="/">Home</RouterLink>
           </li>
           <li>
-            <RouterLink to="/about">About</RouterLink>
-          </li>
-          <li>
             <Button as-child>
               <RouterLink to="/sign-in">Sign in</RouterLink>
             </Button>
