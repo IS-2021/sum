@@ -9,6 +9,10 @@ import router from './router';
 import { createHead } from '@unhead/vue';
 import { VueQueryPlugin } from '@tanstack/vue-query';
 import { queryClientConfig } from '@/lib/tanstack-query';
+import axios from 'axios';
+
+axios.defaults.withCredentials = true;
+axios.defaults.validateStatus = (status) => status < 500;
 
 const app = createApp(App);
 
