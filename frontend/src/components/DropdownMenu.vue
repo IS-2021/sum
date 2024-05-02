@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import { Menu } from 'lucide-vue-next';
+import { Home } from 'lucide-vue-next';
+import { UtensilsCrossed } from 'lucide-vue-next';
 import { ref } from 'vue'
 import {
   DropdownMenuArrow,
@@ -24,14 +26,20 @@ const toggleState = ref(false)
 
     <DropdownMenuPortal>
       <DropdownMenuContent
-        class="sm:hidden min-w-[300px] h-screen outline-none bg-neutral-800 rounded-md p-4 shadow-[0px_10px_38px_-10px_rgba(22,_23,_24,_0.35),_0px_10px_20px_-15px_rgba(22,_23,_24,_0.2)] will-change-[opacity,transform] data-[side=top]:animate-slideDownAndFade data-[side=right]:animate-slideLeftAndFade data-[side=bottom]:animate-slideUpAndFade data-[side=left]:animate-slideRightAndFade"
+        class="sm:hidden text-lg min-w-[300px] h-screen outline-none bg-neutral-800 rounded-md p-4 shadow-[0px_10px_38px_-10px_rgba(22,_23,_24,_0.35),_0px_10px_20px_-15px_rgba(22,_23,_24,_0.2)] will-change-[opacity,transform] data-[side=top]:animate-slideDownAndFade data-[side=right]:animate-slideLeftAndFade data-[side=bottom]:animate-slideUpAndFade data-[side=left]:animate-slideRightAndFade"
         :side-offset="5">
         <DropdownMenuItem value="New Tab"
-          class="group leading-none text-grass11 rounded-[3px] flex items-center h-[38px] px-[5px] relative pl-5 pt-5 select-none outline-none data-[disabled]:text-mauve8 data-[disabled]:pointer-events-none data-[highlighted]:bg-green9 data-[highlighted]:text-green1">
+          class="group leading-none text-grass11 rounded-[3px] flex items-center gap-4 h-[38px] px-[5px] relative pl-5 pt-5 select-none outline-none data-[disabled]:text-mauve8 data-[disabled]:pointer-events-none data-[highlighted]:bg-green9 data-[highlighted]:text-green1">
+          <div class="p-2 rounded-lg bg-neutral-600">
+            <Home />
+          </div>
           <RouterLink to="/">Home</RouterLink>
         </DropdownMenuItem>
         <DropdownMenuItem value="New Tab"
-          class="group leading-none text-grass11 rounded-[3px] flex items-center h-[25px] px-[5px] relative pl-5 pt-10 select-none outline-none data-[disabled]:text-mauve8 data-[disabled]:pointer-events-none data-[highlighted]:bg-green9 data-[highlighted]:text-green1">
+          class="group leading-none text-grass11 rounded-[3px] flex items-center gap-4 h-[25px] px-[5px] relative pl-5 pt-10 select-none outline-none data-[disabled]:text-mauve8 data-[disabled]:pointer-events-none data-[highlighted]:bg-green9 data-[highlighted]:text-green1">
+          <div class="p-2 rounded-lg bg-neutral-600">
+            <UtensilsCrossed />
+          </div>
           <RouterLink to="/restaurants">Restaurants</RouterLink>
         </DropdownMenuItem>
         <DropdownMenuArrow class="fill-white" />
