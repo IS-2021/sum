@@ -8,6 +8,13 @@ import { postLogout } from '@/lib/api/auth/auth';
     <nav class="flex-grow">
       <ul class="flex items-center gap-6">
         <li>
+          <div class="h-8 w-8">
+            <RouterLink to="/">
+              <img src="@/assets/logo.svg" alt="Logo">
+            </RouterLink>
+          </div>
+        </li>
+        <li>
           <RouterLink to="/">Home</RouterLink>
         </li>
         <li>
