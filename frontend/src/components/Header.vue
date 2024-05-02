@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Button } from '@/components/ui/button';
-import { useUser } from '@/components/providers/useUser';
+import { useUser } from '@/composables/useUser';
 
 const { user, isSignedIn, signOut } = useUser();
 </script>
