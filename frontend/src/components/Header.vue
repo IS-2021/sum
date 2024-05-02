@@ -18,9 +18,6 @@ import { postLogout } from '@/lib/api/auth/auth';
           <RouterLink to="/">Home</RouterLink>
         </li>
         <li>
-          <RouterLink to="/about">About</RouterLink>
-        </li>
-        <li>
           <RouterLink to="/restaurants">Restaurants</RouterLink>
         </li>
         <li class="flex-grow"></li>
