@@ -93,7 +93,7 @@ export const useGetRestaurants = <
 export const postRestaurants = (
   restaurantInputDTO: MaybeRef<RestaurantInputDTO>,
   options?: AxiosRequestConfig,
-): Promise<AxiosResponse<void>> => {
+): Promise<AxiosResponse<RestaurantDTO>> => {
   restaurantInputDTO = unref(restaurantInputDTO);
   return axios.default.post(`http://localhost:9090/restaurants`, restaurantInputDTO, options);
 };
@@ -350,6 +350,72 @@ export const useDeleteRestaurantsId = <
   TContext
 > => {
   const mutationOptions = getDeleteRestaurantsIdMutationOptions(options);
+
+  return useMutation(mutationOptions);
+};
+export const postRestaurantsImagesId = (
+  id: MaybeRef<Uuid>,
+  options?: AxiosRequestConfig,
+): Promise<AxiosResponse<void>> => {
+  id = unref(id);
+  return axios.default.post(`http://localhost:9090/restaurants/images/${id}`, undefined, options);
+};
+
+export const getPostRestaurantsImagesIdMutationOptions = <
+  TError = AxiosError<void>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof postRestaurantsImagesId>>,
+    TError,
+    { id: Uuid },
+    TContext
+  >;
+  axios?: AxiosRequestConfig;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof postRestaurantsImagesId>>,
+  TError,
+  { id: Uuid },
+  TContext
+> => {
+  const { mutation: mutationOptions, axios: axiosOptions } = options ?? {};
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof postRestaurantsImagesId>>,
+    { id: Uuid }
+  > = (props) => {
+    const { id } = props ?? {};
+
+    return postRestaurantsImagesId(id, axiosOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type PostRestaurantsImagesIdMutationResult = NonNullable<
+  Awaited<ReturnType<typeof postRestaurantsImagesId>>
+>;
+
+export type PostRestaurantsImagesIdMutationError = AxiosError<void>;
+
+export const usePostRestaurantsImagesId = <
+  TError = AxiosError<void>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof postRestaurantsImagesId>>,
+    TError,
+    { id: Uuid },
+    TContext
+  >;
+  axios?: AxiosRequestConfig;
+}): UseMutationReturnType<
+  Awaited<ReturnType<typeof postRestaurantsImagesId>>,
+  TError,
+  { id: Uuid },
+  TContext
+> => {
+  const mutationOptions = getPostRestaurantsImagesIdMutationOptions(options);
 
   return useMutation(mutationOptions);
 };
