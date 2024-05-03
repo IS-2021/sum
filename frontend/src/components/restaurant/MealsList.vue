@@ -16,7 +16,6 @@ const amount = ref(0)
 
 const categories = ref(props.categories)
 </script>
-
 <template>
   <template v-if="areMealsLoading">
     <p>Loading...</p>
@@ -29,7 +28,8 @@ const categories = ref(props.categories)
       <Filters />
     </div>
     <div class=" mx-auto flex-grow space-y-3 mb-10" v-for="category in categories" v-bind:key="category">
-      <div v-for="meal in meals" v-bind:key="meal.id">
+      <p v-if="meals?.length === 0">No meals found</p>
+      <div v-else v-for="meal in meals" v-bind:key="meal.id">
         <div class="bg-neutral-900 min-w-96 rounded p-4 space-y-3">
           <div class="flex">
             <h1 class="font-semibold text-xl">{{ meal.name }}</h1>
