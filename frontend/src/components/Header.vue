@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { Button } from '@/components/ui/button';
-import { postLogout } from '@/lib/api/auth/auth';
-import DropdownMenu from './DropdownMenu.vue';
+import { useUser } from '@/composables/useUser';
+
+const { user, isSignedIn, signOut } = useUser();
 </script>
 
 <template>
@@ -9,21 +10,25 @@ import DropdownMenu from './DropdownMenu.vue';
     <nav class="flex-grow">
       <ul class="flex items-center gap-6">
         <li>
+<div class="h-8 w-8">
+            <RouterLink to="/">
+              <img src="@/assets/logo.svg" alt="Logo">
+            </RouterLink>
+          </div>
           <DropdownMenu />
         </li>
         <li class="hidden sm:block">
           <RouterLink to="/">Home</RouterLink>
         </li>
-        <li class="hidden sm:block">
-          <RouterLink to="/about">About</RouterLink>
-        </li>
+        <li class="hidden sm:block">       
+        </li>   
         <li class="hidden sm:block">
           <RouterLink to="/restaurants">Restaurants</RouterLink>
         </li>
         <li class="flex-grow"></li>
         <li class="flex gap-2">
-          <Button @click="postLogout">Log out</Button>
-          <Button as-child>
+          <Button v-if="isSignedIn" @click="signOut">Log out</Button>
+          <Button v-else as-child>
             <RouterLink to="/sign-in">Sign in</RouterLink>
           </Button>
         </li>
