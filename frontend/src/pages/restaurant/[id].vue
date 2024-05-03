@@ -10,20 +10,18 @@ import { ThumbsUp } from 'lucide-vue-next';
 import { Info } from 'lucide-vue-next';
 
 import { useRoute } from 'vue-router/auto';
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 import { unref } from 'vue';
 
 import { useGetRestaurantsId } from '@/lib/api/restaurants/restaurants';
 
-
-const route = useRoute('/restaurant/[id]')
+const route = useRoute('/restaurant/[id]');
 const id = route.params.id;
 const { data, isPending: areRestaurantsLoading } = useGetRestaurantsId(id);
-const restaurant = unref(data)?.data;
+const restaurant = computed(() => unref(data)?.data);
 
 const isFavourite = ref(false);
-const categories = ref(['Kategoria 1'])
-
+const categories = ref(['Kategoria 1']);
 </script>
 
 <template>
@@ -32,7 +30,7 @@ const categories = ref(['Kategoria 1'])
   </template>
   <div v-else>
     <div class="w-full h-40 mb-12">
-      <img src="@/assets/images/restaurant-image-1.jpg" class="w-full h-full object-cover">
+      <img src="@/assets/images/restaurant-image-1.jpg" class="w-full h-full object-cover" />
     </div>
     <div class="container">
       <div class="flex flex-row flex-wrap">
@@ -41,7 +39,9 @@ const categories = ref(['Kategoria 1'])
             <p class="font-semibold text-3xl">{{ restaurant?.name }}</p>
             <StarItem :isFavourite="isFavourite" />
             <div class="flex-grow" />
-            <div class="flex items-center justify-center h-10 w-10 rounded-full bg-neutral-900 cursor-pointer">
+            <div
+              class="flex items-center justify-center h-10 w-10 rounded-full bg-neutral-900 cursor-pointer"
+            >
               <Info class="h-5 w-5" />
             </div>
           </div>
