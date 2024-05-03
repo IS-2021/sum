@@ -1121,6 +1121,8 @@ paths:
     parameters:
       - name: id
         description: restaurant id
+        schema:
+          $ref: "#/components/schemas/UUID"
         in: path
         required: true
 components:

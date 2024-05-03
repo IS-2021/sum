@@ -14,9 +14,10 @@ import * as axios from 'axios';
 import type { AxiosError, AxiosRequestConfig, AxiosResponse } from 'axios';
 import { unref } from 'vue';
 import type { MaybeRef } from 'vue';
+import type { Uuid } from '../../api-model';
 
 export const postRestaurantsImagesId = (
-  id: MaybeRef<unknown>,
+  id: MaybeRef<Uuid>,
   options?: AxiosRequestConfig,
 ): Promise<AxiosResponse<void>> => {
   id = unref(id);
@@ -30,21 +31,21 @@ export const getPostRestaurantsImagesIdMutationOptions = <
   mutation?: UseMutationOptions<
     Awaited<ReturnType<typeof postRestaurantsImagesId>>,
     TError,
-    { id: unknown },
+    { id: Uuid },
     TContext
   >;
   axios?: AxiosRequestConfig;
 }): UseMutationOptions<
   Awaited<ReturnType<typeof postRestaurantsImagesId>>,
   TError,
-  { id: unknown },
+  { id: Uuid },
   TContext
 > => {
   const { mutation: mutationOptions, axios: axiosOptions } = options ?? {};
 
   const mutationFn: MutationFunction<
     Awaited<ReturnType<typeof postRestaurantsImagesId>>,
-    { id: unknown }
+    { id: Uuid }
   > = (props) => {
     const { id } = props ?? {};
 
@@ -67,14 +68,14 @@ export const usePostRestaurantsImagesId = <
   mutation?: UseMutationOptions<
     Awaited<ReturnType<typeof postRestaurantsImagesId>>,
     TError,
-    { id: unknown },
+    { id: Uuid },
     TContext
   >;
   axios?: AxiosRequestConfig;
 }): UseMutationReturnType<
   Awaited<ReturnType<typeof postRestaurantsImagesId>>,
   TError,
-  { id: unknown },
+  { id: Uuid },
   TContext
 > => {
   const mutationOptions = getPostRestaurantsImagesIdMutationOptions(options);
