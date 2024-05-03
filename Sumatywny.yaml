@@ -1117,6 +1117,8 @@ paths:
         content:
           multipart/form-data: {}
         required: true
+      tags:
+        - restaurants
       responses:
         "200":
           description: Restaurant image added
