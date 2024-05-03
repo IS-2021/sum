@@ -4,8 +4,10 @@
  * Sumatywny
  * OpenAPI spec version: 1.0.0
  */
+import type { Uuid } from './uuid';
 
-export interface AddressInputDTO {
+export interface AddressDTO {
+  addressId: Uuid;
   city: string;
   country: string;
   number: string;

@@ -483,29 +483,6 @@ paths:
         in: path
         required: true
   /opinions:
-    get:
-      tags:
-        - opinions
-      responses:
-        "200":
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: "#/components/schemas/OpinionDTO"
-              examples:
-                opinions:
-                  value:
-                    - user_id: 1a3e6f89-2b4c-567d-8e9a-0123456789ab
-                      restaurant_id: ab123456-c789-d012-e345-678f90123456
-                      is_positive: true
-                      opinion_id: fe901234-5678-abcd-ef12-345678901234
-                    - user_id: 2b4c6d8f-9a1b-234c-567d-89a0bcde1234
-                      restaurant_id: bc234567-d890-1e23-456f-789a01234567
-                      is_positive: true
-                      opinion_id: dc345678-9012-34ab-cdef-123456789012
-          description: Get list of opinion
     post:
       requestBody:
         content:
@@ -847,12 +824,6 @@ paths:
         "404":
           $ref: "#/components/responses/NotFound_404"
     put:
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/RestaurantDTO"
-        required: true
       tags:
         - admin_restaurants
       responses:
@@ -1136,6 +1107,22 @@ paths:
       responses:
         "204":
           description: Ends user session
+  "/restaurants/images/{id}":
+    post:
+      requestBody:
+        content:
+          multipart/form-data: {}
+        required: true
+      responses:
+        "200":
+          description: Restaurant image added
+        "500":
+          description: Bad image cant add
+    parameters:
+      - name: id
+        description: restaurant id
+        in: path
+        required: true
 components:
   schemas:
     OpinionDTO:
@@ -1385,7 +1372,7 @@ components:
         phoneNumber:
           type: string
         addressInputDto:
-          $ref: "#/components/schemas/AddressInputDto"
+          $ref: "#/components/schemas/AddressInputDTO"
           description: ""
         userId:
           $ref: "#/components/schemas/UUID"
@@ -1400,31 +1387,6 @@ components:
           description: ""
           type: string
         password:
-          description: ""
-          type: string
-    AddressInputDto:
-      description: ""
-      required:
-        - country
-        - city
-        - street
-        - number
-        - postalCode
-      type: object
-      properties:
-        country:
-          description: ""
-          type: string
-        city:
-          description: ""
-          type: string
-        street:
-          description: ""
-          type: string
-        number:
-          description: ""
-          type: string
-        postalCode:
           description: ""
           type: string
     BookingDTO:
@@ -1536,13 +1498,15 @@ components:
       title: Root Type for RestaurantDTO
       description: ""
       required:
-        - isActive
-        - addressId
+        - active
+        - address
         - id
         - name
         - phoneNumber
         - userId
         - hours
+        - likesCount
+        - dislikesCount
       type: object
       properties:
         id:
@@ -1551,19 +1515,24 @@ components:
           type: string
         phoneNumber:
           type: string
-        isActive:
-          type: boolean
-        addressId:
-          $ref: "#/components/schemas/UUID"
         userId:
           $ref: "#/components/schemas/UUID"
         imageUrl:
           description: ""
           type: string
-          x-faker: image.imageUrl
         hours:
           $ref: "#/components/schemas/HoursDTO"
           description: ""
+        likesCount:
+          description: ""
+          type: integer
+        dislikesCount:
+          description: ""
+          type: integer
+        address:
+          $ref: "#/components/schemas/AddressDTO"
+        active:
+          type: boolean
     RestaurantFavouriteInputDTO:
       description: ""
       required:
@@ -1637,6 +1606,60 @@ components:
           - "10:00"
           - "24:00"
         sunday: []
+    AddressDTO:
+      description: ""
+      required:
+        - country
+        - city
+        - street
+        - number
+        - postalCode
+        - addressId
+      type: object
+      properties:
+        country:
+          description: ""
+          type: string
+        city:
+          description: ""
+          type: string
+        street:
+          description: ""
+          type: string
+        number:
+          description: ""
+          type: string
+        postalCode:
+          description: ""
+          type: string
+        addressId:
+          $ref: "#/components/schemas/UUID"
+          description: ""
+    AddressInputDTO:
+      description: ""
+      required:
+        - country
+        - city
+        - street
+        - number
+        - postalCode
+      type: object
+      properties:
+        country:
+          description: ""
+          type: string
+        city:
+          description: ""
+          type: string
+        street:
+          description: ""
+          type: string
+        number:
+          description: ""
+          type: string
+        postalCode:
+          description: ""
+          type: string
   responses:
     NotFound_404:
       content:

@@ -14,151 +14,70 @@ import * as axios from 'axios';
 import type { AxiosError, AxiosRequestConfig, AxiosResponse } from 'axios';
 import { unref } from 'vue';
 import type { MaybeRef } from 'vue';
-import type {
-  NotFound404Response,
-  PasswordDTO,
-  RestaurantInputDTO,
-  Uuid,
-  ValidationFailed422Response,
-} from '../../api-model';
 
-export const postRestaurants = (
-  restaurantInputDTO: MaybeRef<RestaurantInputDTO>,
-  options?: AxiosRequestConfig,
-): Promise<AxiosResponse<void>> => {
-  restaurantInputDTO = unref(restaurantInputDTO);
-  return axios.default.post(`http://localhost:9090/restaurants`, restaurantInputDTO, options);
-};
-
-export const getPostRestaurantsMutationOptions = <
-  TError = AxiosError<ValidationFailed422Response>,
-  TContext = unknown,
->(options?: {
-  mutation?: UseMutationOptions<
-    Awaited<ReturnType<typeof postRestaurants>>,
-    TError,
-    { data: RestaurantInputDTO },
-    TContext
-  >;
-  axios?: AxiosRequestConfig;
-}): UseMutationOptions<
-  Awaited<ReturnType<typeof postRestaurants>>,
-  TError,
-  { data: RestaurantInputDTO },
-  TContext
-> => {
-  const { mutation: mutationOptions, axios: axiosOptions } = options ?? {};
-
-  const mutationFn: MutationFunction<
-    Awaited<ReturnType<typeof postRestaurants>>,
-    { data: RestaurantInputDTO }
-  > = (props) => {
-    const { data } = props ?? {};
-
-    return postRestaurants(data, axiosOptions);
-  };
-
-  return { mutationFn, ...mutationOptions };
-};
-
-export type PostRestaurantsMutationResult = NonNullable<
-  Awaited<ReturnType<typeof postRestaurants>>
->;
-export type PostRestaurantsMutationBody = RestaurantInputDTO;
-export type PostRestaurantsMutationError = AxiosError<ValidationFailed422Response>;
-
-export const usePostRestaurants = <
-  TError = AxiosError<ValidationFailed422Response>,
-  TContext = unknown,
->(options?: {
-  mutation?: UseMutationOptions<
-    Awaited<ReturnType<typeof postRestaurants>>,
-    TError,
-    { data: RestaurantInputDTO },
-    TContext
-  >;
-  axios?: AxiosRequestConfig;
-}): UseMutationReturnType<
-  Awaited<ReturnType<typeof postRestaurants>>,
-  TError,
-  { data: RestaurantInputDTO },
-  TContext
-> => {
-  const mutationOptions = getPostRestaurantsMutationOptions(options);
-
-  return useMutation(mutationOptions);
-};
-export const putAuthIdChangePassword = (
-  id: MaybeRef<Uuid>,
-  passwordDTO: MaybeRef<PasswordDTO>,
+export const postRestaurantsImagesId = (
+  id: MaybeRef<unknown>,
   options?: AxiosRequestConfig,
 ): Promise<AxiosResponse<void>> => {
   id = unref(id);
-  passwordDTO = unref(passwordDTO);
-  return axios.default.put(
-    `http://localhost:9090/auth/${id}/change-password`,
-    passwordDTO,
-    options,
-  );
+  return axios.default.post(`http://localhost:9090/restaurants/images/${id}`, undefined, options);
 };
 
-export const getPutAuthIdChangePasswordMutationOptions = <
-  TError = AxiosError<NotFound404Response | ValidationFailed422Response>,
+export const getPostRestaurantsImagesIdMutationOptions = <
+  TError = AxiosError<void>,
   TContext = unknown,
 >(options?: {
   mutation?: UseMutationOptions<
-    Awaited<ReturnType<typeof putAuthIdChangePassword>>,
+    Awaited<ReturnType<typeof postRestaurantsImagesId>>,
     TError,
-    { id: Uuid; data: PasswordDTO },
+    { id: unknown },
     TContext
   >;
   axios?: AxiosRequestConfig;
 }): UseMutationOptions<
-  Awaited<ReturnType<typeof putAuthIdChangePassword>>,
+  Awaited<ReturnType<typeof postRestaurantsImagesId>>,
   TError,
-  { id: Uuid; data: PasswordDTO },
+  { id: unknown },
   TContext
 > => {
   const { mutation: mutationOptions, axios: axiosOptions } = options ?? {};
 
   const mutationFn: MutationFunction<
-    Awaited<ReturnType<typeof putAuthIdChangePassword>>,
-    { id: Uuid; data: PasswordDTO }
+    Awaited<ReturnType<typeof postRestaurantsImagesId>>,
+    { id: unknown }
   > = (props) => {
-    const { id, data } = props ?? {};
+    const { id } = props ?? {};
 
-    return putAuthIdChangePassword(id, data, axiosOptions);
+    return postRestaurantsImagesId(id, axiosOptions);
   };
 
   return { mutationFn, ...mutationOptions };
 };
 
-export type PutAuthIdChangePasswordMutationResult = NonNullable<
-  Awaited<ReturnType<typeof putAuthIdChangePassword>>
->;
-export type PutAuthIdChangePasswordMutationBody = PasswordDTO;
-export type PutAuthIdChangePasswordMutationError = AxiosError<
-  NotFound404Response | ValidationFailed422Response
+export type PostRestaurantsImagesIdMutationResult = NonNullable<
+  Awaited<ReturnType<typeof postRestaurantsImagesId>>
 >;
 
-export const usePutAuthIdChangePassword = <
-  TError = AxiosError<NotFound404Response | ValidationFailed422Response>,
+export type PostRestaurantsImagesIdMutationError = AxiosError<void>;
+
+export const usePostRestaurantsImagesId = <
+  TError = AxiosError<void>,
   TContext = unknown,
 >(options?: {
   mutation?: UseMutationOptions<
-    Awaited<ReturnType<typeof putAuthIdChangePassword>>,
+    Awaited<ReturnType<typeof postRestaurantsImagesId>>,
     TError,
-    { id: Uuid; data: PasswordDTO },
+    { id: unknown },
     TContext
   >;
   axios?: AxiosRequestConfig;
 }): UseMutationReturnType<
-  Awaited<ReturnType<typeof putAuthIdChangePassword>>,
+  Awaited<ReturnType<typeof postRestaurantsImagesId>>,
   TError,
-  { id: Uuid; data: PasswordDTO },
+  { id: unknown },
   TContext
 > => {
-  const mutationOptions = getPutAuthIdChangePasswordMutationOptions(options);
+  const mutationOptions = getPostRestaurantsImagesIdMutationOptions(options);
 
   return useMutation(mutationOptions);
 };
