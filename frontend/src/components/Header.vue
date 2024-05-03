@@ -6,13 +6,15 @@ const { user, isSignedIn, signOut } = useUser();
 </script>
 
 <template>
-  <header class="h-16 w-full top-0 border border-transparent bg-zinc-800 sticky flex items-center px-6 z-50">
+  <header
+    class="h-16 w-full top-0 border border-transparent bg-zinc-800 sticky flex items-center px-6 z-50"
+  >
     <nav class="flex-grow">
       <ul class="flex items-center gap-6">
         <li>
-<div class="h-8 w-8">
+          <div class="h-8 w-8">
             <RouterLink to="/">
-              <img src="@/assets/logo.svg" alt="Logo">
+              <img src="@/assets/logo.svg" alt="Logo" />
             </RouterLink>
           </div>
           <DropdownMenu />
@@ -20,8 +22,6 @@ const { user, isSignedIn, signOut } = useUser();
         <li class="hidden sm:block">
           <RouterLink to="/">Home</RouterLink>
         </li>
-        <li class="hidden sm:block">       
-        </li>   
         <li class="hidden sm:block">
           <RouterLink to="/restaurants">Restaurants</RouterLink>
         </li>
