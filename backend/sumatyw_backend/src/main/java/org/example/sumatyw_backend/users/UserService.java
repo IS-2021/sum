@@ -3,8 +3,11 @@ package org.example.sumatyw_backend.users;
 import lombok.AllArgsConstructor;
 import org.example.sumatyw_backend.cities.CityRepository;
 import org.example.sumatyw_backend.exceptions.ResourceAlreadyExistsException;
+import org.example.sumatyw_backend.exceptions.UserNotAuthenticatedException;
 import org.example.sumatyw_backend.exceptions.UserNotFoundException;
 import org.example.sumatyw_backend.restaurants.RestaurantRepository;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -63,11 +66,20 @@ public class UserService {
         userRepository.deleteById(id);
     }
 
-    public User getMeUser() {
+    public User getMeUser() throws UserNotAuthenticatedException {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
-        User user = userRepository.findByUsername(
-            SecurityContextHolder.getContext().getAuthentication().getName()).orElseThrow(
-                () -> new UserNotFoundException("User not found with username: " + SecurityContextHolder.getContext().getAuthentication().getName()));
+        if (authentication instanceof AnonymousAuthenticationToken) {
+            throw new UserNotAuthenticatedException("User is not authenticated");
+        }
+
+        String username = authentication.getName();
+
+        User user = userRepository
+            .findByUsername(username)
+            .orElseThrow(
+                () -> new UserNotFoundException("User not found with username: " + username)
+            );
 
         return user;
     }
