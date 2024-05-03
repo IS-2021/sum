@@ -26,7 +26,7 @@ const props = defineProps<RestaurantInfoProps>();
 <template>
   <Dialog>
     <DialogTrigger as-child>
-      <Info />
+      <Info @click="console.log($props.hours)" />
     </DialogTrigger>
     <DialogContent class="sm:max-w-md">
       <DialogHeader>
