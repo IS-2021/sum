@@ -12,7 +12,7 @@ import java.util.Map;
 
 @RestController
 @AllArgsConstructor
-@RequestMapping("/meal")
+@RequestMapping("/meals")
 public class MealController {
 
     private MealService mealService;
