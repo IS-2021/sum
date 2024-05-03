@@ -10,16 +10,19 @@ const { user, isSignedIn, signOut } = useUser();
     <nav class="flex-grow">
       <ul class="flex items-center gap-6">
         <li>
-          <div class="h-8 w-8">
+<div class="h-8 w-8">
             <RouterLink to="/">
               <img src="@/assets/logo.svg" alt="Logo">
             </RouterLink>
           </div>
+          <DropdownMenu />
         </li>
-        <li>
+        <li class="hidden sm:block">
           <RouterLink to="/">Home</RouterLink>
         </li>
-        <li>
+        <li class="hidden sm:block">       
+        </li>   
+        <li class="hidden sm:block">
           <RouterLink to="/restaurants">Restaurants</RouterLink>
         </li>
         <li class="flex-grow"></li>
