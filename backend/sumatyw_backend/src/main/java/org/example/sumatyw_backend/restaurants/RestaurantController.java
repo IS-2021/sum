@@ -3,7 +3,6 @@ package org.example.sumatyw_backend.restaurants;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
-import lombok.SneakyThrows;
 import org.example.sumatyw_backend.exceptions.InvalidDataException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,7 +12,6 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
@@ -96,11 +94,11 @@ public class RestaurantController {
 
         try {
             String imageName = UUID.randomUUID().toString();
-            FileOutputStream fos = new FileOutputStream(new File(IMAGE_UPLOAD_DIR + imageName + ".jpg"));
+            FileOutputStream fos = new FileOutputStream(IMAGE_UPLOAD_DIR + imageName + ".jpg");
             fos.write(image.getBytes());
             fos.close();
 
-            if (!restaurant.getImageUUID().isEmpty()) {
+            if (!restaurant.getImageUUID().equals("default.jpg")) {
                 File oldImageFile = new File(IMAGE_UPLOAD_DIR + restaurant.getImageUUID() + ".jpg");
                 oldImageFile.delete();
             }
@@ -109,10 +107,10 @@ public class RestaurantController {
 
             restaurantService.updateRestaurantImageUUID(restaurant);
 
-            return new ResponseEntity<>("Restaurant added successfully", HttpStatus.OK);
+            return new ResponseEntity<>("Restaurant image added successfully", HttpStatus.OK);
         } catch (IOException e) {
             e.printStackTrace();
-            return new ResponseEntity<>("Failed to add restaurant", HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("Failed to add restaurant image", HttpStatus.BAD_REQUEST);
         }
     }
 }

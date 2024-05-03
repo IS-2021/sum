@@ -18,6 +18,9 @@ import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { AlertCircleIcon } from 'lucide-vue-next';
 import { ref } from 'vue';
+import { useRouter } from 'vue-router/auto';
+
+const router = useRouter();
 
 const formSchema = toTypedSchema(
   z.object({
@@ -46,8 +49,9 @@ const onSubmit = form.handleSubmit(async (formData) => {
     },
   );
 
-  if (res.status === 200) {
+  if (res.status === 201) {
     errorMessage.value = '';
+    await router.push('/sign-in');
   } else if (res.status === 400) {
     const { message } = res.data as unknown as ValidationFailed422Response;
 

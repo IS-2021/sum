@@ -61,8 +61,8 @@ function updateFilter(element: Ingredient) {
     </PopoverTrigger>
     <PopoverContent class="w-full p-0">
       <Command>
-        <CommandInput placeholder="Search framework..." />
-        <CommandEmpty>No framework found.</CommandEmpty>
+        <CommandInput placeholder="Search ingredients..." />
+        <CommandEmpty>No ingredients found.</CommandEmpty>
         <CommandList>
           <CommandGroup>
             <CommandItem v-for="ingredient in ingredients" :key="ingredient.id" :value="ingredient" :id="ingredient.id"
