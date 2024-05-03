@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { ThumbsUpIcon } from 'lucide-vue-next';
 import { AspectRatio } from '@/components/ui/aspect-ratio';
-import fallbackImgUrl from '@/assets/images/restaurant-image-1.jpg';
 import RestaurantOpeningHours from '@/components/restaurants/RestaurantOpeningHours.vue';
 import type { HoursDTO } from '@/lib/api-model';
+import { getImageUrl } from '@/lib/assets';
 
 interface RestaurantCardProps {
   id: string;
@@ -18,7 +18,7 @@ const props = defineProps<RestaurantCardProps>();
 const restaurantLink = `/restaurant/${props.id}`;
 
 const imageAltText = `${props.name} restaurant`;
-const imgSrc = props.imageSrc ?? fallbackImgUrl;
+const imgSrc = getImageUrl(props.imageSrc);
 </script>
 
 <template>
