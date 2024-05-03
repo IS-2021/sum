@@ -40,14 +40,9 @@ const form = useForm({
 const errorMessage = ref('');
 
 const onSubmit = form.handleSubmit(async (formData) => {
-  const res = await postAuthRegister(
-    {
-      ...formData,
-    },
-    {
-      validateStatus: (status) => status < 500,
-    },
-  );
+  const res = await postAuthRegister({
+    ...formData,
+  });
 
   if (res.status === 201) {
     errorMessage.value = '';
