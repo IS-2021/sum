@@ -4,15 +4,11 @@
  * Sumatywny
  * OpenAPI spec version: 1.0.0
  */
-import { useMutation, useQuery } from '@tanstack/vue-query';
+import { useMutation } from '@tanstack/vue-query';
 import type {
   MutationFunction,
-  QueryFunction,
-  QueryKey,
   UseMutationOptions,
   UseMutationReturnType,
-  UseQueryOptions,
-  UseQueryReturnType,
 } from '@tanstack/vue-query';
 import * as axios from 'axios';
 import type { AxiosError, AxiosRequestConfig, AxiosResponse } from 'axios';
@@ -25,56 +21,6 @@ import type {
   Uuid,
   ValidationFailed422Response,
 } from '../../api-model';
-
-export const getOpinions = (options?: AxiosRequestConfig): Promise<AxiosResponse<OpinionDTO[]>> => {
-  return axios.default.get(`http://localhost:9090/opinions`, options);
-};
-
-export const getGetOpinionsQueryKey = () => {
-  return ['http:', 'localhost:9090', 'opinions'] as const;
-};
-
-export const getGetOpinionsQueryOptions = <
-  TData = Awaited<ReturnType<typeof getOpinions>>,
-  TError = AxiosError<unknown>,
->(options?: {
-  query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getOpinions>>, TError, TData>>;
-  axios?: AxiosRequestConfig;
-}) => {
-  const { query: queryOptions, axios: axiosOptions } = options ?? {};
-
-  const queryKey = getGetOpinionsQueryKey();
-
-  const queryFn: QueryFunction<Awaited<ReturnType<typeof getOpinions>>> = ({ signal }) =>
-    getOpinions({ signal, ...axiosOptions });
-
-  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
-    Awaited<ReturnType<typeof getOpinions>>,
-    TError,
-    TData
-  >;
-};
-
-export type GetOpinionsQueryResult = NonNullable<Awaited<ReturnType<typeof getOpinions>>>;
-export type GetOpinionsQueryError = AxiosError<unknown>;
-
-export const useGetOpinions = <
-  TData = Awaited<ReturnType<typeof getOpinions>>,
-  TError = AxiosError<unknown>,
->(options?: {
-  query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getOpinions>>, TError, TData>>;
-  axios?: AxiosRequestConfig;
-}): UseQueryReturnType<TData, TError> & { queryKey: QueryKey } => {
-  const queryOptions = getGetOpinionsQueryOptions(options);
-
-  const query = useQuery(queryOptions) as UseQueryReturnType<TData, TError> & {
-    queryKey: QueryKey;
-  };
-
-  query.queryKey = unref(queryOptions).queryKey as QueryKey;
-
-  return query;
-};
 
 export const postOpinions = (
   opinionInputDTO: MaybeRef<OpinionInputDTO>,

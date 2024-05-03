@@ -4,15 +4,18 @@
  * Sumatywny
  * OpenAPI spec version: 1.0.0
  */
-import type { Uuid } from './uuid';
+import type { AddressDTO } from './addressDTO';
 import type { HoursDTO } from './hoursDTO';
+import type { Uuid } from './uuid';
 
 export interface RestaurantDTO {
-  addressId: Uuid;
+  active: boolean;
+  address: AddressDTO;
+  dislikesCount: number;
   hours: HoursDTO;
   id: Uuid;
   imageUrl?: string;
-  isActive: boolean;
+  likesCount: number;
   name: string;
   phoneNumber: string;
   userId: Uuid;
