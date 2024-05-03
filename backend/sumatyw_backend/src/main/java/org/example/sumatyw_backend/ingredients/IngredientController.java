@@ -34,7 +34,7 @@ public class IngredientController {
 
 
     @PutMapping("/{id}")
-    public ResponseEntity<IngredientDTO> updateOpinion(@PathVariable("id") UUID id, @RequestBody @Valid IngredientInputDTO ingredientInputDTO) {
+    public ResponseEntity<IngredientDTO> updateIngredient(@PathVariable("id") UUID id, @RequestBody @Valid IngredientInputDTO ingredientInputDTO) {
         Ingredient ingredient = ingredientService.updateIngredientById(id, IngredientDTOMapper.mapIngredientInputDTOToIngredient(ingredientInputDTO));
 
         return new ResponseEntity<>(

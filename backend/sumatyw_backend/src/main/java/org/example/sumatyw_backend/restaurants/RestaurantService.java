@@ -23,6 +23,8 @@ public class RestaurantService {
 
     public Restaurant addRestaurant(Restaurant restaurant) {
 
+        restaurant.setImageUUID("default.jpg");
+
         Optional<Address> addressDB = addressRepository.findByCity_NameAndStreetAndNumberAndPostalCode(
             restaurant.getAddress().getCity().getName(),
             restaurant.getAddress().getStreet(),

@@ -13,6 +13,6 @@ public interface MealRepository extends JpaRepository<Meal, UUID> {
 
     Optional<Meal> findById(UUID id);
 
-    List<Meal> findAllByRestaurant(Restaurant restaurant);
+    List<Meal> findAllByRestaurantRestaurantId(UUID id);
 
 }
