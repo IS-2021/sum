@@ -28,7 +28,7 @@ const categories = ref(['Kategoria 1']);
   <template v-if="areRestaurantsLoading">
     <p>Loading...</p>
   </template>
-  <div v-else>
+  <div v-else-if="restaurant">
     <div class="w-full h-40 mb-12">
       <img src="@/assets/images/restaurant-image-1.jpg" class="w-full h-full object-cover" />
     </div>
@@ -36,13 +36,13 @@ const categories = ref(['Kategoria 1']);
       <div class="flex flex-row flex-wrap">
         <div class="w-full">
           <div class="flex flex-row mb-4 gap-4 items-center">
-            <p class="font-semibold text-3xl">{{ restaurant?.name }}</p>
+            <p class="font-semibold text-3xl">{{ restaurant.name }}</p>
             <StarItem :isFavourite="isFavourite" />
             <div class="flex-grow" />
             <div
               class="flex items-center justify-center h-10 w-10 rounded-full bg-neutral-900 cursor-pointer"
             >
-              <InfoPopup />
+              <InfoPopup :hours="restaurant.hours" :address="restaurant.address" />
             </div>
           </div>
           <div class="flex flex-row gap-1">

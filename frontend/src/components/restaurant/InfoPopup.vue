@@ -1,41 +1,60 @@
 <script setup lang="ts">
+import { Button } from '@/components/ui/button';
 import {
+  Dialog,
   DialogClose,
   DialogContent,
   DialogDescription,
-  DialogOverlay,
-  DialogPortal,
-  DialogRoot,
+  DialogFooter,
+  DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from 'radix-vue'
-import { Icon } from '@iconify/vue'
+} from '@/components/ui/dialog';
 import { Info } from 'lucide-vue-next';
-import type { HoursDTO } from '@/lib/api-model';
+import type { AddressDTO, HoursDTO } from '@/lib/api-model';
+import OpeningHoursRow from '@/components/restaurants/OpeningHoursRow.vue';
+import { isCurrentDay } from '@/components/restaurants/openingHours';
 
+interface RestaurantInfoProps {
+  hours: HoursDTO;
+  address: AddressDTO;
+}
+
+const props = defineProps<RestaurantInfoProps>();
 </script>
 
 <template>
-  <DialogRoot>
-    <DialogTrigger>
-      <Info class="h-5 w-5" />
+  <Dialog>
+    <DialogTrigger as-child>
+      <Info />
     </DialogTrigger>
-    <DialogPortal>
-      <DialogOverlay class="bg-blackA9 data-[state=open]:animate-overlayShow fixed inset-0 z-30" />
-      <DialogContent
-        class="data-[state=open]:animate-contentShow fixed top-[50%] left-[50%] max-h-[85vh] w-[90vw] max-w-[450px] translate-x-[-50%] translate-y-[-50%] rounded-[6px] bg-neutral-800 p-[25px] shadow-[hsl(206_22%_7%_/_35%)_0px_10px_38px_-10px,_hsl(206_22%_7%_/_20%)_0px_10px_20px_-15px] focus:outline-none z-[100]">
-        <DialogTitle class="text-mauve12 m-0 text-[17px] font-semibold">
-          Edit profile
-        </DialogTitle>
-        <DialogDescription class="text-mauve11 mt-[10px] mb-5 text-[15px] leading-normal">
-          Make changes to your profile here. Click save when you're done.
+    <DialogContent class="sm:max-w-md">
+      <DialogHeader>
+        <DialogTitle>Restaurant info</DialogTitle>
+        <DialogDescription>
+          <p class="mb-2 text-md font-bold">Opening Hours</p>
+
+          <ul>
+            <li
+              v-for="[day, [openingHours, closingHours]] in Object.entries(props.hours)"
+              :key="day"
+            >
+              <OpeningHoursRow
+                :day="day"
+                :opening-hours="openingHours"
+                :closing-hours="closingHours"
+                :is-current-day="isCurrentDay(day)"
+              />
+            </li>
+          </ul>
         </DialogDescription>
-        <DialogClose
-          class="text-grass11 hover:bg-green4 focus:shadow-green7 absolute top-[10px] right-[10px] inline-flex h-[25px] w-[25px] appearance-none items-center justify-center rounded-full focus:shadow-[0_0_0_2px] focus:outline-none"
-          aria-label="Close">
-          <Icon icon="lucide:x" />
+      </DialogHeader>
+
+      <DialogFooter class="sm:justify-start">
+        <DialogClose as-child>
+          <Button type="button" variant="secondary"> Close </Button>
         </DialogClose>
-      </DialogContent>
-    </DialogPortal>
-  </DialogRoot>
+      </DialogFooter>
+    </DialogContent>
+  </Dialog>
 </template>
