@@ -19,6 +19,7 @@ public class UserController {
     @GetMapping()
     public ResponseEntity<List<UserDTO>> getUsers() {
         List<User> users = userService.getUsers();
+
         return new ResponseEntity<>(
             users.stream().map(UserDTOMapper::mapUserToUserDTO).toList(),
             HttpStatus.OK

@@ -63,7 +63,7 @@ public class AdminController {
             return new ResponseEntity<>(restaurantReportsService.getAllOpenedRestaurantReports(),HttpStatus.OK);
         } catch (ObjectNotFoundException e) {
 
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(new ArrayList<>(),HttpStatus.OK);
         }
 
     }
@@ -150,7 +150,7 @@ public class AdminController {
             return new ResponseEntity<>(mappedList,HttpStatus.OK);
 
         } catch (ObjectNotFoundException e) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(new ArrayList<>(),HttpStatus.OK);
         }
 
     }
@@ -170,7 +170,7 @@ public class AdminController {
             return new ResponseEntity<>(mappedList,HttpStatus.OK);
 
         } catch (ObjectNotFoundException e) {
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            return new ResponseEntity<>(new ArrayList<>(),HttpStatus.OK);
         }
     }
 
