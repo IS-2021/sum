@@ -9,8 +9,8 @@ import type { Timestamp } from './timestamp';
 
 export interface BookingDTO {
   id: Uuid;
-  meal_id: Uuid;
-  picked_up_timestamp?: Timestamp;
+  mealId: Uuid;
+  pickedUpTimestamp?: Timestamp;
   timestamp: Timestamp;
-  user_id: Uuid;
+  userId: Uuid;
 }

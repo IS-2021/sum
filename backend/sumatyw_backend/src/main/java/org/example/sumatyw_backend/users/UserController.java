@@ -19,7 +19,6 @@ public class UserController {
     @GetMapping()
     public ResponseEntity<List<UserDTO>> getUsers() {
         List<User> users = userService.getUsers();
-
         return new ResponseEntity<>(
             users.stream().map(UserDTOMapper::mapUserToUserDTO).toList(),
             HttpStatus.OK
@@ -27,47 +26,39 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity getUserById(@PathVariable("id") UUID id) {
-        try {
-            User user = userService.getUserById(id);
+    public ResponseEntity<UserDTO> getUserById(@PathVariable("id") UUID id) {
+        User user = userService.getUserById(id);
 
-            return new ResponseEntity<>(
-                UserDTOMapper.mapUserToUserDTO(user),
-                HttpStatus.OK
-            );
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
-        }
+        return new ResponseEntity<>(
+            UserDTOMapper.mapUserToUserDTO(user),
+            HttpStatus.OK
+        );
+    }
+
+    @GetMapping("/me")
+    public ResponseEntity<UserDTO> getMe() {
+        return new ResponseEntity<>(
+            UserDTOMapper.mapUserToUserDTO(userService.getMeUser()),
+            HttpStatus.OK
+        );
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity deleteUserById(@PathVariable("id") UUID id) {
-        if(userService.removeUserById(id)) {
+    public ResponseEntity<Void> deleteUserById(@PathVariable("id") UUID id) {
+        userService.removeUserById(id);
 
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).body("User deleted");
-        } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
-        }
+        return new ResponseEntity<>(
+            HttpStatus.NO_CONTENT
+        );
     }
 
     @PutMapping("{id}")
-    public ResponseEntity updateUserById(@PathVariable("id") UUID id, @Valid @RequestBody UserInputDTO updatedUser) {
-        try {
-            User user = userService.updateUserById(id, UserDTOMapper.mapUserInputDTOToUser(updatedUser));
+    public ResponseEntity<UserDTO> updateUserById(@PathVariable("id") UUID id, @Valid @RequestBody UserInputDTO updatedUser) {
+        User user = userService.updateUserById(id, UserDTOMapper.mapUserInputDTOToUser(updatedUser));
 
-            return new ResponseEntity<>(
-                UserDTOMapper.mapUserToUserDTO(user),
-                HttpStatus.OK
-            );
-
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
-        }
+        return new ResponseEntity<>(
+            UserDTOMapper.mapUserToUserDTO(user),
+            HttpStatus.OK
+        );
     }
-
-    @PutMapping("{id}/activate")
-    public void activateUserAccountById(@PathVariable UUID id) {
-        userService.activateAccount(id);
-    }
-
 }

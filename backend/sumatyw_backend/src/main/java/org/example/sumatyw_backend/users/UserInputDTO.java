@@ -1,7 +1,6 @@
 package org.example.sumatyw_backend.users;
 
 import jakarta.validation.constraints.*;
-import org.example.sumatyw_backend.restaurants.Restaurant;
 
 public record UserInputDTO(
 
@@ -20,11 +19,11 @@ public record UserInputDTO(
      String email,
      @NotBlank(message = "User password cannot be blank")
      @Size(max = 30, message = "User password cannot contain more than 30 characters")
-//     @Pattern(regexp = "^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$ %^&*-]).{8,}$",
-//              message = "The user password is too weak")
+     @Pattern(regexp = "^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$ %^&*-]).{8,}$",
+              message = "The user password is too weak")
      String password,
      @NotBlank(message = "User phone number cannot be blank")
-     @Size(max = 10, message = "User phone number cannot contain more than 10 digits")
+     @Size(max = 11, message = "User phone number cannot contain more than 11 digits")
      String phoneNumber,
      @NotNull(message = "User role number cannot be blank")
 //     @Pattern(regexp = "\\bROLE_USER\\b",

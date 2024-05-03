@@ -9,5 +9,5 @@ import type { Uuid } from './uuid';
 export interface MealInputDTO {
   description: string;
   name: string;
-  restaurant_id: Uuid;
+  restaurantId: Uuid;
 }

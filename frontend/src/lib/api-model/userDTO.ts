@@ -14,6 +14,7 @@ export interface UserDTO {
   email: string;
   firstName: string;
   id: Uuid;
+  isBlocked: boolean;
   password: string;
   phoneNumber: string;
   role: Role;

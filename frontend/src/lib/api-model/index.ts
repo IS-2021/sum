@@ -5,12 +5,16 @@
  * OpenAPI spec version: 1.0.0
  */
 
+export * from './addressInputDto';
+export * from './badRequest400Response';
 export * from './bookingDTO';
 export * from './bookingInputDTO';
 export * from './credentialsDTO';
 export * from './deleteFavouriteRestaurantsDTO';
 export * from './getIngredientsParams';
 export * from './getMealsParams';
+export * from './getRestaurantsParams';
+export * from './hoursDTO';
 export * from './httpException';
 export * from './httpExceptionAnyOf';
 export * from './ingredientDTO';
@@ -23,9 +27,12 @@ export * from './opinionInputDTO';
 export * from './passwordDTO';
 export * from './postIngredientsParams';
 export * from './postMealsParams';
+export * from './putAdminReportsRestaurantsIdParams';
+export * from './putAdminReportsUsersIdParams';
 export * from './reportDTO';
 export * from './reportsInputDTO';
 export * from './restaurantDTO';
+export * from './restaurantFavouriteInputDTO';
 export * from './restaurantInputDTO';
 export * from './role';
 export * from './timestamp';

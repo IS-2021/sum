@@ -7,8 +7,8 @@
 import type { Uuid } from './uuid';
 
 export interface OpinionDTO {
-  is_positive: boolean;
-  opinion_id: Uuid;
-  restaurant_id: Uuid;
-  user_id: Uuid;
+  isPositive: boolean;
+  opinionId: Uuid;
+  restaurantId: Uuid;
+  userId: Uuid;
 }

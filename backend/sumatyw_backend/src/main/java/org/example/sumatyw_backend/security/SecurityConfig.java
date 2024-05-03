@@ -1,12 +1,11 @@
 package org.example.sumatyw_backend.security;
 
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.web.client.HttpMessageConvertersRestClientCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -19,6 +18,8 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.Arrays;
 import java.util.List;
+
+import static org.springframework.security.config.Customizer.withDefaults;
 
 
 @Configuration
@@ -44,30 +45,36 @@ public class SecurityConfig {
             })
             .csrf(AbstractHttpConfigurer::disable)
             .authorizeHttpRequests(authorize -> authorize
-                .requestMatchers(HttpMethod.GET, "/users/{id}").hasAnyRole("USER", "ADMIN")
-                .requestMatchers(HttpMethod.PUT, "/users/{id}").hasAnyRole("USER", "ADMIN")
-                .requestMatchers( "/users/**").hasAnyRole("ADMIN")
+//                .requestMatchers(HttpMethod.GET, "/users/{id}").hasAnyRole("USER", "ADMIN")
+//                .requestMatchers(HttpMethod.PUT, "/users/{id}").hasAnyRole("USER", "ADMIN")
+//                .requestMatchers("/login").permitAll()
+//                .requestMatchers("/auth/register").permitAll()
+//                .requestMatchers( "/admin/**").hasAnyRole("ADMIN")
                 .anyRequest().permitAll()
+//                .anyRequest().authenticated()
             )
-            .httpBasic(Customizer.withDefaults())
-            .formLogin(Customizer.withDefaults())
-//            .formLogin(httpSecurityFormLoginConfigurer -> httpSecurityFormLoginConfigurer
-//                .loginPage("/login")
-//                .failureUrl("/login?error")
-//                .defaultSuccessUrl("/home", true)
-//                .permitAll()
-//            )
-//            .logout(httpSecurityLogoutConfigurer -> httpSecurityLogoutConfigurer
-//                .logoutUrl("/logout")
-//                .logoutSuccessUrl("/login?logout")
-//                .permitAll()
-//                .invalidateHttpSession(true)
-//            )
-//            .csrf(httpSecurityCsrfConfigurer ->
-//                httpSecurityCsrfConfigurer
-//                    .ignoringRequestMatchers("/api/**")
-//            );
-;
+            .httpBasic(withDefaults())
+            .formLogin(httpSecurityFormLoginConfigurer -> httpSecurityFormLoginConfigurer
+                .loginPage("/login")
+                .successHandler((request, response, authentication) -> {
+                    response.setStatus(200);
+                })
+                .failureHandler((request, response, authentication) -> {
+                    response.setContentType("text/html;charset=UTF-8");
+                    response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Authentication Failed. Wrong username or password or both");
+                })
+                .permitAll()
+            )
+            .logout(httpSecurityLogoutConfigurer -> httpSecurityLogoutConfigurer
+                .logoutUrl("/logout")
+                .logoutSuccessHandler((request, response, authentication) -> {
+                    response.setStatus(200);
+                })
+                .invalidateHttpSession(true)
+                .deleteCookies("JSESSIONID")
+                .permitAll()
+            );
+
         return http.build();
     }
 

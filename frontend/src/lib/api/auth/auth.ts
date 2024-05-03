@@ -4,15 +4,11 @@
  * Sumatywny
  * OpenAPI spec version: 1.0.0
  */
-import { useMutation, useQuery } from '@tanstack/vue-query';
+import { useMutation } from '@tanstack/vue-query';
 import type {
   MutationFunction,
-  QueryFunction,
-  QueryKey,
   UseMutationOptions,
   UseMutationReturnType,
-  UseQueryOptions,
-  UseQueryReturnType,
 } from '@tanstack/vue-query';
 import * as axios from 'axios';
 import type { AxiosError, AxiosRequestConfig, AxiosResponse } from 'axios';
@@ -20,72 +16,14 @@ import { unref } from 'vue';
 import type { MaybeRef } from 'vue';
 import type {
   CredentialsDTO,
+  NotFound404Response,
+  PasswordDTO,
   UserDTO,
   UserInputDTO,
+  Uuid,
   ValidationFailed422Response,
 } from '../../api-model';
 
-export const postAuthLogin = (
-  credentialsDTO: MaybeRef<CredentialsDTO>,
-  options?: AxiosRequestConfig,
-): Promise<AxiosResponse<void>> => {
-  credentialsDTO = unref(credentialsDTO);
-  return axios.default.post(`http://localhost:9090/auth/login`, credentialsDTO, options);
-};
-
-export const getPostAuthLoginMutationOptions = <
-  TError = AxiosError<void>,
-  TContext = unknown,
->(options?: {
-  mutation?: UseMutationOptions<
-    Awaited<ReturnType<typeof postAuthLogin>>,
-    TError,
-    { data: CredentialsDTO },
-    TContext
-  >;
-  axios?: AxiosRequestConfig;
-}): UseMutationOptions<
-  Awaited<ReturnType<typeof postAuthLogin>>,
-  TError,
-  { data: CredentialsDTO },
-  TContext
-> => {
-  const { mutation: mutationOptions, axios: axiosOptions } = options ?? {};
-
-  const mutationFn: MutationFunction<
-    Awaited<ReturnType<typeof postAuthLogin>>,
-    { data: CredentialsDTO }
-  > = (props) => {
-    const { data } = props ?? {};
-
-    return postAuthLogin(data, axiosOptions);
-  };
-
-  return { mutationFn, ...mutationOptions };
-};
-
-export type PostAuthLoginMutationResult = NonNullable<Awaited<ReturnType<typeof postAuthLogin>>>;
-export type PostAuthLoginMutationBody = CredentialsDTO;
-export type PostAuthLoginMutationError = AxiosError<void>;
-
-export const usePostAuthLogin = <TError = AxiosError<void>, TContext = unknown>(options?: {
-  mutation?: UseMutationOptions<
-    Awaited<ReturnType<typeof postAuthLogin>>,
-    TError,
-    { data: CredentialsDTO },
-    TContext
-  >;
-  axios?: AxiosRequestConfig;
-}): UseMutationReturnType<
-  Awaited<ReturnType<typeof postAuthLogin>>,
-  TError,
-  { data: CredentialsDTO },
-  TContext
-> => {
-  const mutationOptions = getPostAuthLoginMutationOptions(options);
-
-  return useMutation(mutationOptions);
-};
 export const postAuthRegister = (
   userInputDTO: MaybeRef<UserInputDTO>,
   options?: AxiosRequestConfig,
@@ -152,52 +90,175 @@ export const usePostAuthRegister = <
 
   return useMutation(mutationOptions);
 };
-export const getAuthLogout = (options?: AxiosRequestConfig): Promise<AxiosResponse<void>> => {
-  return axios.default.get(`http://localhost:9090/auth/logout`, options);
+export const putAuthIdChangePassword = (
+  id: MaybeRef<Uuid>,
+  passwordDTO: MaybeRef<PasswordDTO>,
+  options?: AxiosRequestConfig,
+): Promise<AxiosResponse<void>> => {
+  id = unref(id);
+  passwordDTO = unref(passwordDTO);
+  return axios.default.put(
+    `http://localhost:9090/auth/${id}/change-password`,
+    passwordDTO,
+    options,
+  );
 };
 
-export const getGetAuthLogoutQueryKey = () => {
-  return ['http:', 'localhost:9090', 'auth', 'logout'] as const;
-};
-
-export const getGetAuthLogoutQueryOptions = <
-  TData = Awaited<ReturnType<typeof getAuthLogout>>,
-  TError = AxiosError<unknown>,
+export const getPutAuthIdChangePasswordMutationOptions = <
+  TError = AxiosError<NotFound404Response | ValidationFailed422Response>,
+  TContext = unknown,
 >(options?: {
-  query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getAuthLogout>>, TError, TData>>;
-  axios?: AxiosRequestConfig;
-}) => {
-  const { query: queryOptions, axios: axiosOptions } = options ?? {};
-
-  const queryKey = getGetAuthLogoutQueryKey();
-
-  const queryFn: QueryFunction<Awaited<ReturnType<typeof getAuthLogout>>> = ({ signal }) =>
-    getAuthLogout({ signal, ...axiosOptions });
-
-  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
-    Awaited<ReturnType<typeof getAuthLogout>>,
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof putAuthIdChangePassword>>,
     TError,
-    TData
+    { id: Uuid; data: PasswordDTO },
+    TContext
   >;
-};
-
-export type GetAuthLogoutQueryResult = NonNullable<Awaited<ReturnType<typeof getAuthLogout>>>;
-export type GetAuthLogoutQueryError = AxiosError<unknown>;
-
-export const useGetAuthLogout = <
-  TData = Awaited<ReturnType<typeof getAuthLogout>>,
-  TError = AxiosError<unknown>,
->(options?: {
-  query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getAuthLogout>>, TError, TData>>;
   axios?: AxiosRequestConfig;
-}): UseQueryReturnType<TData, TError> & { queryKey: QueryKey } => {
-  const queryOptions = getGetAuthLogoutQueryOptions(options);
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof putAuthIdChangePassword>>,
+  TError,
+  { id: Uuid; data: PasswordDTO },
+  TContext
+> => {
+  const { mutation: mutationOptions, axios: axiosOptions } = options ?? {};
 
-  const query = useQuery(queryOptions) as UseQueryReturnType<TData, TError> & {
-    queryKey: QueryKey;
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof putAuthIdChangePassword>>,
+    { id: Uuid; data: PasswordDTO }
+  > = (props) => {
+    const { id, data } = props ?? {};
+
+    return putAuthIdChangePassword(id, data, axiosOptions);
   };
 
-  query.queryKey = unref(queryOptions).queryKey as QueryKey;
+  return { mutationFn, ...mutationOptions };
+};
 
-  return query;
+export type PutAuthIdChangePasswordMutationResult = NonNullable<
+  Awaited<ReturnType<typeof putAuthIdChangePassword>>
+>;
+export type PutAuthIdChangePasswordMutationBody = PasswordDTO;
+export type PutAuthIdChangePasswordMutationError = AxiosError<
+  NotFound404Response | ValidationFailed422Response
+>;
+
+export const usePutAuthIdChangePassword = <
+  TError = AxiosError<NotFound404Response | ValidationFailed422Response>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof putAuthIdChangePassword>>,
+    TError,
+    { id: Uuid; data: PasswordDTO },
+    TContext
+  >;
+  axios?: AxiosRequestConfig;
+}): UseMutationReturnType<
+  Awaited<ReturnType<typeof putAuthIdChangePassword>>,
+  TError,
+  { id: Uuid; data: PasswordDTO },
+  TContext
+> => {
+  const mutationOptions = getPutAuthIdChangePasswordMutationOptions(options);
+
+  return useMutation(mutationOptions);
+};
+export const postLogin = (
+  credentialsDTO: MaybeRef<CredentialsDTO>,
+  options?: AxiosRequestConfig,
+): Promise<AxiosResponse<void>> => {
+  const formUrlEncoded = new URLSearchParams();
+  const unrefedCredentialsDTO = unref(credentialsDTO);
+  formUrlEncoded.append('username', unrefedCredentialsDTO.username);
+  formUrlEncoded.append('password', unrefedCredentialsDTO.password);
+
+  credentialsDTO = unref(credentialsDTO);
+  return axios.default.post(`http://localhost:9090/login`, formUrlEncoded, options);
+};
+
+export const getPostLoginMutationOptions = <
+  TError = AxiosError<void>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof postLogin>>,
+    TError,
+    { data: CredentialsDTO },
+    TContext
+  >;
+  axios?: AxiosRequestConfig;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof postLogin>>,
+  TError,
+  { data: CredentialsDTO },
+  TContext
+> => {
+  const { mutation: mutationOptions, axios: axiosOptions } = options ?? {};
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof postLogin>>,
+    { data: CredentialsDTO }
+  > = (props) => {
+    const { data } = props ?? {};
+
+    return postLogin(data, axiosOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type PostLoginMutationResult = NonNullable<Awaited<ReturnType<typeof postLogin>>>;
+export type PostLoginMutationBody = CredentialsDTO;
+export type PostLoginMutationError = AxiosError<void>;
+
+export const usePostLogin = <TError = AxiosError<void>, TContext = unknown>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof postLogin>>,
+    TError,
+    { data: CredentialsDTO },
+    TContext
+  >;
+  axios?: AxiosRequestConfig;
+}): UseMutationReturnType<
+  Awaited<ReturnType<typeof postLogin>>,
+  TError,
+  { data: CredentialsDTO },
+  TContext
+> => {
+  const mutationOptions = getPostLoginMutationOptions(options);
+
+  return useMutation(mutationOptions);
+};
+export const postLogout = (options?: AxiosRequestConfig): Promise<AxiosResponse<void>> => {
+  return axios.default.post(`http://localhost:9090/logout`, undefined, options);
+};
+
+export const getPostLogoutMutationOptions = <
+  TError = AxiosError<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<Awaited<ReturnType<typeof postLogout>>, TError, void, TContext>;
+  axios?: AxiosRequestConfig;
+}): UseMutationOptions<Awaited<ReturnType<typeof postLogout>>, TError, void, TContext> => {
+  const { mutation: mutationOptions, axios: axiosOptions } = options ?? {};
+
+  const mutationFn: MutationFunction<Awaited<ReturnType<typeof postLogout>>, void> = () => {
+    return postLogout(axiosOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type PostLogoutMutationResult = NonNullable<Awaited<ReturnType<typeof postLogout>>>;
+
+export type PostLogoutMutationError = AxiosError<unknown>;
+
+export const usePostLogout = <TError = AxiosError<unknown>, TContext = unknown>(options?: {
+  mutation?: UseMutationOptions<Awaited<ReturnType<typeof postLogout>>, TError, void, TContext>;
+  axios?: AxiosRequestConfig;
+}): UseMutationReturnType<Awaited<ReturnType<typeof postLogout>>, TError, void, TContext> => {
+  const mutationOptions = getPostLogoutMutationOptions(options);
+
+  return useMutation(mutationOptions);
 };

@@ -19,35 +19,45 @@ import type { AxiosError, AxiosRequestConfig, AxiosResponse } from 'axios';
 import { computed, unref } from 'vue';
 import type { MaybeRef } from 'vue';
 import type {
+  GetRestaurantsParams,
   NotFound404Response,
   RestaurantDTO,
+  RestaurantInputDTO,
   Uuid,
   ValidationFailed422Response,
 } from '../../api-model';
 
 export const getRestaurants = (
+  params?: MaybeRef<GetRestaurantsParams>,
   options?: AxiosRequestConfig,
 ): Promise<AxiosResponse<RestaurantDTO[]>> => {
-  return axios.default.get(`http://localhost:9090/restaurants`, options);
+  params = unref(params);
+  return axios.default.get(`http://localhost:9090/restaurants`, {
+    ...options,
+    params: { ...unref(params), ...options?.params },
+  });
 };
 
-export const getGetRestaurantsQueryKey = () => {
-  return ['http:', 'localhost:9090', 'restaurants'] as const;
+export const getGetRestaurantsQueryKey = (params?: MaybeRef<GetRestaurantsParams>) => {
+  return ['http:', 'localhost:9090', 'restaurants', ...(params ? [params] : [])] as const;
 };
 
 export const getGetRestaurantsQueryOptions = <
   TData = Awaited<ReturnType<typeof getRestaurants>>,
   TError = AxiosError<unknown>,
->(options?: {
-  query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getRestaurants>>, TError, TData>>;
-  axios?: AxiosRequestConfig;
-}) => {
+>(
+  params?: MaybeRef<GetRestaurantsParams>,
+  options?: {
+    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getRestaurants>>, TError, TData>>;
+    axios?: AxiosRequestConfig;
+  },
+) => {
   const { query: queryOptions, axios: axiosOptions } = options ?? {};
 
-  const queryKey = getGetRestaurantsQueryKey();
+  const queryKey = getGetRestaurantsQueryKey(params);
 
   const queryFn: QueryFunction<Awaited<ReturnType<typeof getRestaurants>>> = ({ signal }) =>
-    getRestaurants({ signal, ...axiosOptions });
+    getRestaurants(params, { signal, ...axiosOptions });
 
   return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
     Awaited<ReturnType<typeof getRestaurants>>,
@@ -62,11 +72,14 @@ export type GetRestaurantsQueryError = AxiosError<unknown>;
 export const useGetRestaurants = <
   TData = Awaited<ReturnType<typeof getRestaurants>>,
   TError = AxiosError<unknown>,
->(options?: {
-  query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getRestaurants>>, TError, TData>>;
-  axios?: AxiosRequestConfig;
-}): UseQueryReturnType<TData, TError> & { queryKey: QueryKey } => {
-  const queryOptions = getGetRestaurantsQueryOptions(options);
+>(
+  params?: MaybeRef<GetRestaurantsParams>,
+  options?: {
+    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getRestaurants>>, TError, TData>>;
+    axios?: AxiosRequestConfig;
+  },
+): UseQueryReturnType<TData, TError> & { queryKey: QueryKey } => {
+  const queryOptions = getGetRestaurantsQueryOptions(params, options);
 
   const query = useQuery(queryOptions) as UseQueryReturnType<TData, TError> & {
     queryKey: QueryKey;
@@ -77,6 +90,72 @@ export const useGetRestaurants = <
   return query;
 };
 
+export const postRestaurants = (
+  restaurantInputDTO: MaybeRef<RestaurantInputDTO>,
+  options?: AxiosRequestConfig,
+): Promise<AxiosResponse<void>> => {
+  restaurantInputDTO = unref(restaurantInputDTO);
+  return axios.default.post(`http://localhost:9090/restaurants`, restaurantInputDTO, options);
+};
+
+export const getPostRestaurantsMutationOptions = <
+  TError = AxiosError<ValidationFailed422Response>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof postRestaurants>>,
+    TError,
+    { data: RestaurantInputDTO },
+    TContext
+  >;
+  axios?: AxiosRequestConfig;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof postRestaurants>>,
+  TError,
+  { data: RestaurantInputDTO },
+  TContext
+> => {
+  const { mutation: mutationOptions, axios: axiosOptions } = options ?? {};
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof postRestaurants>>,
+    { data: RestaurantInputDTO }
+  > = (props) => {
+    const { data } = props ?? {};
+
+    return postRestaurants(data, axiosOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type PostRestaurantsMutationResult = NonNullable<
+  Awaited<ReturnType<typeof postRestaurants>>
+>;
+export type PostRestaurantsMutationBody = RestaurantInputDTO;
+export type PostRestaurantsMutationError = AxiosError<ValidationFailed422Response>;
+
+export const usePostRestaurants = <
+  TError = AxiosError<ValidationFailed422Response>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof postRestaurants>>,
+    TError,
+    { data: RestaurantInputDTO },
+    TContext
+  >;
+  axios?: AxiosRequestConfig;
+}): UseMutationReturnType<
+  Awaited<ReturnType<typeof postRestaurants>>,
+  TError,
+  { data: RestaurantInputDTO },
+  TContext
+> => {
+  const mutationOptions = getPostRestaurantsMutationOptions(options);
+
+  return useMutation(mutationOptions);
+};
 export const getRestaurantsId = (
   id: MaybeRef<Uuid>,
   options?: AxiosRequestConfig,

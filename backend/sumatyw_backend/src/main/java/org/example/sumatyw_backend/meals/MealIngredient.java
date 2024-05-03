@@ -3,6 +3,7 @@ package org.example.sumatyw_backend.meals;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.example.sumatyw_backend.ingredients.Ingredient;
 
 import java.util.UUID;
 
