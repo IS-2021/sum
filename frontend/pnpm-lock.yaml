@@ -11,6 +11,9 @@ importers:
       '@fontsource-variable/inter':
         specifier: ^5.0.18
         version: 5.0.18
+      '@iconify/vue':
+        specifier: ^4.1.2
+        version: 4.1.2(vue@3.4.21(typescript@5.4.5))
       '@tanstack/vue-query':
         specifier: ^5.29.0
         version: 5.29.0(vue@3.4.21(typescript@5.4.5))
@@ -707,6 +710,14 @@ packages:
   '@ibm-cloud/openapi-ruleset@1.15.9':
     resolution: {integrity: sha512-r9qQY09PQnDjEWAAmwU5EUGOiBcYLWNZqKX84GBhEvyx8g/eyTaOGSEoX8lLfEIMOLJH3qu+Ht15EDgc/pDyWQ==}
     engines: {node: '>=16.0.0'}
+
+  '@iconify/types@2.0.0':
+    resolution: {integrity: sha512-+wluvCrRhXrhyOmRDJ3q8mux9JkKy5SJ/v8ol2tu4FVjyYvtEzkc/3pK15ET6RKg4b4w4BmTk1+gsCUhf21Ykg==}
+
+  '@iconify/vue@4.1.2':
+    resolution: {integrity: sha512-CQnYqLiQD5LOAaXhBrmj1mdL2/NCJvwcC4jtW2Z8ukhThiFkLDkutarTOV2trfc9EXqUqRs0KqXOL9pZ/IyysA==}
+    peerDependencies:
+      vue: '>=3'
 
   '@inquirer/confirm@3.1.5':
     resolution: {integrity: sha512-6+dwZrpko5vr5EFEQmUbfBVhtu6IsnB8lQNsLHgO9S9fbfS5J6MuUj+NY0h98pPpYZXEazLR7qzypEDqVzf6aQ==}
@@ -4450,6 +4461,13 @@ snapshots:
       validator: 13.11.0
     transitivePeerDependencies:
       - encoding
+
+  '@iconify/types@2.0.0': {}
+
+  '@iconify/vue@4.1.2(vue@3.4.21(typescript@5.4.5))':
+    dependencies:
+      '@iconify/types': 2.0.0
+      vue: 3.4.21(typescript@5.4.5)
 
   '@inquirer/confirm@3.1.5':
     dependencies:
