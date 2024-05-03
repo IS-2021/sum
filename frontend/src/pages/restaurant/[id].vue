@@ -6,8 +6,8 @@ meta:
 <script setup lang="ts">
 import StarItem from '@/components/StarItem.vue';
 import MealsByCategory from '@/components/restaurant/MealsList.vue';
+import InfoPopup from '@/components/restaurant/InfoPopup.vue';
 import { ThumbsUp } from 'lucide-vue-next';
-import { Info } from 'lucide-vue-next';
 
 import { useRoute } from 'vue-router/auto';
 import { ref } from 'vue';
@@ -42,7 +42,7 @@ const categories = ref(['Kategoria 1'])
             <StarItem :isFavourite="isFavourite" />
             <div class="flex-grow" />
             <div class="flex items-center justify-center h-10 w-10 rounded-full bg-neutral-900 cursor-pointer">
-              <Info class="h-5 w-5" />
+              <InfoPopup />
             </div>
           </div>
           <div class="flex flex-row gap-1">
