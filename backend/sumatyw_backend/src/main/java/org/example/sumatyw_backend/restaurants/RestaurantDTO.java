@@ -11,6 +11,8 @@ public record RestaurantDTO(
     UUID userId,
     AddressDTO addressDTO,
     Hours hours,
-    String imageUrl
+    String imageUrl,
+    int likesCount,
+    int dislikesCount
 ) {
 }
