@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { Button } from '@/components/ui/button';
 import { useUser } from '@/composables/useUser';
+import DropdownMenu from '@/components/DropdownMenu.vue';
 
 const { user, isSignedIn, signOut } = useUser();
 </script>
@@ -12,12 +13,14 @@ const { user, isSignedIn, signOut } = useUser();
     <nav class="flex-grow">
       <ul class="flex items-center gap-6">
         <li>
+          <DropdownMenu />
+        </li>
+        <li>
           <div class="h-8 w-8">
             <RouterLink to="/">
               <img src="@/assets/logo.svg" alt="Logo" />
             </RouterLink>
           </div>
-          <DropdownMenu />
         </li>
         <li class="hidden sm:block">
           <RouterLink to="/">Home</RouterLink>
