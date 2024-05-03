@@ -45,10 +45,6 @@ public class RestaurantController {
     public ResponseEntity<List<RestaurantDTO>> getRestaurants() {
         List<Restaurant> restaurants = restaurantService.getAllRestaurants();
 
-        if (restaurants.isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        }
-
         return new ResponseEntity<>(
             restaurants.stream().map(RestaurantDTOMapper::mapRestaurantToRestaurantDTO).toList(),
             HttpStatus.OK
