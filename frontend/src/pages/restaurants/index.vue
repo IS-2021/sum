@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useHead } from '@unhead/vue';
 import { useGetRestaurants } from '@/lib/api/restaurants/restaurants';
-import { unref } from 'vue';
+import { computed, unref } from 'vue';
 import RestaurantCard from '@/components/restaurants/RestaurantCard.vue';
 
 useHead({
@@ -9,7 +9,7 @@ useHead({
 });
 
 const { data, isPending: areRestaurantsLoading } = useGetRestaurants();
-const restaurants = unref(data)?.data;
+const restaurants = computed(() => unref(data)?.data);
 </script>
 
 <template>
