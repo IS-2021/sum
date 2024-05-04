@@ -98,6 +98,10 @@ paths:
         - restaurants
       responses:
         "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RestaurantDTO"
           description: Restaurant created
         "422":
           $ref: "#/components/responses/ValidationFailed_422"
@@ -1113,6 +1117,8 @@ paths:
         content:
           multipart/form-data: {}
         required: true
+      tags:
+        - restaurants
       responses:
         "200":
           description: Restaurant image added
@@ -1363,21 +1369,25 @@ components:
       title: Root Type for RestaurantDTO
       description: ""
       required:
-        - addressInputDto
+        - addressInputDTO
         - name
         - phoneNumber
         - userId
+        - hours
       type: object
       properties:
         name:
           type: string
         phoneNumber:
           type: string
-        addressInputDto:
-          $ref: "#/components/schemas/AddressInputDTO"
-          description: ""
         userId:
           $ref: "#/components/schemas/UUID"
+        hours:
+          $ref: "#/components/schemas/HoursDTO"
+          description: ""
+        addressInputDTO:
+          $ref: "#/components/schemas/AddressInputDTO"
+          description: ""
     CredentialsDTO:
       description: ""
       required:

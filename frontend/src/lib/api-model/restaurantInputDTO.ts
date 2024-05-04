@@ -5,10 +5,12 @@
  * OpenAPI spec version: 1.0.0
  */
 import type { AddressInputDTO } from './addressInputDTO';
+import type { HoursDTO } from './hoursDTO';
 import type { Uuid } from './uuid';
 
 export interface RestaurantInputDTO {
-  addressInputDto: AddressInputDTO;
+  addressInputDTO: AddressInputDTO;
+  hours: HoursDTO;
   name: string;
   phoneNumber: string;
   userId: Uuid;

@@ -7,7 +7,6 @@
 
 export * from './addressDTO';
 export * from './addressInputDTO';
-export * from './addressInputDto';
 export * from './badRequest400Response';
 export * from './bookingDTO';
 export * from './bookingInputDTO';
