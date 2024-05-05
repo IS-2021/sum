@@ -58,8 +58,18 @@ public class RestaurantController {
             RestaurantDTOMapper.mapRestaurantToRestaurantDTO(restaurant),
             HttpStatus.OK
         );
-
     }
+
+//    @GetMapping("/{id}")
+//    public ResponseEntity<RestaurantDTO> getRestaurantDistinctIngredients(@PathVariable("id") UUID id) {
+//        Restaurant restaurant = restaurantService.getRestaurantById(id);
+//
+//
+//        return new ResponseEntity<>(
+//            RestaurantDTOMapper.mapRestaurantToRestaurantDTO(restaurant),
+//            HttpStatus.OK
+//        );
+//    }
 
 
     @DeleteMapping("/{id}")

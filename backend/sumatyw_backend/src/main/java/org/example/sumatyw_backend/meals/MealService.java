@@ -32,8 +32,8 @@ public class MealService {
         return mealRepository.save(existingMeal);
     }
 
-    public void removeMeal(Meal meal) {
-        mealRepository.delete(meal);
+    public void removeMeal(UUID id) {
+        mealRepository.deleteById(id);
     }
 
 }
