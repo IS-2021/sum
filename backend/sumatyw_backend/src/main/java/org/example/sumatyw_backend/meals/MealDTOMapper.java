@@ -1,6 +1,10 @@
 package org.example.sumatyw_backend.meals;
 
+import org.example.sumatyw_backend.ingredients.IngredientDTO;
+import org.example.sumatyw_backend.ingredients.IngredientDTOMapper;
 import org.example.sumatyw_backend.restaurants.Restaurant;
+
+import java.util.ArrayList;
 
 public class MealDTOMapper {
 
@@ -17,7 +21,8 @@ public class MealDTOMapper {
             meal.getMealId(),
             meal.getRestaurant().getRestaurantId(),
             meal.getName(),
-            meal.getDescription()
+            meal.getDescription(),
+            meal.getIngredients() == null ? new ArrayList<>() : meal.getIngredients().stream().map(IngredientDTOMapper::mapIngredientToIngredientDTO).toList()
         );
     }
 }
