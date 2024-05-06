@@ -13,24 +13,17 @@ import {
 import { Info } from 'lucide-vue-next';
 import type { AddressDTO, HoursDTO } from '@/lib/api-model';
 import OpeningHoursRow from '@/components/restaurants/OpeningHoursRow.vue';
-import { isCurrentDay } from '@/components/restaurants/openingHours';
+import { isCurrentDay, sortedDaysOfWeek } from '@/components/restaurants/openingHours';
 
 interface RestaurantInfoProps {
   hours: HoursDTO;
   address: AddressDTO;
+  phone: string;
 }
 
 const props = defineProps<RestaurantInfoProps>();
 
-const sortedDaysOfWeek: HoursDTO = {
-  monday: props.hours.monday,
-  tuesday: props.hours.tuesday,
-  wednesday: props.hours.wednesday,
-  thursday: props.hours.thursday,
-  friday: props.hours.friday,
-  saturday: props.hours.saturday,
-  sunday: props.hours.sunday,
-};
+const daysOfWeek: HoursDTO = sortedDaysOfWeek(props.hours);
 </script>
 
 <template>
@@ -40,13 +33,31 @@ const sortedDaysOfWeek: HoursDTO = {
     </DialogTrigger>
     <DialogContent class="sm:max-w-md">
       <DialogHeader>
-        <DialogTitle>Restaurant info</DialogTitle>
-        <DialogDescription>
+        <DialogTitle class="pb-4">Restaurant info</DialogTitle>
+        <DialogDescription class="pb-4">
+          <p class="mb-2 text-md font-bold">Address</p>
+
+          <div>
+            <p>{{ props.address.country }}</p>
+            <p>
+              {{
+                props.address.street +
+                ' ' +
+                props.address.number +
+                ', ' +
+                props.address.postalCode +
+                ' ' +
+                props.address.city
+              }}
+            </p>
+          </div>
+        </DialogDescription>
+        <DialogDescription class="pb-4">
           <p class="mb-2 text-md font-bold">Opening Hours</p>
 
           <ul>
             <li
-              v-for="[day, [openingHours, closingHours]] in Object.entries(sortedDaysOfWeek)"
+              v-for="[day, [openingHours, closingHours]] in Object.entries(daysOfWeek)"
               :key="day"
             >
               <OpeningHoursRow
@@ -57,6 +68,11 @@ const sortedDaysOfWeek: HoursDTO = {
               />
             </li>
           </ul>
+        </DialogDescription>
+        <DialogDescription class="pb-4">
+          <p class="mb-2 text-md font-bold">Phone number</p>
+
+          <p>{{ props.phone }}</p>
         </DialogDescription>
       </DialogHeader>
 

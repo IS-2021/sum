@@ -45,7 +45,7 @@ const categories = ref(['Kategoria 1']);
               <InfoPopup
                 :hours="restaurant.hours"
                 :address="restaurant.address"
-                @click="console.log(restaurant?.hours)"
+                :phone="restaurant.phoneNumber"
               />
             </div>
           </div>
