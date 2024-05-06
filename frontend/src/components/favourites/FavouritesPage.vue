@@ -1,22 +1,30 @@
 <script setup lang="ts">
 import type { RestaurantDTO, RestaurantFavouriteInputDTO, UserDTO } from '@/lib/api-model';
-import { putUsersIdFavourites, useGetUsersIdFavourites } from '@/lib/api/favourites/favourites';
+import {
+  postUsersDeleteFavourites,
+  putUsersIdFavourites,
+  useGetUsersIdFavourites,
+} from '@/lib/api/favourites/favourites';
 import { computed, type ComputedRef, ref, unref, watch, watchEffect } from 'vue';
 import { ArrowRightIcon, GripVerticalIcon, StarIcon } from 'lucide-vue-next';
 import { getImageUrl } from '@/lib/assets';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { VueDraggable } from 'vue-draggable-plus';
+import StarItem from '@/components/StarItem.vue';
 
 const { user } = defineProps<{ user: UserDTO }>();
 
-const { data, isPending } = useGetUsersIdFavourites(unref(user)?.id, {
+const { data, isFetching, refetch } = useGetUsersIdFavourites(unref(user)?.id, {
   query: {
     enabled: !!unref(user)?.id,
     refetchOnWindowFocus: false,
     refetchOnReconnect: false,
   },
 });
+
+const disableDrag = ref(false);
+const isDragDisabled = computed(() => disableDrag.value || isFetching.value);
 
 const favourites = ref<RestaurantDTO[]>([]);
 const hasAnyFavourites = computed(() => favourites.value.length > 0);
@@ -27,6 +35,25 @@ const favouritesOrder: ComputedRef<RestaurantFavouriteInputDTO[]> = computed(() 
     orderNumber: index,
   })),
 );
+
+const handleDeleteFavourite = async (isFavourite: Boolean, restaurantId: string) => {
+  if (isFavourite) {
+    return;
+  }
+
+  disableDrag.value = true;
+
+  const { status } = await postUsersDeleteFavourites({
+    userId: user.id,
+    restaurantIds: [restaurantId],
+  });
+
+  if (status === 204) {
+    await refetch();
+  }
+
+  disableDrag.value = false;
+};
 
 watch(favouritesOrder, (newFavourites) => {
   putUsersIdFavourites(user.id, newFavourites);
@@ -50,7 +77,13 @@ watchEffect(() => {
   </div>
 
   <div v-if="favourites">
-    <VueDraggable class="space-y-4" v-model="favourites" handle=".handle" :animation="250">
+    <VueDraggable
+      :class="cn('space-y-4', isDragDisabled && 'transition-all opacity-80 animate-pulse')"
+      v-model="favourites"
+      handle=".handle"
+      :animation="250"
+      :disabled="isDragDisabled"
+    >
       <li
         v-for="favourite in favourites"
         :key="favourite.id"
@@ -62,7 +95,12 @@ watchEffect(() => {
         >
           <GripVerticalIcon class="handle cursor-move" />
           <Button size="icon" variant="ghost" class="hover:!bg-opacity-40">
-            <StarIcon class="fill-neutral-50" />
+            <StarItem
+              :is-favourite="true"
+              @favourite-change="
+                (isFavourite: Boolean) => handleDeleteFavourite(isFavourite, favourite.id)
+              "
+            />
           </Button>
 
           <RouterLink :to="`/restaurant/${favourite.id}`" class="flex-grow">
