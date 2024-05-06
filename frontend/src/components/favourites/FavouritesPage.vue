@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import type { RestaurantDTO, UserDTO } from '@/lib/api-model';
-import { useGetUsersIdFavourites } from '@/lib/api/favourites/favourites';
-import { computed, ref, unref, watchEffect } from 'vue';
+import type { RestaurantDTO, RestaurantFavouriteInputDTO, UserDTO } from '@/lib/api-model';
+import { putUsersIdFavourites, useGetUsersIdFavourites } from '@/lib/api/favourites/favourites';
+import { computed, type ComputedRef, ref, unref, watch, watchEffect } from 'vue';
 import { ArrowRightIcon, GripVerticalIcon, StarIcon } from 'lucide-vue-next';
 import { getImageUrl } from '@/lib/assets';
 import { cn } from '@/lib/utils';
@@ -20,6 +20,17 @@ const { data, isPending } = useGetUsersIdFavourites(unref(user)?.id, {
 
 const favourites = ref<RestaurantDTO[]>([]);
 const hasAnyFavourites = computed(() => favourites.value.length > 0);
+
+const favouritesOrder: ComputedRef<RestaurantFavouriteInputDTO[]> = computed(() =>
+  favourites.value.map((favourite, index) => ({
+    restaurantId: favourite.id,
+    orderNumber: index,
+  })),
+);
+
+watch(favouritesOrder, (newFavourites) => {
+  putUsersIdFavourites(user.id, newFavourites);
+});
 
 watchEffect(() => {
   if (data.value && data.value.data.length > 0) {
