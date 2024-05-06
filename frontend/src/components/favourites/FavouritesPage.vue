@@ -43,14 +43,12 @@ const { favourites, hasAnyFavourites, handleDeleteFavourite, isDragDisabled } = 
           class="flex items-center gap-4 px-5 py-3 transition-all duration-200 bg-opacity-50 hover:bg-opacity-35 bg-neutral-900"
         >
           <GripVerticalIcon class="handle cursor-move" />
-          <Button size="icon" variant="ghost" class="hover:!bg-opacity-40">
-            <StarItem
-              :is-favourite="true"
-              @favourite-change="
-                (isFavourite: Boolean) => handleDeleteFavourite(isFavourite, favourite.id)
-              "
-            />
-          </Button>
+          <StarItem
+            :is-favourite="true"
+            @favourite-change="
+              (isFavourite: Boolean) => handleDeleteFavourite(isFavourite, favourite.id)
+            "
+          />
 
           <RouterLink :to="`/restaurant/${favourite.id}`" class="flex-grow">
             <div class="ml-2">
