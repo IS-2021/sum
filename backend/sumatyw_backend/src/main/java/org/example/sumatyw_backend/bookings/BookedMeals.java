@@ -1,9 +1,9 @@
-package org.example.sumatyw_backend.meals;
+package org.example.sumatyw_backend.bookings;
 
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.example.sumatyw_backend.restaurants.Restaurant;
+import org.example.sumatyw_backend.meals.Meal;
 import org.example.sumatyw_backend.users.User;
 
 import java.util.UUID;

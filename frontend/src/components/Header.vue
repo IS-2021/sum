@@ -28,6 +28,9 @@ const { user, isSignedIn, signOut } = useUser();
         <li class="hidden sm:block">
           <RouterLink to="/restaurants">Restaurants</RouterLink>
         </li>
+        <li class="hidden sm:block">
+          <RouterLink to="/favourites">Favourites</RouterLink>
+        </li>
         <li class="flex-grow"></li>
         <li class="flex gap-2">
           <Button v-if="isSignedIn" @click="signOut">Log out</Button>

@@ -32,8 +32,8 @@ public class RestaurantDTOMapper {
                 AddressDTOMapper.mapAddressToAddressDTO(restaurant.getAddress()),
                 objectMapper.readValue(restaurant.getHours(), Hours.class),
                 "/images/" + restaurant.getImageUUID() + ".jpg",
-                97,
-                3
+                restaurant.getLikesCount(),
+                restaurant.getDislikesCount()
             );
         } catch (JsonProcessingException e) {
             e.printStackTrace();

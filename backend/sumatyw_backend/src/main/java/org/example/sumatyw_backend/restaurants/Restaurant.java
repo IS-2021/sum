@@ -40,4 +40,6 @@ public class Restaurant {
     private String imageUUID;
     private boolean active;
     private boolean banned;
+    private int likesCount;
+    private int dislikesCount;
 }

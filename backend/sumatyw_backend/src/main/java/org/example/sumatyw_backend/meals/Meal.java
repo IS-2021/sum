@@ -5,6 +5,7 @@ import lombok.*;
 import org.example.sumatyw_backend.ingredients.Ingredient;
 import org.example.sumatyw_backend.restaurants.Restaurant;
 
+import java.util.ArrayList;
 import java.util.UUID;
 import java.util.List;
 
@@ -25,12 +26,6 @@ public class Meal {
     @ManyToOne
     @JoinColumn(name = "restaurant_id", nullable = false)
     private Restaurant restaurant;
-    @ManyToMany
-    @JoinTable(
-        name = "meal_ingredient",
-        joinColumns = @JoinColumn(name = "meal_id", referencedColumnName = "mealId"),
-        inverseJoinColumns = @JoinColumn(name = "ingredient_id", referencedColumnName = "ingredientId")
-    )
-    private List<Ingredient> ingredients;
-
+    @ManyToMany(mappedBy = "meals")
+    private List<Ingredient> ingredients = new ArrayList<>();
 }

@@ -17,8 +17,8 @@ public class IngredientController {
     private IngredientService ingredientService;
 
     @PostMapping()
-    public ResponseEntity<IngredientDTO> addOpinion(@RequestBody @Valid IngredientInputDTO ingredientInputDTO) {
-        Ingredient ingredient = ingredientService.addIngredient(IngredientDTOMapper.mapIngredientInputDTOToIngredient(ingredientInputDTO));
+    public ResponseEntity<IngredientDTO> addIngredient(@RequestBody @Valid IngredientInputDTO ingredientInputDTO, @RequestParam("mealId") UUID mealId) {
+        Ingredient ingredient = ingredientService.addIngredient(IngredientDTOMapper.mapIngredientInputDTOToIngredient(ingredientInputDTO, mealId));
 
         return new ResponseEntity<>(
             IngredientDTOMapper.mapIngredientToIngredientDTO(ingredient),
@@ -26,12 +26,26 @@ public class IngredientController {
         );
     }
 
-    @GetMapping()
-    public ResponseEntity<List<IngredientDTO>> getIngredients() {
-        List<Ingredient> ingredients = ingredientService.getAllIngredients();
+    @GetMapping(params = {"mealId"})
+    public ResponseEntity<List<IngredientDTO>> getIngredientsByMealId(@RequestParam("mealId") UUID mealId) {
+        List<Ingredient> ingredientsByMeal = ingredientService.getIngredientsByMealId(mealId);
+        return new ResponseEntity<>(ingredientsByMeal.stream().map(IngredientDTOMapper::mapIngredientToIngredientDTO).toList(), HttpStatus.OK);
+
+    }
+
+    @GetMapping(params = {"restaurantId"})
+    public ResponseEntity<List<IngredientDTO>> getIngredientsByRestaurantId(@RequestParam("restaurantId") UUID restaurandId) {
+        List<Ingredient> ingredients = ingredientService.getIngredientsByRestaurant(restaurandId);
+
         return new ResponseEntity<>(ingredients.stream().map(IngredientDTOMapper::mapIngredientToIngredientDTO).toList(), HttpStatus.OK);
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<IngredientDTO> getIngredientById(@PathVariable UUID id) {
+
+        Ingredient ingredient = ingredientService.getIngredientById(id);
+        return new ResponseEntity<>(IngredientDTOMapper.mapIngredientToIngredientDTO(ingredient), HttpStatus.OK);
+    }
 
     @PutMapping("/{id}")
     public ResponseEntity<IngredientDTO> updateIngredient(@PathVariable("id") UUID id, @RequestBody @Valid IngredientInputDTO ingredientInputDTO) {

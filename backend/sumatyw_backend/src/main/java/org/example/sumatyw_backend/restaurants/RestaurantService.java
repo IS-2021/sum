@@ -7,11 +7,10 @@ import org.example.sumatyw_backend.cities.City;
 import org.example.sumatyw_backend.cities.CityRepository;
 import org.example.sumatyw_backend.exceptions.ObjectNotFoundException;
 import org.example.sumatyw_backend.exceptions.ResourceAlreadyExistsException;
+import org.example.sumatyw_backend.ingredients.IngredientDTO;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 @AllArgsConstructor
@@ -100,5 +99,11 @@ public class RestaurantService {
 
     public void updateRestaurantImageUUID(Restaurant restaurant) {
         restaurantRepository.save(restaurant);
+    }
+
+    public List<IngredientDTO> getDistinctIngredientsByRestaurant(Restaurant restaurant) {
+        Set ingredients = new HashSet();
+        //fo
+        return null;
     }
 }
