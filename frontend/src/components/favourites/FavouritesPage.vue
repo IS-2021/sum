@@ -1,68 +1,17 @@
 <script setup lang="ts">
-import type { RestaurantDTO, RestaurantFavouriteInputDTO, UserDTO } from '@/lib/api-model';
-import {
-  postUsersDeleteFavourites,
-  putUsersIdFavourites,
-  useGetUsersIdFavourites,
-} from '@/lib/api/favourites/favourites';
-import { computed, type ComputedRef, ref, unref, watch, watchEffect } from 'vue';
+import type { UserDTO } from '@/lib/api-model';
 import { ArrowRightIcon, GripVerticalIcon, StarIcon } from 'lucide-vue-next';
 import { getImageUrl } from '@/lib/assets';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { VueDraggable } from 'vue-draggable-plus';
 import StarItem from '@/components/StarItem.vue';
+import { useFavourites } from '@/components/favourites/useFavourites';
 
 const { user } = defineProps<{ user: UserDTO }>();
 
-const { data, isFetching, refetch } = useGetUsersIdFavourites(unref(user)?.id, {
-  query: {
-    enabled: !!unref(user)?.id,
-    refetchOnWindowFocus: false,
-    refetchOnReconnect: false,
-  },
-});
-
-const disableDrag = ref(false);
-const isDragDisabled = computed(() => disableDrag.value || isFetching.value);
-
-const favourites = ref<RestaurantDTO[]>([]);
-const hasAnyFavourites = computed(() => favourites.value.length > 0);
-
-const favouritesOrder: ComputedRef<RestaurantFavouriteInputDTO[]> = computed(() =>
-  favourites.value.map((favourite, index) => ({
-    restaurantId: favourite.id,
-    orderNumber: index,
-  })),
-);
-
-const handleDeleteFavourite = async (isFavourite: Boolean, restaurantId: string) => {
-  if (isFavourite) {
-    return;
-  }
-
-  disableDrag.value = true;
-
-  const { status } = await postUsersDeleteFavourites({
-    userId: user.id,
-    restaurantIds: [restaurantId],
-  });
-
-  if (status === 204) {
-    await refetch();
-  }
-
-  disableDrag.value = false;
-};
-
-watch(favouritesOrder, (newFavourites) => {
-  putUsersIdFavourites(user.id, newFavourites);
-});
-
-watchEffect(() => {
-  if (data.value && data.value.data.length > 0) {
-    favourites.value = data.value.data;
-  }
+const { favourites, hasAnyFavourites, handleDeleteFavourite, isDragDisabled } = useFavourites({
+  userId: user.id,
 });
 </script>
 
