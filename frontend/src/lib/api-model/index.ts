@@ -28,6 +28,8 @@ export * from './opinionInputDTO';
 export * from './passwordDTO';
 export * from './postIngredientsParams';
 export * from './postMealsParams';
+export * from './problemDetail';
+export * from './problemDetailResponse';
 export * from './putAdminReportsRestaurantsIdParams';
 export * from './putAdminReportsUsersIdParams';
 export * from './reportDTO';
