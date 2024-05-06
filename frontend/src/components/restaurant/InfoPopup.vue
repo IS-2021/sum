@@ -21,12 +21,22 @@ interface RestaurantInfoProps {
 }
 
 const props = defineProps<RestaurantInfoProps>();
+
+const sortedDaysOfWeek: HoursDTO = {
+  monday: props.hours.monday,
+  tuesday: props.hours.tuesday,
+  wednesday: props.hours.wednesday,
+  thursday: props.hours.thursday,
+  friday: props.hours.friday,
+  saturday: props.hours.saturday,
+  sunday: props.hours.sunday,
+};
 </script>
 
 <template>
   <Dialog>
     <DialogTrigger as-child>
-      <Info @click="console.log($props.hours)" />
+      <Info @click="console.log(props.hours)" />
     </DialogTrigger>
     <DialogContent class="sm:max-w-md">
       <DialogHeader>
@@ -36,7 +46,7 @@ const props = defineProps<RestaurantInfoProps>();
 
           <ul>
             <li
-              v-for="[day, [openingHours, closingHours]] in Object.entries(props.hours)"
+              v-for="[day, [openingHours, closingHours]] in Object.entries(sortedDaysOfWeek)"
               :key="day"
             >
               <OpeningHoursRow

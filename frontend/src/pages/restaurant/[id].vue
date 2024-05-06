@@ -42,7 +42,11 @@ const categories = ref(['Kategoria 1']);
             <div
               class="flex items-center justify-center h-10 w-10 rounded-full bg-neutral-900 cursor-pointer"
             >
-              <InfoPopup :hours="restaurant.hours" :address="restaurant.address" />
+              <InfoPopup
+                :hours="restaurant.hours"
+                :address="restaurant.address"
+                @click="console.log(restaurant?.hours)"
+              />
             </div>
           </div>
           <div class="flex flex-row gap-1">
