@@ -25,10 +25,11 @@ const isFavourite = ref(false);
 const categories = ref(['Kategoria 1']);
 const { user } = useUser();
 
-function postFavourite() {
-  if (isFavourite.value === true && user.value && restaurant.value) {
-    postUsersIdFavourites(user.value.id, { restaurantId: restaurant.value.id });
-  } else if (isFavourite.value === false && user.value && restaurant.value) {
+function postFavourite(fav: Boolean) {
+  if (fav === true && user.value && restaurant.value) {
+    postUsersIdFavourites(user.value.id, { orderNumber: 0, restaurantId: restaurant.value.id });
+  } else if (fav === false && user.value && restaurant.value) {
+    console.log(isFavourite.value);
     postUsersDeleteFavourites({ restaurantIds: [restaurant.value.id], userId: user.value.id });
   }
 }
