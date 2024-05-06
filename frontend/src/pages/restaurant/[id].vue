@@ -10,7 +10,7 @@ import { ThumbsUp } from 'lucide-vue-next';
 import { Info } from 'lucide-vue-next';
 
 import { useRoute } from 'vue-router/auto';
-import { unref, watch, computed, ref } from 'vue';
+import { unref, computed, ref } from 'vue';
 
 import { useGetRestaurantsId } from '@/lib/api/restaurants/restaurants';
 import { postUsersDeleteFavourites, postUsersIdFavourites } from '@/lib/api/favourites/favourites';
@@ -29,7 +29,6 @@ function postFavourite(fav: Boolean) {
   if (fav === true && user.value && restaurant.value) {
     postUsersIdFavourites(user.value.id, { orderNumber: 0, restaurantId: restaurant.value.id });
   } else if (fav === false && user.value && restaurant.value) {
-    console.log(isFavourite.value);
     postUsersDeleteFavourites({ restaurantIds: [restaurant.value.id], userId: user.value.id });
   }
 }
