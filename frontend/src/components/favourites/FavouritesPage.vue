@@ -54,8 +54,7 @@ const { favourites, hasAnyFavourites, handleDeleteFavourite, isDragDisabled } = 
 
           <RouterLink :to="`/restaurant/${favourite.id}`" class="flex-grow">
             <div class="ml-2">
-              <p class="text-lg font-semibold mb-2">{{ favourite.name }}</p>
-              <p class="text-neutral-300">Closed</p>
+              <p class="text-lg font-semibold">{{ favourite.name }}</p>
             </div>
           </RouterLink>
 
