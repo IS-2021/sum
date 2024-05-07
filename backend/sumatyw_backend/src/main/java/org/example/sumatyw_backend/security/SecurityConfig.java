@@ -61,7 +61,7 @@ public class SecurityConfig {
                 })
                 .failureHandler((request, response, authentication) -> {
                     response.setContentType("text/html;charset=UTF-8");
-                    response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Authentication Failed. Wrong username or password or both");
+                    response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Wrong username or password");
                 })
                 .permitAll()
             )
