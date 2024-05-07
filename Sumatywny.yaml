@@ -122,6 +122,8 @@ paths:
               schema:
                 $ref: "#/components/schemas/UserDTO"
           description: Created
+        "400":
+          $ref: "#/components/responses/ProblemDetail"
         "422":
           $ref: "#/components/responses/ValidationFailed_422"
   /users/me:
@@ -450,7 +452,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/IngredientDTO"
+              $ref: "#/components/schemas/IngredientInputDTO"
         required: true
       tags:
         - ingredients
@@ -637,13 +639,6 @@ paths:
         required: true
       tags:
         - meals
-      parameters:
-        - name: restaurantId
-          description: ""
-          schema:
-            $ref: "#/components/schemas/UUID"
-          in: query
-          required: false
       responses:
         "201":
           content:
@@ -1193,6 +1188,7 @@ components:
       required:
         - name
         - type
+        - mealId
       type: object
       properties:
         name:
@@ -1201,6 +1197,9 @@ components:
         type:
           description: ""
           type: string
+        mealId:
+          $ref: "#/components/schemas/UUID"
+          description: ""
     HttpException:
       anyOf:
         - required:
@@ -1672,6 +1671,33 @@ components:
         postalCode:
           description: ""
           type: string
+    ProblemDetail:
+      title: Root Type for ProblemDetail
+      description: ""
+      required:
+        - detail
+        - title
+        - type
+        - status
+      type: object
+      properties:
+        type:
+          type: string
+        title:
+          type: string
+        status:
+          format: int32
+          type: integer
+        detail:
+          type: string
+        instance:
+          type: string
+      example:
+        type: "about:blank"
+        title: Bad Request
+        status: 400
+        detail: "Phone number: '111222333' already exists."
+        instance: /auth/register
   responses:
     NotFound_404:
       content:
@@ -1695,6 +1721,12 @@ components:
       description: Validation failed
     BadRequest_400:
       description: Bad requets
+    ProblemDetail:
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ProblemDetail"
+      description: ""
 tags:
   - name: bookings
     description: ""

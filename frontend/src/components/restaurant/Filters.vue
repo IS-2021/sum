@@ -17,33 +17,25 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { useGetIngredients } from '@/lib/api/ingredients/ingredients';
 import { unref } from 'vue';
 import type { Uuid } from '@/lib/api-model';
-import type { Ref } from 'vue';
 
-interface Ingredient {
-  id: Uuid;
-  name: string;
-  type: string;
-}
+const props = defineProps<{
+  restaurantId: Uuid;
+}>();
 
-const { data } = useGetIngredients();
-let ingredientsData = computed(() => unref(data)?.data);
-const parsedIngredients: Ref<Ingredient[] | undefined> = ref(ingredientsData);
-const ingredients = parsedIngredients.value?.filter(
-  (item, index) => parsedIngredients.value?.indexOf(item) === index,
-);
-const filtered: Ref<Ingredient[] | undefined> = ref(ingredients);
+const { data } = useGetIngredients({ restaurantId: props.restaurantId });
+let ingredients = computed(() => unref(data)?.data);
 
 const open = ref(false);
 
-function updateFilter(element: Ingredient) {
-  if (filtered.value?.find((e) => e.name === element.name) !== undefined) {
-    const index = filtered.value?.indexOf(element);
-    filtered.value.splice(index, 1);
-  } else {
-    filtered.value?.push(element);
-  }
-  console.log(filtered.value);
-}
+// function updateFilter(element: Ingredient) {
+//   if (filtered.value?.find((e) => e.name === element.name) !== undefined) {
+//     const index = filtered.value?.indexOf(element);
+//     filtered.value.splice(index, 1);
+//   } else {
+//     filtered.value?.push(element);
+//   }
+//   console.log(filtered.value);
+// }
 </script>
 
 <template>
@@ -72,13 +64,14 @@ function updateFilter(element: Ingredient) {
               :value="ingredient"
               :id="ingredient.id"
               @select="open = true"
-              @click.stop="updateFilter(ingredient)"
             >
               <Check
                 :class="
                   cn(
                     'mr-2 h-4 w-4',
-                    filtered?.find((e) => e.name === ingredient.name) ? 'opacity-100' : 'opacity-0',
+                    ingredients?.find((e) => e.name === ingredient.name)
+                      ? 'opacity-100'
+                      : 'opacity-0',
                   )
                 "
               />

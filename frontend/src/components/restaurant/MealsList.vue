@@ -5,9 +5,11 @@ import { unref } from 'vue';
 import { Button } from '@/components/ui/button';
 import TagsInput from '@/components/restaurant/TagsInput.vue';
 import Filters from '@/components/restaurant/Filters.vue';
+import type { Uuid } from '@/lib/api-model';
 
 const props = defineProps<{
   categories: string[];
+  restaurantId: Uuid;
 }>();
 
 const { data, isPending: areMealsLoading } = useGetMeals({
@@ -27,7 +29,7 @@ const categories = ref(props.categories);
     <div class="w-96 space-y-3 p-4 bg-neutral-900 rounded h-fit">
       <p>Excluding dishes that contain:</p>
       <TagsInput />
-      <Filters />
+      <Filters :restaurantId="props.restaurantId" />
     </div>
     <div
       class="mx-auto flex-grow space-y-3 mb-10"
