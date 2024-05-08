@@ -15,8 +15,8 @@ import {
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 
 import { useGetIngredients } from '@/lib/api/ingredients/ingredients';
-import { unref } from 'vue';
-import type { Uuid } from '@/lib/api-model';
+import { unref, type Ref } from 'vue';
+import type { IngredientDTO, Uuid } from '@/lib/api-model';
 
 const props = defineProps<{
   restaurantId: Uuid;
@@ -27,15 +27,16 @@ let ingredients = computed(() => unref(data)?.data);
 
 const open = ref(false);
 
-// function updateFilter(element: Ingredient) {
-//   if (filtered.value?.find((e) => e.name === element.name) !== undefined) {
-//     const index = filtered.value?.indexOf(element);
-//     filtered.value.splice(index, 1);
-//   } else {
-//     filtered.value?.push(element);
-//   }
-//   console.log(filtered.value);
-// }
+const unwantedIngredients: Ref<IngredientDTO[]> = ref([]);
+
+function updateFilter(element: IngredientDTO) {
+  if (unwantedIngredients.value?.find((e) => e.name === element.name) !== undefined) {
+    const index = unwantedIngredients.value?.indexOf(element);
+    unwantedIngredients.value.splice(index, 1);
+  } else {
+    unwantedIngredients.value.push(element);
+  }
+}
 </script>
 
 <template>
@@ -64,12 +65,13 @@ const open = ref(false);
               :value="ingredient"
               :id="ingredient.id"
               @select="open = true"
+              @click="updateFilter(ingredient)"
             >
               <Check
                 :class="
                   cn(
                     'mr-2 h-4 w-4',
-                    ingredients?.find((e) => e.name === ingredient.name)
+                    unwantedIngredients?.find((e) => e.name === ingredient.name)
                       ? 'opacity-100'
                       : 'opacity-0',
                   )

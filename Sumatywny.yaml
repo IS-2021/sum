@@ -1155,7 +1155,7 @@ components:
         - restaurantId
         - name
         - description
-        - id
+        - mealId
       type: object
       properties:
         name:
@@ -1164,10 +1164,10 @@ components:
         description:
           description: ""
           type: string
-        id:
+        restaurantId:
           $ref: "#/components/schemas/UUID"
           description: ""
-        restaurantId:
+        mealId:
           $ref: "#/components/schemas/UUID"
           description: ""
     BookingInputDTO:
@@ -1188,7 +1188,6 @@ components:
       required:
         - name
         - type
-        - mealId
       type: object
       properties:
         name:
@@ -1197,9 +1196,6 @@ components:
         type:
           description: ""
           type: string
-        mealId:
-          $ref: "#/components/schemas/UUID"
-          description: ""
     HttpException:
       anyOf:
         - required:
