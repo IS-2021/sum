@@ -13,6 +13,7 @@ import {
   CommandList,
 } from '@/components/ui/command';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import TagsInput from './TagsInput.vue';
 
 import { useGetIngredients } from '@/lib/api/ingredients/ingredients';
 import { unref, type Ref } from 'vue';
@@ -40,6 +41,7 @@ function updateFilter(element: IngredientDTO) {
 </script>
 
 <template>
+  <TagsInput :unwantedIngredients="unwantedIngredients" />
   <Popover v-model:open="open">
     <PopoverTrigger as-child>
       <Button

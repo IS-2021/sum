@@ -31,7 +31,6 @@ const categories = ref(props.categories);
     <div class="flex gap-12 mt-4">
       <div class="w-96 space-y-3 p-4 bg-neutral-900 rounded h-fit">
         <p>Excluding dishes that contain:</p>
-        <TagsInput />
         <Filters :restaurantId="props.restaurantId" />
       </div>
       <div
