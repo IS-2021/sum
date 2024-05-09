@@ -65,7 +65,7 @@ const { totalRatings, ratingPercentage } = useUserRating(
           <div v-if="totalRatings > 0" class="flex items-center gap-1 text-green-600">
             <ThumbsUp class="h-4 w-4" />
             <p class="text-base">
-              {{ ratingPercentage }}% ({{ totalRatings }}) users recommends this restaurant
+              {{ ratingPercentage }} ({{ totalRatings }}) users recommends this restaurant
             </p>
           </div>
           <div v-else>

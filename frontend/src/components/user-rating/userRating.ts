@@ -11,3 +11,7 @@ export function computeUserRating(likes?: number, dislikes?: number) {
 
   return likes / total;
 }
+
+export function formatUserRating(rating: number) {
+  return `${Math.floor(rating * 100)}%`;
+}

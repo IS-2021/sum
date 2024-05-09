@@ -1,14 +1,14 @@
 <script setup lang="ts">
-import { computeUserRating } from '@/components/user-rating/userRating';
+import { useUserRating } from '@/components/user-rating/useUserRating';
 
 const props = defineProps<{
   likes: number;
   dislikes: number;
 }>();
 
-const likesPercentage = computeUserRating(props.likes, props.dislikes);
+const likesPercentage = useUserRating(props.likes, props.dislikes);
 </script>
 
 <template>
-  <span>{{ likesPercentage }}% ({{ likes + dislikes }})</span>
+  <span>{{ likesPercentage }} ({{ likes + dislikes }})</span>
 </template>
