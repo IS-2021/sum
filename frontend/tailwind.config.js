@@ -20,6 +20,11 @@ module.exports = {
       },
     },
     extend: {
+      colors: {
+        primary: '#5cc157',
+        secondary: '#b7d77f',
+        accent: '#405f40',
+      },
       keyframes: {
         'accordion-down': {
           from: { height: 0 },

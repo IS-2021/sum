@@ -132,14 +132,8 @@ const isValid = form.meta.value.valid;
       <FormItem>
         <FormLabel>Phone Number</FormLabel>
         <FormControl>
-          <div
-            class="flex items-center rounded-md border border-neutral-200 dark:border-neutral-800"
-          >
-            <div
-              class="px-2 h-10 grid items-center text-neutral-500 bg-neutral-200 dark:bg-neutral-800"
-            >
-              +48
-            </div>
+          <div class="flex items-center rounded-md border border-neutral-200">
+            <div class="px-2 h-10 grid items-center text-neutral-500 bg-neutral-200">+48</div>
             <Input
               type="text"
               placeholder="111222333"

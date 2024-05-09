@@ -40,18 +40,19 @@ const { favourites, hasAnyFavourites, handleDeleteFavourite, isDragDisabled } = 
         :class="cn('rounded bg-cover group list-none', `bg-[image:var(--image-url)]`)"
       >
         <div
-          class="flex items-center gap-4 px-5 py-3 transition-all duration-200 bg-opacity-50 hover:bg-opacity-35 bg-neutral-900"
+          class="flex items-center gap-4 px-5 py-3 transition-all duration-200 bg-opacity-50 hover:bg-opacity-35 bg-neutral-700"
         >
-          <GripVerticalIcon class="handle cursor-move" />
+          <GripVerticalIcon class="handle cursor-move text-neutral-50" />
           <StarItem
             :is-favourite="true"
             @favourite-change="
               (isFavourite: Boolean) => handleDeleteFavourite(isFavourite, favourite.id)
             "
+            class="text-neutral-50 [&>svg]:fill-neutral-50 hover:text-neutral-50 transition-all"
           />
 
           <RouterLink :to="`/restaurant/${favourite.id}`" class="flex-grow">
-            <div class="ml-2">
+            <div class="ml-2 text-neutral-50">
               <p class="text-lg font-semibold">{{ favourite.name }}</p>
             </div>
           </RouterLink>
@@ -59,7 +60,7 @@ const { favourites, hasAnyFavourites, handleDeleteFavourite, isDragDisabled } = 
           <Button
             as-child
             variant="ghost"
-            class="group-hover:opacity-100 opacity-0 transition-all hover:!bg-opacity-40 hidden md:block"
+            class="group-hover:opacity-100 opacity-0 transition-all hover:!bg-opacity-40 hidden md:block text-neutral-50 hover:text-neutral-50"
           >
             <RouterLink :to="`/restaurant/${favourite.id}`">
               Open <ArrowRightIcon class="inline-block w-5 h-5 ml-2" />
