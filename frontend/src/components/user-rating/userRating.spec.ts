@@ -15,7 +15,6 @@ describe('userRating', () => {
     const likes = undefined;
     const dislikes = undefined;
 
-    //@ts-ignore
     const result = computeUserRating(likes, dislikes);
 
     expect(result).toBe(0);
