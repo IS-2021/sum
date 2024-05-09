@@ -1,6 +1,6 @@
 <route lang="yaml">
 meta:
-  layout: centered
+  layout: auth
 </route>
 
 <script setup lang="ts">
@@ -13,14 +13,18 @@ useHead({
 </script>
 
 <template>
-  <div class="w-96 mx-auto border border-neutral-200 p-8 rounded">
-    <h1 class="text-xl text-center font-bold mb-8">Sign-In</h1>
+  <div>
+    <h1 class="text-2xl font-bold mb-2">Sign in to FoodGood</h1>
 
-    <SignInForm />
+    <p class="mb-8 text-neutral-700">Use your username and password to sign-in.</p>
 
-    <p class="w-full text-sm text-center mt-4">
-      Don't have an account?
-      <RouterLink to="/sign-up" class="underline">Sign up</RouterLink>
-    </p>
+    <div class="max-w-screen-sm w-full">
+      <SignInForm />
+
+      <p class="w-full text-sm text-center mt-4">
+        Don't have an account?
+        <RouterLink to="/sign-up" class="underline">Sign up</RouterLink>
+      </p>
+    </div>
   </div>
 </template>
