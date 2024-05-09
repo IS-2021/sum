@@ -17,7 +17,7 @@ useHead({
       />
     </div>
 
-    <div class="p-10">
+    <div class="p-10 self-center">
       <RouterLink to="/">
         <Logo class="mb-8" />
       </RouterLink>
