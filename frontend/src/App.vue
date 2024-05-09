@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { RouterView } from 'vue-router';
 import { onMounted } from 'vue';
+import { Toaster } from 'vue-sonner';
 
 onMounted(() => {
   // This is soo hacky, but I haven't found out why the class="dark" is attached to the html tag
@@ -15,4 +16,5 @@ onMounted(() => {
   <Suspense>
     <RouterView />
   </Suspense>
+  <Toaster position="top-center" rich-colors />
 </template>

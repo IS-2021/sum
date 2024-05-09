@@ -1,6 +1,7 @@
 import { computed } from 'vue';
 import { useGetUsersMe } from '@/lib/api/users/users';
 import { postLogout } from '@/lib/api/auth/auth';
+import { toast } from 'vue-sonner';
 
 export function useUser() {
   const { isPending, data, refetch } = useGetUsersMe();
@@ -12,6 +13,7 @@ export function useUser() {
   const signOut = async () => {
     await postLogout();
     await refetch();
+    toast.success("Goodbye! You've been signed out.");
   };
 
   return {

@@ -18,6 +18,7 @@ import type { ValidationFailed422Response } from '@/lib/api-model';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { AlertCircleIcon } from 'lucide-vue-next';
 import { useRouter } from 'vue-router/auto';
+import { toast } from 'vue-sonner';
 
 const router = useRouter();
 
@@ -38,6 +39,7 @@ const onSubmit = form.handleSubmit(async (credentials) => {
 
   if (res.status === 200) {
     errorMessage.value = '';
+    toast.success('Welcome back!');
     await router.push('/');
   } else if (res.status === 401) {
     const { message } = res.data as unknown as ValidationFailed422Response;
