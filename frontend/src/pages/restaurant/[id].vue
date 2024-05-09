@@ -15,6 +15,8 @@ import { unref, computed, ref } from 'vue';
 import { useGetRestaurantsId } from '@/lib/api/restaurants/restaurants';
 import { postUsersDeleteFavourites, postUsersIdFavourites } from '@/lib/api/favourites/favourites';
 import { useUser } from '@/composables/useUser';
+import { computeUserRating } from '@/components/user-rating/userRating';
+import { useUserRating } from '@/components/user-rating/useUserRating';
 
 const route = useRoute('/restaurant/[id]');
 const id = route.params.id;
@@ -32,6 +34,11 @@ function postFavourite(fav: Boolean) {
     postUsersDeleteFavourites({ restaurantIds: [restaurant.value.id], userId: user.value.id });
   }
 }
+
+const { totalRatings, ratingPercentage } = useUserRating(
+  restaurant.value?.likesCount,
+  restaurant.value?.dislikesCount,
+);
 </script>
 
 <template>
@@ -55,9 +62,14 @@ function postFavourite(fav: Boolean) {
               <Info class="h-5 w-5" />
             </div>
           </div>
-          <div class="flex items-center gap-1 text-green-600">
+          <div v-if="totalRatings > 0" class="flex items-center gap-1 text-green-600">
             <ThumbsUp class="h-4 w-4" />
-            <p class="text-base">97% users recomends this restaurant</p>
+            <p class="text-base">
+              {{ ratingPercentage }}% ({{ totalRatings }}) users recommends this restaurant
+            </p>
+          </div>
+          <div v-else>
+            <p class="text-neutral-500">This restaurant has no ratings yet.</p>
           </div>
         </div>
       </div>
