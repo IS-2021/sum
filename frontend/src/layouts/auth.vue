@@ -12,8 +12,8 @@ useHead({
     <div class="hidden sm:block">
       <img
         src="@/assets/images/pablo-merchan-montes-Orz90t6o0e4-unsplash-crop.jpg"
-        alt="FoodGood"
-        class="w-full h-svh object-cover object-right-top"
+        alt="FoodGood background image"
+        class="w-full h-svh object-cover object-right-top aria-hidden"
       />
     </div>
 
