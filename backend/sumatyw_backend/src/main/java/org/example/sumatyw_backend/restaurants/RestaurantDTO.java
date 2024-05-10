@@ -9,7 +9,7 @@ public record RestaurantDTO(
     String name,
     String phoneNumber,
     UUID userId,
-    AddressDTO addressDTO,
+    AddressDTO address,
     Hours hours,
     String imageUrl,
     int likesCount,

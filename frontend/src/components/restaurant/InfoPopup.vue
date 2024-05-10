@@ -29,7 +29,7 @@ const daysOfWeek: HoursDTO = sortedDaysOfWeek(props.hours);
 <template>
   <Dialog>
     <DialogTrigger as-child>
-      <Info @click="console.log(props.hours)" />
+      <Info />
     </DialogTrigger>
     <DialogContent class="sm:max-w-md">
       <DialogHeader>
@@ -40,15 +40,8 @@ const daysOfWeek: HoursDTO = sortedDaysOfWeek(props.hours);
           <div>
             <p>{{ props.address.country }}</p>
             <p>
-              {{
-                props.address.street +
-                ' ' +
-                props.address.number +
-                ', ' +
-                props.address.postalCode +
-                ' ' +
-                props.address.city
-              }}
+              {{ props.address.street }} {{ props.address.number }}, {{ props.address.postalCode }}
+              {{ props.address.city }}
             </p>
           </div>
         </DialogDescription>
