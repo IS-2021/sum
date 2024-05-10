@@ -23,7 +23,6 @@ import type {
   MealDTO,
   MealInputDTO,
   NotFound404Response,
-  PostMealsParams,
   Uuid,
   ValidationFailed422Response,
 } from '../../api-model';
@@ -93,15 +92,10 @@ export const useGetMeals = <
 
 export const postMeals = (
   mealInputDTO: MaybeRef<MealInputDTO>,
-  params?: MaybeRef<PostMealsParams>,
   options?: AxiosRequestConfig,
 ): Promise<AxiosResponse<MealDTO>> => {
   mealInputDTO = unref(mealInputDTO);
-  params = unref(params);
-  return axios.default.post(`http://localhost:9090/meals`, mealInputDTO, {
-    ...options,
-    params: { ...unref(params), ...options?.params },
-  });
+  return axios.default.post(`http://localhost:9090/meals`, mealInputDTO, options);
 };
 
 export const getPostMealsMutationOptions = <
@@ -111,25 +105,25 @@ export const getPostMealsMutationOptions = <
   mutation?: UseMutationOptions<
     Awaited<ReturnType<typeof postMeals>>,
     TError,
-    { data: MealInputDTO; params?: PostMealsParams },
+    { data: MealInputDTO },
     TContext
   >;
   axios?: AxiosRequestConfig;
 }): UseMutationOptions<
   Awaited<ReturnType<typeof postMeals>>,
   TError,
-  { data: MealInputDTO; params?: PostMealsParams },
+  { data: MealInputDTO },
   TContext
 > => {
   const { mutation: mutationOptions, axios: axiosOptions } = options ?? {};
 
   const mutationFn: MutationFunction<
     Awaited<ReturnType<typeof postMeals>>,
-    { data: MealInputDTO; params?: PostMealsParams }
+    { data: MealInputDTO }
   > = (props) => {
-    const { data, params } = props ?? {};
+    const { data } = props ?? {};
 
-    return postMeals(data, params, axiosOptions);
+    return postMeals(data, axiosOptions);
   };
 
   return { mutationFn, ...mutationOptions };
@@ -146,14 +140,14 @@ export const usePostMeals = <
   mutation?: UseMutationOptions<
     Awaited<ReturnType<typeof postMeals>>,
     TError,
-    { data: MealInputDTO; params?: PostMealsParams },
+    { data: MealInputDTO },
     TContext
   >;
   axios?: AxiosRequestConfig;
 }): UseMutationReturnType<
   Awaited<ReturnType<typeof postMeals>>,
   TError,
-  { data: MealInputDTO; params?: PostMealsParams },
+  { data: MealInputDTO },
   TContext
 > => {
   const mutationOptions = getPostMealsMutationOptions(options);

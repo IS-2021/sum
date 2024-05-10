@@ -1170,6 +1170,11 @@ components:
         mealId:
           $ref: "#/components/schemas/UUID"
           description: ""
+        ingredients:
+          description: List of ingredients
+          type: array
+          items:
+            $ref: "#/components/schemas/IngredientDTO"
     BookingInputDTO:
       description: ""
       required:
