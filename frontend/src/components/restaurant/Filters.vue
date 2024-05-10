@@ -16,19 +16,23 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import TagsInput from './TagsInput.vue';
 
 import { useGetIngredients } from '@/lib/api/ingredients/ingredients';
-import { unref, type Ref } from 'vue';
+import { unref, watch, type Ref } from 'vue';
 import type { IngredientDTO, Uuid } from '@/lib/api-model';
 
 const props = defineProps<{
   restaurantId: Uuid;
+  unwantedIngredients: IngredientDTO[];
+}>();
+
+const emit = defineEmits<{
+  (e: 'filterChange', unwantedIngredients: IngredientDTO[]): void;
 }>();
 
 const { data } = useGetIngredients({ restaurantId: props.restaurantId });
 let ingredients = computed(() => unref(data)?.data);
 
 const open = ref(false);
-
-const unwantedIngredients: Ref<IngredientDTO[]> = ref([]);
+const unwantedIngredients: Ref<IngredientDTO[]> = ref(props.unwantedIngredients);
 
 function updateFilter(element: IngredientDTO) {
   if (unwantedIngredients.value?.find((e) => e.name === element.name) !== undefined) {
@@ -38,6 +42,10 @@ function updateFilter(element: IngredientDTO) {
     unwantedIngredients.value.push(element);
   }
 }
+
+watch(unwantedIngredients.value, (x) => {
+  emit('filterChange', x);
+});
 </script>
 
 <template>
