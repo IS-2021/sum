@@ -8,10 +8,10 @@ const { user, isSignedIn, signOut } = useUser();
 
 <template>
   <header
-    class="h-16 w-full top-0 border border-transparent bg-zinc-800 sticky flex items-center px-6 z-50"
+    class="h-16 w-full top-0 border border-transparent bg-neutral-950 sticky flex items-center px-6 z-50"
   >
     <nav class="flex-grow">
-      <ul class="flex items-center gap-6">
+      <ul class="flex items-center gap-6 text-white">
         <li>
           <DropdownMenu />
         </li>

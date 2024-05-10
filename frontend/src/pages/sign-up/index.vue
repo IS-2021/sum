@@ -13,7 +13,7 @@ useHead({
 </script>
 
 <template>
-  <div class="mx-auto border border-neutral-800 p-8 rounded">
+  <div class="mx-auto border border-neutral-200 p-8 rounded">
     <h1 class="text-xl text-center font-bold mb-8">Sign-Up</h1>
 
     <SignUpForm />
