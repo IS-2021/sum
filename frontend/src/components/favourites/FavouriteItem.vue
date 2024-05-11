@@ -3,19 +3,14 @@ import StarItem from '@/components/StarItem.vue';
 import { ArrowRightIcon, ClockIcon, GripVerticalIcon } from 'lucide-vue-next';
 import { Button } from '@/components/ui/button';
 import type { RestaurantDTO } from '@/lib/api-model';
-import { openingHoursToString } from '@/components/restaurants/openingHours';
+import { findCurrentDayHours, openingHoursToString } from '@/components/restaurants/openingHours';
 
 const { favourite, handleDeleteFavourite } = defineProps<{
   favourite: RestaurantDTO;
   handleDeleteFavourite: (isFavourite: Boolean, id: string) => void;
 }>();
 
-const isCurrentDay = (day: string) => {
-  return day === new Date().toLocaleDateString('en-US', { weekday: 'long' }).toLowerCase();
-};
-
-const foundCurrentDayHours = Object.entries(favourite.hours).find(([day]) => isCurrentDay(day));
-const currentDayHours = foundCurrentDayHours ? foundCurrentDayHours[1] : [];
+const currentDayHours = findCurrentDayHours(favourite.hours);
 </script>
 
 <template>
