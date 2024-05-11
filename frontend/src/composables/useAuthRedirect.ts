@@ -1,32 +1,57 @@
 import { useUser } from '@/composables/useUser';
-import { computed, watchEffect } from 'vue';
+import { watchEffect } from 'vue';
 import { useRouter } from 'vue-router/auto';
-import type { AppRoutes } from '@/lib/router';
+import type { AppRouteNames } from '@/lib/router';
 
-interface AuthRedirectOptions {
-  redirectTo: AppRoutes;
-  requireAuth?: boolean;
+interface UseAuthRedirectorProps {
+  /**
+   * Routes that will require an authenticated user.
+   */
+  protectedRoutes: AppRouteNames[];
+  /**
+   * A callback executed on redirect of unauthenticated user.
+   */
+  onGuestRedirect?: () => void;
+  /**
+   * Routes that will require a non-authenticated user.
+   */
+  guestRoutes?: AppRouteNames[];
+  /**
+   * A callback executed on redirect of non-authenticated user.
+   */
+  onAuthenticatedRedirect?: () => void;
 }
 
-/**
- * Redirects the user to a specific route based on their authentication status.
- * By default, it will redirect only if the user is signed in.
- * @param redirectTo The route to redirect to
- * @param requireAuth If true, the user must be signed in for redirect to work
- */
-export function useAuthRedirect({ redirectTo, requireAuth = true }: AuthRedirectOptions) {
-  const { isSignedIn, isLoaded } = useUser();
+export function useAuthRedirect({
+  protectedRoutes,
+  guestRoutes,
+  onGuestRedirect,
+  onAuthenticatedRedirect,
+}: UseAuthRedirectorProps) {
   const router = useRouter();
-
-  const shouldRedirect = computed(() => (requireAuth ? isSignedIn.value : !isSignedIn.value));
+  const { isLoaded, isSignedIn } = useUser();
 
   watchEffect(async () => {
     if (!isLoaded.value) {
       return;
     }
 
-    if (shouldRedirect.value) {
-      await router.push(redirectTo);
+    const currentRoute = router.currentRoute.value.name;
+    const isAuthRouteMatching = protectedRoutes.includes(currentRoute);
+    const isGuestRouteMatching = guestRoutes?.includes(currentRoute);
+
+    if (isAuthRouteMatching && !isSignedIn.value) {
+      await router.push('/sign-in');
+
+      if (onGuestRedirect) {
+        onGuestRedirect();
+      }
+    } else if (isGuestRouteMatching && isSignedIn.value) {
+      await router.push('/');
+
+      if (onAuthenticatedRedirect) {
+        onAuthenticatedRedirect();
+      }
     }
   });
 }
