@@ -22,18 +22,17 @@ public class RestaurantService {
 
     public Restaurant addRestaurant(Restaurant restaurant) {
 
-        restaurant.setImageUUID("default.jpg");
+        restaurant.setImageUUID("default");
 
-        Optional<Address> addressDB = addressRepository.findByCity_NameAndStreetAndNumberAndPostalCode(
-            restaurant.getAddress().getCity().getName(),
+        Optional<Address> addressDB = addressRepository.findByCityAndStreetAndNumberAndPostalCode(
+            restaurant.getAddress().getCity(),
             restaurant.getAddress().getStreet(),
             restaurant.getAddress().getNumber(),
             restaurant.getAddress().getPostalCode()
         );
 
-        Optional<City> city = cityRepository.findByName(restaurant.getAddress().getCity().getName());
-
-        city.ifPresent(c -> restaurant.getAddress().setCity(c));
+        cityRepository.findById(restaurant.getAddress().getCity().getCityId())
+            .orElseThrow(() -> new ObjectNotFoundException("City with id: " + restaurant.getAddress().getCity().getCityId() + " not found"));
 
         if (addressDB.isPresent())
             throw new ResourceAlreadyExistsException("Restaurant with given address already exists");
@@ -55,6 +54,20 @@ public class RestaurantService {
 
     public List<Restaurant> getAllRestaurants() {
         return restaurantRepository.findAllByActiveTrue();
+    }
+
+    public List<Restaurant> getRestaurantsByCity(String city) {
+        return restaurantRepository.findAllByAddress_City_NameAndActiveTrue(city);
+    }
+
+    public RestaurantDTO deactivateRestaurant(UUID id) {
+
+        Restaurant restaurant = restaurantRepository.findById(id).orElseThrow(
+            () -> new ObjectNotFoundException("Restaurant with id: " + id + " not found"));
+        restaurant.setActive(false);
+        restaurantRepository.save(restaurant);
+        return RestaurantDTOMapper.mapRestaurantToRestaurantDTO(restaurant);
+
     }
 
     public RestaurantDTO activateRestaurantById(UUID id) {
@@ -101,9 +114,6 @@ public class RestaurantService {
         restaurantRepository.save(restaurant);
     }
 
-    public List<IngredientDTO> getDistinctIngredientsByRestaurant(Restaurant restaurant) {
-        Set ingredients = new HashSet();
-        //fo
-        return null;
-    }
+
+
 }
