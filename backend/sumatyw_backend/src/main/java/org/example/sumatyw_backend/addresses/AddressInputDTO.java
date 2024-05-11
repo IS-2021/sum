@@ -1,7 +1,10 @@
 package org.example.sumatyw_backend.addresses;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+
+import java.util.UUID;
 
 public record AddressInputDTO(
 
@@ -14,9 +17,8 @@ public record AddressInputDTO(
     @NotBlank(message = "Address postal code cannot be blank")
     @Size(max = 6, message = "City postal code cannot contain more than 6 characters")
     String postalCode,
-    @NotBlank(message = "City name cannot be blank")
-    @Size(max = 100, message = "City name cannot contain more than 100 characters")
-    String city,
+    @NotNull(message = "City id cannot be blank")
+    UUID cityId,
     @NotBlank(message = "Country cannot be blank")
     @Size(max = 50, message = "Country name cannot contain more than 50 characters")
     String country
