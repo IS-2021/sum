@@ -10,7 +10,7 @@ const props = defineProps<AppRouterLinkProps>();
 </script>
 
 <template>
-  <RouterLink :to="props.to" exact-active-class="text-primary">
+  <RouterLink :to="props.to" active-class="text-primary">
     <slot />
   </RouterLink>
 </template>
