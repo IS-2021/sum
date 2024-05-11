@@ -57,7 +57,7 @@ function postFavourite(fav: Boolean) {
             <StarItem :isFavourite="isFavourite" @favourite-change="postFavourite" />
             <div class="flex-grow" />
             <div
-              class="flex items-center justify-center h-10 w-10 rounded-full bg-neutral-900 cursor-pointer"
+              class="flex items-center justify-center h-10 min-w-10 rounded-full bg-neutral-900 cursor-pointer"
             >
               <Info class="h-5 w-5" />
             </div>
