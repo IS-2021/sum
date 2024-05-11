@@ -1,7 +1,6 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue';
-import { useGetMeals } from '@/lib/api/meals/meals';
-import { unref, type Ref } from 'vue';
+import { ref } from 'vue';
+import { type Ref } from 'vue';
 import { Button } from '@/components/ui/button';
 import Filters from '@/components/restaurant/Filters.vue';
 import type { IngredientDTO, MealDTO, Uuid } from '@/lib/api-model';
@@ -9,29 +8,25 @@ import type { IngredientDTO, MealDTO, Uuid } from '@/lib/api-model';
 const props = defineProps<{
   categories: string[];
   restaurantId: Uuid;
+  meals: MealDTO[];
+  areMealsLoading: boolean;
 }>();
 
-const { data, isPending: areMealsLoading } = useGetMeals({
-  restaurantId: props.restaurantId,
-});
-
-const meals = computed(() => unref(data)?.data);
 const amount = ref(0);
 const unwantedIngredients: Ref<IngredientDTO[]> = ref([]);
 let filteredMeals: Ref<MealDTO[]> = ref([]);
 
-meals.value?.forEach((e) => {
+props.meals.forEach((e) => {
   filteredMeals.value.push(e);
 });
 
 function updateFilters(list: IngredientDTO[]) {
-  console.log(unwantedIngredients);
   unwantedIngredients.value = list;
   filteredMeals.value = [];
-  meals.value?.forEach((e) => {
+  props.meals.forEach((e) => {
     filteredMeals.value.push(e);
   });
-  meals.value?.forEach((meal) => {
+  props.meals.forEach((meal) => {
     unwantedIngredients.value.forEach((ingredient) => {
       if (
         meal.ingredients?.find((e) => e.name === ingredient.name) !== undefined &&

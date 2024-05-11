@@ -10,17 +10,20 @@ import { ThumbsUp } from 'lucide-vue-next';
 import { Info } from 'lucide-vue-next';
 
 import { useRoute } from 'vue-router/auto';
-import { unref, computed, ref } from 'vue';
+import { computed, ref } from 'vue';
 
-import { useGetRestaurantsId } from '@/lib/api/restaurants/restaurants';
 import { postUsersDeleteFavourites, postUsersIdFavourites } from '@/lib/api/favourites/favourites';
 import { useUser } from '@/composables/useUser';
 import { getImageUrl } from '@/lib/assets';
+import { getMeals, getRestaurant } from '@/components/restaurant/restaurant';
 
 const route = useRoute('/restaurant/[id]');
 const id = route.params.id;
-const { data, isPending: areRestaurantsLoading } = useGetRestaurantsId(id);
-const restaurant = computed(() => unref(data)?.data);
+const restaurant = getRestaurant(id).restaurant;
+const areRestaurantsLoading = getRestaurant(id).areRestaurantsLoading;
+
+const meals = getMeals(id).meals;
+const areMealsLoading = getMeals(id).areMealsLoading;
 
 const imgSrc = computed(() => getImageUrl(restaurant.value?.imageUrl));
 const imageAltText = `${restaurant.value?.name} restaurant`;
@@ -42,7 +45,7 @@ function postFavourite(fav: Boolean) {
   <template v-if="areRestaurantsLoading">
     <p>Loading...</p>
   </template>
-  <div v-else-if="restaurant">
+  <div v-else-if="restaurant && meals">
     <div class="w-full h-40 mb-12">
       <img :src="imgSrc" :alt="imageAltText" class="w-full h-full object-cover" />
     </div>
@@ -65,7 +68,12 @@ function postFavourite(fav: Boolean) {
           </div>
         </div>
       </div>
-      <MealsList :categories="categories" :restaurantId="restaurant.id" />
+      <MealsList
+        :categories="categories"
+        :restaurantId="restaurant.id"
+        :meals="meals"
+        :areMealsLoading="areMealsLoading"
+      />
     </div>
   </div>
 </template>

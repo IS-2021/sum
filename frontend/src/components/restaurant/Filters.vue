@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { Check, ChevronsUpDown } from 'lucide-vue-next';
 
-import { computed, ref } from 'vue';
+import { ref } from 'vue';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import {
@@ -15,9 +15,9 @@ import {
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import TagsInput from './TagsInput.vue';
 
-import { useGetIngredients } from '@/lib/api/ingredients/ingredients';
-import { unref, watch, type Ref } from 'vue';
+import { watch, type Ref } from 'vue';
 import type { IngredientDTO, Uuid } from '@/lib/api-model';
+import { getIngredients } from './restaurant';
 
 const props = defineProps<{
   restaurantId: Uuid;
@@ -28,8 +28,7 @@ const emit = defineEmits<{
   (e: 'filterChange', unwantedIngredients: IngredientDTO[]): void;
 }>();
 
-const { data } = useGetIngredients({ restaurantId: props.restaurantId });
-let ingredients = computed(() => unref(data)?.data);
+let ingredients = getIngredients(props.restaurantId).ingredients;
 
 const open = ref(false);
 const unwantedIngredients: Ref<IngredientDTO[]> = ref(props.unwantedIngredients);

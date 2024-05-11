@@ -13,7 +13,6 @@ const isCurrentDay = (day: string) => {
 
 const foundCurrentDayHours = Object.entries(props.hours).find(([day]) => isCurrentDay(day));
 const currentDayHours = foundCurrentDayHours ? foundCurrentDayHours[1] : [];
-console.log(currentDayHours);
 </script>
 
 <template>
