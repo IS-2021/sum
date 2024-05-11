@@ -15,6 +15,7 @@ import { unref, computed, ref } from 'vue';
 import { useGetRestaurantsId } from '@/lib/api/restaurants/restaurants';
 import { postUsersDeleteFavourites, postUsersIdFavourites } from '@/lib/api/favourites/favourites';
 import { useUser } from '@/composables/useUser';
+import RequireAuth from '@/components/auth/RequireAuth.vue';
 
 const route = useRoute('/restaurant/[id]');
 const id = route.params.id;
@@ -47,7 +48,10 @@ function postFavourite(fav: Boolean) {
         <div class="w-full">
           <div class="flex flex-row mb-4 gap-4 items-center">
             <p class="font-semibold text-3xl">{{ restaurant.name }}</p>
-            <StarItem :isFavourite="isFavourite" @favourite-change="postFavourite" />
+            <RequireAuth>
+              <StarItem :isFavourite="isFavourite" @favourite-change="postFavourite" />
+            </RequireAuth>
+
             <div class="flex-grow" />
             <div
               class="flex items-center justify-center h-10 w-10 rounded-full bg-neutral-200 cursor-pointer"

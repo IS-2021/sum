@@ -2,6 +2,7 @@
 import { Button } from '@/components/ui/button';
 import { useUser } from '@/composables/useUser';
 import DropdownMenu from '@/components/DropdownMenu.vue';
+import RequireAuth from '@/components/auth/RequireAuth.vue';
 
 const { user, isSignedIn, signOut } = useUser();
 </script>
@@ -28,9 +29,13 @@ const { user, isSignedIn, signOut } = useUser();
         <li class="hidden sm:block">
           <RouterLink to="/restaurants">Restaurants</RouterLink>
         </li>
-        <li class="hidden sm:block">
-          <RouterLink to="/favourites">Favourites</RouterLink>
-        </li>
+
+        <RequireAuth>
+          <li class="hidden sm:block">
+            <RouterLink to="/favourites">Favourites</RouterLink>
+          </li>
+        </RequireAuth>
+
         <li class="flex-grow"></li>
         <li class="flex gap-2">
           <Button v-if="isSignedIn" @click="signOut">Log out</Button>
