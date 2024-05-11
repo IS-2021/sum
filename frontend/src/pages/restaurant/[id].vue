@@ -6,8 +6,8 @@ meta:
 <script setup lang="ts">
 import StarItem from '@/components/StarItem.vue';
 import MealsList from '@/components/restaurant/MealsList.vue';
+
 import { ThumbsUp } from 'lucide-vue-next';
-import { Info } from 'lucide-vue-next';
 
 import { useRoute } from 'vue-router/auto';
 import { computed, ref } from 'vue';
@@ -57,14 +57,18 @@ function postFavourite(fav: Boolean) {
             <StarItem :isFavourite="isFavourite" @favourite-change="postFavourite" />
             <div class="flex-grow" />
             <div
-              class="flex items-center justify-center h-10 min-w-10 rounded-full bg-neutral-900 cursor-pointer"
+              class="flex items-center justify-center h-10 w-10 rounded-full bg-neutral-200 cursor-pointer"
             >
-              <Info class="h-5 w-5" />
+              <InfoPopup
+                :hours="restaurant.hours"
+                :address="restaurant.address"
+                :phone="restaurant.phoneNumber"
+              />
             </div>
           </div>
-          <div class="flex flex-row gap-1">
-            <ThumbsUp class="text-green-500 h-5 w-5" />
-            <p class="text-green-500 text-base">97% users recomends this restaurant</p>
+          <div class="flex items-center gap-1 text-green-600">
+            <ThumbsUp class="h-4 w-4" />
+            <p class="text-base">97% users recomends this restaurant</p>
           </div>
         </div>
       </div>

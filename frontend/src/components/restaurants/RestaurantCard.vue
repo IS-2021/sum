@@ -23,16 +23,22 @@ const imgSrc = getImageUrl(props.imageSrc);
 
 <template>
   <RouterLink :to="restaurantLink">
-    <article class="bg-neutral-900 text-neutral-50 rounded text-lg space-y-3 p-4 h-full">
-      <AspectRatio :ratio="16 / 9">
-        <img :src="imgSrc" :alt="imageAltText" class="rounded-md object-cover w-full h-full" />
+    <article
+      class="group bg-neutral-200 text-neutral-900 rounded text-lg space-y-3 p-4 h-full hover:shadow transition-shadow"
+    >
+      <AspectRatio :ratio="16 / 9" class="overflow-clip rounded-md">
+        <img
+          :src="imgSrc"
+          :alt="imageAltText"
+          class="object-cover w-full h-full group-hover:scale-105 transition-transform"
+        />
       </AspectRatio>
 
       <header class="flex justify-between items-center">
         <p class="font-bold">{{ name }}</p>
       </header>
 
-      <footer class="flex items-center justify-between text-neutral-500">
+      <footer class="flex items-center justify-between text-neutral-500 text-base">
         <RestaurantOpeningHours :hours="props.hours" />
 
         <p class="flex gap-2 items-center">

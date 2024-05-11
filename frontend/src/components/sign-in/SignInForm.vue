@@ -39,7 +39,7 @@ const onSubmit = form.handleSubmit(async (credentials) => {
   if (res.status === 200) {
     errorMessage.value = '';
     await router.push('/');
-  } else if (res.status === 400) {
+  } else if (res.status === 401) {
     const { message } = res.data as unknown as ValidationFailed422Response;
 
     errorMessage.value = message;

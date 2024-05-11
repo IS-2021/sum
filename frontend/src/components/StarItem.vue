@@ -21,7 +21,7 @@ const toggleFavourite = () => {
 
 <template>
   <Button v-if="isFavourite" size="icon" variant="ghost" class="hover:!bg-opacity-40">
-    <Star fill="white" class="w-7 h-7 cursor-pointer" @click="toggleFavourite" />
+    <Star class="w-7 h-7 cursor-pointer fill-primary" @click="toggleFavourite" />
   </Button>
   <Button v-else size="icon" variant="ghost" class="hover:!bg-opacity-40">
     <Star class="w-7 h-7 cursor-pointer" @click="toggleFavourite" />

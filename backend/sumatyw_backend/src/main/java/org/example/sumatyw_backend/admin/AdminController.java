@@ -175,7 +175,7 @@ public class AdminController {
     }
 
     @PutMapping("/restaurants/{id}")
-    public ResponseEntity activateRestaurant(@PathVariable("id") UUID id) {
+    public ResponseEntity<RestaurantDTO> activateRestaurant(@PathVariable("id") UUID id) {
 
         return new ResponseEntity<>(restaurantService.activateRestaurantById(id),HttpStatus.OK);
     }

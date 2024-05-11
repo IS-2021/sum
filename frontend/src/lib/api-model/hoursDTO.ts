@@ -6,11 +6,11 @@
  */
 
 export interface HoursDTO {
-  friday: string[];
   monday: string[];
-  saturday: string[];
-  sunday: string[];
-  thursday: string[];
   tuesday: string[];
   wednesday: string[];
+  thursday: string[];
+  friday: string[];
+  saturday: string[];
+  sunday: string[];
 }

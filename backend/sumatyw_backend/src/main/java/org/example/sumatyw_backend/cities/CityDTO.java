@@ -5,6 +5,7 @@ import java.util.UUID;
 public record CityDTO(
     UUID cityId,
     String name,
+    String region,
     String country
 ) {
 }

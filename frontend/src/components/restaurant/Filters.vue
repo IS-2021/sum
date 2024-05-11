@@ -55,7 +55,7 @@ watch(unwantedIngredients.value, (x) => {
         variant="outline"
         role="combobox"
         :aria-expanded="open"
-        class="w-full justify-between text-white"
+        class="w-full justify-between"
       >
         Select unwanted ingredients...
 
