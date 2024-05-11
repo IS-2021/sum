@@ -6,10 +6,13 @@ layout: centered
 <script setup lang="ts">
 import { useHead } from '@unhead/vue';
 import SignUpForm from '@/components/sign-up/SignUpForm.vue';
+import { useAuthRedirect } from '@/composables/useAuthRedirect';
 
 useHead({
   title: 'Sign-Up',
 });
+
+useAuthRedirect({ redirectTo: '/' });
 </script>
 
 <template>

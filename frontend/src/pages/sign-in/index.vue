@@ -6,10 +6,13 @@ meta:
 <script setup lang="ts">
 import { useHead } from '@unhead/vue';
 import SignInForm from '@/components/sign-in/SignInForm.vue';
+import { useAuthRedirect } from '@/composables/useAuthRedirect';
 
 useHead({
   title: 'Sign-In',
 });
+
+useAuthRedirect({ redirectTo: '/' });
 </script>
 
 <template>
