@@ -14,7 +14,14 @@ const openingHours = hasOpeningHours ? [props.openingHours, props.closingHours] 
 </script>
 
 <template>
-  <p :class="cn('flex justify-between', isCurrentDay && 'text-green-500 font-semibold')">
+  <p
+    :class="
+      cn(
+        'flex justify-between',
+        isCurrentDay && 'text-primary underline underline-offset-4 font-semibold',
+      )
+    "
+  >
     <span class="capitalize">{{ day }}</span>
     <span class="tabular-nums">{{ openingHoursToString(openingHours) }}</span>
   </p>

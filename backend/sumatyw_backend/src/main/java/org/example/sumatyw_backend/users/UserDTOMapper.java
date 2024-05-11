@@ -11,7 +11,7 @@ public class UserDTOMapper {
             .email(userInputDTO.email())
             .phoneNumber(userInputDTO.phoneNumber())
             .role(userInputDTO.role())
-            .blocked(true)
+            .blocked(false)
             .build();
     }
 

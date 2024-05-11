@@ -4,15 +4,11 @@ import { ClockIcon } from 'lucide-vue-next';
 import OpeningHoursRow from './OpeningHoursRow.vue';
 import { openingHoursToString } from '@/components/restaurants/openingHours';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { isCurrentDay, findCurrentDayHours } from '@/components/restaurants/openingHours';
 
 const props = defineProps<{ hours: HoursDTO }>();
 
-const isCurrentDay = (day: string) => {
-  return day === new Date().toLocaleDateString('en-US', { weekday: 'long' }).toLowerCase();
-};
-
-const foundCurrentDayHours = Object.entries(props.hours).find(([day]) => isCurrentDay(day));
-const currentDayHours = foundCurrentDayHours ? foundCurrentDayHours[1] : [];
+const currentDayHours = findCurrentDayHours(props.hours);
 </script>
 
 <template>
@@ -28,7 +24,7 @@ const currentDayHours = foundCurrentDayHours ? foundCurrentDayHours[1] : [];
         <p class="mb-2 text-md font-bold">Opening Hours</p>
 
         <ul>
-          <li v-for="[day, [openingHours, closingHours]] in Object.entries(props.hours)">
+          <li v-for="[day, [openingHours, closingHours]] in Object.entries(props.hours)" :key="day">
             <OpeningHoursRow
               :day="day"
               :opening-hours="openingHours"

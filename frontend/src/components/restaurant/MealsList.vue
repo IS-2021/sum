@@ -47,7 +47,7 @@ function updateFilters(list: IngredientDTO[]) {
   <div v-else-if="filteredMeals">
     <h1 class="text-2xl mt-16 font-bold">Available packages</h1>
     <div class="flex gap-12 mt-4">
-      <div class="w-96 space-y-3 p-4 bg-neutral-900 rounded h-fit">
+      <div class="w-96 space-y-3 p-4 bg-neutral-200 rounded h-fit">
         <p>Excluding dishes that contain:</p>
         <Filters
           :restaurantId="restaurantId"
@@ -62,17 +62,17 @@ function updateFilters(list: IngredientDTO[]) {
       >
         <p v-if="filteredMeals.length === 0">No meals found</p>
         <div v-else v-for="meal in filteredMeals" v-bind:key="meal.mealId">
-          <div class="bg-neutral-900 min-w-96 rounded p-4 space-y-3">
+          <div class="bg-neutral-200 min-w-96 rounded p-4 space-y-3">
             <div class="flex">
               <h1 class="font-semibold text-xl">{{ meal.name }}</h1>
               <div class="flex-grow"></div>
               <p class="text-xs">Available amount: {{ amount }}</p>
             </div>
-            <p class="text-neutral-300">{{ meal.description }}</p>
+            <p class="text-neutral-950">{{ meal.description }}</p>
             <div class="flex flex-wrap">
-              <p class="text-neutral-300 pr-1">Ingredients:</p>
+              <p class="text-neutral-800 pr-1">Ingredients:</p>
               <div
-                class="text-neutral-300 pr-1"
+                class="text-neutral-800 pr-1"
                 v-for="ingredient in meal.ingredients"
                 :key="ingredient.id"
               >

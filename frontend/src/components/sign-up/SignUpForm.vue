@@ -13,7 +13,7 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { Role, type ValidationFailed422Response } from '@/lib/api-model';
+import { type ProblemDetailResponse, Role } from '@/lib/api-model';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { AlertCircleIcon } from 'lucide-vue-next';
@@ -48,9 +48,11 @@ const onSubmit = form.handleSubmit(async (formData) => {
     errorMessage.value = '';
     await router.push('/sign-in');
   } else if (res.status === 400) {
-    const { message } = res.data as unknown as ValidationFailed422Response;
+    const { detail } = res.data as unknown as ProblemDetailResponse;
 
-    errorMessage.value = message;
+    if (detail) {
+      errorMessage.value = detail;
+    }
   }
 });
 
@@ -130,14 +132,8 @@ const isValid = form.meta.value.valid;
       <FormItem>
         <FormLabel>Phone Number</FormLabel>
         <FormControl>
-          <div
-            class="flex items-center rounded-md border border-neutral-200 dark:border-neutral-800"
-          >
-            <div
-              class="px-2 h-10 grid items-center text-neutral-500 bg-neutral-200 dark:bg-neutral-800"
-            >
-              +48
-            </div>
+          <div class="flex items-center rounded-md border border-neutral-200">
+            <div class="px-2 h-10 grid items-center text-neutral-500 bg-neutral-200">+48</div>
             <Input
               type="text"
               placeholder="111222333"

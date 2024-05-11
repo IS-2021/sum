@@ -24,12 +24,7 @@ const delegatedProps = computed(() => {
 <template>
   <TableRow>
     <TableCell
-      :class="
-        cn(
-          'p-4 whitespace-nowrap align-middle text-sm text-neutral-950 dark:text-neutral-50',
-          props.class,
-        )
-      "
+      :class="cn('p-4 whitespace-nowrap align-middle text-sm text-neutral-950 ', props.class)"
       v-bind="delegatedProps"
     >
       <div class="flex items-center justify-center py-10">
