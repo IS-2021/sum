@@ -34,7 +34,7 @@ const open = ref(false);
 const unwantedIngredients: Ref<IngredientDTO[]> = ref(props.unwantedIngredients);
 
 function updateFilter(element: IngredientDTO) {
-  if (unwantedIngredients.value?.find((e) => e.name === element.name) !== undefined) {
+  if (unwantedIngredients.value?.find((e) => e.name === element.name)) {
     const index = unwantedIngredients.value?.indexOf(element);
     unwantedIngredients.value.splice(index, 1);
   } else {

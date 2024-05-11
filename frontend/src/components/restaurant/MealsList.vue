@@ -14,11 +14,7 @@ const props = defineProps<{
 
 const amount = ref(0);
 const unwantedIngredients: Ref<IngredientDTO[]> = ref([]);
-let filteredMeals: Ref<MealDTO[]> = ref([]);
-
-props.meals.forEach((e) => {
-  filteredMeals.value.push(e);
-});
+let filteredMeals: Ref<MealDTO[]> = ref(props.meals);
 
 function updateFilters(list: IngredientDTO[]) {
   unwantedIngredients.value = list;
@@ -26,16 +22,11 @@ function updateFilters(list: IngredientDTO[]) {
   props.meals.forEach((e) => {
     filteredMeals.value.push(e);
   });
-  props.meals.forEach((meal) => {
-    unwantedIngredients.value.forEach((ingredient) => {
-      if (
-        meal.ingredients?.find((e) => e.name === ingredient.name) !== undefined &&
-        filteredMeals.value
-      ) {
-        const index = filteredMeals.value.indexOf(meal);
-        filteredMeals.value.splice(index, 1);
-      }
-    });
+
+  filteredMeals.value = props.meals.filter((meal) => {
+    const ingredients = meal.ingredients?.map((ingredient) => ingredient.name);
+    console.log(ingredients);
+    return !unwantedIngredients.value.some((ingredient) => ingredients?.includes(ingredient.name));
   });
 }
 </script>
