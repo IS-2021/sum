@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button';
 import { useUser } from '@/composables/useUser';
 import DropdownMenu from '@/components/DropdownMenu.vue';
 import AppNavLink from '@/components/AppNavLink.vue';
+import RequireAuth from '@/components/auth/RequireAuth.vue';
 
 const { isSignedIn, signOut } = useUser();
 </script>

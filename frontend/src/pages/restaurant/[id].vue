@@ -14,9 +14,12 @@ import { computed, ref } from 'vue';
 
 import { postUsersDeleteFavourites, postUsersIdFavourites } from '@/lib/api/favourites/favourites';
 import { useUser } from '@/composables/useUser';
-import { computeUserRating } from '@/components/user-rating/userRating';
 import { useUserRating } from '@/components/user-rating/useUserRating';
 import RequireAuth from '@/components/auth/RequireAuth.vue';
+import { getRestaurant } from '@/components/restaurant/restaurant';
+import { getMeals } from '@/components/restaurant/restaurant';
+import { getImageUrl } from '@/lib/assets';
+import InfoPopup from '@/components/restaurant/InfoPopup.vue';
 
 const route = useRoute('/restaurant/[id]');
 const id = route.params.id;
@@ -55,7 +58,7 @@ const { totalRatings, ratingPercentage } = useUserRating(
     <div class="w-full h-40 mb-12">
       <img :src="imgSrc" :alt="imageAltText" class="w-full h-full object-cover" />
     </div>
-    <div class="container">
+    <div class="sm:container mx-4">
       <div class="flex flex-row flex-wrap">
         <div class="w-full">
           <div class="flex flex-row mb-4 gap-4 items-center">
@@ -66,7 +69,7 @@ const { totalRatings, ratingPercentage } = useUserRating(
 
             <div class="flex-grow" />
             <div
-              class="flex items-center justify-center h-10 w-10 rounded-full bg-neutral-200 cursor-pointer"
+              class="flex items-center justify-center min-h-10 min-w-10 rounded-full bg-neutral-200 cursor-pointer"
             >
               <InfoPopup
                 :hours="restaurant.hours"

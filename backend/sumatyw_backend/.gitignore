@@ -1,5 +1,6 @@
 ### Docker DB volume
 data
+src/main/resources/static/images/*
 
 HELP.md
 target/
