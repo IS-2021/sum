@@ -6,6 +6,7 @@ import lombok.*;
 import org.example.sumatyw_backend.meals.Meal;
 import org.example.sumatyw_backend.users.User;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @AllArgsConstructor
@@ -15,15 +16,15 @@ import java.util.UUID;
 @Entity
 @Builder
 @Table(name="booked_meals")
-public class BookedMeals {
+public class Booking {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID bookedId;
 
-    private String timestamp;
+    private LocalDateTime timestamp;
 
-    private String picked_up_timestamp;
+    private LocalDateTime pickedUpTimestamp;
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
