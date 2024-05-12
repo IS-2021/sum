@@ -33,7 +33,7 @@ const { isSignedIn, signOut } = useUser();
         </li>
         <RequireAuth>
           <li class="hidden sm:block">
-            <RouterLink to="/favourites">Favourites</RouterLink>
+            <AppNavLink to="/favourites">Favourites</AppNavLink>
           </li>
         </RequireAuth>
 
