@@ -1,5 +1,7 @@
 package org.example.sumatyw_backend.users;
 
+import org.example.sumatyw_backend.cities.CityDTOMapper;
+
 public class UserDTOMapper {
 
     public static User mapUserInputDTOToUser(UserInputDTO userInputDTO) {
@@ -11,7 +13,7 @@ public class UserDTOMapper {
             .email(userInputDTO.email())
             .phoneNumber(userInputDTO.phoneNumber())
             .role(userInputDTO.role())
-            .blocked(true)
+            .blocked(false)
             .build();
     }
 
@@ -23,7 +25,21 @@ public class UserDTOMapper {
             user.getUsername(),
             user.getEmail(),
             user.getPhoneNumber(),
-            user.getRole()
+            user.getRole(),
+            user.isBlocked()
+        );
+    }
+
+    public static  UserMeDTO mapUserToUserMeDTO(User user) {
+        return new UserMeDTO(
+            user.getUserId().toString(),
+            user.getFirstName(),
+            user.getSecondName(),
+            user.getUsername(),
+            user.getEmail(),
+            user.getPhoneNumber(),
+            user.getRole(),
+            user.getCity() == null ? null : CityDTOMapper.mapCityToCityDTO(user.getCity())
         );
     }
 }

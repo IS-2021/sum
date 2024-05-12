@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { Check, ChevronsUpDown } from 'lucide-vue-next';
 
-import { computed, ref } from 'vue';
+import { ref } from 'vue';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import {
@@ -13,40 +13,42 @@ import {
   CommandList,
 } from '@/components/ui/command';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import TagsInput from './TagsInput.vue';
 
-import { useGetIngredients } from '@/lib/api/ingredients/ingredients';
-import { unref } from 'vue';
-import type { Uuid } from '@/lib/api-model';
-import type { Ref } from 'vue';
+import { watch, type Ref } from 'vue';
+import type { IngredientDTO, Uuid } from '@/lib/api-model';
+import { getIngredients } from './restaurant';
 
-interface Ingredient {
-  id: Uuid;
-  name: string;
-  type: string;
-}
+const props = defineProps<{
+  restaurantId: Uuid;
+  unwantedIngredients: IngredientDTO[];
+}>();
 
-const { data } = useGetIngredients();
-let ingredientsData = computed(() => unref(data)?.data);
-const parsedIngredients: Ref<Ingredient[] | undefined> = ref(ingredientsData);
-const ingredients = parsedIngredients.value?.filter(
-  (item, index) => parsedIngredients.value?.indexOf(item) === index,
-);
-const filtered: Ref<Ingredient[] | undefined> = ref(ingredients);
+const emit = defineEmits<{
+  (e: 'filterChange', unwantedIngredients: IngredientDTO[]): void;
+}>();
+
+let ingredients = getIngredients(props.restaurantId).ingredients;
 
 const open = ref(false);
+const unwantedIngredients: Ref<IngredientDTO[]> = ref(props.unwantedIngredients);
 
-function updateFilter(element: Ingredient) {
-  if (filtered.value?.find((e) => e.name === element.name) !== undefined) {
-    const index = filtered.value?.indexOf(element);
-    filtered.value.splice(index, 1);
+function updateFilter(element: IngredientDTO) {
+  if (unwantedIngredients.value?.find((e) => e.name === element.name)) {
+    const index = unwantedIngredients.value?.indexOf(element);
+    unwantedIngredients.value.splice(index, 1);
   } else {
-    filtered.value?.push(element);
+    unwantedIngredients.value.push(element);
   }
-  console.log(filtered.value);
 }
+
+watch(unwantedIngredients.value, (x) => {
+  emit('filterChange', x);
+});
 </script>
 
 <template>
+  <TagsInput :unwantedIngredients="unwantedIngredients" />
   <Popover v-model:open="open">
     <PopoverTrigger as-child>
       <Button
@@ -72,13 +74,15 @@ function updateFilter(element: Ingredient) {
               :value="ingredient"
               :id="ingredient.id"
               @select="open = true"
-              @click.stop="updateFilter(ingredient)"
+              @click="updateFilter(ingredient)"
             >
               <Check
                 :class="
                   cn(
                     'mr-2 h-4 w-4',
-                    filtered?.find((e) => e.name === ingredient.name) ? 'opacity-100' : 'opacity-0',
+                    unwantedIngredients?.find((e) => e.name === ingredient.name)
+                      ? 'opacity-100'
+                      : 'opacity-0',
                   )
                 "
               />

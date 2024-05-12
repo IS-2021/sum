@@ -2,8 +2,9 @@
 import { Button } from '@/components/ui/button';
 import { useUser } from '@/composables/useUser';
 import DropdownMenu from '@/components/DropdownMenu.vue';
+import AppNavLink from '@/components/AppNavLink.vue';
 
-const { user, isSignedIn, signOut } = useUser();
+const { isSignedIn, signOut } = useUser();
 </script>
 
 <template>
@@ -15,6 +16,7 @@ const { user, isSignedIn, signOut } = useUser();
         <li>
           <DropdownMenu />
         </li>
+
         <li>
           <div class="h-8 w-8">
             <RouterLink to="/">
@@ -23,15 +25,19 @@ const { user, isSignedIn, signOut } = useUser();
           </div>
         </li>
         <li class="hidden sm:block">
-          <RouterLink to="/">Home</RouterLink>
+          <AppNavLink to="/">Home</AppNavLink>
         </li>
         <li class="hidden sm:block">
-          <RouterLink to="/restaurants">Restaurants</RouterLink>
+          <AppNavLink to="/restaurants">Restaurants</AppNavLink>
         </li>
-        <li class="hidden sm:block">
-          <RouterLink to="/favourites">Favourites</RouterLink>
-        </li>
+        <RequireAuth>
+          <li class="hidden sm:block">
+            <RouterLink to="/favourites">Favourites</RouterLink>
+          </li>
+        </RequireAuth>
+
         <li class="flex-grow"></li>
+
         <li class="flex gap-2">
           <Button v-if="isSignedIn" @click="signOut">Log out</Button>
           <Button v-else as-child>

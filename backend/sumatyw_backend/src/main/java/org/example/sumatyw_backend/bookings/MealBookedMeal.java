@@ -24,6 +24,6 @@
 //
 //    @ManyToOne
 //    @JoinColumn(name = "booked_id", nullable = false)
-//    private BookedMeals bookedMeals;
+//    private Booking bookedMeals;
 //
 //}
