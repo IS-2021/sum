@@ -20,7 +20,7 @@ const currentDayHours = findCurrentDayHours(favourite.hours);
     <GripVerticalIcon class="handle cursor-move text-neutral-50" />
     <StarItem
       :is-favourite="true"
-      @props-change="(isFavourite: Boolean) => handleDeleteFavourite(isFavourite, favourite.id)"
+      @favourite-change="(isFavourite: Boolean) => handleDeleteFavourite(isFavourite, favourite.id)"
       class="text-neutral-50 [&>svg]:fill-neutral-50 hover:text-neutral-50 transition-all"
     />
 
