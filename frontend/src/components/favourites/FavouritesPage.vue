@@ -1,12 +1,11 @@
 <script setup lang="ts">
 import type { UserDTO } from '@/lib/api-model';
-import { ArrowRightIcon, GripVerticalIcon, StarIcon } from 'lucide-vue-next';
+import { StarIcon } from 'lucide-vue-next';
 import { getImageUrl } from '@/lib/assets';
 import { cn } from '@/lib/utils';
-import { Button } from '@/components/ui/button';
 import { VueDraggable } from 'vue-draggable-plus';
-import StarItem from '@/components/StarItem.vue';
 import { useFavourites } from '@/components/favourites/useFavourites';
+import FavouriteItem from '@/components/favourites/FavouriteItem.vue';
 
 const { user } = defineProps<{ user: UserDTO }>();
 
@@ -39,34 +38,7 @@ const { favourites, hasAnyFavourites, handleDeleteFavourite, isDragDisabled } = 
         :style="`--image-url: url('${getImageUrl(favourite.imageUrl)}')`"
         :class="cn('rounded bg-cover group list-none', `bg-[image:var(--image-url)]`)"
       >
-        <div
-          class="flex items-center gap-4 px-5 py-3 transition-all duration-200 bg-opacity-50 hover:bg-opacity-35 bg-neutral-700"
-        >
-          <GripVerticalIcon class="handle cursor-move text-neutral-50" />
-          <StarItem
-            :is-favourite="true"
-            @favourite-change="
-              (isFavourite: Boolean) => handleDeleteFavourite(isFavourite, favourite.id)
-            "
-            class="text-neutral-50 [&>svg]:fill-neutral-50 hover:text-neutral-50 transition-all"
-          />
-
-          <RouterLink :to="`/restaurant/${favourite.id}`" class="flex-grow">
-            <div class="ml-2 text-neutral-50">
-              <p class="text-lg font-semibold">{{ favourite.name }}</p>
-            </div>
-          </RouterLink>
-
-          <Button
-            as-child
-            variant="ghost"
-            class="group-hover:opacity-100 opacity-0 transition-all hover:!bg-opacity-40 hidden md:block text-neutral-50 hover:text-neutral-50"
-          >
-            <RouterLink :to="`/restaurant/${favourite.id}`">
-              Open <ArrowRightIcon class="inline-block w-5 h-5 ml-2" />
-            </RouterLink>
-          </Button>
-        </div>
+        <FavouriteItem :favourite="favourite" :handle-delete-favourite="handleDeleteFavourite" />
       </li>
     </VueDraggable>
   </div>

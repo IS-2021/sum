@@ -13,7 +13,7 @@ public record RestaurantInputDTO(
     @Size(max = 50, message = "Restaurant name cannot contain more than 50 characters")
     String name,
     @NotBlank(message = "Restaurant phone number cannot be blank")
-    @Size(max = 10, message = "Restaurant phone number cannot contain more than 10 characters")
+    @Size(max = 11, message = "Restaurant phone number cannot contain more than 11 characters")
     String phoneNumber,
     @NotNull(message = "Restaurant address cannot be blank")
     @Valid

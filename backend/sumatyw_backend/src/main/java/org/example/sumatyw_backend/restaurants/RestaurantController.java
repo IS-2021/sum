@@ -53,23 +53,26 @@ public class RestaurantController {
     public ResponseEntity<RestaurantDTO> getRestaurantById(@PathVariable("id") UUID id) {
         Restaurant restaurant = restaurantService.getRestaurantById(id);
 
-
         return new ResponseEntity<>(
             RestaurantDTOMapper.mapRestaurantToRestaurantDTO(restaurant),
             HttpStatus.OK
         );
     }
 
-//    @GetMapping("/{id}")
-//    public ResponseEntity<RestaurantDTO> getRestaurantDistinctIngredients(@PathVariable("id") UUID id) {
-//        Restaurant restaurant = restaurantService.getRestaurantById(id);
-//
-//
-//        return new ResponseEntity<>(
-//            RestaurantDTOMapper.mapRestaurantToRestaurantDTO(restaurant),
-//            HttpStatus.OK
-//        );
-//    }
+    @PutMapping("/deactivate/{id}")
+    public ResponseEntity<RestaurantDTO> deactivateRestaurantById(@PathVariable("id") UUID id) {
+        return new ResponseEntity<>(restaurantService.deactivateRestaurant(id), HttpStatus.OK);
+    }
+
+    @GetMapping("/city/{cityName}")
+    public ResponseEntity<List<RestaurantDTO>> getRestaurantsByCity(@PathVariable("cityName") String city) {
+        List<Restaurant> restaurants = restaurantService.getRestaurantsByCity(city);
+
+        return new ResponseEntity<>(
+            restaurants.stream().map(RestaurantDTOMapper::mapRestaurantToRestaurantDTO).toList(),
+            HttpStatus.OK
+        );
+    }
 
 
     @DeleteMapping("/{id}")

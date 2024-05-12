@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { RouterView } from 'vue-router';
 import { onMounted } from 'vue';
-import { Toaster } from 'vue-sonner';
+import { useAuthRedirect } from '@/composables/useAuthRedirect';
+import { toast, Toaster } from 'vue-sonner';
 
 onMounted(() => {
   // This is soo hacky, but I haven't found out why the class="dark" is attached to the html tag
@@ -10,11 +11,20 @@ onMounted(() => {
     document.documentElement.classList.remove('dark');
   }, 10);
 });
+
+useAuthRedirect({
+  protectedRoutes: ['/favourites/'],
+  onGuestRedirect: () => {
+    toast.message('You need to sign-in before viewing this this page.');
+  },
+  guestRoutes: ['/sign-in/', '/sign-up/'],
+});
 </script>
 
 <template>
   <Suspense>
     <RouterView />
   </Suspense>
+
   <Toaster position="top-center" rich-colors />
 </template>

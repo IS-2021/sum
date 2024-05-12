@@ -37,9 +37,9 @@ public class UserController {
     }
 
     @GetMapping("/me")
-    public ResponseEntity<UserDTO> getMe() {
+    public ResponseEntity<UserMeDTO> getMe() {
         return new ResponseEntity<>(
-            UserDTOMapper.mapUserToUserDTO(userService.getMeUser()),
+            UserDTOMapper.mapUserToUserMeDTO(userService.getMeUser()),
             HttpStatus.OK
         );
     }
@@ -53,12 +53,22 @@ public class UserController {
         );
     }
 
-    @PutMapping("{id}")
+    @PutMapping("/{id}")
     public ResponseEntity<UserDTO> updateUserById(@PathVariable("id") UUID id, @Valid @RequestBody UserInputDTO updatedUser) {
         User user = userService.updateUserById(id, UserDTOMapper.mapUserInputDTOToUser(updatedUser));
 
         return new ResponseEntity<>(
             UserDTOMapper.mapUserToUserDTO(user),
+            HttpStatus.OK
+        );
+    }
+
+    @PostMapping("/{userId}/city/{cityId}")
+    public ResponseEntity<UserMeDTO> updateUserCity(@PathVariable("userId") UUID userId, @PathVariable("cityId") UUID cityId) {
+        User user = userService.updateUserCity(userId, cityId);
+
+        return new ResponseEntity<>(
+            UserDTOMapper.mapUserToUserMeDTO(user),
             HttpStatus.OK
         );
     }

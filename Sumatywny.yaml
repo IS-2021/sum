@@ -452,7 +452,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/IngredientDTO"
+              $ref: "#/components/schemas/IngredientInputDTO"
         required: true
       tags:
         - ingredients
@@ -639,13 +639,6 @@ paths:
         required: true
       tags:
         - meals
-      parameters:
-        - name: restaurantId
-          description: ""
-          schema:
-            $ref: "#/components/schemas/UUID"
-          in: query
-          required: false
       responses:
         "201":
           content:
@@ -1162,7 +1155,7 @@ components:
         - restaurantId
         - name
         - description
-        - id
+        - mealId
       type: object
       properties:
         name:
@@ -1171,12 +1164,17 @@ components:
         description:
           description: ""
           type: string
-        id:
-          $ref: "#/components/schemas/UUID"
-          description: ""
         restaurantId:
           $ref: "#/components/schemas/UUID"
           description: ""
+        mealId:
+          $ref: "#/components/schemas/UUID"
+          description: ""
+        ingredients:
+          description: List of ingredients
+          type: array
+          items:
+            $ref: "#/components/schemas/IngredientDTO"
     BookingInputDTO:
       description: ""
       required:

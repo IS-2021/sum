@@ -18,6 +18,7 @@ import type {
   CredentialsDTO,
   NotFound404Response,
   PasswordDTO,
+  ProblemDetailResponse,
   UserDTO,
   UserInputDTO,
   Uuid,
@@ -33,7 +34,7 @@ export const postAuthRegister = (
 };
 
 export const getPostAuthRegisterMutationOptions = <
-  TError = AxiosError<ValidationFailed422Response>,
+  TError = AxiosError<ProblemDetailResponse | ValidationFailed422Response>,
   TContext = unknown,
 >(options?: {
   mutation?: UseMutationOptions<
@@ -67,10 +68,12 @@ export type PostAuthRegisterMutationResult = NonNullable<
   Awaited<ReturnType<typeof postAuthRegister>>
 >;
 export type PostAuthRegisterMutationBody = UserInputDTO;
-export type PostAuthRegisterMutationError = AxiosError<ValidationFailed422Response>;
+export type PostAuthRegisterMutationError = AxiosError<
+  ProblemDetailResponse | ValidationFailed422Response
+>;
 
 export const usePostAuthRegister = <
-  TError = AxiosError<ValidationFailed422Response>,
+  TError = AxiosError<ProblemDetailResponse | ValidationFailed422Response>,
   TContext = unknown,
 >(options?: {
   mutation?: UseMutationOptions<
