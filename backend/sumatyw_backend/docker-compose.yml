@@ -9,6 +9,6 @@ services:
     volumes:
       - ./data:/var/lib/mysql
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql
-      - ./wojewodztwa_miasta.csv:/docker-entrypoint-initdb.d/init.sql
+      - ./wojewodztwa_miasta.csv:/home/wojewodztwa_miasta.csv
     ports:
       - "9020:3306"

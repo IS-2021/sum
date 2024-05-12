@@ -1,5 +1,7 @@
 CREATE DATABASE food_good;
 
+USE food_good;
+
 CREATE TABLE cities (
                       city_id UUID NOT NULL DEFAULT UUID() PRIMARY KEY,
                       country varchar(255) DEFAULT NULL,
