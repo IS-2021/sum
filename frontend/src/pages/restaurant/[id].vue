@@ -14,9 +14,12 @@ import { computed, ref } from 'vue';
 
 import { postUsersDeleteFavourites, postUsersIdFavourites } from '@/lib/api/favourites/favourites';
 import { useUser } from '@/composables/useUser';
-import { computeUserRating } from '@/components/user-rating/userRating';
 import { useUserRating } from '@/components/user-rating/useUserRating';
 import RequireAuth from '@/components/auth/RequireAuth.vue';
+import { getRestaurant } from '@/components/restaurant/restaurant';
+import { getMeals } from '@/components/restaurant/restaurant';
+import { getImageUrl } from '@/lib/assets';
+import InfoPopup from '@/components/restaurant/InfoPopup.vue';
 
 const route = useRoute('/restaurant/[id]');
 const id = route.params.id;
