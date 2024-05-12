@@ -85,7 +85,7 @@ const isValid = form.meta.value.valid;
       </FormItem>
     </FormField>
 
-    <div class="flex gap-4">
+    <div class="flex gap-4 flex-col lg:flex-row">
       <FormField v-slot="{ componentField }" name="firstName">
         <FormItem class="flex-grow">
           <FormLabel>First name</FormLabel>
