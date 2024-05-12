@@ -3,11 +3,11 @@ import { useUser } from '@/composables/useUser';
 import FavouritesPage from '@/components/favourites/FavouritesPage.vue';
 import { useHead } from '@unhead/vue';
 
-const { user } = useUser();
-
 useHead({
   title: 'Favourites',
 });
+
+const { user } = useUser();
 </script>
 
 <template>
