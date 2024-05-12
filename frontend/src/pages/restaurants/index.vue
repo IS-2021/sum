@@ -27,8 +27,9 @@ const restaurants = computed(() => unref(data)?.data);
           :id="restaurant.id"
           :image-src="restaurant.imageUrl"
           :name="restaurant.name"
-          :rating="95"
           :hours="restaurant.hours"
+          :likes="restaurant.likesCount"
+          :dislikes="restaurant.dislikesCount"
         />
       </div>
     </div>

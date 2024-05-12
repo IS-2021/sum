@@ -4,13 +4,16 @@ import { AspectRatio } from '@/components/ui/aspect-ratio';
 import RestaurantOpeningHours from '@/components/restaurants/RestaurantOpeningHours.vue';
 import type { HoursDTO } from '@/lib/api-model';
 import { getImageUrl } from '@/lib/assets';
+import UserRating from '@/components/user-rating/UserRating.vue';
+import { useUserRating } from '@/components/user-rating/useUserRating';
 
 interface RestaurantCardProps {
   id: string;
   imageSrc?: string;
   name: string;
-  rating: Number;
   hours: HoursDTO;
+  likes: number;
+  dislikes: number;
 }
 
 const props = defineProps<RestaurantCardProps>();
@@ -19,6 +22,7 @@ const restaurantLink = `/restaurant/${props.id}`;
 
 const imageAltText = `${props.name} restaurant`;
 const imgSrc = getImageUrl(props.imageSrc);
+const { totalRatings } = useUserRating(props.likes, props.dislikes);
 </script>
 
 <template>
@@ -42,7 +46,10 @@ const imgSrc = getImageUrl(props.imageSrc);
         <RestaurantOpeningHours :hours="props.hours" />
 
         <p class="flex gap-2 items-center">
-          <span class="leading-5">{{ rating }}%</span>
+          <span class="leading-5">
+            <UserRating v-if="totalRatings > 0" :likes="likes" :dislikes="dislikes" />
+            <span v-else>N/A</span>
+          </span>
           <ThumbsUpIcon class="w-5 h-5" />
         </p>
       </footer>
