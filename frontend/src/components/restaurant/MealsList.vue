@@ -25,7 +25,6 @@ function updateFilters(list: IngredientDTO[]) {
 
   filteredMeals.value = props.meals.filter((meal) => {
     const ingredients = meal.ingredients?.map((ingredient) => ingredient.name);
-    console.log(ingredients);
     return !unwantedIngredients.value.some((ingredient) => ingredients?.includes(ingredient.name));
   });
 }
