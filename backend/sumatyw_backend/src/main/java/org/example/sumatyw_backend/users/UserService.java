@@ -1,7 +1,9 @@
 package org.example.sumatyw_backend.users;
 
 import lombok.AllArgsConstructor;
+import org.example.sumatyw_backend.cities.City;
 import org.example.sumatyw_backend.cities.CityRepository;
+import org.example.sumatyw_backend.exceptions.ObjectNotFoundException;
 import org.example.sumatyw_backend.exceptions.ResourceAlreadyExistsException;
 import org.example.sumatyw_backend.exceptions.UserNotAuthenticatedException;
 import org.example.sumatyw_backend.exceptions.UserNotFoundException;
@@ -104,11 +106,6 @@ public class UserService {
         existingUser.setEmail(updatedUser.getEmail());
         existingUser.setPhoneNumber(updatedUser.getPhoneNumber());
 
-        if (cityRepository.findByName(updatedUser.getCity().getName()).isEmpty())
-            cityRepository.save(updatedUser.getCity());
-
-        existingUser.setCity(updatedUser.getCity());
-
         return userRepository.save(existingUser);
     }
 
@@ -121,5 +118,14 @@ public class UserService {
         } else {
             throw new UserNotFoundException("User not found with ID: " + id);
         }
+    }
+
+    public User updateUserCity(UUID userId, UUID cityId) {
+        User existingUser = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("User not found with ID: " + userId));
+        City city = cityRepository.findById(cityId).orElseThrow(() -> new ObjectNotFoundException("City not found with ID:" + cityId));
+
+        existingUser.setCity(city);
+
+        return userRepository.save(existingUser);
     }
 }

@@ -5,22 +5,27 @@ meta:
 
 <script setup lang="ts">
 import StarItem from '@/components/StarItem.vue';
-import MealsByCategory from '@/components/restaurant/MealsList.vue';
-import InfoPopup from '@/components/restaurant/InfoPopup.vue';
+import MealsList from '@/components/restaurant/MealsList.vue';
+
 import { ThumbsUp } from 'lucide-vue-next';
 
 import { useRoute } from 'vue-router/auto';
-import { unref, computed, ref } from 'vue';
+import { computed, ref } from 'vue';
 
-import { useGetRestaurantsId } from '@/lib/api/restaurants/restaurants';
 import { postUsersDeleteFavourites, postUsersIdFavourites } from '@/lib/api/favourites/favourites';
 import { useUser } from '@/composables/useUser';
 import RequireAuth from '@/components/auth/RequireAuth.vue';
 
 const route = useRoute('/restaurant/[id]');
 const id = route.params.id;
-const { data, isPending: areRestaurantsLoading } = useGetRestaurantsId(id);
-const restaurant = computed(() => unref(data)?.data);
+const restaurant = getRestaurant(id).restaurant;
+const areRestaurantsLoading = getRestaurant(id).areRestaurantsLoading;
+
+const meals = getMeals(id).meals;
+const areMealsLoading = getMeals(id).areMealsLoading;
+
+const imgSrc = computed(() => getImageUrl(restaurant.value?.imageUrl));
+const imageAltText = `${restaurant.value?.name} restaurant`;
 
 const isFavourite = ref(false);
 const categories = ref(['Kategoria 1']);
@@ -39,9 +44,9 @@ function postFavourite(fav: Boolean) {
   <template v-if="areRestaurantsLoading">
     <p>Loading...</p>
   </template>
-  <div v-else-if="restaurant">
+  <div v-else-if="restaurant && meals">
     <div class="w-full h-40 mb-12">
-      <img src="@/assets/images/restaurant-image-1.jpg" class="w-full h-full object-cover" />
+      <img :src="imgSrc" :alt="imageAltText" class="w-full h-full object-cover" />
     </div>
     <div class="container">
       <div class="flex flex-row flex-wrap">
@@ -69,7 +74,12 @@ function postFavourite(fav: Boolean) {
           </div>
         </div>
       </div>
-      <MealsByCategory :categories="categories" />
+      <MealsList
+        :categories="categories"
+        :restaurantId="restaurant.id"
+        :meals="meals"
+        :areMealsLoading="areMealsLoading"
+      />
     </div>
   </div>
 </template>

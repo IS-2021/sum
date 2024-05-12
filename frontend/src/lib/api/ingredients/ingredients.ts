@@ -225,12 +225,12 @@ export const useGetIngredientsId = <
 
 export const putIngredientsId = (
   id: MaybeRef<Uuid>,
-  ingredientDTO: MaybeRef<IngredientDTO>,
+  ingredientInputDTO: MaybeRef<IngredientInputDTO>,
   options?: AxiosRequestConfig,
 ): Promise<AxiosResponse<IngredientDTO>> => {
   id = unref(id);
-  ingredientDTO = unref(ingredientDTO);
-  return axios.default.put(`http://localhost:9090/ingredients/${id}`, ingredientDTO, options);
+  ingredientInputDTO = unref(ingredientInputDTO);
+  return axios.default.put(`http://localhost:9090/ingredients/${id}`, ingredientInputDTO, options);
 };
 
 export const getPutIngredientsIdMutationOptions = <
@@ -240,21 +240,21 @@ export const getPutIngredientsIdMutationOptions = <
   mutation?: UseMutationOptions<
     Awaited<ReturnType<typeof putIngredientsId>>,
     TError,
-    { id: Uuid; data: IngredientDTO },
+    { id: Uuid; data: IngredientInputDTO },
     TContext
   >;
   axios?: AxiosRequestConfig;
 }): UseMutationOptions<
   Awaited<ReturnType<typeof putIngredientsId>>,
   TError,
-  { id: Uuid; data: IngredientDTO },
+  { id: Uuid; data: IngredientInputDTO },
   TContext
 > => {
   const { mutation: mutationOptions, axios: axiosOptions } = options ?? {};
 
   const mutationFn: MutationFunction<
     Awaited<ReturnType<typeof putIngredientsId>>,
-    { id: Uuid; data: IngredientDTO }
+    { id: Uuid; data: IngredientInputDTO }
   > = (props) => {
     const { id, data } = props ?? {};
 
@@ -267,7 +267,7 @@ export const getPutIngredientsIdMutationOptions = <
 export type PutIngredientsIdMutationResult = NonNullable<
   Awaited<ReturnType<typeof putIngredientsId>>
 >;
-export type PutIngredientsIdMutationBody = IngredientDTO;
+export type PutIngredientsIdMutationBody = IngredientInputDTO;
 export type PutIngredientsIdMutationError = AxiosError<
   NotFound404Response | ValidationFailed422Response
 >;
@@ -279,14 +279,14 @@ export const usePutIngredientsId = <
   mutation?: UseMutationOptions<
     Awaited<ReturnType<typeof putIngredientsId>>,
     TError,
-    { id: Uuid; data: IngredientDTO },
+    { id: Uuid; data: IngredientInputDTO },
     TContext
   >;
   axios?: AxiosRequestConfig;
 }): UseMutationReturnType<
   Awaited<ReturnType<typeof putIngredientsId>>,
   TError,
-  { id: Uuid; data: IngredientDTO },
+  { id: Uuid; data: IngredientInputDTO },
   TContext
 > => {
   const mutationOptions = getPutIngredientsIdMutationOptions(options);
