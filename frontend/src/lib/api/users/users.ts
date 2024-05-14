@@ -22,6 +22,7 @@ import type {
   NotFound404Response,
   UserDTO,
   UserInputDTO,
+  UserMeDTO,
   Uuid,
   ValidationFailed422Response,
 } from '../../api-model';
@@ -266,7 +267,7 @@ export const useDeleteUsersId = <
 
   return useMutation(mutationOptions);
 };
-export const getUsersMe = (options?: AxiosRequestConfig): Promise<AxiosResponse<UserDTO>> => {
+export const getUsersMe = (options?: AxiosRequestConfig): Promise<AxiosResponse<UserMeDTO>> => {
   return axios.default.get(`http://localhost:9090/users/me`, options);
 };
 

@@ -6,15 +6,21 @@ import { getRestaurants } from "../lib/api/restaurants/restaurants";
 import { logEvent } from "../lib/logger";
 import { fakePhoneNumber } from "./helpers";
 import { getAdminRestaurants } from "../lib/api/admin-restaurants/admin-restaurants";
+import { getCityId } from "./cities";
 
 export async function addRestaurant() {
   const restaurantUser = await addRestaurantAccount();
+
+  const cityId = await getCityId("Warszawa");
+  if (!cityId) {
+    throw new Error("City was not found");
+  }
 
   const restaurantInput: RestaurantInputDTO = {
     name: faker.lorem.words(4),
     addressInputDTO: {
       number: faker.location.buildingNumber(),
-      city: faker.location.city(),
+      cityId: cityId,
       country: faker.location.country(),
       postalCode: faker.location.zipCode(),
       street: faker.location.street(),

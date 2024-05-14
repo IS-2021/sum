@@ -6,9 +6,9 @@
  */
 
 export interface ProblemDetail {
-  detail?: string;
+  detail: string;
   instance?: string;
-  status?: number;
-  title?: string;
-  type?: string;
+  status: number;
+  title: string;
+  type: string;
 }

@@ -136,7 +136,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/UserDTO"
+                $ref: "#/components/schemas/UserMeDTO"
           description: Returns the data of the currently logged in user
         "404":
           $ref: "#/components/responses/NotFound_404"
@@ -1126,6 +1126,89 @@ paths:
           $ref: "#/components/schemas/UUID"
         in: path
         required: true
+  "/restaurants/deactivate/{id}":
+    put:
+      tags:
+        - restaurants
+      parameters:
+        - name: id
+          description: ID of restaurant
+          schema:
+            $ref: "#/components/schemas/UUID"
+          in: path
+          required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RestaurantDTO"
+          description: Restaurant deactivated
+        "400":
+          $ref: "#/components/responses/ValidationFailed_422"
+      description: Deactivate restaurant by it's ID
+  "/restaurants/city/{cityName}":
+    get:
+      tags:
+        - restaurants
+      parameters:
+        - name: cityName
+          schema:
+            type: string
+          in: path
+          required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/RestaurantDTO"
+          description: Get restaurants by city
+    parameters:
+      - name: cityName
+        description: City Name
+        schema:
+          type: string
+        in: path
+        required: true
+  /cities:
+    get:
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/CityDTO"
+          description: Get all cities
+      description: Get all cities by ID
+  "/users/{userId}/city/{cityId}":
+    post:
+      parameters:
+        - name: userId
+          schema:
+            $ref: "#/components/schemas/UUID"
+          in: path
+          required: true
+        - name: cityId
+          schema:
+            $ref: "#/components/schemas/UUID"
+          in: path
+          required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserMeDTO"
+          description: City has been set
+        "400":
+          $ref: "#/components/responses/BadRequest_400"
+        "404":
+          $ref: "#/components/responses/NotFound_404"
 components:
   schemas:
     OpinionDTO:
@@ -1622,17 +1705,15 @@ components:
       description: ""
       required:
         - country
-        - city
+        - cityId
         - street
         - number
         - postalCode
         - addressId
+        - region
       type: object
       properties:
         country:
-          description: ""
-          type: string
-        city:
           description: ""
           type: string
         street:
@@ -1647,20 +1728,23 @@ components:
         addressId:
           $ref: "#/components/schemas/UUID"
           description: ""
+        region:
+          description: ""
+          type: string
+        cityId:
+          description: ""
+          type: string
     AddressInputDTO:
       description: ""
       required:
         - country
-        - city
         - street
         - number
         - postalCode
+        - cityId
       type: object
       properties:
         country:
-          description: ""
-          type: string
-        city:
           description: ""
           type: string
         street:
@@ -1672,6 +1756,9 @@ components:
         postalCode:
           description: ""
           type: string
+        cityId:
+          $ref: "#/components/schemas/UUID"
+          description: ""
     ProblemDetail:
       title: Root Type for ProblemDetail
       description: ""
@@ -1699,6 +1786,60 @@ components:
         status: 400
         detail: "Phone number: '111222333' already exists."
         instance: /auth/register
+    CityDTO:
+      title: Root Type for CityDTO
+      description: ""
+      type: object
+      properties:
+        uuid:
+          type: string
+        name:
+          type: string
+        region:
+          type: string
+        country:
+          type: string
+      example:
+        uuid: ""
+        name: ""
+        region: ""
+        country: ""
+    UserMeDTO:
+      description: ""
+      required:
+        - id
+        - firstName
+        - secondName
+        - username
+        - email
+        - phoneNumber
+        - role
+      type: object
+      properties:
+        id:
+          $ref: "#/components/schemas/UUID"
+          description: ""
+        firstName:
+          description: ""
+          type: string
+        secondName:
+          description: ""
+          type: string
+        username:
+          description: ""
+          type: string
+        email:
+          description: ""
+          type: string
+        phoneNumber:
+          description: ""
+          type: string
+        role:
+          $ref: "#/components/schemas/Role"
+          description: ""
+        city:
+          $ref: "#/components/schemas/CityDTO"
+          description: ""
   responses:
     NotFound_404:
       content:
