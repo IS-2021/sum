@@ -4,81 +4,152 @@
  * Sumatywny
  * OpenAPI spec version: 1.0.0
  */
-import { useMutation } from '@tanstack/vue-query';
+import { useMutation, useQuery } from '@tanstack/vue-query';
 import type {
   MutationFunction,
+  QueryFunction,
+  QueryKey,
   UseMutationOptions,
   UseMutationReturnType,
+  UseQueryOptions,
+  UseQueryReturnType,
 } from '@tanstack/vue-query';
 import * as axios from 'axios';
 import type { AxiosError, AxiosRequestConfig, AxiosResponse } from 'axios';
 import { unref } from 'vue';
 import type { MaybeRef } from 'vue';
-import type { Uuid } from '../../api-model';
+import type {
+  BadRequest400Response,
+  CityDTO,
+  NotFound404Response,
+  UserMeDTO,
+  Uuid,
+} from '../../api-model';
 
-export const postRestaurantsImagesId = (
-  id: MaybeRef<Uuid>,
-  options?: AxiosRequestConfig,
-): Promise<AxiosResponse<void>> => {
-  id = unref(id);
-  return axios.default.post(`http://localhost:9090/restaurants/images/${id}`, undefined, options);
+/**
+ * Get all cities by ID
+ */
+export const getCities = (options?: AxiosRequestConfig): Promise<AxiosResponse<CityDTO[]>> => {
+  return axios.default.get(`http://localhost:9090/cities`, options);
 };
 
-export const getPostRestaurantsImagesIdMutationOptions = <
-  TError = AxiosError<void>,
+export const getGetCitiesQueryKey = () => {
+  return ['http:', 'localhost:9090', 'cities'] as const;
+};
+
+export const getGetCitiesQueryOptions = <
+  TData = Awaited<ReturnType<typeof getCities>>,
+  TError = AxiosError<unknown>,
+>(options?: {
+  query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getCities>>, TError, TData>>;
+  axios?: AxiosRequestConfig;
+}) => {
+  const { query: queryOptions, axios: axiosOptions } = options ?? {};
+
+  const queryKey = getGetCitiesQueryKey();
+
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof getCities>>> = ({ signal }) =>
+    getCities({ signal, ...axiosOptions });
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof getCities>>,
+    TError,
+    TData
+  >;
+};
+
+export type GetCitiesQueryResult = NonNullable<Awaited<ReturnType<typeof getCities>>>;
+export type GetCitiesQueryError = AxiosError<unknown>;
+
+export const useGetCities = <
+  TData = Awaited<ReturnType<typeof getCities>>,
+  TError = AxiosError<unknown>,
+>(options?: {
+  query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getCities>>, TError, TData>>;
+  axios?: AxiosRequestConfig;
+}): UseQueryReturnType<TData, TError> & { queryKey: QueryKey } => {
+  const queryOptions = getGetCitiesQueryOptions(options);
+
+  const query = useQuery(queryOptions) as UseQueryReturnType<TData, TError> & {
+    queryKey: QueryKey;
+  };
+
+  query.queryKey = unref(queryOptions).queryKey as QueryKey;
+
+  return query;
+};
+
+export const postUsersUserIdCityCityId = (
+  userId: MaybeRef<Uuid>,
+  cityId: MaybeRef<Uuid>,
+  options?: AxiosRequestConfig,
+): Promise<AxiosResponse<UserMeDTO>> => {
+  userId = unref(userId);
+  cityId = unref(cityId);
+  return axios.default.post(
+    `http://localhost:9090/users/${userId}/city/${cityId}`,
+    undefined,
+    options,
+  );
+};
+
+export const getPostUsersUserIdCityCityIdMutationOptions = <
+  TError = AxiosError<BadRequest400Response | NotFound404Response>,
   TContext = unknown,
 >(options?: {
   mutation?: UseMutationOptions<
-    Awaited<ReturnType<typeof postRestaurantsImagesId>>,
+    Awaited<ReturnType<typeof postUsersUserIdCityCityId>>,
     TError,
-    { id: Uuid },
+    { userId: Uuid; cityId: Uuid },
     TContext
   >;
   axios?: AxiosRequestConfig;
 }): UseMutationOptions<
-  Awaited<ReturnType<typeof postRestaurantsImagesId>>,
+  Awaited<ReturnType<typeof postUsersUserIdCityCityId>>,
   TError,
-  { id: Uuid },
+  { userId: Uuid; cityId: Uuid },
   TContext
 > => {
   const { mutation: mutationOptions, axios: axiosOptions } = options ?? {};
 
   const mutationFn: MutationFunction<
-    Awaited<ReturnType<typeof postRestaurantsImagesId>>,
-    { id: Uuid }
+    Awaited<ReturnType<typeof postUsersUserIdCityCityId>>,
+    { userId: Uuid; cityId: Uuid }
   > = (props) => {
-    const { id } = props ?? {};
+    const { userId, cityId } = props ?? {};
 
-    return postRestaurantsImagesId(id, axiosOptions);
+    return postUsersUserIdCityCityId(userId, cityId, axiosOptions);
   };
 
   return { mutationFn, ...mutationOptions };
 };
 
-export type PostRestaurantsImagesIdMutationResult = NonNullable<
-  Awaited<ReturnType<typeof postRestaurantsImagesId>>
+export type PostUsersUserIdCityCityIdMutationResult = NonNullable<
+  Awaited<ReturnType<typeof postUsersUserIdCityCityId>>
 >;
 
-export type PostRestaurantsImagesIdMutationError = AxiosError<void>;
+export type PostUsersUserIdCityCityIdMutationError = AxiosError<
+  BadRequest400Response | NotFound404Response
+>;
 
-export const usePostRestaurantsImagesId = <
-  TError = AxiosError<void>,
+export const usePostUsersUserIdCityCityId = <
+  TError = AxiosError<BadRequest400Response | NotFound404Response>,
   TContext = unknown,
 >(options?: {
   mutation?: UseMutationOptions<
-    Awaited<ReturnType<typeof postRestaurantsImagesId>>,
+    Awaited<ReturnType<typeof postUsersUserIdCityCityId>>,
     TError,
-    { id: Uuid },
+    { userId: Uuid; cityId: Uuid },
     TContext
   >;
   axios?: AxiosRequestConfig;
 }): UseMutationReturnType<
-  Awaited<ReturnType<typeof postRestaurantsImagesId>>,
+  Awaited<ReturnType<typeof postUsersUserIdCityCityId>>,
   TError,
-  { id: Uuid },
+  { userId: Uuid; cityId: Uuid },
   TContext
 > => {
-  const mutationOptions = getPostRestaurantsImagesIdMutationOptions(options);
+  const mutationOptions = getPostUsersUserIdCityCityIdMutationOptions(options);
 
   return useMutation(mutationOptions);
 };

@@ -14,7 +14,7 @@ export async function addRestaurant() {
     name: faker.lorem.words(4),
     addressInputDTO: {
       number: faker.location.buildingNumber(),
-      city: faker.location.city(),
+      cityId: "6d44a0f0-121c-11ef-813c-0242ac130002",
       country: faker.location.country(),
       postalCode: faker.location.zipCode(),
       street: faker.location.street(),

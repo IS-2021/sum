@@ -419,3 +419,143 @@ export const usePostRestaurantsImagesId = <
 
   return useMutation(mutationOptions);
 };
+/**
+ * Deactivate restaurant by it's ID
+ */
+export const putRestaurantsDeactivateId = (
+  id: MaybeRef<Uuid>,
+  options?: AxiosRequestConfig,
+): Promise<AxiosResponse<RestaurantDTO>> => {
+  id = unref(id);
+  return axios.default.put(
+    `http://localhost:9090/restaurants/deactivate/${id}`,
+    undefined,
+    options,
+  );
+};
+
+export const getPutRestaurantsDeactivateIdMutationOptions = <
+  TError = AxiosError<ValidationFailed422Response>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof putRestaurantsDeactivateId>>,
+    TError,
+    { id: Uuid },
+    TContext
+  >;
+  axios?: AxiosRequestConfig;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof putRestaurantsDeactivateId>>,
+  TError,
+  { id: Uuid },
+  TContext
+> => {
+  const { mutation: mutationOptions, axios: axiosOptions } = options ?? {};
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof putRestaurantsDeactivateId>>,
+    { id: Uuid }
+  > = (props) => {
+    const { id } = props ?? {};
+
+    return putRestaurantsDeactivateId(id, axiosOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type PutRestaurantsDeactivateIdMutationResult = NonNullable<
+  Awaited<ReturnType<typeof putRestaurantsDeactivateId>>
+>;
+
+export type PutRestaurantsDeactivateIdMutationError = AxiosError<ValidationFailed422Response>;
+
+export const usePutRestaurantsDeactivateId = <
+  TError = AxiosError<ValidationFailed422Response>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof putRestaurantsDeactivateId>>,
+    TError,
+    { id: Uuid },
+    TContext
+  >;
+  axios?: AxiosRequestConfig;
+}): UseMutationReturnType<
+  Awaited<ReturnType<typeof putRestaurantsDeactivateId>>,
+  TError,
+  { id: Uuid },
+  TContext
+> => {
+  const mutationOptions = getPutRestaurantsDeactivateIdMutationOptions(options);
+
+  return useMutation(mutationOptions);
+};
+export const getRestaurantsCityCityName = (
+  cityName: MaybeRef<string>,
+  options?: AxiosRequestConfig,
+): Promise<AxiosResponse<RestaurantDTO[]>> => {
+  cityName = unref(cityName);
+  return axios.default.get(`http://localhost:9090/restaurants/city/${cityName}`, options);
+};
+
+export const getGetRestaurantsCityCityNameQueryKey = (cityName: MaybeRef<string>) => {
+  return ['http:', 'localhost:9090', 'restaurants', 'city', cityName] as const;
+};
+
+export const getGetRestaurantsCityCityNameQueryOptions = <
+  TData = Awaited<ReturnType<typeof getRestaurantsCityCityName>>,
+  TError = AxiosError<unknown>,
+>(
+  cityName: MaybeRef<string>,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof getRestaurantsCityCityName>>, TError, TData>
+    >;
+    axios?: AxiosRequestConfig;
+  },
+) => {
+  const { query: queryOptions, axios: axiosOptions } = options ?? {};
+
+  const queryKey = getGetRestaurantsCityCityNameQueryKey(cityName);
+
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof getRestaurantsCityCityName>>> = ({
+    signal,
+  }) => getRestaurantsCityCityName(cityName, { signal, ...axiosOptions });
+
+  return {
+    queryKey,
+    queryFn,
+    enabled: computed(() => !!unref(cityName)),
+    ...queryOptions,
+  } as UseQueryOptions<Awaited<ReturnType<typeof getRestaurantsCityCityName>>, TError, TData>;
+};
+
+export type GetRestaurantsCityCityNameQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getRestaurantsCityCityName>>
+>;
+export type GetRestaurantsCityCityNameQueryError = AxiosError<unknown>;
+
+export const useGetRestaurantsCityCityName = <
+  TData = Awaited<ReturnType<typeof getRestaurantsCityCityName>>,
+  TError = AxiosError<unknown>,
+>(
+  cityName: MaybeRef<string>,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof getRestaurantsCityCityName>>, TError, TData>
+    >;
+    axios?: AxiosRequestConfig;
+  },
+): UseQueryReturnType<TData, TError> & { queryKey: QueryKey } => {
+  const queryOptions = getGetRestaurantsCityCityNameQueryOptions(cityName, options);
+
+  const query = useQuery(queryOptions) as UseQueryReturnType<TData, TError> & {
+    queryKey: QueryKey;
+  };
+
+  query.queryKey = unref(queryOptions).queryKey as QueryKey;
+
+  return query;
+};
