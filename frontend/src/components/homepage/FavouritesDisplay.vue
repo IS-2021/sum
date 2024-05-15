@@ -12,7 +12,7 @@ const { favourites, hasAnyFavourites } = useFavourites({
 </script>
 
 <template>
-  <h1 class="font-bold text-2xl mb-8">Favourite restaurants</h1>
+  <h1 class="font-bold text-2xl mb-8">Your Favourite Restaurants</h1>
 
   <div v-if="!hasAnyFavourites">
     <p>
