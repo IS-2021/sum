@@ -3,10 +3,14 @@ import { useHead } from '@unhead/vue';
 // import { getLatestBooking } from '.';
 // import { getImageUrl } from '@/lib/assets';
 // import { AspectRatio } from '@/components/ui/aspect-ratio';
+import { useUser } from '@/composables/useUser';
+import FavouritesDisplay from '@/components/homepage/FavouritesDisplay.vue';
 
 useHead({
   title: 'Home',
 });
+
+const { user } = useUser();
 
 // const latest = getLatestBooking();
 // const restaurant = latest.restaurant;
@@ -37,6 +41,9 @@ useHead({
           </header>
         </article>
       </div> -->
+      <div v-if="user">
+        <FavouritesDisplay v-if="user" :user="user" />
+      </div>
     </div>
   </div>
 </template>
