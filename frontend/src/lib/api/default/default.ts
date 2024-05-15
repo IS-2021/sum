@@ -4,80 +4,17 @@
  * Sumatywny
  * OpenAPI spec version: 1.0.0
  */
-import { useMutation, useQuery } from '@tanstack/vue-query';
+import { useMutation } from '@tanstack/vue-query';
 import type {
   MutationFunction,
-  QueryFunction,
-  QueryKey,
   UseMutationOptions,
   UseMutationReturnType,
-  UseQueryOptions,
-  UseQueryReturnType,
 } from '@tanstack/vue-query';
 import * as axios from 'axios';
 import type { AxiosError, AxiosRequestConfig, AxiosResponse } from 'axios';
 import { unref } from 'vue';
 import type { MaybeRef } from 'vue';
-import type {
-  BadRequest400Response,
-  CityDTO,
-  NotFound404Response,
-  UserMeDTO,
-  Uuid,
-} from '../../api-model';
-
-/**
- * Get all cities by ID
- */
-export const getCities = (options?: AxiosRequestConfig): Promise<AxiosResponse<CityDTO[]>> => {
-  return axios.default.get(`http://localhost:9090/cities`, options);
-};
-
-export const getGetCitiesQueryKey = () => {
-  return ['http:', 'localhost:9090', 'cities'] as const;
-};
-
-export const getGetCitiesQueryOptions = <
-  TData = Awaited<ReturnType<typeof getCities>>,
-  TError = AxiosError<unknown>,
->(options?: {
-  query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getCities>>, TError, TData>>;
-  axios?: AxiosRequestConfig;
-}) => {
-  const { query: queryOptions, axios: axiosOptions } = options ?? {};
-
-  const queryKey = getGetCitiesQueryKey();
-
-  const queryFn: QueryFunction<Awaited<ReturnType<typeof getCities>>> = ({ signal }) =>
-    getCities({ signal, ...axiosOptions });
-
-  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
-    Awaited<ReturnType<typeof getCities>>,
-    TError,
-    TData
-  >;
-};
-
-export type GetCitiesQueryResult = NonNullable<Awaited<ReturnType<typeof getCities>>>;
-export type GetCitiesQueryError = AxiosError<unknown>;
-
-export const useGetCities = <
-  TData = Awaited<ReturnType<typeof getCities>>,
-  TError = AxiosError<unknown>,
->(options?: {
-  query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getCities>>, TError, TData>>;
-  axios?: AxiosRequestConfig;
-}): UseQueryReturnType<TData, TError> & { queryKey: QueryKey } => {
-  const queryOptions = getGetCitiesQueryOptions(options);
-
-  const query = useQuery(queryOptions) as UseQueryReturnType<TData, TError> & {
-    queryKey: QueryKey;
-  };
-
-  query.queryKey = unref(queryOptions).queryKey as QueryKey;
-
-  return query;
-};
+import type { BadRequest400Response, NotFound404Response, UserMeDTO, Uuid } from '../../api-model';
 
 export const postUsersUserIdCityCityId = (
   userId: MaybeRef<Uuid>,

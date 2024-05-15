@@ -1175,6 +1175,8 @@ paths:
         required: true
   /cities:
     get:
+      tags:
+        - cities
       responses:
         "200":
           content:
