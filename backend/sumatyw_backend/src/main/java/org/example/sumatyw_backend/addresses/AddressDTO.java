@@ -12,6 +12,8 @@ public record AddressDTO(
     String postalCode,
     String city,
     String country,
-    String region
+    String region,
+    double latitude,
+    double longitude
 ) {
 }

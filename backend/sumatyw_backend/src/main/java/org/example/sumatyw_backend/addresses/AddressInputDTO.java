@@ -21,6 +21,8 @@ public record AddressInputDTO(
     UUID cityId,
     @NotBlank(message = "Country cannot be blank")
     @Size(max = 50, message = "Country name cannot contain more than 50 characters")
-    String country
+    String country,
+    double latitude,
+    double longitude
 ) {
 }

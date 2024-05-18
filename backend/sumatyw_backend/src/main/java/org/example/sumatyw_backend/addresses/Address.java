@@ -26,4 +26,6 @@ public class Address {
     private String postalCode;
     @OneToOne(mappedBy = "address")
     private Restaurant restaurant;
+    private double latitude;
+    private double longitude;
 }

@@ -12,6 +12,8 @@ public class AddressDTOMapper {
             .city(City.builder()
                 .cityId(addressInputDTO.cityId())
                 .build())
+            .latitude(addressInputDTO.latitude())
+            .longitude(addressInputDTO.longitude())
             .build();
     }
 
@@ -23,7 +25,9 @@ public class AddressDTOMapper {
             address.getPostalCode(),
             address.getCity().getName(),
             address.getCity().getCountry(),
-            address.getCity().getRegion()
+            address.getCity().getRegion(),
+            address.getLatitude(),
+            address.getLongitude()
         );
     }
 }
