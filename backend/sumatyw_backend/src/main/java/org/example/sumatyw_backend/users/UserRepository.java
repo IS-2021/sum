@@ -15,7 +15,5 @@ public interface UserRepository extends JpaRepository<User, UUID> {
     Optional<User> findByPhoneNumber(String phoneNumber);
     Optional<User> findByEmail(String email);
     List<User> findByBlockedFalse();
-//    @Query("SELECT u.favouriteRestaurants FROM User u WHERE u.userId = :id")
-//    List<Restaurant> findAllFavouriteRestaurantsByUserId(UUID id);
 
 }

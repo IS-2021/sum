@@ -38,18 +38,6 @@ public class UserReportsService {
         }
     }
 
-//    public ReportDTO handleUserReport(UserReport userReport) {
-//
-//        if(userReportsRepository.findById(userReport.getUserReportId()).isPresent()) {
-//            userReportsRepository.save(userReport);
-//            return ReportsDTOMapper.mapUserReportToReportDTO(userReport);
-//
-//        } else {
-//            throw new ObjectNotFoundException("User report not found.");
-//        }
-//
-//    }
-
     public ReportDTO closeUserReport(UUID reportId) {
 
         Optional<UserReport> userReport = userReportsRepository.findById(reportId);
