@@ -25,7 +25,7 @@ export default defineComponent({
 </script>
 
 <template>
-  <aside class="border-r border-neutral-300 w-full h-svh px-6 py-5 max-w-[300px]">
+  <aside class="w-full h-svh px-6 py-5">
     <RouterLink to="/manage">
       <Logo class="mb-8" />
     </RouterLink>
