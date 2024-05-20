@@ -26,6 +26,7 @@
     "axios": "^1.6.8",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.0",
+    "date-fns": "^3.6.0",
     "lucide-vue-next": "^0.367.0",
     "pinia": "^2.1.7",
     "radix-vue": "^1.7.0",
