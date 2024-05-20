@@ -11,7 +11,9 @@ useHead({
 
 <template>
   <div class="flex flex-col lg:flex-row flex-grow">
-    <div class="lg:hidden gap-4 h-16 px-4 py-4 flex items-center border-b border-neutral-300">
+    <div
+      class="lg:hidden gap-4 h-16 px-4 sm:px-8 lg:px-12 xl:px-16 py-4 flex items-center border-b border-neutral-300"
+    >
       <MobileNavbar />
       <Logo class="h-8 w-8" />
     </div>
@@ -20,7 +22,7 @@ useHead({
       <Navbar />
     </div>
 
-    <div class="flex-grow mx-16 mt-14">
+    <div class="flex-grow mx-4 sm:mx-8 lg:mx-12 xl:mx-16 mt-14">
       <RouterView />
     </div>
   </div>

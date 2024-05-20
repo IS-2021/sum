@@ -8,7 +8,9 @@ const { value, measure } = defineProps<StatsCardProps>();
 </script>
 
 <template>
-  <div class="flex gap-8 items-center bg-white px-10 py-5 rounded min-w-72 w-fit justify-center">
+  <div
+    class="flex gap-8 items-center bg-white px-10 py-5 rounded min-w-72 w-full sm:w-fit justify-center"
+  >
     <slot />
     <div>
       <p class="text-3xl font-bold mb-1">{{ value }}</p>

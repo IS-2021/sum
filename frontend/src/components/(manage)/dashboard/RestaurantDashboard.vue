@@ -16,7 +16,7 @@ useHead({
     Some local restaurant name that is kinda long
   </h1>
 
-  <div class="flex gap-6 mb-8">
+  <div class="flex gap-6 mb-8 flex-col sm:flex-row">
     <StatsCard measure="Positive ratings" value="97%">
       <ThumbsUpIcon class="w-9 h-9 text-primary" />
     </StatsCard>
