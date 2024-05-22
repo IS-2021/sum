@@ -56,12 +56,13 @@ export default defineComponent({
             Reports
           </NavLink>
         </li>
+        <li>
+          <NavLink to="/manage/settings">
+            <SettingsIcon />
+            Restaurant settings
+          </NavLink>
+        </li>
       </ul>
     </nav>
-
-    <NavLink to="/manage/settings">
-      <SettingsIcon />
-      Restaurant settings
-    </NavLink>
   </aside>
 </template>
