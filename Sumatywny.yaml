@@ -366,6 +366,12 @@ paths:
     get:
       tags:
         - bookings
+      parameters:
+        - name: userId
+          description: "If exists, returns booking by userId, eg. /bookings?userId=123"
+          schema:
+            $ref: "#/components/schemas/UUID"
+          in: query
       responses:
         "200":
           content:
@@ -1333,7 +1339,7 @@ components:
       required:
         - name
         - type
-        - id
+        - ingredientId
       type: object
       properties:
         name:
@@ -1343,14 +1349,14 @@ components:
         type:
           description: ""
           type: string
-        id:
+        ingredientId:
           $ref: "#/components/schemas/UUID"
           description: ""
           x-faker: datatype.uuid
       example:
         name: Cheese
         type: dairy
-        id: 1488098b-8777-417f-a45a-78c7361502d8
+        ingredientId: 1488098b-8777-417f-a45a-78c7361502d8
     UserDTO:
       title: Root Type for UserDTO
       description: User object.
@@ -1362,7 +1368,7 @@ components:
         - role
         - secondName
         - username
-        - id
+        - userId
         - isBlocked
       type: object
       properties:
@@ -1394,12 +1400,12 @@ components:
           x-faker:
             phone.phoneNumber:
               - "###-###-###"
-        id:
-          $ref: "#/components/schemas/UUID"
-          description: ""
         isBlocked:
           description: ""
           type: boolean
+        userId:
+          $ref: "#/components/schemas/UUID"
+          description: ""
     UserInputDTO:
       title: Root Type for UserDTO
       description: User object.
@@ -1491,8 +1497,10 @@ components:
       required:
         - userId
         - mealId
-        - timestamp
+        - orderedTimestamp
         - id
+        - deadlinePickUpTimestamp
+        - pickedUpTimestamp
       type: object
       properties:
         userId:
@@ -1501,14 +1509,17 @@ components:
         mealId:
           $ref: "#/components/schemas/UUID"
           description: ""
-        timestamp:
-          $ref: "#/components/schemas/timestamp"
-          description: ""
         pickedUpTimestamp:
           $ref: "#/components/schemas/timestamp"
           description: ""
         id:
           $ref: "#/components/schemas/UUID"
+          description: ""
+        orderedTimestamp:
+          $ref: "#/components/schemas/timestamp"
+          description: ""
+        deadlinePickUpTimestamp:
+          $ref: "#/components/schemas/timestamp"
           description: ""
     DeleteFavouriteRestaurantsDTO:
       description: ""
@@ -1597,7 +1608,7 @@ components:
       required:
         - active
         - address
-        - id
+        - restaurantId
         - name
         - phoneNumber
         - userId
@@ -1606,8 +1617,6 @@ components:
         - dislikesCount
       type: object
       properties:
-        id:
-          $ref: "#/components/schemas/UUID"
         name:
           type: string
         phoneNumber:
@@ -1630,6 +1639,8 @@ components:
           $ref: "#/components/schemas/AddressDTO"
         active:
           type: boolean
+        restaurantId:
+          $ref: "#/components/schemas/UUID"
     RestaurantFavouriteInputDTO:
       description: ""
       required:
@@ -1734,8 +1745,14 @@ components:
           description: ""
           type: string
         cityId:
+          $ref: "#/components/schemas/UUID"
           description: ""
-          type: string
+        longitude:
+          description: double
+          type: number
+        latitude:
+          description: double
+          type: number
     AddressInputDTO:
       description: ""
       required:
@@ -1744,6 +1761,8 @@ components:
         - number
         - postalCode
         - cityId
+        - latitude
+        - longitude
       type: object
       properties:
         country:
@@ -1761,6 +1780,12 @@ components:
         cityId:
           $ref: "#/components/schemas/UUID"
           description: ""
+        latitude:
+          description: double
+          type: number
+        longitude:
+          description: double
+          type: number
     ProblemDetail:
       title: Root Type for ProblemDetail
       description: ""
@@ -1791,25 +1816,27 @@ components:
     CityDTO:
       title: Root Type for CityDTO
       description: ""
+      required:
+        - cityId
       type: object
       properties:
-        uuid:
-          type: string
         name:
           type: string
         region:
           type: string
         country:
           type: string
+        cityId:
+          $ref: "#/components/schemas/UUID"
       example:
-        uuid: ""
+        cityId: ""
         name: ""
         region: ""
         country: ""
     UserMeDTO:
       description: ""
       required:
-        - id
+        - userMeId
         - firstName
         - secondName
         - username
@@ -1818,9 +1845,6 @@ components:
         - role
       type: object
       properties:
-        id:
-          $ref: "#/components/schemas/UUID"
-          description: ""
         firstName:
           description: ""
           type: string
@@ -1841,6 +1865,9 @@ components:
           description: ""
         city:
           $ref: "#/components/schemas/CityDTO"
+          description: ""
+        userMeId:
+          $ref: "#/components/schemas/UUID"
           description: ""
   responses:
     NotFound_404:

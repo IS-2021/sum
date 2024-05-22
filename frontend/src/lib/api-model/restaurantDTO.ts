@@ -13,10 +13,10 @@ export interface RestaurantDTO {
   address: AddressDTO;
   dislikesCount: number;
   hours: HoursDTO;
-  id: Uuid;
   imageUrl?: string;
   likesCount: number;
   name: string;
   phoneNumber: string;
+  restaurantId: Uuid;
   userId: Uuid;
 }

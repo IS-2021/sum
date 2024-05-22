@@ -4,8 +4,8 @@
  * Sumatywny
  * OpenAPI spec version: 1.0.0
  */
-import type { Uuid } from './uuid';
 import type { Role } from './role';
+import type { Uuid } from './uuid';
 
 /**
  * User object.
@@ -13,11 +13,11 @@ import type { Role } from './role';
 export interface UserDTO {
   email: string;
   firstName: string;
-  id: Uuid;
   isBlocked: boolean;
   password: string;
   phoneNumber: string;
   role: Role;
   secondName: string;
+  userId: Uuid;
   username: string;
 }

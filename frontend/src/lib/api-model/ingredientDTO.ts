@@ -7,7 +7,7 @@
 import type { Uuid } from './uuid';
 
 export interface IngredientDTO {
-  id: Uuid;
+  ingredientId: Uuid;
   name: string;
   type: string;
 }

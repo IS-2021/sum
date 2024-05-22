@@ -9,6 +9,10 @@ import type { Uuid } from './uuid';
 export interface AddressInputDTO {
   cityId: Uuid;
   country: string;
+  /** double */
+  latitude: number;
+  /** double */
+  longitude: number;
   number: string;
   postalCode: string;
   street: string;

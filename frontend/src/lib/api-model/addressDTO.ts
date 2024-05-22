@@ -8,8 +8,12 @@ import type { Uuid } from './uuid';
 
 export interface AddressDTO {
   addressId: Uuid;
-  cityId: string;
+  cityId: Uuid;
   country: string;
+  /** double */
+  latitude?: number;
+  /** double */
+  longitude?: number;
   number: string;
   postalCode: string;
   region: string;
