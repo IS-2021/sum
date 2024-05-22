@@ -13,6 +13,7 @@ export * from './bookingInputDTO';
 export * from './cityDTO';
 export * from './credentialsDTO';
 export * from './deleteFavouriteRestaurantsDTO';
+export * from './getBookingsParams';
 export * from './getIngredientsParams';
 export * from './getMealsParams';
 export * from './getRestaurantsParams';

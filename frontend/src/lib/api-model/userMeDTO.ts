@@ -5,16 +5,16 @@
  * OpenAPI spec version: 1.0.0
  */
 import type { CityDTO } from './cityDTO';
-import type { Uuid } from './uuid';
 import type { Role } from './role';
+import type { Uuid } from './uuid';
 
 export interface UserMeDTO {
   city?: CityDTO;
   email: string;
   firstName: string;
-  id: Uuid;
   phoneNumber: string;
   role: Role;
   secondName: string;
+  userMeId: Uuid;
   username: string;
 }
