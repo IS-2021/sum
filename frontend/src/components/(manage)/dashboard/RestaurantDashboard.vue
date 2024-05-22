@@ -16,12 +16,12 @@ useHead({
     Some local restaurant name that is kinda long
   </h1>
 
-  <div class="flex gap-6 mb-8 flex-col sm:flex-row">
+  <div class="flex sm:gap-6 mb-8 flex-col sm:flex-row">
     <StatsCard measure="Positive ratings" value="97%">
-      <ThumbsUpIcon class="w-9 h-9 text-primary" />
+      <ThumbsUpIcon class="sm:w-9 sm:h-9 text-primary" />
     </StatsCard>
     <StatsCard measure="Meals saved" value="34">
-      <CookingPotIcon class="w-9 h-9 text-primary" />
+      <CookingPotIcon class="sm:w-9 sm:h-9 text-primary" />
     </StatsCard>
   </div>
 

@@ -9,11 +9,11 @@ const { value, measure } = defineProps<StatsCardProps>();
 
 <template>
   <div
-    class="flex gap-8 items-center bg-white px-10 py-5 rounded min-w-72 w-full sm:w-fit justify-center"
+    class="flex gap-4 sm:gap-8 items-center bg-white px-10 sm:py-5 py-3 rounded min-w-72 w-full sm:w-fit sm:justify-center"
   >
     <slot />
-    <div>
-      <p class="text-3xl font-bold mb-1">{{ value }}</p>
+    <div class="flex items-center gap-3 sm:block">
+      <p class="sm:text-3xl font-bold sm:mb-1">{{ value }}</p>
       <p class="text-neutral-500">{{ measure }}</p>
     </div>
   </div>
