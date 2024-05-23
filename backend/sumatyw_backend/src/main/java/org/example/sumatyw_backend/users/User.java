@@ -23,7 +23,7 @@ import java.util.UUID;
 @Getter
 @Entity
 @Builder
-@Table(name="user_details")
+@Table(name = "user_details")
 public class User implements UserDetails {
 
     @Id
@@ -31,24 +31,34 @@ public class User implements UserDetails {
     private UUID userId;
     private String firstName;
     private String secondName;
+
     @Column(unique = true)
     private String username;
+
     @Column(unique = true)
     private String email;
+
     private String password;
+
     @Column(unique = true)
     private String phoneNumber;
+
     private boolean blocked;
+
     @Enumerated(EnumType.STRING)
     private Role role;
+
     @OneToOne(mappedBy = "user")
     private Restaurant restaurant;
+
     @OneToOne(optional = true)
     @JoinColumn(name = "address_id", nullable = true)
     @NotFound(action = NotFoundAction.IGNORE)
     private Address address;
+
     @OneToMany(mappedBy = "user")
     private List<Opinion> opinions;
+
     @OneToMany(mappedBy = "user", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
     private List<Favourite> favourites;
 

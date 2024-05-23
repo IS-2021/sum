@@ -4,19 +4,19 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.example.sumatyw_backend.restaurants.Restaurant;
 
-import java.util.UUID;
-
 @AllArgsConstructor
 @NoArgsConstructor
 @Setter
 @Getter
 @Entity
 @Builder
-@Table(name="addresses")
+@Table(name = "addresses")
 public class Address {
+    /**
+     * Address ID. Equals Place ID from Google Maps API.
+     */
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID addressId;
+    private String addressId;
     private String city;
     private String street;
     private String number;

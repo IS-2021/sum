@@ -16,4 +16,6 @@ public interface AddressRepository extends JpaRepository<Address, UUID> {
         String postalCode
     );
 
+    Optional<Address> findByAddressId(String addressId);
+
 }

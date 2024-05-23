@@ -1179,20 +1179,6 @@ paths:
           type: string
         in: path
         required: true
-  /cities:
-    get:
-      tags:
-        - cities
-      responses:
-        "200":
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: "#/components/schemas/CityDTO"
-          description: Get all cities
-      description: Get all cities by ID
   "/users/{userId}/city/{cityId}":
     post:
       tags:
@@ -1759,12 +1745,11 @@ components:
       description: ""
       required:
         - country
-        - cityId
+        - city
         - street
         - number
         - postalCode
         - addressId
-        - region
       type: object
       properties:
         country:
@@ -1780,20 +1765,17 @@ components:
           description: ""
           type: string
         addressId:
-          $ref: "#/components/schemas/UUID"
-          description: ""
-        region:
           description: ""
           type: string
-        cityId:
-          $ref: "#/components/schemas/UUID"
-          description: ""
         longitude:
           description: double
           type: number
         latitude:
           description: double
           type: number
+        city:
+          description: ""
+          type: string
     AddressInputDTO:
       description: ""
       required:
@@ -1854,30 +1836,10 @@ components:
         status: 400
         detail: "Phone number: '111222333' already exists."
         instance: /auth/register
-    CityDTO:
-      title: Root Type for CityDTO
-      description: ""
-      required:
-        - cityId
-      type: object
-      properties:
-        name:
-          type: string
-        region:
-          type: string
-        country:
-          type: string
-        cityId:
-          $ref: "#/components/schemas/UUID"
-      example:
-        cityId: ""
-        name: ""
-        region: ""
-        country: ""
     UserMeDTO:
       description: ""
       required:
-        - userMeId
+        - id
         - firstName
         - secondName
         - username
@@ -1904,11 +1866,11 @@ components:
         role:
           $ref: "#/components/schemas/Role"
           description: ""
-        city:
-          $ref: "#/components/schemas/CityDTO"
-          description: ""
-        userMeId:
+        id:
           $ref: "#/components/schemas/UUID"
+          description: ""
+        address:
+          $ref: "#/components/schemas/AddressDTO"
           description: ""
     GeoLatLngDTO:
       title: Root Type for GeoLatLngDTO
