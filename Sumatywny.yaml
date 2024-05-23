@@ -1240,6 +1240,24 @@ paths:
           $ref: "#/components/schemas/UUID"
         in: path
         required: true
+  /geo/places:
+    get:
+      tags:
+        - geo
+      parameters:
+        - name: placeId
+          description: Google Maps Place ID
+          schema:
+            type: string
+          in: query
+          required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AddressDTO"
+          description: Returns address of the place
 components:
   schemas:
     OpinionDTO:

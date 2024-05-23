@@ -21,6 +21,7 @@ public class Address {
     private String street;
     private String number;
     private String postalCode;
+    private String country;
     @OneToOne(mappedBy = "address")
     private Restaurant restaurant;
     private double latitude;

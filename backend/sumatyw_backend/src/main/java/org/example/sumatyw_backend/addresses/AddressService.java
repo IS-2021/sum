@@ -1,8 +1,13 @@
 package org.example.sumatyw_backend.addresses;
 
+import com.google.maps.errors.ApiException;
+import com.google.maps.model.PlaceDetails;
 import lombok.AllArgsConstructor;
+import org.example.sumatyw_backend.geo.place_details.PlaceDetailsMapper;
+import org.example.sumatyw_backend.geo.place_details.PlaceDetailsService;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.util.Optional;
 
 @Service
@@ -10,24 +15,18 @@ import java.util.Optional;
 public class AddressService {
 
     private final AddressRepository addressRepository;
+    private final PlaceDetailsService placeDetailsService;
 
-    public Address getAddress(String addressId) {
+    public Address getAddress(String addressId) throws IOException, InterruptedException, ApiException {
         Optional<Address> address = addressRepository.findByAddressId(addressId);
 
         if (address.isPresent()) {
             return address.get();
         }
 
-        // TODO: Replace with call to geo.places API once it's implemented
-        Address newAddress = Address.builder()
-            .addressId(addressId)
-            .city("Łódź")
-            .street("Wólczańska")
-            .number("215")
-            .postalCode("93-005")
-            .latitude(51.7487039)
-            .longitude(19.4595253)
-            .build();
+        // If address is not present in the database, fetch it from Google Maps API
+        PlaceDetails placeDetails = placeDetailsService.getPlaceDetails(addressId);
+        Address newAddress = PlaceDetailsMapper.mapPlaceDetailsToAddress(placeDetails);
 
         return addressRepository.save(newAddress);
     }

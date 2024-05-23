@@ -3,6 +3,10 @@ package org.example.sumatyw_backend.geo;
 import com.google.maps.errors.ApiException;
 import com.google.maps.model.AutocompletePrediction;
 import lombok.AllArgsConstructor;
+import org.example.sumatyw_backend.addresses.Address;
+import org.example.sumatyw_backend.addresses.AddressDTO;
+import org.example.sumatyw_backend.addresses.AddressDTOMapper;
+import org.example.sumatyw_backend.addresses.AddressService;
 import org.example.sumatyw_backend.geo.autocomplete.AutocompleteDTO;
 import org.example.sumatyw_backend.geo.autocomplete.AutocompleteDTOMapper;
 import org.example.sumatyw_backend.geo.autocomplete.AutocompleteService;
@@ -22,7 +26,9 @@ import java.util.UUID;
 @RequestMapping("/geo")
 @AllArgsConstructor
 public class GeoController {
+
     private final AutocompleteService autocompleteService;
+    private final AddressService addressService;
 
     @GetMapping("/autocomplete")
     public ResponseEntity<List<AutocompleteDTO>> autocompleteAddress(@RequestParam String query, @RequestParam UUID sessionToken) throws IOException, InterruptedException, ApiException {
@@ -32,4 +38,14 @@ public class GeoController {
 
         return new ResponseEntity<>(dtos, HttpStatus.OK);
     }
+
+    @GetMapping("/places")
+    public ResponseEntity<AddressDTO> getPlaceDetails(@RequestParam String placeId) throws IOException, InterruptedException, ApiException {
+        Address address = addressService.getAddress(placeId);
+
+        AddressDTO dto = AddressDTOMapper.mapAddressToAddressDTO(address);
+
+        return new ResponseEntity<>(dto, HttpStatus.OK);
+    }
+
 }
