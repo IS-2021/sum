@@ -21,6 +21,7 @@ import type { MaybeRef } from 'vue';
 import type {
   BadRequest400Response,
   NotFound404Response,
+  PostUsersUserIdAddressParams,
   UserDTO,
   UserInputDTO,
   UserMeDTO,
@@ -318,77 +319,76 @@ export const useGetUsersMe = <
   return query;
 };
 
-export const postUsersUserIdCityCityId = (
+export const postUsersUserIdAddress = (
   userId: MaybeRef<Uuid>,
-  cityId: MaybeRef<Uuid>,
+  params: MaybeRef<PostUsersUserIdAddressParams>,
   options?: AxiosRequestConfig,
 ): Promise<AxiosResponse<UserMeDTO>> => {
   userId = unref(userId);
-  cityId = unref(cityId);
-  return axios.default.post(
-    `http://localhost:9090/users/${userId}/city/${cityId}`,
-    undefined,
-    options,
-  );
+  params = unref(params);
+  return axios.default.post(`http://localhost:9090/users/${userId}/address`, undefined, {
+    ...options,
+    params: { ...unref(params), ...options?.params },
+  });
 };
 
-export const getPostUsersUserIdCityCityIdMutationOptions = <
+export const getPostUsersUserIdAddressMutationOptions = <
   TError = AxiosError<BadRequest400Response | NotFound404Response>,
   TContext = unknown,
 >(options?: {
   mutation?: UseMutationOptions<
-    Awaited<ReturnType<typeof postUsersUserIdCityCityId>>,
+    Awaited<ReturnType<typeof postUsersUserIdAddress>>,
     TError,
-    { userId: Uuid; cityId: Uuid },
+    { userId: Uuid; params: PostUsersUserIdAddressParams },
     TContext
   >;
   axios?: AxiosRequestConfig;
 }): UseMutationOptions<
-  Awaited<ReturnType<typeof postUsersUserIdCityCityId>>,
+  Awaited<ReturnType<typeof postUsersUserIdAddress>>,
   TError,
-  { userId: Uuid; cityId: Uuid },
+  { userId: Uuid; params: PostUsersUserIdAddressParams },
   TContext
 > => {
   const { mutation: mutationOptions, axios: axiosOptions } = options ?? {};
 
   const mutationFn: MutationFunction<
-    Awaited<ReturnType<typeof postUsersUserIdCityCityId>>,
-    { userId: Uuid; cityId: Uuid }
+    Awaited<ReturnType<typeof postUsersUserIdAddress>>,
+    { userId: Uuid; params: PostUsersUserIdAddressParams }
   > = (props) => {
-    const { userId, cityId } = props ?? {};
+    const { userId, params } = props ?? {};
 
-    return postUsersUserIdCityCityId(userId, cityId, axiosOptions);
+    return postUsersUserIdAddress(userId, params, axiosOptions);
   };
 
   return { mutationFn, ...mutationOptions };
 };
 
-export type PostUsersUserIdCityCityIdMutationResult = NonNullable<
-  Awaited<ReturnType<typeof postUsersUserIdCityCityId>>
+export type PostUsersUserIdAddressMutationResult = NonNullable<
+  Awaited<ReturnType<typeof postUsersUserIdAddress>>
 >;
 
-export type PostUsersUserIdCityCityIdMutationError = AxiosError<
+export type PostUsersUserIdAddressMutationError = AxiosError<
   BadRequest400Response | NotFound404Response
 >;
 
-export const usePostUsersUserIdCityCityId = <
+export const usePostUsersUserIdAddress = <
   TError = AxiosError<BadRequest400Response | NotFound404Response>,
   TContext = unknown,
 >(options?: {
   mutation?: UseMutationOptions<
-    Awaited<ReturnType<typeof postUsersUserIdCityCityId>>,
+    Awaited<ReturnType<typeof postUsersUserIdAddress>>,
     TError,
-    { userId: Uuid; cityId: Uuid },
+    { userId: Uuid; params: PostUsersUserIdAddressParams },
     TContext
   >;
   axios?: AxiosRequestConfig;
 }): UseMutationReturnType<
-  Awaited<ReturnType<typeof postUsersUserIdCityCityId>>,
+  Awaited<ReturnType<typeof postUsersUserIdAddress>>,
   TError,
-  { userId: Uuid; cityId: Uuid },
+  { userId: Uuid; params: PostUsersUserIdAddressParams },
   TContext
 > => {
-  const mutationOptions = getPostUsersUserIdCityCityIdMutationOptions(options);
+  const mutationOptions = getPostUsersUserIdAddressMutationOptions(options);
 
   return useMutation(mutationOptions);
 };
