@@ -7,13 +7,16 @@
 
 export * from './addressDTO';
 export * from './addressInputDTO';
+export * from './autocompleteDTO';
 export * from './badRequest400Response';
 export * from './bookingDTO';
 export * from './bookingInputDTO';
 export * from './cityDTO';
 export * from './credentialsDTO';
 export * from './deleteFavouriteRestaurantsDTO';
+export * from './geoLatLngDTO';
 export * from './getBookingsParams';
+export * from './getGeoAutocompleteParams';
 export * from './getIngredientsParams';
 export * from './getMealsParams';
 export * from './getRestaurantsParams';

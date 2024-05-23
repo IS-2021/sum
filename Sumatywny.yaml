@@ -1195,6 +1195,8 @@ paths:
       description: Get all cities by ID
   "/users/{userId}/city/{cityId}":
     post:
+      tags:
+        - users
       parameters:
         - name: userId
           schema:
@@ -1217,6 +1219,45 @@ paths:
           $ref: "#/components/responses/BadRequest_400"
         "404":
           $ref: "#/components/responses/NotFound_404"
+    parameters:
+      - name: userId
+        schema:
+          $ref: "#/components/schemas/UUID"
+        in: path
+        required: true
+      - name: cityId
+        schema:
+          $ref: "#/components/schemas/UUID"
+        in: path
+        required: true
+  /geo/autocomplete:
+    get:
+      tags:
+        - geo
+      parameters:
+        - name: query
+          description: 'Partial city/street query, such as "War", "Warsz" or "Warszawa"'
+          schema:
+            type: string
+          in: query
+          required: true
+        - name: sessionToken
+          description: >-
+            See:
+            https://developers.google.com/maps/documentation/places/web-service/session-tokens
+          schema:
+            $ref: "#/components/schemas/UUID"
+          in: query
+          required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/AutocompleteDTO"
+          description: List of autocompletions
 components:
   schemas:
     OpinionDTO:
@@ -1869,6 +1910,38 @@ components:
         userMeId:
           $ref: "#/components/schemas/UUID"
           description: ""
+    GeoLatLngDTO:
+      title: Root Type for GeoLatLngDTO
+      description: ""
+      required:
+        - lat
+        - lng
+      type: object
+      properties:
+        lat:
+          format: double
+          type: number
+        lng:
+          format: double
+          type: number
+      example:
+        lat: 51.7659423
+        lng: 19.4777691
+    AutocompleteDTO:
+      title: Root Type for AutocompleteDTO
+      description: ""
+      required:
+        - description
+        - placeId
+      type: object
+      properties:
+        description:
+          type: string
+        placeId:
+          type: string
+      example:
+        description: "Warszawa, Polska"
+        placeId: ChIJAZ-GmmbMHkcR_NPqiCq-8HI
   responses:
     NotFound_404:
       content:
