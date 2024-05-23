@@ -47,7 +47,7 @@ const handleCompletionInput = (payload: string) => {
         variant="outline"
         role="combobox"
         :aria-expanded="open"
-        class="justify-between w-full max-w-screen-sm"
+        class="justify-between w-full"
       >
         {{
           pickedPlaceId
@@ -58,7 +58,7 @@ const handleCompletionInput = (payload: string) => {
         <ChevronsUpDown class="ml-2 h-4 w-4 shrink-0 opacity-50" />
       </Button>
     </PopoverTrigger>
-    <PopoverContent class="p-0 min-w-max max-w-screen-sm w-full">
+    <PopoverContent class="p-0 w-[calc(100svw-1.5rem)] sm:max-w-prose">
       <Command :key="citiesKey">
         <CitiesComboboxInput
           class="h-9"
