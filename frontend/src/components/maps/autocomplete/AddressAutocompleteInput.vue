@@ -7,6 +7,10 @@ import { computed, nextTick, ref, watchEffect } from 'vue';
 import { getGeoAutocomplete } from '@/lib/api/geo/geo';
 import { v4 } from 'uuid';
 
+const emit = defineEmits<{
+  (e: 'onPlaceSelect', placeId: string): void;
+}>();
+
 const completionQuery = ref<string>('');
 const sessionToken = ref<string>(v4());
 const enableQuery = computed(() => completionQuery.value.length > 3);
@@ -26,7 +30,7 @@ watchEffect(async () => {
   }
 });
 
-const handleUpdate = async (payload: string) => {
+const handlePlaceSearch = async (payload: string) => {
   if (payload.length < 2) {
     return;
   }
@@ -34,9 +38,17 @@ const handleUpdate = async (payload: string) => {
   completionQuery.value = payload;
   await nextTick();
 };
-const debouncedHandleUpdate = useDebounceFn(handleUpdate, 500);
+const debouncedHandlePlaceSearch = useDebounceFn(handlePlaceSearch, 500);
+
+const handlePlaceSelect = (payload: AutocompleteDTO['placeId']) => {
+  emit('onPlaceSelect', payload);
+};
 </script>
 
 <template>
-  <CitiesCombobox :completions="cities" @searchChange="debouncedHandleUpdate" />
+  <CitiesCombobox
+    :completions="cities"
+    @searchChange="debouncedHandlePlaceSearch"
+    @onSelect="handlePlaceSelect"
+  />
 </template>

@@ -23,10 +23,11 @@ interface CitiesComboboxProps {
 const props = defineProps<CitiesComboboxProps>();
 
 const open = ref(false);
-const value = ref('');
+const pickedPlaceId = ref('');
 
 const emit = defineEmits<{
   searchChange: [payload: string];
+  onSelect: [payload: string];
 }>();
 
 const citiesKey = computed(() => props.completions.map((city) => city.description).join(''));
@@ -42,8 +43,9 @@ const citiesKey = computed(() => props.completions.map((city) => city.descriptio
         class="w-[200px] justify-between"
       >
         {{
-          value
-            ? props.completions.find((completion) => completion.placeId === value)?.description
+          pickedPlaceId
+            ? props.completions.find((completion) => completion.placeId === pickedPlaceId)
+                ?.description
             : 'Search addresses...'
         }}
         <ChevronsUpDown class="ml-2 h-4 w-4 shrink-0 opacity-50" />
@@ -68,7 +70,8 @@ const citiesKey = computed(() => props.completions.map((city) => city.descriptio
               @select="
                 (ev) => {
                   if (typeof ev.detail.value === 'string') {
-                    value = ev.detail.value;
+                    pickedPlaceId = ev.detail.value;
+                    emit('onSelect', completion.placeId);
                   }
                   open = false;
                 }
@@ -77,7 +80,10 @@ const citiesKey = computed(() => props.completions.map((city) => city.descriptio
               {{ completion.description }}
               <Check
                 :class="
-                  cn('ml-auto h-4 w-4', value === completion.placeId ? 'opacity-100' : 'opacity-0')
+                  cn(
+                    'ml-auto h-4 w-4',
+                    pickedPlaceId === completion.placeId ? 'opacity-100' : 'opacity-0',
+                  )
                 "
               />
             </CommandItem>
