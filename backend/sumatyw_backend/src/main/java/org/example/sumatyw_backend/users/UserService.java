@@ -1,8 +1,8 @@
 package org.example.sumatyw_backend.users;
 
 import lombok.AllArgsConstructor;
-import org.example.sumatyw_backend.addresses.AddressInputDTO;
 import org.example.sumatyw_backend.addresses.AddressRepository;
+import org.example.sumatyw_backend.addresses.AddressService;
 import org.example.sumatyw_backend.exceptions.ResourceAlreadyExistsException;
 import org.example.sumatyw_backend.exceptions.UserNotAuthenticatedException;
 import org.example.sumatyw_backend.exceptions.UserNotFoundException;
@@ -22,9 +22,9 @@ import java.util.UUID;
 public class UserService {
 
     private final UserRepository userRepository;
-    private final AddressRepository addressRepository;
     private final PasswordEncoder passwordEncoder;
     private final RestaurantRepository restaurantRepository;
+    private final AddressService addressService;
 
     public User addUser(User user) {
 
@@ -122,18 +122,10 @@ public class UserService {
         }
     }
 
-    public User updateUserAddress(UUID userId, AddressInputDTO addressInputDTO) {
+    public User updateUserAddress(UUID userId, String placeId) {
         User existingUser = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("User not found with ID: " + userId));
 
-//        Address updatedAddress = existingUser.getAddress();
-//        updatedAddress.setCity(addressInputDTO.city());
-//        updatedAddress.setStreet(addressInputDTO.street());
-//        updatedAddress.setNumber(addressInputDTO.number());
-//        updatedAddress.setPostalCode(addressInputDTO.postalCode());
-//        updatedAddress.setLatitude(addressInputDTO.latitude());
-//        updatedAddress.setLongitude(addressInputDTO.longitude());
-
-//        addressRepository.save(updatedAddress);
+        existingUser.setAddress(addressService.getAddress(placeId));
 
         return userRepository.save(existingUser);
     }

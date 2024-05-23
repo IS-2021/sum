@@ -1179,43 +1179,6 @@ paths:
           type: string
         in: path
         required: true
-  "/users/{userId}/city/{cityId}":
-    post:
-      tags:
-        - users
-      parameters:
-        - name: userId
-          schema:
-            $ref: "#/components/schemas/UUID"
-          in: path
-          required: true
-        - name: cityId
-          schema:
-            $ref: "#/components/schemas/UUID"
-          in: path
-          required: true
-      responses:
-        "200":
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/UserMeDTO"
-          description: City has been set
-        "400":
-          $ref: "#/components/responses/BadRequest_400"
-        "404":
-          $ref: "#/components/responses/NotFound_404"
-    parameters:
-      - name: userId
-        schema:
-          $ref: "#/components/schemas/UUID"
-        in: path
-        required: true
-      - name: cityId
-        schema:
-          $ref: "#/components/schemas/UUID"
-        in: path
-        required: true
   /geo/autocomplete:
     get:
       tags:
@@ -1244,6 +1207,39 @@ paths:
                 items:
                   $ref: "#/components/schemas/AutocompleteDTO"
           description: List of autocompletions
+  "/users/{userId}/address":
+    post:
+      tags:
+        - users
+      parameters:
+        - name: userId
+          schema:
+            $ref: "#/components/schemas/UUID"
+          in: path
+          required: true
+        - name: placeId
+          description: Place ID from Google Maps API
+          schema:
+            type: string
+          in: query
+          required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserMeDTO"
+          description: City has been set
+        "400":
+          $ref: "#/components/responses/BadRequest_400"
+        "404":
+          $ref: "#/components/responses/NotFound_404"
+    parameters:
+      - name: userId
+        schema:
+          $ref: "#/components/schemas/UUID"
+        in: path
+        required: true
 components:
   schemas:
     OpinionDTO:
