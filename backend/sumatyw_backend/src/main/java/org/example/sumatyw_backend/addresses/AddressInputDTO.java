@@ -17,8 +17,8 @@ public record AddressInputDTO(
     @NotBlank(message = "Address postal code cannot be blank")
     @Size(max = 6, message = "City postal code cannot contain more than 6 characters")
     String postalCode,
-    @NotNull(message = "City id cannot be blank")
-    UUID cityId,
+    @NotNull(message = "City cannot be blank")
+    String city,
     @NotBlank(message = "Country cannot be blank")
     @Size(max = 50, message = "Country name cannot contain more than 50 characters")
     String country,

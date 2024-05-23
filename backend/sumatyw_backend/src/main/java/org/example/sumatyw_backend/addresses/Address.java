@@ -2,7 +2,6 @@ package org.example.sumatyw_backend.addresses;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.example.sumatyw_backend.cities.City;
 import org.example.sumatyw_backend.restaurants.Restaurant;
 
 import java.util.UUID;
@@ -18,9 +17,7 @@ public class Address {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID addressId;
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "city_id")
-    private City city;
+    private String city;
     private String street;
     private String number;
     private String postalCode;
