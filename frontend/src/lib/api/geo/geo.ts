@@ -15,7 +15,12 @@ import * as axios from 'axios';
 import type { AxiosError, AxiosRequestConfig, AxiosResponse } from 'axios';
 import { unref } from 'vue';
 import type { MaybeRef } from 'vue';
-import type { AutocompleteDTO, GetGeoAutocompleteParams } from '../../api-model';
+import type {
+  AddressDTO,
+  AutocompleteDTO,
+  GetGeoAutocompleteParams,
+  GetGeoPlacesParams,
+} from '../../api-model';
 
 export const getGeoAutocomplete = (
   params: MaybeRef<GetGeoAutocompleteParams>,
@@ -72,6 +77,69 @@ export const useGetGeoAutocomplete = <
   },
 ): UseQueryReturnType<TData, TError> & { queryKey: QueryKey } => {
   const queryOptions = getGetGeoAutocompleteQueryOptions(params, options);
+
+  const query = useQuery(queryOptions) as UseQueryReturnType<TData, TError> & {
+    queryKey: QueryKey;
+  };
+
+  query.queryKey = unref(queryOptions).queryKey as QueryKey;
+
+  return query;
+};
+
+export const getGeoPlaces = (
+  params: MaybeRef<GetGeoPlacesParams>,
+  options?: AxiosRequestConfig,
+): Promise<AxiosResponse<AddressDTO>> => {
+  params = unref(params);
+  return axios.default.get(`http://localhost:9090/geo/places`, {
+    ...options,
+    params: { ...unref(params), ...options?.params },
+  });
+};
+
+export const getGetGeoPlacesQueryKey = (params: MaybeRef<GetGeoPlacesParams>) => {
+  return ['http:', 'localhost:9090', 'geo', 'places', ...(params ? [params] : [])] as const;
+};
+
+export const getGetGeoPlacesQueryOptions = <
+  TData = Awaited<ReturnType<typeof getGeoPlaces>>,
+  TError = AxiosError<unknown>,
+>(
+  params: MaybeRef<GetGeoPlacesParams>,
+  options?: {
+    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getGeoPlaces>>, TError, TData>>;
+    axios?: AxiosRequestConfig;
+  },
+) => {
+  const { query: queryOptions, axios: axiosOptions } = options ?? {};
+
+  const queryKey = getGetGeoPlacesQueryKey(params);
+
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof getGeoPlaces>>> = ({ signal }) =>
+    getGeoPlaces(params, { signal, ...axiosOptions });
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof getGeoPlaces>>,
+    TError,
+    TData
+  >;
+};
+
+export type GetGeoPlacesQueryResult = NonNullable<Awaited<ReturnType<typeof getGeoPlaces>>>;
+export type GetGeoPlacesQueryError = AxiosError<unknown>;
+
+export const useGetGeoPlaces = <
+  TData = Awaited<ReturnType<typeof getGeoPlaces>>,
+  TError = AxiosError<unknown>,
+>(
+  params: MaybeRef<GetGeoPlacesParams>,
+  options?: {
+    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getGeoPlaces>>, TError, TData>>;
+    axios?: AxiosRequestConfig;
+  },
+): UseQueryReturnType<TData, TError> & { queryKey: QueryKey } => {
+  const queryOptions = getGetGeoPlacesQueryOptions(params, options);
 
   const query = useQuery(queryOptions) as UseQueryReturnType<TData, TError> & {
     queryKey: QueryKey;
