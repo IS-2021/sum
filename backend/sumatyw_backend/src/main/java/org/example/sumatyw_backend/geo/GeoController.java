@@ -32,6 +32,10 @@ public class GeoController {
 
     @GetMapping("/autocomplete")
     public ResponseEntity<List<AutocompleteDTO>> autocompleteAddress(@RequestParam String query, @RequestParam UUID sessionToken) throws IOException, InterruptedException, ApiException {
+        if (query.isBlank()) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
         AutocompletePrediction[] searchResult = autocompleteService.autocompleteAddress(query, sessionToken);
 
         List<AutocompleteDTO> dtos = Arrays.stream(searchResult).map(AutocompleteDTOMapper::mapPredictionToDTO).toList();
