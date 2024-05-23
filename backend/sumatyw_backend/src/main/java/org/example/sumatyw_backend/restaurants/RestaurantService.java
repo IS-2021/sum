@@ -28,10 +28,7 @@ public class RestaurantService {
             restaurant.getAddress().getNumber(),
             restaurant.getAddress().getPostalCode()
         );
-
-//        cityRepository.findByName(restaurant.getAddress().getCity())
-//            .orElseThrow(() -> new ObjectNotFoundException("City with id: " + restaurant.getAddress().getCity() + " not found"));
-
+        
         if (addressDB.isPresent())
             throw new ResourceAlreadyExistsException("Restaurant with given address already exists");
 
