@@ -8,7 +8,7 @@ import org.example.sumatyw_backend.addresses.AddressDTO;
 import org.example.sumatyw_backend.geo.autocomplete.AutocompleteDTO;
 import org.example.sumatyw_backend.geo.autocomplete.AutocompleteDTOMapper;
 import org.example.sumatyw_backend.geo.autocomplete.AutocompleteService;
-import org.example.sumatyw_backend.geo.place_details.PlaceDetailsDTOMapper;
+import org.example.sumatyw_backend.geo.place_details.PlaceDetailsMapper;
 import org.example.sumatyw_backend.geo.place_details.PlaceDetailsService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -43,7 +43,7 @@ public class GeoController {
     public ResponseEntity<AddressDTO> getPlaceDetails(@RequestParam String placeId) throws IOException, InterruptedException, ApiException {
         PlaceDetails placeDetails = placeDetailsService.getPlaceDetails(placeId);
 
-        AddressDTO addressDTO = PlaceDetailsDTOMapper.mapPlaceDetailsToAddressDTO(placeDetails);
+        AddressDTO addressDTO = PlaceDetailsMapper.mapPlaceDetailsToAddressDTO(placeDetails);
 
         return new ResponseEntity<>(addressDTO, HttpStatus.OK);
     }

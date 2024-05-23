@@ -1,7 +1,7 @@
 package org.example.sumatyw_backend.users;
 
+import com.google.maps.errors.ApiException;
 import lombok.AllArgsConstructor;
-import org.example.sumatyw_backend.addresses.AddressRepository;
 import org.example.sumatyw_backend.addresses.AddressService;
 import org.example.sumatyw_backend.exceptions.ResourceAlreadyExistsException;
 import org.example.sumatyw_backend.exceptions.UserNotAuthenticatedException;
@@ -13,6 +13,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -122,7 +123,7 @@ public class UserService {
         }
     }
 
-    public User updateUserAddress(UUID userId, String placeId) {
+    public User updateUserAddress(UUID userId, String placeId) throws IOException, InterruptedException, ApiException {
         User existingUser = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("User not found with ID: " + userId));
 
         existingUser.setAddress(addressService.getAddress(placeId));
