@@ -67,7 +67,8 @@ const handleCompletionInput = (e: any) => {
           v-on:input="handleCompletionInput"
         />
         <CommandEmpty class="grid justify-center">
-          <LoaderCircleIcon class="animate-spin" />
+          <p v-if="completionText.length < 3">Begin typing to search</p>
+          <LoaderCircleIcon v-if="completionText.length >= 3" class="animate-spin" />
         </CommandEmpty>
         <CommandList>
           <CommandGroup>
