@@ -3,24 +3,36 @@ import { useDebounceFn } from '@vueuse/core';
 
 import type { AutocompleteDTO } from '@/lib/api-model';
 import CitiesCombobox from '@/components/maps/autocomplete/CitiesCombobox.vue';
-import { computed, ref } from 'vue';
+import { computed, nextTick, ref, watchEffect } from 'vue';
+import { getGeoAutocomplete } from '@/lib/api/geo/geo';
+import { v4 } from 'uuid';
 
-const cities = ref<AutocompleteDTO[]>([
-  { placeId: 'foo', description: 'Warszawa' },
-  { placeId: 'bar', description: 'Wrocław' },
-]);
+const completionQuery = ref<string>('');
+const sessionToken = ref<string>(v4());
+const enableQuery = computed(() => completionQuery.value.length > 3);
 
-function generateCities(prefix: string): AutocompleteDTO[] {
-  return [
-    { placeId: 'foo', description: `${prefix}Warszawa` },
-    { placeId: 'bar', description: `${prefix}Wrocław` },
-  ];
-}
+const cities = ref<AutocompleteDTO[]>([]);
 
-const handleUpdate = (payload: string) => {
-  const newCities = generateCities(payload);
-  console.log('updating', newCities);
-  cities.value = newCities;
+watchEffect(async () => {
+  if (enableQuery.value) {
+    const res = await getGeoAutocomplete({
+      query: completionQuery.value,
+      sessionToken: sessionToken.value,
+    });
+
+    if (res.status === 200) {
+      cities.value = res.data;
+    }
+  }
+});
+
+const handleUpdate = async (payload: string) => {
+  if (payload.length < 2) {
+    return;
+  }
+
+  completionQuery.value = payload;
+  await nextTick();
 };
 const debouncedHandleUpdate = useDebounceFn(handleUpdate, 500);
 </script>
