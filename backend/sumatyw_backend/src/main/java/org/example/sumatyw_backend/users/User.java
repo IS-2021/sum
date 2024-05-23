@@ -51,7 +51,7 @@ public class User implements UserDetails {
     @OneToOne(mappedBy = "user")
     private Restaurant restaurant;
 
-    @OneToOne(optional = true)
+    @ManyToOne(optional = true)
     @JoinColumn(name = "address_id", nullable = true)
     @NotFound(action = NotFoundAction.IGNORE)
     private Address address;
