@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue';
+import { computed, ref, watchEffect } from 'vue';
 import type { AutocompleteDTO } from '@/lib/api-model';
 
 import { Check, ChevronsUpDown, LoaderCircleIcon } from 'lucide-vue-next';
@@ -10,11 +10,11 @@ import {
   Command,
   CommandEmpty,
   CommandGroup,
-  CommandInput,
   CommandItem,
   CommandList,
 } from '@/components/ui/command';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import CitiesComboboxInput from '@/components/maps/autocomplete/CitiesComboboxInput.vue';
 
 interface CitiesComboboxProps {
   completions: AutocompleteDTO[];
@@ -23,7 +23,9 @@ interface CitiesComboboxProps {
 const props = defineProps<CitiesComboboxProps>();
 
 const open = ref(false);
-const completionText = ref('');
+const completionText = defineModel<string>('completionText', {
+  default: '',
+});
 const pickedPlaceId = ref('');
 
 const emit = defineEmits<{
@@ -33,10 +35,7 @@ const emit = defineEmits<{
 
 const citiesKey = computed(() => props.completions.map((city) => city.description).join(''));
 
-const handleCompletionInput = (e: any) => {
-  const payload = e.target.value;
-
-  completionText.value = payload;
+const handleCompletionInput = (payload: string) => {
   emit('searchChange', payload);
 };
 </script>
@@ -61,10 +60,12 @@ const handleCompletionInput = (e: any) => {
     </PopoverTrigger>
     <PopoverContent class="p-0 min-w-max max-w-screen-sm w-full">
       <Command :key="citiesKey">
-        <CommandInput
+        <CitiesComboboxInput
           class="h-9"
           placeholder="Search addresses..."
-          v-on:input="handleCompletionInput"
+          v-model="completionText"
+          :defaultValue="completionText"
+          @update:inputText="handleCompletionInput"
         />
         <CommandEmpty class="grid justify-center">
           <p v-if="completionText.length < 3">Begin typing to search</p>
