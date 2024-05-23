@@ -1,6 +1,7 @@
 package org.example.sumatyw_backend.users;
 
 import jakarta.validation.Valid;
+import jakarta.websocket.server.PathParam;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -63,9 +64,9 @@ public class UserController {
         );
     }
 
-    @PostMapping("/{userId}/city/{cityId}")
-    public ResponseEntity<UserMeDTO> updateUserCity(@PathVariable("userId") UUID userId, @PathVariable("cityId") UUID cityId) {
-        User user = userService.updateUserCity(userId, cityId);
+    @PostMapping("/{userId}/address")
+    public ResponseEntity<UserMeDTO> updateUserCity(@PathVariable("userId") UUID userId, @PathParam("placeId") String placeId) {
+        User user = userService.updateUserAddress(userId, placeId);
 
         return new ResponseEntity<>(
             UserDTOMapper.mapUserToUserMeDTO(user),

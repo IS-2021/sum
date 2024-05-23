@@ -1,9 +1,8 @@
 package org.example.sumatyw_backend.users;
 
 import lombok.AllArgsConstructor;
-import org.example.sumatyw_backend.cities.City;
-import org.example.sumatyw_backend.cities.CityRepository;
-import org.example.sumatyw_backend.exceptions.ObjectNotFoundException;
+import org.example.sumatyw_backend.addresses.AddressRepository;
+import org.example.sumatyw_backend.addresses.AddressService;
 import org.example.sumatyw_backend.exceptions.ResourceAlreadyExistsException;
 import org.example.sumatyw_backend.exceptions.UserNotAuthenticatedException;
 import org.example.sumatyw_backend.exceptions.UserNotFoundException;
@@ -23,9 +22,9 @@ import java.util.UUID;
 public class UserService {
 
     private final UserRepository userRepository;
-    private final CityRepository cityRepository;
     private final PasswordEncoder passwordEncoder;
     private final RestaurantRepository restaurantRepository;
+    private final AddressService addressService;
 
     public User addUser(User user) {
 
@@ -47,21 +46,24 @@ public class UserService {
     }
 
     public List<User> getUsers() {
-        return  userRepository.findAll();
+        return userRepository.findAll();
     }
 
     public List<User> getNotBannedUsers() {
-        return  userRepository.findByBlockedFalse();
+        return userRepository.findByBlockedFalse();
     }
+
     public User getUserById(UUID id) {
         return userRepository.findById(id)
             .orElseThrow(() -> new UserNotFoundException("User not found with ID: " + id));
     }
+
     public User getUserByEmail(String email) {
         return userRepository.findByEmail(email)
             .orElseThrow(() -> new UserNotFoundException("User not found with email: " + email));
     }
-    public void  removeUserById(UUID id) {
+
+    public void removeUserById(UUID id) {
         userRepository.findById(id).orElseThrow(
             () -> new UserNotFoundException("User not found with ID: " + id)
         );
@@ -112,7 +114,7 @@ public class UserService {
     public void changePassword(UUID id, String password) {
         Optional<User> user = userRepository.findById(id);
 
-        if(user.isPresent()) {
+        if (user.isPresent()) {
             user.get().setPassword(passwordEncoder.encode(password));
             userRepository.save(user.get());
         } else {
@@ -120,11 +122,10 @@ public class UserService {
         }
     }
 
-    public User updateUserCity(UUID userId, UUID cityId) {
+    public User updateUserAddress(UUID userId, String placeId) {
         User existingUser = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("User not found with ID: " + userId));
-        City city = cityRepository.findById(cityId).orElseThrow(() -> new ObjectNotFoundException("City not found with ID:" + cityId));
 
-        existingUser.setCity(city);
+        existingUser.setAddress(addressService.getAddress(placeId));
 
         return userRepository.save(existingUser);
     }

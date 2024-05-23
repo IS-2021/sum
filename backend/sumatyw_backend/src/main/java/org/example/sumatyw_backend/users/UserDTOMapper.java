@@ -1,6 +1,9 @@
 package org.example.sumatyw_backend.users;
 
-import org.example.sumatyw_backend.cities.CityDTOMapper;
+import org.example.sumatyw_backend.addresses.AddressDTO;
+import org.example.sumatyw_backend.addresses.AddressDTOMapper;
+
+import java.util.Optional;
 
 public class UserDTOMapper {
 
@@ -30,7 +33,10 @@ public class UserDTOMapper {
         );
     }
 
-    public static  UserMeDTO mapUserToUserMeDTO(User user) {
+    public static UserMeDTO mapUserToUserMeDTO(User user) {
+        Optional<AddressDTO> addressDTO = user.getAddress()
+            .map(AddressDTOMapper::mapAddressToAddressDTO);
+
         return new UserMeDTO(
             user.getUserId().toString(),
             user.getFirstName(),
@@ -39,7 +45,7 @@ public class UserDTOMapper {
             user.getEmail(),
             user.getPhoneNumber(),
             user.getRole(),
-            user.getCity() == null ? null : CityDTOMapper.mapCityToCityDTO(user.getCity())
+            addressDTO
         );
     }
 }
