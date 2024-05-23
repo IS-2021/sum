@@ -41,6 +41,7 @@ const handlePlaceSearch = async (payload: string) => {
 const debouncedHandlePlaceSearch = useDebounceFn(handlePlaceSearch, 500);
 
 const handlePlaceSelect = (payload: AutocompleteDTO['placeId']) => {
+  sessionToken.value = v4();
   emit('onPlaceSelect', payload);
 };
 </script>
