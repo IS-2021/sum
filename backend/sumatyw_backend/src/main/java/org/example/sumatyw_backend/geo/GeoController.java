@@ -39,7 +39,7 @@ public class GeoController {
         return new ResponseEntity<>(dtos, HttpStatus.OK);
     }
 
-    @GetMapping("/place")
+    @GetMapping("/places")
     public ResponseEntity<AddressDTO> getPlaceDetails(@RequestParam String placeId) throws IOException, InterruptedException, ApiException {
         Address address = addressService.getAddress(placeId);
 
