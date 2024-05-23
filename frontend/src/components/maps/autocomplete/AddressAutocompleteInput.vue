@@ -13,7 +13,7 @@ const emit = defineEmits<{
 
 const completionQuery = ref<string>('');
 const sessionToken = ref<string>(v4());
-const enableQuery = computed(() => completionQuery.value.length > 3);
+const enableQuery = computed(() => completionQuery.value.length >= 3);
 
 const cities = ref<AutocompleteDTO[]>([]);
 

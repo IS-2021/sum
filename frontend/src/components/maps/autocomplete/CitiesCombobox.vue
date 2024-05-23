@@ -23,6 +23,7 @@ interface CitiesComboboxProps {
 const props = defineProps<CitiesComboboxProps>();
 
 const open = ref(false);
+const completionText = ref('');
 const pickedPlaceId = ref('');
 
 const emit = defineEmits<{
@@ -31,6 +32,13 @@ const emit = defineEmits<{
 }>();
 
 const citiesKey = computed(() => props.completions.map((city) => city.description).join(''));
+
+const handleCompletionInput = (e: any) => {
+  const payload = e.target.value;
+
+  completionText.value = payload;
+  emit('searchChange', payload);
+};
 </script>
 
 <template>
@@ -56,7 +64,7 @@ const citiesKey = computed(() => props.completions.map((city) => city.descriptio
         <CommandInput
           class="h-9"
           placeholder="Search addresses..."
-          v-on:input="(e) => emit('searchChange', e.target.value)"
+          v-on:input="handleCompletionInput"
         />
         <CommandEmpty class="grid justify-center">
           <LoaderCircleIcon class="animate-spin" />
