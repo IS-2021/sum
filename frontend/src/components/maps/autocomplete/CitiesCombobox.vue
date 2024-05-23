@@ -40,7 +40,7 @@ const citiesKey = computed(() => props.completions.map((city) => city.descriptio
         variant="outline"
         role="combobox"
         :aria-expanded="open"
-        class="w-[200px] justify-between"
+        class="justify-between w-full max-w-screen-sm"
       >
         {{
           pickedPlaceId
@@ -51,7 +51,7 @@ const citiesKey = computed(() => props.completions.map((city) => city.descriptio
         <ChevronsUpDown class="ml-2 h-4 w-4 shrink-0 opacity-50" />
       </Button>
     </PopoverTrigger>
-    <PopoverContent class="w-[200px] p-0">
+    <PopoverContent class="p-0 min-w-max max-w-screen-sm w-full">
       <Command :key="citiesKey">
         <CommandInput
           class="h-9"
