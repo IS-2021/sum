@@ -18,6 +18,7 @@ export * from './geoLatLngDTO';
 export * from './getBookingsParams';
 export * from './getGeoAutocompleteParams';
 export * from './getGeoPlacesParams';
+export * from './getGeoReverseGeocodeParams';
 export * from './getIngredientsParams';
 export * from './getMealsParams';
 export * from './getRestaurantsParams';
