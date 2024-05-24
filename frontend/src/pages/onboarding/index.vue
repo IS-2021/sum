@@ -1,3 +1,8 @@
+<route lang="yaml">
+meta:
+  layout: empty
+</route>
+
 <script setup lang="ts">
 import Logo from '@/components/Logo.vue';
 import { loader } from '@/lib/googleMaps';
