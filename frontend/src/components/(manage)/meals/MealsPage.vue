@@ -4,8 +4,19 @@ import { ref } from 'vue';
 
 import Button from '@/components/ui/button/Button.vue';
 import { Trash2 } from 'lucide-vue-next';
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog';
 
 import { getMeals } from '@/components/restaurant/restaurant';
+import { deleteMealsId } from '@/lib/api/meals/meals';
 
 const props = defineProps<{
   restaurantId: Uuid;
@@ -15,7 +26,9 @@ const meals = getMeals(props.restaurantId).meals;
 const areMealsLoading = getMeals(props.restaurantId).areMealsLoading;
 const amount = ref(0);
 
-console.log(meals);
+function deleteMeal(id: Uuid) {
+  deleteMealsId(id);
+}
 </script>
 
 <template>
@@ -45,7 +58,24 @@ console.log(meals);
           </div>
           <div class="flex items-center gap-3 justify-between">
             <Button class="w-1/2">Modify</Button>
-            <Trash2 class="cursor-pointer" />
+            <Dialog>
+              <DialogTrigger as-child>
+                <Trash2 class="cursor-pointer" />
+              </DialogTrigger>
+              <DialogContent class="sm:max-w-md">
+                <DialogHeader>
+                  <DialogTitle class="pb-4">Do you want to delete this meal?</DialogTitle>
+                </DialogHeader>
+
+                <DialogFooter class="sm:justify-start">
+                  <DialogClose as-child>
+                    <Button type="button" variant="secondary" @click="deleteMeal(meal.mealId)">
+                      Delete meal
+                    </Button>
+                  </DialogClose>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
           </div>
         </div>
       </div>
