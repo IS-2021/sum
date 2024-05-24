@@ -11,6 +11,7 @@ import { Button } from '@/components/ui/button';
 import AddressAutocompleteInput from '@/components/maps/autocomplete/AddressAutocompleteInput.vue';
 import { LocateFixedIcon } from 'lucide-vue-next';
 import { useGeolocation } from '@vueuse/core';
+import { usePlaceId } from '@/composables/usePlaceId';
 
 const coords = ref({
   latitude: 51.7484822,
@@ -27,6 +28,29 @@ const {
 const map = shallowRef<google.maps.Map>();
 const currentPosMarker = shallowRef<google.maps.marker.AdvancedMarkerElement>();
 const mapDiv = ref<HTMLDivElement | null>(null);
+const { placeData, setPlaceId } = usePlaceId();
+
+function updateMap({ latitude, longitude }: { latitude: number; longitude: number }) {
+  if (map.value) {
+    map.value.setCenter({ lat: latitude, lng: longitude });
+    map.value.setZoom(15);
+  }
+  if (currentPosMarker.value) {
+    currentPosMarker.value.position = { lat: latitude, lng: longitude };
+  }
+}
+
+watchEffect(() => {
+  if (!placeData.value) {
+    return;
+  }
+
+  coords.value = {
+    latitude: placeData.value.latitude,
+    longitude: placeData.value.longitude,
+  };
+  updateMap(coords.value);
+});
 
 onMounted(async () => {
   if (!mapDiv.value) {
@@ -66,19 +90,7 @@ watchEffect(() => {
     longitude: coordsReading.value?.longitude ?? coords.value.longitude,
   };
 
-  if (map.value) {
-    map.value.setCenter({
-      lat: coords.value.latitude,
-      lng: coords.value.longitude,
-    });
-    map.value.setZoom(14);
-  }
-  if (currentPosMarker.value) {
-    currentPosMarker.value.position = {
-      lat: coords.value.latitude,
-      lng: coords.value.longitude,
-    };
-  }
+  updateMap(coords.value);
 });
 </script>
 
@@ -103,7 +115,7 @@ watchEffect(() => {
           <p class="mb-2 text-neutral-700">Enter your address:</p>
           <AddressAutocompleteInput
             popover-class="md:w-80 lg:w-full"
-            @on-place-select="(placeId) => console.log(placeId)"
+            @on-place-select="setPlaceId"
           />
 
           <div v-if="isGeolocationSupported">
