@@ -1,4 +1,4 @@
-package org.example.sumatyw_backend.geo.place_details;
+package org.example.sumatyw_backend.geo;
 
 import com.google.maps.model.AddressComponent;
 import com.google.maps.model.AddressComponentType;
@@ -9,9 +9,7 @@ import java.util.List;
 
 public class AddressComponentMapper {
 
-    public static Address mapPlaceDetailsToAddress(AddressComponent[] addressComponents) {
-        Address.AddressBuilder address = Address.builder();
-
+    public static Address mapAddressComponentsToAddress(AddressComponent[] addressComponents) {
         String city = "";
         String street = "";
         String number = "";
