@@ -6,7 +6,7 @@ meta:
 <script setup lang="ts">
 import Logo from '@/components/Logo.vue';
 import { loader } from '@/lib/googleMaps';
-import { onMounted, ref, shallowRef, watchEffect } from 'vue';
+import { onMounted, ref, shallowRef, watch, watchEffect } from 'vue';
 import { Button } from '@/components/ui/button';
 import AddressAutocompleteInput from '@/components/maps/autocomplete/AddressAutocompleteInput.vue';
 import { LocateFixedIcon } from 'lucide-vue-next';
@@ -81,7 +81,7 @@ onMounted(async () => {
   });
 });
 
-watchEffect(() => {
+watch(coordsReading, () => {
   if (![coordsReading.value.latitude, coordsReading.value.longitude].every((v) => isFinite(v))) {
     return;
   }
