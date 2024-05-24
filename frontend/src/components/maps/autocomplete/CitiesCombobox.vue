@@ -18,6 +18,7 @@ import CitiesComboboxInput from '@/components/maps/autocomplete/CitiesComboboxIn
 
 interface CitiesComboboxProps {
   completions: AutocompleteDTO[];
+  popoverClass?: string;
 }
 
 const props = defineProps<CitiesComboboxProps>();
@@ -58,7 +59,7 @@ const handleCompletionInput = (payload: string) => {
         <ChevronsUpDown class="ml-2 h-4 w-4 shrink-0 opacity-50" />
       </Button>
     </PopoverTrigger>
-    <PopoverContent class="p-0 w-[calc(100svw-1.5rem)] sm:max-w-prose">
+    <PopoverContent :class="cn('p-0 w-[calc(100svw-1.5rem)] sm:max-w-prose', popoverClass)">
       <Command :key="citiesKey">
         <CitiesComboboxInput
           class="h-9"
