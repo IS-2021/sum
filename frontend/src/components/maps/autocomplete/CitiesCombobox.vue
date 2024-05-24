@@ -17,13 +17,10 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import CitiesComboboxInput from '@/components/maps/autocomplete/CitiesComboboxInput.vue';
 
 interface CitiesComboboxProps {
-  minCharsToBeginSearch?: number;
   completions: AutocompleteDTO[];
 }
 
-const props = withDefaults(defineProps<CitiesComboboxProps>(), {
-  minCharsToBeginSearch: 2,
-});
+const props = defineProps<CitiesComboboxProps>();
 
 const open = ref(false);
 const completionText = defineModel<string>('completionText', {
@@ -71,11 +68,8 @@ const handleCompletionInput = (payload: string) => {
           @update:inputText="handleCompletionInput"
         />
         <CommandEmpty class="grid justify-center">
-          <p v-if="completionText.length < minCharsToBeginSearch">Begin typing to search</p>
-          <LoaderCircleIcon
-            v-if="completionText.length >= minCharsToBeginSearch"
-            class="animate-spin"
-          />
+          <p v-if="completionText.length < 3">Begin typing to search</p>
+          <LoaderCircleIcon v-if="completionText.length >= 3" class="animate-spin" />
         </CommandEmpty>
         <CommandList>
           <CommandGroup>

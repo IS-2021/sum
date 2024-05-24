@@ -5,19 +5,13 @@ import type { AutocompleteDTO } from '@/lib/api-model';
 import { useDebounceFn } from '@vueuse/core';
 
 interface UseAddressAutocompleteProps {
-  minCharsToBeginSearch?: number;
   onAddressSelect: (payload: AutocompleteDTO['placeId']) => void;
 }
 
-export function useAddressAutocomplete({
-  onAddressSelect,
-  minCharsToBeginSearch = 2,
-}: UseAddressAutocompleteProps) {
-  const canBeginSearch = (query: string) => query.length >= minCharsToBeginSearch;
-
+export function useAddressAutocomplete({ onAddressSelect }: UseAddressAutocompleteProps) {
   const completionQuery = ref<string>('');
   const sessionToken = ref<string>(v4());
-  const enableQuery = computed(() => canBeginSearch(completionQuery.value));
+  const enableQuery = computed(() => completionQuery.value.length >= 3);
 
   const cities = ref<AutocompleteDTO[]>([]);
 
@@ -35,7 +29,7 @@ export function useAddressAutocomplete({
   });
 
   const handlePlaceSearch = async (payload: string) => {
-    if (canBeginSearch(payload)) {
+    if (payload.length < 2) {
       return;
     }
 
@@ -53,8 +47,6 @@ export function useAddressAutocomplete({
   return {
     completionQuery,
     cities,
-    minCharsToBeginSearch,
-    canBeginSearch,
     handlePlaceSearch: debouncedHandlePlaceSearch,
     handlePlaceSelect,
   };
