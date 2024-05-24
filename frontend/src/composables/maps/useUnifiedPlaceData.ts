@@ -1,5 +1,5 @@
-import { usePlaceId } from '@/composables/usePlaceId';
-import { useReverseGeocoding } from '@/composables/useReverseGeocoding';
+import { usePlaceId } from '@/composables/maps/usePlaceId';
+import { useReverseGeocoding } from '@/composables/maps/useReverseGeocoding';
 import { ref, watchEffect } from 'vue';
 import type { AddressDTO } from '@/lib/api-model';
 

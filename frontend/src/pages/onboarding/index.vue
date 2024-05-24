@@ -11,7 +11,7 @@ import { Button } from '@/components/ui/button';
 import AddressAutocompleteInput from '@/components/maps/autocomplete/AddressAutocompleteInput.vue';
 import { LocateFixedIcon } from 'lucide-vue-next';
 import { useGeolocation } from '@vueuse/core';
-import { useUnifiedPlaceData } from '@/composables/useUnifiedPlaceData';
+import { useUnifiedPlaceData } from '@/composables/maps/useUnifiedPlaceData';
 
 const coords = ref({
   latitude: 51.7484822,
