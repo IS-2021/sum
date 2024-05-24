@@ -5,13 +5,17 @@ meta:
 
 <script setup lang="ts">
 import Logo from '@/components/Logo.vue';
-import { loader } from '@/lib/googleMaps';
+import { formatAddress, loader } from '@/lib/googleMaps';
 import { onMounted, ref, shallowRef, watch, watchEffect } from 'vue';
 import { Button } from '@/components/ui/button';
 import AddressAutocompleteInput from '@/components/maps/autocomplete/AddressAutocompleteInput.vue';
-import { LocateFixedIcon } from 'lucide-vue-next';
+import { LocateFixedIcon, MapPinIcon } from 'lucide-vue-next';
 import { useGeolocation } from '@vueuse/core';
 import { useUnifiedPlaceData } from '@/composables/maps/useUnifiedPlaceData';
+import { postUsersUserIdAddress } from '@/lib/api/users/users';
+import { useUser } from '@/composables/useUser';
+import { useRouter } from 'vue-router/auto';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 
 const coords = ref({
   latitude: 51.7484822,
@@ -26,6 +30,8 @@ const {
   immediate: false,
 });
 
+const { user } = useUser();
+const router = useRouter();
 const map = shallowRef<google.maps.Map>();
 const currentPosMarker = shallowRef<google.maps.marker.AdvancedMarkerElement>();
 const mapDiv = ref<HTMLDivElement | null>(null);
@@ -96,6 +102,19 @@ watch(coordsReading, () => {
   setCoords(coords.value);
   updateMap(coords.value);
 });
+
+async function saveUserAddress() {
+  if (!user.value || !placeData.value) {
+    return;
+  }
+
+  const res = await postUsersUserIdAddress(user.value.id, {
+    placeId: placeData.value.addressId,
+  });
+  if (res.status === 200) {
+    await router.push('/');
+  }
+}
 </script>
 
 <template>
@@ -124,15 +143,22 @@ watch(coordsReading, () => {
 
           <div v-if="isGeolocationSupported">
             <p class="mt-3 mb-2 text-neutral-700">or use your current location:</p>
-            <Button @click="resumeGeolocation" class="bg-secondary hover:bg-secondary/80">
+            <Button @click="resumeGeolocation" variant="outline">
               <LocateFixedIcon class="h-4 w-4 mr-2" /> Use my current location
             </Button>
           </div>
         </div>
 
-        <div class="mt-8">
-          <p>You selected address:</p>
-          <pre>{{ placeData }}</pre>
+        <div class="mt-8" v-if="placeData">
+          <Alert class="bg-secondary/25 mb-3">
+            <MapPinIcon class="h-4 w-4" />
+            <AlertTitle>Selected address</AlertTitle>
+            <AlertDescription>
+              {{ formatAddress(placeData) }}
+            </AlertDescription>
+          </Alert>
+
+          <Button @click="saveUserAddress"> Save and continue </Button>
         </div>
       </div>
     </div>
