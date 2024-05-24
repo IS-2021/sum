@@ -1266,13 +1266,13 @@ paths:
         - name: lat
           description: ""
           schema:
-            type: string
+            type: number
           in: query
           required: true
         - name: lng
           description: ""
           schema:
-            type: string
+            type: number
           in: query
           required: true
       responses:
@@ -1280,9 +1280,7 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: "#/components/schemas/AddressDTO"
+                $ref: "#/components/schemas/AddressDTO"
           description: Reverse geocoded address
 components:
   schemas:
