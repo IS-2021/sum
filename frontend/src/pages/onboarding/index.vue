@@ -11,7 +11,7 @@ import { Button } from '@/components/ui/button';
 import AddressAutocompleteInput from '@/components/maps/autocomplete/AddressAutocompleteInput.vue';
 import { LocateFixedIcon } from 'lucide-vue-next';
 import { useGeolocation } from '@vueuse/core';
-import { usePlaceId } from '@/composables/usePlaceId';
+import { useUnifiedPlaceData } from '@/composables/useUnifiedPlaceData';
 
 const coords = ref({
   latitude: 51.7484822,
@@ -29,7 +29,7 @@ const {
 const map = shallowRef<google.maps.Map>();
 const currentPosMarker = shallowRef<google.maps.marker.AdvancedMarkerElement>();
 const mapDiv = ref<HTMLDivElement | null>(null);
-const { placeData, setPlaceId } = usePlaceId();
+const { placeData, setPlaceId, setCoords } = useUnifiedPlaceData();
 
 function updateMap({ latitude, longitude }: { latitude: number; longitude: number }) {
   if (map.value) {
@@ -93,6 +93,7 @@ watchEffect(() => {
     longitude: coordsReading.value?.longitude ?? coords.value.longitude,
   };
 
+  setCoords(coords.value);
   updateMap(coords.value);
 });
 </script>
@@ -117,16 +118,21 @@ watchEffect(() => {
         <div class="max-w-screen-sm w-full">
           <p class="mb-2 text-neutral-700">Enter your address:</p>
           <AddressAutocompleteInput
-            popover-class="md:w-80 lg:w-full"
+            popover-class="md:w-80 lg:w-full lg:max-w-prose"
             @on-place-select="setPlaceId"
           />
 
           <div v-if="isGeolocationSupported">
             <p class="mt-3 mb-2 text-neutral-700">or use your current location:</p>
-            <Button @click="resumeGeolocation">
+            <Button @click="resumeGeolocation" class="bg-secondary hover:bg-secondary/80">
               <LocateFixedIcon class="h-4 w-4 mr-2" /> Use my current location
             </Button>
           </div>
+        </div>
+
+        <div class="mt-8">
+          <p>You selected address:</p>
+          <pre>{{ placeData }}</pre>
         </div>
       </div>
     </div>
