@@ -1790,6 +1790,8 @@ components:
         - number
         - postalCode
         - addressId
+        - latitude
+        - longitude
       type: object
       properties:
         country:
