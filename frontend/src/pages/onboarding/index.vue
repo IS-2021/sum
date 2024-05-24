@@ -21,6 +21,7 @@ const {
   isSupported: isGeolocationSupported,
   coords: coordsReading,
   resume: resumeGeolocation,
+  pause: pauseGeolocation,
 } = useGeolocation({
   immediate: false,
 });
@@ -84,6 +85,8 @@ watchEffect(() => {
   if (![coordsReading.value.latitude, coordsReading.value.longitude].every((v) => isFinite(v))) {
     return;
   }
+
+  pauseGeolocation();
 
   coords.value = {
     latitude: coordsReading.value?.latitude ?? coords.value.latitude,
