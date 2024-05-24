@@ -3,11 +3,12 @@ package org.example.sumatyw_backend.geo.place_details;
 import com.google.maps.model.PlaceDetails;
 import org.example.sumatyw_backend.addresses.Address;
 import org.example.sumatyw_backend.addresses.AddressDTO;
+import org.example.sumatyw_backend.geo.AddressComponentMapper;
 
 public class PlaceDetailsMapper {
 
     public static AddressDTO mapPlaceDetailsToAddressDTO(PlaceDetails placeDetails) {
-        Address addressComponents = AddressComponentMapper.mapPlaceDetailsToAddress(placeDetails.addressComponents);
+        Address addressComponents = AddressComponentMapper.mapAddressComponentsToAddress(placeDetails.addressComponents);
 
         return new AddressDTO(
             placeDetails.placeId,
@@ -22,7 +23,7 @@ public class PlaceDetailsMapper {
     }
 
     public static Address mapPlaceDetailsToAddress(PlaceDetails placeDetails) {
-        Address addressComponents = AddressComponentMapper.mapPlaceDetailsToAddress(placeDetails.addressComponents);
+        Address addressComponents = AddressComponentMapper.mapAddressComponentsToAddress(placeDetails.addressComponents);
 
         return Address.builder()
             .addressId(placeDetails.placeId)
