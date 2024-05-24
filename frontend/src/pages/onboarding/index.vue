@@ -20,6 +20,7 @@ const {
 });
 
 const map = shallowRef<google.maps.Map>();
+const currentPosMarker = shallowRef<google.maps.marker.AdvancedMarkerElement>();
 const mapDiv = ref<HTMLDivElement | null>(null);
 
 onMounted(async () => {
@@ -41,7 +42,7 @@ onMounted(async () => {
   });
 
   const { AdvancedMarkerElement } = await loader.importLibrary('marker');
-  const marker = new AdvancedMarkerElement({
+  currentPosMarker.value = new AdvancedMarkerElement({
     position: {
       lat: coords.value.latitude,
       lng: coords.value.longitude,
@@ -66,6 +67,12 @@ watchEffect(() => {
       lng: coords.value.longitude,
     });
     map.value.setZoom(14);
+  }
+  if (currentPosMarker.value) {
+    currentPosMarker.value.position = {
+      lat: coords.value.latitude,
+      lng: coords.value.longitude,
+    };
   }
 });
 </script>
