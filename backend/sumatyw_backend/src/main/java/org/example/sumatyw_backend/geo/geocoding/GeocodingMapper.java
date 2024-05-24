@@ -9,10 +9,12 @@ import org.example.sumatyw_backend.geo.AddressComponentMapper;
 public class GeocodingMapper {
 
     public static AddressDTO mapReverseGeocodeToAddressDTO(GeocodingResult results) {
-        Address addressComponents = AddressComponentMapper.mapAddressComponentsToAddress(results.addressComponents);
-        addressComponents.setAddressId(results.placeId);
+        Address address = AddressComponentMapper.mapAddressComponentsToAddress(results.addressComponents);
+        address.setAddressId(results.placeId);
+        address.setLatitude(results.geometry.location.lat);
+        address.setLongitude(results.geometry.location.lng);
 
-        return AddressDTOMapper.mapAddressToAddressDTO(addressComponents);
+        return AddressDTOMapper.mapAddressToAddressDTO(address);
     }
 
 }
