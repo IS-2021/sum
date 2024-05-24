@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import Logo from '@/components/Logo.vue';
 import { loader } from '@/lib/googleMaps';
-import { onMounted, ref, watchEffect } from 'vue';
+import { onMounted, ref, shallowRef, watchEffect } from 'vue';
 import { Button } from '@/components/ui/button';
 import AddressAutocompleteInput from '@/components/maps/autocomplete/AddressAutocompleteInput.vue';
 import { LocateFixedIcon } from 'lucide-vue-next';
@@ -19,24 +19,53 @@ const {
   immediate: false,
 });
 
+const map = shallowRef<google.maps.Map>();
 const mapDiv = ref<HTMLDivElement | null>(null);
+
 onMounted(async () => {
+  if (!mapDiv.value) {
+    return;
+  }
+
   const { Map } = await loader.importLibrary('maps');
-  const map = new Map(mapDiv.value, {
+  map.value = new Map(mapDiv.value, {
     center: {
       lat: coords.value.latitude,
       lng: coords.value.longitude,
     },
     zoom: 10,
+    mapId: '2ea9a80405b2230f',
+    fullscreenControl: false,
+    mapTypeControl: false,
+    streetViewControl: false,
+  });
+
+  const { AdvancedMarkerElement } = await loader.importLibrary('marker');
+  const marker = new AdvancedMarkerElement({
+    position: {
+      lat: coords.value.latitude,
+      lng: coords.value.longitude,
+    },
+    map: map.value,
   });
 });
 
 watchEffect(() => {
-  if (isFinite(coordsReading.value.latitude) && isFinite(coordsReading.value.longitude)) {
-    coords.value = {
-      latitude: coordsReading.value?.latitude ?? coords.value.latitude,
-      longitude: coordsReading.value?.longitude ?? coords.value.longitude,
-    };
+  if (![coordsReading.value.latitude, coordsReading.value.longitude].every((v) => isFinite(v))) {
+    return;
+  }
+
+  coords.value = {
+    latitude: coordsReading.value?.latitude ?? coords.value.latitude,
+    longitude: coordsReading.value?.longitude ?? coords.value.longitude,
+  };
+
+  if (map.value) {
+    map.value.setCenter({
+      lat: coords.value.latitude,
+      lng: coords.value.longitude,
+    });
+    map.value.setZoom(14);
   }
 });
 </script>
