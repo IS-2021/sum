@@ -16,6 +16,7 @@ import { postUsersUserIdAddress } from '@/lib/api/users/users';
 import { useUser } from '@/composables/useUser';
 import { useRouter } from 'vue-router/auto';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { useHead } from '@unhead/vue';
 
 const coords = ref({
   latitude: 51.7484822,
@@ -28,6 +29,10 @@ const {
   pause: pauseGeolocation,
 } = useGeolocation({
   immediate: false,
+});
+
+useHead({
+  title: 'Complete your profile',
 });
 
 const { user } = useUser();
