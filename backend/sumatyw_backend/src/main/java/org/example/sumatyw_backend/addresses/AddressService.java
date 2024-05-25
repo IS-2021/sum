@@ -18,7 +18,7 @@ public class AddressService {
     private final PlaceDetailsService placeDetailsService;
 
     public Address getAddress(String addressId) throws IOException, InterruptedException, ApiException {
-        Optional<Address> address = addressRepository.findByAddressId(addressId);
+        Optional<Address> address = addressRepository.findById(addressId);
 
         if (address.isPresent()) {
             return address.get();
