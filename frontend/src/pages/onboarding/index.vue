@@ -39,8 +39,8 @@ const { placeData, setPlaceId, setCoords } = useUnifiedPlaceData();
 
 function updateMap({ latitude, longitude }: { latitude: number; longitude: number }) {
   if (map.value) {
-    map.value.setCenter({ lat: latitude, lng: longitude });
     map.value.setZoom(15);
+    map.value.panTo({ lat: latitude, lng: longitude });
   }
   if (currentPosMarker.value) {
     currentPosMarker.value.position = { lat: latitude, lng: longitude };
@@ -84,6 +84,17 @@ onMounted(async () => {
       lng: coords.value.longitude,
     },
     map: map.value,
+  });
+
+  map.value.addListener('click', ({ latLng }: google.maps.MapMouseEvent) => {
+    if (!latLng) {
+      return;
+    }
+
+    setCoords({
+      latitude: latLng.lat(),
+      longitude: latLng.lng(),
+    });
   });
 });
 
