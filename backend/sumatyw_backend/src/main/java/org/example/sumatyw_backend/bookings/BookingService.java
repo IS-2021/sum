@@ -6,7 +6,6 @@ import org.example.sumatyw_backend.exceptions.ObjectNotFoundException;
 import org.example.sumatyw_backend.exceptions.ResourceAlreadyExistsException;
 import org.example.sumatyw_backend.exceptions.UserNotFoundException;
 import org.example.sumatyw_backend.meals.MealRepository;
-import org.example.sumatyw_backend.meals.MealService;
 import org.example.sumatyw_backend.restaurants.Restaurant;
 import org.example.sumatyw_backend.restaurants.RestaurantRepository;
 import org.example.sumatyw_backend.users.UserRepository;
