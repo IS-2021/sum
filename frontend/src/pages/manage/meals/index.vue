@@ -4,9 +4,42 @@ meta:
 </route>
 
 <script setup lang="ts">
-import MealsPage from '@/components/(manage)/meals/MealsPage.vue';
+import type { Uuid } from '@/lib/api-model';
+import NavLink from '@/components/(manage)/common/NavLink.vue';
+
+import Button from '@/components/ui/button/Button.vue';
+import { Plus } from 'lucide-vue-next';
+
+import { getMeals } from '@/components/restaurant/restaurant';
+import IngredientItem from '@/components/(manage)/meals/IngredientItem.vue';
+
+const props = defineProps<{
+  restaurantId: Uuid;
+}>();
+
+const meals = getMeals(props.restaurantId).meals;
+const areMealsLoading = getMeals(props.restaurantId).areMealsLoading;
 </script>
 
 <template>
-  <MealsPage />
+  <div class="flex justify-between items-center mb-10">
+    <h1 class="text-2xl font-semibold tracking-tight">Meals</h1>
+    <NavLink to="/manage/mealAdd">
+      <Button>
+        <Plus width="16" height="16" class="mr-1" />
+        Add meal
+      </Button>
+    </NavLink>
+  </div>
+  <template v-if="areMealsLoading">
+    <p>Loading...</p>
+  </template>
+  <div v-else-if="meals">
+    <div class="space-y-3 mb-10 max-w-screen-md w-full">
+      <p v-if="meals.length === 0">No meals found</p>
+      <div>
+        <IngredientItem v-for="meal in meals" v-bind:key="meal.mealId" :meal="meal" />
+      </div>
+    </div>
+  </div>
 </template>

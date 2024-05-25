@@ -4,9 +4,9 @@ meta:
 </route>
 
 <script setup lang="ts">
-import MealsUpdatePage from '@/components/(manage)/meals/MealsUpdatePage.vue';
+import MealsAddPage from '@/components/(manage)/meals/MealsAddPage.vue';
 </script>
 
 <template>
-  <MealsUpdatePage />
+  <MealsAddPage />
 </template>

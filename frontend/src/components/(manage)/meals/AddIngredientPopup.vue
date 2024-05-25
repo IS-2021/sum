@@ -23,6 +23,8 @@ import {
 } from '@/components/ui/command';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import Button from '@/components/ui/button/Button.vue';
+import { Plus } from 'lucide-vue-next';
+
 import { postIngredients, useGetIngredients } from '@/lib/api/ingredients/ingredients';
 import type { IngredientDTO, Uuid } from '@/lib/api-model';
 
@@ -56,7 +58,7 @@ function postChosenIngredients() {
     <DialogTrigger as-child>
       <Button>
         <Plus width="16" height="16" class="mr-1" />
-        Add Ingredient
+        Add Ingredients
       </Button>
     </DialogTrigger>
     <DialogContent class="sm:max-w-md">
