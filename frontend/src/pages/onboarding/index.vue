@@ -119,7 +119,7 @@ async function saveUserAddress() {
 
 <template>
   <div class="w-full grid grid-cols-1 md:grid-cols-2 max-h-svh">
-    <div class="hidden md:block h-svh" ref="mapDiv" />
+    <div class="hidden md:block h-svh border-r border-neutral-300" ref="mapDiv" />
 
     <div class="p-10 self-center">
       <RouterLink to="/">
