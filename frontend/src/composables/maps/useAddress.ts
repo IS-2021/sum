@@ -3,26 +3,26 @@ import { useReverseGeocoding } from '@/composables/maps/useReverseGeocoding';
 import { ref, watchEffect } from 'vue';
 import type { AddressDTO } from '@/lib/api-model';
 
-export function useUnifiedPlaceData() {
-  const placeData = ref<AddressDTO | null>(null);
+export function useAddress() {
+  const address = ref<AddressDTO | null>(null);
 
   const { placeData: placeIdData, setPlaceId } = usePlaceId();
   const { placeData: reverseGeoCodeData, setCoords } = useReverseGeocoding();
 
   watchEffect(() => {
     if (placeIdData.value) {
-      placeData.value = placeIdData.value;
+      address.value = placeIdData.value;
     }
   });
 
   watchEffect(() => {
     if (reverseGeoCodeData.value) {
-      placeData.value = reverseGeoCodeData.value;
+      address.value = reverseGeoCodeData.value;
     }
   });
 
   return {
-    placeData,
+    address,
     setPlaceId,
     setCoords,
   };

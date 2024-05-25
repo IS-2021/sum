@@ -11,7 +11,7 @@ import { Button } from '@/components/ui/button';
 import AddressAutocompleteInput from '@/components/maps/autocomplete/AddressAutocompleteInput.vue';
 import { LocateFixedIcon, MapPinIcon, LogOutIcon } from 'lucide-vue-next';
 import { useGeolocation } from '@vueuse/core';
-import { useUnifiedPlaceData } from '@/composables/maps/useUnifiedPlaceData';
+import { useAddress } from '@/composables/maps/useAddress';
 import { postUsersUserIdAddress } from '@/lib/api/users/users';
 import { useUser } from '@/composables/useUser';
 import { useRouter } from 'vue-router/auto';
@@ -40,7 +40,7 @@ const router = useRouter();
 const map = shallowRef<google.maps.Map>();
 const currentPosMarker = shallowRef<google.maps.marker.AdvancedMarkerElement>();
 const mapDiv = ref<HTMLDivElement | null>(null);
-const { placeData, setPlaceId, setCoords } = useUnifiedPlaceData();
+const { address, setPlaceId, setCoords } = useAddress();
 
 function updateMap({ latitude, longitude }: { latitude: number; longitude: number }) {
   if (map.value) {
@@ -53,13 +53,13 @@ function updateMap({ latitude, longitude }: { latitude: number; longitude: numbe
 }
 
 watchEffect(() => {
-  if (!placeData.value) {
+  if (!address.value) {
     return;
   }
 
   coords.value = {
-    latitude: placeData.value.latitude,
-    longitude: placeData.value.longitude,
+    latitude: address.value.latitude,
+    longitude: address.value.longitude,
   };
   updateMap(coords.value);
 });
@@ -120,12 +120,12 @@ watch(coordsReading, () => {
 });
 
 async function saveUserAddress() {
-  if (!user.value || !placeData.value) {
+  if (!user.value || !address.value) {
     return;
   }
 
   const res = await postUsersUserIdAddress(user.value.id, {
-    placeId: placeData.value.addressId,
+    placeId: address.value.addressId,
   });
   if (res.status === 200) {
     await router.push('/');
@@ -178,12 +178,12 @@ async function saveUserAddress() {
             </div>
           </div>
 
-          <div class="mt-8" v-if="placeData">
+          <div class="mt-8" v-if="address">
             <Alert class="bg-secondary/25 mb-3">
               <MapPinIcon class="h-4 w-4" />
               <AlertTitle>Selected address</AlertTitle>
               <AlertDescription>
-                {{ formatAddress(placeData) }}
+                {{ formatAddress(address) }}
               </AlertDescription>
             </Alert>
 
