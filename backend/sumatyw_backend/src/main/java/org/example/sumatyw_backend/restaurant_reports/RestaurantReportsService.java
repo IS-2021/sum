@@ -6,7 +6,6 @@ import org.example.sumatyw_backend.exceptions.ResourceAlreadyExistsException;
 import org.example.sumatyw_backend.reports.ReportDTO;
 import org.example.sumatyw_backend.reports.ReportInputDTO;
 import org.example.sumatyw_backend.reports.ReportsDTOMapper;
-import org.example.sumatyw_backend.restaurants.RestaurantDTOMapper;
 import org.example.sumatyw_backend.restaurants.RestaurantService;
 import org.example.sumatyw_backend.user_reports.RestaurantReport;
 import org.example.sumatyw_backend.users.UserService;
@@ -66,9 +65,9 @@ public class RestaurantReportsService {
 
     public List<ReportDTO> getAllOpenedRestaurantReports() {
 
-        if(!restaurantReportRepository.findByIsOpenTrue().isEmpty()) {
+        if(!restaurantReportRepository.findByIsOpenIsTrue().isEmpty()) {
         List<ReportDTO> mappedList = new ArrayList<>();
-        List<RestaurantReport> restaurantReports = restaurantReportRepository.findByIsOpenTrue();
+        List<RestaurantReport> restaurantReports = restaurantReportRepository.findByIsOpenIsTrue();
 
         for(RestaurantReport r: restaurantReports) {
             mappedList.add(ReportsDTOMapper.mapRestaurantReportToReportDTO(r));
