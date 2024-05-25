@@ -9,7 +9,7 @@ import { formatAddress, loader } from '@/lib/googleMaps';
 import { onMounted, ref, shallowRef, watch, watchEffect } from 'vue';
 import { Button } from '@/components/ui/button';
 import AddressAutocompleteInput from '@/components/maps/autocomplete/AddressAutocompleteInput.vue';
-import { LocateFixedIcon, MapPinIcon } from 'lucide-vue-next';
+import { LocateFixedIcon, MapPinIcon, LogOutIcon } from 'lucide-vue-next';
 import { useGeolocation } from '@vueuse/core';
 import { useUnifiedPlaceData } from '@/composables/maps/useUnifiedPlaceData';
 import { postUsersUserIdAddress } from '@/lib/api/users/users';
@@ -35,7 +35,7 @@ useHead({
   title: 'Complete your profile',
 });
 
-const { user } = useUser();
+const { user, signOut } = useUser();
 const router = useRouter();
 const map = shallowRef<google.maps.Map>();
 const currentPosMarker = shallowRef<google.maps.marker.AdvancedMarkerElement>();
@@ -137,44 +137,58 @@ async function saveUserAddress() {
   <div class="w-full grid grid-cols-1 md:grid-cols-2 max-h-svh">
     <div class="hidden md:block h-svh border-r border-neutral-300" ref="mapDiv" />
 
-    <div class="p-10 self-center">
-      <RouterLink to="/">
-        <Logo class="mb-8" />
-      </RouterLink>
+    <div class="p-10 md:grid md:h-svh grid-rows-5">
+      <div class="hidden lg:grid justify-end">
+        <Button variant="ghost" class="text-neutral-500" @click="signOut">
+          <LogOutIcon class="h-4 w-4 mr-2" /> Sign out
+        </Button>
+      </div>
 
       <div>
-        <h1 class="text-2xl font-bold mb-2">Welcome to FoodGood</h1>
+        <div class="flex justify-between lg:block">
+          <RouterLink to="/">
+            <Logo class="mb-8" />
+          </RouterLink>
 
-        <p class="mb-8 text-neutral-700 max-w-prose">
-          Before you continue, you need to set your location. We’ll use it to show restaurants near
-          you. You can always change it latter in the settings.
-        </p>
-
-        <div class="max-w-screen-sm w-full">
-          <p class="mb-2 text-neutral-700">Enter your address:</p>
-          <AddressAutocompleteInput
-            popover-class="md:w-80 lg:w-full lg:max-w-prose"
-            @on-place-select="setPlaceId"
-          />
-
-          <div v-if="isGeolocationSupported">
-            <p class="mt-3 mb-2 text-neutral-700">or use your current location:</p>
-            <Button @click="resumeGeolocation" variant="outline">
-              <LocateFixedIcon class="h-4 w-4 mr-2" /> Use my current location
-            </Button>
-          </div>
+          <Button variant="ghost" class="text-neutral-500 lg:hidden" @click="signOut">
+            <LogOutIcon class="h-4 w-4 mr-2" /> Sign out
+          </Button>
         </div>
 
-        <div class="mt-8" v-if="placeData">
-          <Alert class="bg-secondary/25 mb-3">
-            <MapPinIcon class="h-4 w-4" />
-            <AlertTitle>Selected address</AlertTitle>
-            <AlertDescription>
-              {{ formatAddress(placeData) }}
-            </AlertDescription>
-          </Alert>
+        <div>
+          <h1 class="text-2xl font-bold mb-2">Welcome to FoodGood</h1>
 
-          <Button @click="saveUserAddress"> Save and continue </Button>
+          <p class="mb-8 text-neutral-700 max-w-prose">
+            Before you continue, you need to set your location. We’ll use it to show restaurants
+            near you. You can always change it latter in the settings.
+          </p>
+
+          <div class="max-w-screen-sm w-full">
+            <p class="mb-2 text-neutral-700">Enter your address:</p>
+            <AddressAutocompleteInput
+              popover-class="md:w-80 lg:w-full lg:max-w-prose"
+              @on-place-select="setPlaceId"
+            />
+
+            <div v-if="isGeolocationSupported">
+              <p class="mt-3 mb-2 text-neutral-700">or use your current location:</p>
+              <Button @click="resumeGeolocation" variant="outline">
+                <LocateFixedIcon class="h-4 w-4 mr-2" /> Use my current location
+              </Button>
+            </div>
+          </div>
+
+          <div class="mt-8" v-if="placeData">
+            <Alert class="bg-secondary/25 mb-3">
+              <MapPinIcon class="h-4 w-4" />
+              <AlertTitle>Selected address</AlertTitle>
+              <AlertDescription>
+                {{ formatAddress(placeData) }}
+              </AlertDescription>
+            </Alert>
+
+            <Button @click="saveUserAddress"> Save and continue </Button>
+          </div>
         </div>
       </div>
     </div>
