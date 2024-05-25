@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { Uuid } from '@/lib/api-model';
 import { ref } from 'vue';
+import NavLink from '@/components/(manage)/common/NavLink.vue';
 
 import Button from '@/components/ui/button/Button.vue';
 import { Trash2 } from 'lucide-vue-next';
@@ -16,6 +17,7 @@ import {
 
 import { getMeals } from '@/components/restaurant/restaurant';
 import { deleteMealsId } from '@/lib/api/meals/meals';
+import MealsUpdatePage from './MealsUpdatePage.vue';
 
 const props = defineProps<{
   restaurantId: Uuid;
@@ -55,7 +57,15 @@ function deleteMeal(id: Uuid) {
           </p>
         </div>
         <div class="flex items-center gap-3 justify-between">
-          <Button class="w-1/2">Modify</Button>
+          <NavLink to="/manage/mealUpdate" class="w-full">
+            <Button class="w-1/2">Modify</Button>
+            <MealsUpdatePage
+              v-if="meal.ingredients"
+              class="hidden"
+              :ingredients="meal.ingredients"
+              :mealId="meal.mealId"
+            />
+          </NavLink>
           <Dialog>
             <DialogTrigger as-child>
               <Trash2 class="cursor-pointer" />
