@@ -5,8 +5,10 @@ meta:
 
 <script setup lang="ts">
 import MealsAddPage from '@/components/(manage)/meals/MealsAddPage.vue';
+import { useUser } from '@/composables/useUser';
+const { user } = useUser();
 </script>
 
 <template>
-  <MealsAddPage />
+  <MealsAddPage v-if="user" :userId="user.id" />
 </template>
