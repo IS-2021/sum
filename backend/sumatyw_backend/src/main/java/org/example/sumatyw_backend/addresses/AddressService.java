@@ -24,7 +24,7 @@ public class AddressService {
             return address.get();
         }
 
-        // If address is not present in the database, fetch it from Google Maps API
+//         If address is not present in the database, fetch it from Google Maps API
         PlaceDetails placeDetails = placeDetailsService.getPlaceDetails(addressId);
         Address newAddress = PlaceDetailsMapper.mapPlaceDetailsToAddress(placeDetails);
 

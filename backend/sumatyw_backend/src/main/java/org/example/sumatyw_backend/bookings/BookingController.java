@@ -47,6 +47,13 @@ public class BookingController {
         return new ResponseEntity<>(bookings.stream().map(BookingDTOMapper::mapBookingToBookingDTO).toList(), HttpStatus.OK);
     }
 
+    @GetMapping(params = {"restaurantId","active"})
+    public ResponseEntity<List<BookingDTO>> getActiveBookingsByRestaurantId(@RequestParam("restaurantId") UUID restaurandId, @RequestParam("active") boolean active) {
+        List<Booking> bookings = bookingService.getActiveBookingsByRestaurantID(restaurandId, active);
+        return new ResponseEntity<>(bookings.stream().map(BookingDTOMapper::mapBookingToBookingDTO).toList(), HttpStatus.OK);
+    }
+
+
     @PutMapping("/{id}")
     public ResponseEntity<BookingDTO> markBookingAsPickedUp(@PathVariable("id") UUID id, @RequestBody BookingInputDTO bookingInputDTO) {
         Booking booking = bookingService.markBookingAsPickedUp(id, BookingDTOMapper.mapBookingInputDTOToBooking(bookingInputDTO));
