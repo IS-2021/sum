@@ -11,9 +11,10 @@ import {
 import { LogOut, MapPinIcon, UserIcon } from 'lucide-vue-next';
 import { useUser } from '@/composables/useUser';
 import { useRouter } from 'vue-router/auto';
+import { formatAddress } from '@/lib/googleMaps';
 
 const router = useRouter();
-const { signOut } = useUser();
+const { user, signOut } = useUser();
 
 function onChangeLocationSelect() {
   router.push('/settings');
@@ -26,8 +27,10 @@ function onChangeLocationSelect() {
       <Button variant="ghost"> <UserIcon class="h-4 w-4 mr-3" /> john.cena </Button>
     </DropdownMenuTrigger>
     <DropdownMenuContent class="w-56">
-      <DropdownMenuLabel>Your Profile</DropdownMenuLabel>
-      <DropdownMenuItem disabled>Location: Łódź</DropdownMenuItem>
+      <DropdownMenuLabel>Your Location</DropdownMenuLabel>
+      <DropdownMenuItem disabled v-if="user?.address">
+        {{ formatAddress(user.address) }}
+      </DropdownMenuItem>
 
       <DropdownMenuSeparator />
 
