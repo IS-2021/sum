@@ -11,4 +11,12 @@ export type GetBookingsParams = {
    * If exists, returns booking by userId, eg. /bookings?userId=123
    */
   userId?: Uuid;
+  /**
+   * If exists, returns all bookings for restaurant
+   */
+  restaurantId?: Uuid;
+  /**
+   * Syntax: restaurantId + active - returns all pending bookings for restaurant
+   */
+  active?: Uuid;
 };
