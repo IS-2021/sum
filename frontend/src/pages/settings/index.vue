@@ -35,11 +35,7 @@ async function saveUserAddress(address: AddressDTO) {
 <template>
   <AddressPickerPage @save:address="saveUserAddress">
     <template v-slot:content-header>
-      <h1 class="text-2xl font-bold mb-2">Change your address</h1>
-
-      <p class="mb-8 text-neutral-700 max-w-prose">
-        We’ll use it to show restaurants near you. You can always change it latter in the settings.
-      </p>
+      <h1 class="text-2xl font-bold mb-8">Change your address</h1>
     </template>
   </AddressPickerPage>
 </template>
