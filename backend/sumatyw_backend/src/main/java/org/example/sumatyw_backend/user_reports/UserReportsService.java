@@ -4,12 +4,10 @@ package org.example.sumatyw_backend.user_reports;
 import lombok.AllArgsConstructor;
 import org.example.sumatyw_backend.exceptions.ObjectNotFoundException;
 import org.example.sumatyw_backend.exceptions.ResourceAlreadyExistsException;
-import org.example.sumatyw_backend.opinions.Opinion;
 import org.example.sumatyw_backend.reports.ReportDTO;
 import org.example.sumatyw_backend.reports.ReportInputDTO;
 import org.example.sumatyw_backend.reports.ReportsDTOMapper;
 import org.example.sumatyw_backend.restaurants.RestaurantService;
-import org.example.sumatyw_backend.users.User;
 import org.example.sumatyw_backend.users.UserService;
 import org.springframework.stereotype.Service;
 
@@ -38,18 +36,6 @@ public class UserReportsService {
         }
     }
 
-//    public ReportDTO handleUserReport(UserReport userReport) {
-//
-//        if(userReportsRepository.findById(userReport.getUserReportId()).isPresent()) {
-//            userReportsRepository.save(userReport);
-//            return ReportsDTOMapper.mapUserReportToReportDTO(userReport);
-//
-//        } else {
-//            throw new ObjectNotFoundException("User report not found.");
-//        }
-//
-//    }
-
     public ReportDTO closeUserReport(UUID reportId) {
 
         Optional<UserReport> userReport = userReportsRepository.findById(reportId);
@@ -75,8 +61,8 @@ public class UserReportsService {
 
     public List<UserReport> getAllOpenedUserReports() {
 
-        if(!userReportsRepository.findByIsOpenTrue().isEmpty()) {
-            return userReportsRepository.findByIsOpenTrue();
+        if(!userReportsRepository.findByIsOpenIsTrue().isEmpty()) {
+            return userReportsRepository.findByIsOpenIsTrue();
         } else {
             throw new ObjectNotFoundException("No opened reports present in database.");
         }

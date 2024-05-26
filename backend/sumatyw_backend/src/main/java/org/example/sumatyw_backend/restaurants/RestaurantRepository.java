@@ -12,9 +12,7 @@ public interface RestaurantRepository extends JpaRepository<Restaurant, UUID> {
 
     Optional<Restaurant> findByPhoneNumber(String phoneNumber);
 
-    Optional<Restaurant> findByName(String name);
-
-    List<Restaurant> findAllByAddress_City_NameAndActiveTrue(String city);
+    List<Restaurant> findAllByAddress_City_AndActiveTrue(String city);
 
     List<Restaurant> findAllByActiveFalse();
 

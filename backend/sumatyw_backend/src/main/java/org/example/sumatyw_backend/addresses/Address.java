@@ -2,10 +2,7 @@ package org.example.sumatyw_backend.addresses;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.example.sumatyw_backend.cities.City;
 import org.example.sumatyw_backend.restaurants.Restaurant;
-
-import java.util.UUID;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -13,17 +10,20 @@ import java.util.UUID;
 @Getter
 @Entity
 @Builder
-@Table(name="addresses")
+@Table(name = "addresses")
 public class Address {
+    /**
+     * Address ID. Equals Place ID from Google Maps API.
+     */
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID addressId;
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "city_id")
-    private City city;
+    private String addressId;
+    private String city;
     private String street;
     private String number;
     private String postalCode;
+    private String country;
     @OneToOne(mappedBy = "address")
     private Restaurant restaurant;
+    private double latitude;
+    private double longitude;
 }

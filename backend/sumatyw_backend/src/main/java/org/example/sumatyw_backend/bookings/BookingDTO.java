@@ -4,9 +4,12 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 public record BookingDTO(
+
+    UUID bookingId,
     UUID userId,
     UUID mealId,
-    LocalDateTime timestamp,
+    LocalDateTime orderedTimestamp,
+    LocalDateTime deadlinePickUpTimestamp,
     LocalDateTime pickedUpTimestamp
 ) {
 }

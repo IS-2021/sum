@@ -2,6 +2,7 @@ package org.example.sumatyw_backend.meals;
 
 
 import lombok.AllArgsConstructor;
+import org.example.sumatyw_backend.bookings.Booking;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -22,7 +23,22 @@ public class MealService {
     }
 
     public List<Meal> getAllMealsByRestaurantId(UUID restaurantId) {
-        return mealRepository.findAllByRestaurantRestaurantId(restaurantId);
+        List<Meal> meals = mealRepository.findAllByRestaurantRestaurantId(restaurantId);
+
+        for (int i = 0; i < meals.size(); i++) {
+            boolean hasActiveBooking = false;
+            for (Booking booking : meals.get(i).getBookings()) {
+                if (booking.isActive() || booking.getPickedUpTimestamp() != null)
+                    hasActiveBooking = true;
+            }
+
+            if (hasActiveBooking) {
+                meals.remove(i);
+                i--;
+            }
+        }
+
+        return meals;
     }
 
     public Meal updateMealById(UUID id, Meal meal) {

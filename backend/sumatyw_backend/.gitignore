@@ -1,3 +1,5 @@
+.env
+
 ### Docker DB volume
 data
 src/main/resources/static/images/*

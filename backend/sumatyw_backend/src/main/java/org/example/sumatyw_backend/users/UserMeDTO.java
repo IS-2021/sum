@@ -1,6 +1,8 @@
 package org.example.sumatyw_backend.users;
 
-import org.example.sumatyw_backend.cities.CityDTO;
+import org.example.sumatyw_backend.addresses.AddressDTO;
+
+import java.util.Optional;
 
 public record UserMeDTO(
     String id,
@@ -10,6 +12,6 @@ public record UserMeDTO(
     String email,
     String phoneNumber,
     Role role,
-    CityDTO city
+    Optional<AddressDTO> address
 ) {
 }

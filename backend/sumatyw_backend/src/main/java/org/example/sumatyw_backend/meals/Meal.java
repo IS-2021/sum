@@ -2,6 +2,7 @@ package org.example.sumatyw_backend.meals;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.example.sumatyw_backend.bookings.Booking;
 import org.example.sumatyw_backend.ingredients.Ingredient;
 import org.example.sumatyw_backend.restaurants.Restaurant;
 
@@ -28,4 +29,6 @@ public class Meal {
     private Restaurant restaurant;
     @ManyToMany(mappedBy = "meals")
     private List<Ingredient> ingredients = new ArrayList<>();
+    @OneToMany(mappedBy = "meal")
+    private List<Booking> bookings;
 }

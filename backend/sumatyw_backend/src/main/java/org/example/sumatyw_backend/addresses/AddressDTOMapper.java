@@ -1,17 +1,17 @@
 package org.example.sumatyw_backend.addresses;
 
-import org.example.sumatyw_backend.cities.City;
-
 public class AddressDTOMapper {
 
     public static Address mapAddressInputDTOToAddress(AddressInputDTO addressInputDTO) {
         return Address.builder()
+            .addressId(addressInputDTO.addressId())
             .number(addressInputDTO.number())
             .street(addressInputDTO.street())
             .postalCode(addressInputDTO.postalCode())
-            .city(City.builder()
-                .cityId(addressInputDTO.cityId())
-                .build())
+            .city(addressInputDTO.city())
+            .country(addressInputDTO.country())
+            .latitude(addressInputDTO.latitude())
+            .longitude(addressInputDTO.longitude())
             .build();
     }
 
@@ -21,9 +21,10 @@ public class AddressDTOMapper {
             address.getNumber(),
             address.getStreet(),
             address.getPostalCode(),
-            address.getCity().getName(),
-            address.getCity().getCountry(),
-            address.getCity().getRegion()
+            address.getCity(),
+            address.getCountry(),
+            address.getLatitude(),
+            address.getLongitude()
         );
     }
 }

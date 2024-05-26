@@ -15,7 +15,7 @@ import java.util.UUID;
 @Getter
 @Entity
 @Builder
-@Table(name="booked_meals")
+@Table(name="bookings")
 public class Booking {
 
     @Id
@@ -33,4 +33,6 @@ public class Booking {
     @ManyToOne
     @JoinColumn(name = "meal_id", nullable = false)
     private Meal meal;
+
+    private boolean active;
 }

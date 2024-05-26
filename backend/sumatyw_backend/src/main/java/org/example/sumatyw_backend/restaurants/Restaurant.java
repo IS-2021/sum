@@ -17,10 +17,9 @@ import java.util.UUID;
 @Getter
 @Entity
 @Builder
-@Table(name="restaurants")
+@Table(name = "restaurants")
 public class Restaurant {
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID restaurantId;
     private String name;
     private String phoneNumber;

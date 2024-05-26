@@ -1,41 +1,27 @@
 package org.example.sumatyw_backend.restaurants;
 
 import lombok.AllArgsConstructor;
-import org.example.sumatyw_backend.addresses.Address;
-import org.example.sumatyw_backend.addresses.AddressRepository;
-import org.example.sumatyw_backend.cities.City;
-import org.example.sumatyw_backend.cities.CityRepository;
 import org.example.sumatyw_backend.exceptions.ObjectNotFoundException;
 import org.example.sumatyw_backend.exceptions.ResourceAlreadyExistsException;
-import org.example.sumatyw_backend.ingredients.IngredientDTO;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.Point;
+import org.locationtech.jts.operation.distance.DistanceOp;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.List;
+import java.util.UUID;
 
 @Service
 @AllArgsConstructor
 public class RestaurantService {
 
     private final RestaurantRepository restaurantRepository;
-    private final AddressRepository addressRepository;
-    private final CityRepository cityRepository;
 
     public Restaurant addRestaurant(Restaurant restaurant) {
 
+        restaurant.setRestaurantId(restaurant.getUser().getUserId());
         restaurant.setImageUUID("default");
-
-        Optional<Address> addressDB = addressRepository.findByCityAndStreetAndNumberAndPostalCode(
-            restaurant.getAddress().getCity(),
-            restaurant.getAddress().getStreet(),
-            restaurant.getAddress().getNumber(),
-            restaurant.getAddress().getPostalCode()
-        );
-
-        cityRepository.findById(restaurant.getAddress().getCity().getCityId())
-            .orElseThrow(() -> new ObjectNotFoundException("City with id: " + restaurant.getAddress().getCity().getCityId() + " not found"));
-
-        if (addressDB.isPresent())
-            throw new ResourceAlreadyExistsException("Restaurant with given address already exists");
 
         if (this.restaurantRepository.findByPhoneNumber(restaurant.getPhoneNumber()).isPresent())
             throw new ResourceAlreadyExistsException("Restaurant with phone number: '" + restaurant.getPhoneNumber() + "' already exists.");
@@ -57,8 +43,9 @@ public class RestaurantService {
     }
 
     public List<Restaurant> getRestaurantsByCity(String city) {
-        return restaurantRepository.findAllByAddress_City_NameAndActiveTrue(city);
+        return restaurantRepository.findAllByAddress_City_AndActiveTrue(city);
     }
+
 
     public RestaurantDTO deactivateRestaurant(UUID id) {
 
@@ -114,6 +101,20 @@ public class RestaurantService {
         restaurantRepository.save(restaurant);
     }
 
+    public List<Restaurant> getLocalRestaurants(double userLat, double userLon, double radius) {
+        List<Restaurant> restaurants = restaurantRepository.findAll();
 
+        return restaurants.stream().filter(r -> getDistance(userLat, userLon, r.getAddress().getLatitude(), r.getAddress().getLongitude()) <= radius).toList();
+    }
 
+    private double getDistance(double lat1, double lon1, double lat2, double lon2) {
+
+        GeometryFactory geometryFactory = new GeometryFactory();
+        Point point1 = geometryFactory.createPoint(new Coordinate(lon1, lat1));
+        Point point2 = geometryFactory.createPoint(new Coordinate(lon2, lat2));
+        DistanceOp distanceOp = new DistanceOp(point1, point2);
+
+        return distanceOp.distance() * 111.32;
+
+    }
 }
