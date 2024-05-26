@@ -9,6 +9,15 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { LogOut, MapPinIcon, UserIcon } from 'lucide-vue-next';
+import { useUser } from '@/composables/useUser';
+import { useRouter } from 'vue-router/auto';
+
+const router = useRouter();
+const { signOut } = useUser();
+
+function onChangeLocationSelect() {
+  router.push('/settings');
+}
 </script>
 
 <template>
@@ -22,14 +31,14 @@ import { LogOut, MapPinIcon, UserIcon } from 'lucide-vue-next';
 
       <DropdownMenuSeparator />
 
-      <DropdownMenuItem>
+      <DropdownMenuItem @select="onChangeLocationSelect">
         <MapPinIcon class="mr-2 h-4 w-4" />
         <span>Change location</span>
       </DropdownMenuItem>
 
       <DropdownMenuSeparator />
 
-      <DropdownMenuItem>
+      <DropdownMenuItem @select="signOut">
         <LogOut class="mr-2 h-4 w-4" />
         <span>Sign out</span>
       </DropdownMenuItem>
