@@ -1,9 +1,14 @@
 <script setup lang="ts">
-import type { UserDTO } from '@/lib/api-model';
+import type { BookingDTO, UserDTO } from '@/lib/api-model';
+import { ref } from 'vue';
 
 const props = defineProps<{
   user: UserDTO;
+  bookings: BookingDTO[];
 }>();
+
+const completedBookings = props.bookings.filter((booking) => !booking.pickedUpTimestamp);
+const completedBookingsCount = ref(completedBookings.length);
 </script>
 
 <template>
@@ -12,7 +17,7 @@ const props = defineProps<{
   >
     <div class="rounded-md flex flex-col justify-center items-center">
       <p v-if="user" class="text-2xl font-bold text-center">Welcome {{ props.user.firstName }}!</p>
-      <p class="text-lg text-center">You saved 13 meals so far!</p>
+      <p class="text-lg text-center">You saved {{ completedBookingsCount }} meals so far!</p>
     </div>
     <div class="flex gap-1 items-end">
       <h1 class="text-primary">FoodGood team</h1>

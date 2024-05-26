@@ -19,7 +19,9 @@ import type { AxiosError, AxiosRequestConfig, AxiosResponse } from 'axios';
 import { computed, unref } from 'vue';
 import type { MaybeRef } from 'vue';
 import type {
+  BadRequest400Response,
   NotFound404Response,
+  PostUsersUserIdAddressParams,
   UserDTO,
   UserInputDTO,
   UserMeDTO,
@@ -315,4 +317,78 @@ export const useGetUsersMe = <
   query.queryKey = unref(queryOptions).queryKey as QueryKey;
 
   return query;
+};
+
+export const postUsersUserIdAddress = (
+  userId: MaybeRef<Uuid>,
+  params: MaybeRef<PostUsersUserIdAddressParams>,
+  options?: AxiosRequestConfig,
+): Promise<AxiosResponse<UserMeDTO>> => {
+  userId = unref(userId);
+  params = unref(params);
+  return axios.default.post(`http://localhost:9090/users/${userId}/address`, undefined, {
+    ...options,
+    params: { ...unref(params), ...options?.params },
+  });
+};
+
+export const getPostUsersUserIdAddressMutationOptions = <
+  TError = AxiosError<BadRequest400Response | NotFound404Response>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof postUsersUserIdAddress>>,
+    TError,
+    { userId: Uuid; params: PostUsersUserIdAddressParams },
+    TContext
+  >;
+  axios?: AxiosRequestConfig;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof postUsersUserIdAddress>>,
+  TError,
+  { userId: Uuid; params: PostUsersUserIdAddressParams },
+  TContext
+> => {
+  const { mutation: mutationOptions, axios: axiosOptions } = options ?? {};
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof postUsersUserIdAddress>>,
+    { userId: Uuid; params: PostUsersUserIdAddressParams }
+  > = (props) => {
+    const { userId, params } = props ?? {};
+
+    return postUsersUserIdAddress(userId, params, axiosOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type PostUsersUserIdAddressMutationResult = NonNullable<
+  Awaited<ReturnType<typeof postUsersUserIdAddress>>
+>;
+
+export type PostUsersUserIdAddressMutationError = AxiosError<
+  BadRequest400Response | NotFound404Response
+>;
+
+export const usePostUsersUserIdAddress = <
+  TError = AxiosError<BadRequest400Response | NotFound404Response>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof postUsersUserIdAddress>>,
+    TError,
+    { userId: Uuid; params: PostUsersUserIdAddressParams },
+    TContext
+  >;
+  axios?: AxiosRequestConfig;
+}): UseMutationReturnType<
+  Awaited<ReturnType<typeof postUsersUserIdAddress>>,
+  TError,
+  { userId: Uuid; params: PostUsersUserIdAddressParams },
+  TContext
+> => {
+  const mutationOptions = getPostUsersUserIdAddressMutationOptions(options);
+
+  return useMutation(mutationOptions);
 };

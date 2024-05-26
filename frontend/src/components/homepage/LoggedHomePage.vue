@@ -6,12 +6,18 @@ import { useHead } from '@unhead/vue';
 import { useUser } from '@/composables/useUser';
 import FavouritesDisplay from '@/components/homepage/FavouritesDisplay.vue';
 import WelcomeComponent from '@/components/homepage/WelcomeComponent.vue';
+import { useGetBookings } from '@/lib/api/bookings/bookings';
+import { unref } from 'vue';
+import type { BookingDTO } from '@/lib/api-model';
 
 useHead({
   title: 'Home',
 });
 
 const { user } = useUser();
+
+const { data } = useGetBookings({ userId: user.value?.id });
+const bookings = unref(data)?.data;
 
 // const latest = getLatestBooking();
 // const restaurant = latest.restaurant;
@@ -23,7 +29,7 @@ const { user } = useUser();
 
 <template>
   <div class="w-full sm:max-w-screen-sm md:max-w-screen-md lg:max-w-screen-xl mx-auto px-4">
-    <WelcomeComponent v-if="user" :user="user" />
+    <WelcomeComponent v-if="user && bookings" :user="user" :bookings="bookings" />
     <!-- <div v-if="latest">
         <h1 class="font-bold text-2xl mb-8">Last orders</h1>
         <article

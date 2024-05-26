@@ -28,7 +28,7 @@ import type {
 } from '../../api-model';
 
 export const getRestaurants = (
-  params?: MaybeRef<GetRestaurantsParams>,
+  params: MaybeRef<GetRestaurantsParams>,
   options?: AxiosRequestConfig,
 ): Promise<AxiosResponse<RestaurantDTO[]>> => {
   params = unref(params);
@@ -38,7 +38,7 @@ export const getRestaurants = (
   });
 };
 
-export const getGetRestaurantsQueryKey = (params?: MaybeRef<GetRestaurantsParams>) => {
+export const getGetRestaurantsQueryKey = (params: MaybeRef<GetRestaurantsParams>) => {
   return ['http:', 'localhost:9090', 'restaurants', ...(params ? [params] : [])] as const;
 };
 
@@ -46,7 +46,7 @@ export const getGetRestaurantsQueryOptions = <
   TData = Awaited<ReturnType<typeof getRestaurants>>,
   TError = AxiosError<unknown>,
 >(
-  params?: MaybeRef<GetRestaurantsParams>,
+  params: MaybeRef<GetRestaurantsParams>,
   options?: {
     query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getRestaurants>>, TError, TData>>;
     axios?: AxiosRequestConfig;
@@ -73,7 +73,7 @@ export const useGetRestaurants = <
   TData = Awaited<ReturnType<typeof getRestaurants>>,
   TError = AxiosError<unknown>,
 >(
-  params?: MaybeRef<GetRestaurantsParams>,
+  params: MaybeRef<GetRestaurantsParams>,
   options?: {
     query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getRestaurants>>, TError, TData>>;
     axios?: AxiosRequestConfig;

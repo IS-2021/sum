@@ -6,8 +6,6 @@
  */
 import type { Uuid } from './uuid';
 
-export interface IngredientDTO {
-  ingredientId: Uuid;
-  name: string;
-  type: string;
-}
+export type GetBookingsActiveParams = {
+  userId: Uuid;
+};

@@ -72,11 +72,24 @@ paths:
       tags:
         - restaurants
       parameters:
-        - name: name
-          description: Filter restaurants by name
+        - name: lat
+          description: double
           schema:
-            type: string
+            type: number
           in: query
+          required: true
+        - name: lon
+          description: double
+          schema:
+            type: number
+          in: query
+          required: true
+        - name: radius
+          description: double
+          schema:
+            type: number
+          in: query
+          required: true
       responses:
         "200":
           content:
@@ -366,6 +379,22 @@ paths:
     get:
       tags:
         - bookings
+      parameters:
+        - name: userId
+          description: "If exists, returns booking by userId, eg. /bookings?userId=123"
+          schema:
+            $ref: "#/components/schemas/UUID"
+          in: query
+        - name: restaurantId
+          description: "If exists, returns all bookings for restaurant"
+          schema:
+            $ref: "#/components/schemas/UUID"
+          in: query
+        - name: active
+          description: "Syntax: restaurantId + active - returns all pending bookings for restaurant"
+          schema:
+            $ref: "#/components/schemas/UUID"
+          in: query
       responses:
         "200":
           content:
@@ -1173,8 +1202,25 @@ paths:
           type: string
         in: path
         required: true
-  /cities:
+  /geo/autocomplete:
     get:
+      tags:
+        - geo
+      parameters:
+        - name: query
+          description: 'Partial city/street query, such as "War", "Warsz" or "Warszawa"'
+          schema:
+            type: string
+          in: query
+          required: true
+        - name: sessionToken
+          description: >-
+            See:
+            https://developers.google.com/maps/documentation/places/web-service/session-tokens
+          schema:
+            $ref: "#/components/schemas/UUID"
+          in: query
+          required: true
       responses:
         "200":
           content:
@@ -1182,21 +1228,23 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: "#/components/schemas/CityDTO"
-          description: Get all cities
-      description: Get all cities by ID
-  "/users/{userId}/city/{cityId}":
+                  $ref: "#/components/schemas/AutocompleteDTO"
+          description: List of autocompletions
+  "/users/{userId}/address":
     post:
+      tags:
+        - users
       parameters:
         - name: userId
           schema:
             $ref: "#/components/schemas/UUID"
           in: path
           required: true
-        - name: cityId
+        - name: placeId
+          description: Place ID from Google Maps API
           schema:
-            $ref: "#/components/schemas/UUID"
-          in: path
+            type: string
+          in: query
           required: true
       responses:
         "200":
@@ -1207,6 +1255,72 @@ paths:
           description: City has been set
         "400":
           $ref: "#/components/responses/BadRequest_400"
+        "404":
+          $ref: "#/components/responses/NotFound_404"
+    parameters:
+      - name: userId
+        schema:
+          $ref: "#/components/schemas/UUID"
+        in: path
+        required: true
+  /geo/places:
+    get:
+      tags:
+        - geo
+      parameters:
+        - name: placeId
+          description: Google Maps Place ID
+          schema:
+            type: string
+          in: query
+          required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AddressDTO"
+          description: Returns address of the place
+  /geo/reverse-geocode:
+    get:
+      tags:
+        - geo
+      parameters:
+        - name: lat
+          description: ""
+          schema:
+            type: number
+          in: query
+          required: true
+        - name: lng
+          description: ""
+          schema:
+            type: number
+          in: query
+          required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AddressDTO"
+          description: Reverse geocoded address
+  /bookings/active:
+    get:
+      parameters:
+        - name: userId
+          description: ""
+          schema:
+            $ref: "#/components/schemas/UUID"
+          in: query
+          required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BookingDTO"
+          description: .
         "404":
           $ref: "#/components/responses/NotFound_404"
 components:
@@ -1331,7 +1445,7 @@ components:
       required:
         - name
         - type
-        - id
+        - ingredientId
       type: object
       properties:
         name:
@@ -1341,14 +1455,14 @@ components:
         type:
           description: ""
           type: string
-        id:
+        ingredientId:
           $ref: "#/components/schemas/UUID"
           description: ""
           x-faker: datatype.uuid
       example:
         name: Cheese
         type: dairy
-        id: 1488098b-8777-417f-a45a-78c7361502d8
+        ingredientId: 1488098b-8777-417f-a45a-78c7361502d8
     UserDTO:
       title: Root Type for UserDTO
       description: User object.
@@ -1360,7 +1474,7 @@ components:
         - role
         - secondName
         - username
-        - id
+        - userId
         - isBlocked
       type: object
       properties:
@@ -1392,12 +1506,12 @@ components:
           x-faker:
             phone.phoneNumber:
               - "###-###-###"
-        id:
-          $ref: "#/components/schemas/UUID"
-          description: ""
         isBlocked:
           description: ""
           type: boolean
+        userId:
+          $ref: "#/components/schemas/UUID"
+          description: ""
     UserInputDTO:
       title: Root Type for UserDTO
       description: User object.
@@ -1489,8 +1603,10 @@ components:
       required:
         - userId
         - mealId
-        - timestamp
+        - orderedTimestamp
         - id
+        - deadlinePickUpTimestamp
+        - pickedUpTimestamp
       type: object
       properties:
         userId:
@@ -1499,14 +1615,17 @@ components:
         mealId:
           $ref: "#/components/schemas/UUID"
           description: ""
-        timestamp:
-          $ref: "#/components/schemas/timestamp"
-          description: ""
         pickedUpTimestamp:
           $ref: "#/components/schemas/timestamp"
           description: ""
         id:
           $ref: "#/components/schemas/UUID"
+          description: ""
+        orderedTimestamp:
+          $ref: "#/components/schemas/timestamp"
+          description: ""
+        deadlinePickUpTimestamp:
+          $ref: "#/components/schemas/timestamp"
           description: ""
     DeleteFavouriteRestaurantsDTO:
       description: ""
@@ -1595,7 +1714,7 @@ components:
       required:
         - active
         - address
-        - id
+        - restaurantId
         - name
         - phoneNumber
         - userId
@@ -1604,8 +1723,6 @@ components:
         - dislikesCount
       type: object
       properties:
-        id:
-          $ref: "#/components/schemas/UUID"
         name:
           type: string
         phoneNumber:
@@ -1628,6 +1745,8 @@ components:
           $ref: "#/components/schemas/AddressDTO"
         active:
           type: boolean
+        restaurantId:
+          $ref: "#/components/schemas/UUID"
     RestaurantFavouriteInputDTO:
       description: ""
       required:
@@ -1705,12 +1824,13 @@ components:
       description: ""
       required:
         - country
-        - cityId
+        - city
         - street
         - number
         - postalCode
         - addressId
-        - region
+        - latitude
+        - longitude
       type: object
       properties:
         country:
@@ -1726,12 +1846,15 @@ components:
           description: ""
           type: string
         addressId:
-          $ref: "#/components/schemas/UUID"
-          description: ""
-        region:
           description: ""
           type: string
-        cityId:
+        longitude:
+          description: double
+          type: number
+        latitude:
+          description: double
+          type: number
+        city:
           description: ""
           type: string
     AddressInputDTO:
@@ -1742,6 +1865,8 @@ components:
         - number
         - postalCode
         - cityId
+        - latitude
+        - longitude
       type: object
       properties:
         country:
@@ -1759,6 +1884,12 @@ components:
         cityId:
           $ref: "#/components/schemas/UUID"
           description: ""
+        latitude:
+          description: double
+          type: number
+        longitude:
+          description: double
+          type: number
     ProblemDetail:
       title: Root Type for ProblemDetail
       description: ""
@@ -1786,24 +1917,6 @@ components:
         status: 400
         detail: "Phone number: '111222333' already exists."
         instance: /auth/register
-    CityDTO:
-      title: Root Type for CityDTO
-      description: ""
-      type: object
-      properties:
-        uuid:
-          type: string
-        name:
-          type: string
-        region:
-          type: string
-        country:
-          type: string
-      example:
-        uuid: ""
-        name: ""
-        region: ""
-        country: ""
     UserMeDTO:
       description: ""
       required:
@@ -1816,9 +1929,6 @@ components:
         - role
       type: object
       properties:
-        id:
-          $ref: "#/components/schemas/UUID"
-          description: ""
         firstName:
           description: ""
           type: string
@@ -1837,9 +1947,44 @@ components:
         role:
           $ref: "#/components/schemas/Role"
           description: ""
-        city:
-          $ref: "#/components/schemas/CityDTO"
+        id:
+          $ref: "#/components/schemas/UUID"
           description: ""
+        address:
+          $ref: "#/components/schemas/AddressDTO"
+          description: ""
+    GeoLatLngDTO:
+      title: Root Type for GeoLatLngDTO
+      description: ""
+      required:
+        - lat
+        - lng
+      type: object
+      properties:
+        lat:
+          format: double
+          type: number
+        lng:
+          format: double
+          type: number
+      example:
+        lat: 51.7659423
+        lng: 19.4777691
+    AutocompleteDTO:
+      title: Root Type for AutocompleteDTO
+      description: ""
+      required:
+        - description
+        - placeId
+      type: object
+      properties:
+        description:
+          type: string
+        placeId:
+          type: string
+      example:
+        description: "Warszawa, Polska"
+        placeId: ChIJAZ-GmmbMHkcR_NPqiCq-8HI
   responses:
     NotFound_404:
       content:

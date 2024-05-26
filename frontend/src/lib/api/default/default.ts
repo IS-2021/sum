@@ -4,13 +4,10 @@
  * Sumatywny
  * OpenAPI spec version: 1.0.0
  */
-import { useMutation, useQuery } from '@tanstack/vue-query';
+import { useQuery } from '@tanstack/vue-query';
 import type {
-  MutationFunction,
   QueryFunction,
   QueryKey,
-  UseMutationOptions,
-  UseMutationReturnType,
   UseQueryOptions,
   UseQueryReturnType,
 } from '@tanstack/vue-query';
@@ -18,57 +15,63 @@ import * as axios from 'axios';
 import type { AxiosError, AxiosRequestConfig, AxiosResponse } from 'axios';
 import { unref } from 'vue';
 import type { MaybeRef } from 'vue';
-import type {
-  BadRequest400Response,
-  CityDTO,
-  NotFound404Response,
-  UserMeDTO,
-  Uuid,
-} from '../../api-model';
+import type { BookingDTO, GetBookingsActiveParams, NotFound404Response } from '../../api-model';
 
-/**
- * Get all cities by ID
- */
-export const getCities = (options?: AxiosRequestConfig): Promise<AxiosResponse<CityDTO[]>> => {
-  return axios.default.get(`http://localhost:9090/cities`, options);
+export const getBookingsActive = (
+  params: MaybeRef<GetBookingsActiveParams>,
+  options?: AxiosRequestConfig,
+): Promise<AxiosResponse<BookingDTO>> => {
+  params = unref(params);
+  return axios.default.get(`http://localhost:9090/bookings/active`, {
+    ...options,
+    params: { ...unref(params), ...options?.params },
+  });
 };
 
-export const getGetCitiesQueryKey = () => {
-  return ['http:', 'localhost:9090', 'cities'] as const;
+export const getGetBookingsActiveQueryKey = (params: MaybeRef<GetBookingsActiveParams>) => {
+  return ['http:', 'localhost:9090', 'bookings', 'active', ...(params ? [params] : [])] as const;
 };
 
-export const getGetCitiesQueryOptions = <
-  TData = Awaited<ReturnType<typeof getCities>>,
-  TError = AxiosError<unknown>,
->(options?: {
-  query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getCities>>, TError, TData>>;
-  axios?: AxiosRequestConfig;
-}) => {
+export const getGetBookingsActiveQueryOptions = <
+  TData = Awaited<ReturnType<typeof getBookingsActive>>,
+  TError = AxiosError<NotFound404Response>,
+>(
+  params: MaybeRef<GetBookingsActiveParams>,
+  options?: {
+    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getBookingsActive>>, TError, TData>>;
+    axios?: AxiosRequestConfig;
+  },
+) => {
   const { query: queryOptions, axios: axiosOptions } = options ?? {};
 
-  const queryKey = getGetCitiesQueryKey();
+  const queryKey = getGetBookingsActiveQueryKey(params);
 
-  const queryFn: QueryFunction<Awaited<ReturnType<typeof getCities>>> = ({ signal }) =>
-    getCities({ signal, ...axiosOptions });
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof getBookingsActive>>> = ({ signal }) =>
+    getBookingsActive(params, { signal, ...axiosOptions });
 
   return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
-    Awaited<ReturnType<typeof getCities>>,
+    Awaited<ReturnType<typeof getBookingsActive>>,
     TError,
     TData
   >;
 };
 
-export type GetCitiesQueryResult = NonNullable<Awaited<ReturnType<typeof getCities>>>;
-export type GetCitiesQueryError = AxiosError<unknown>;
+export type GetBookingsActiveQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getBookingsActive>>
+>;
+export type GetBookingsActiveQueryError = AxiosError<NotFound404Response>;
 
-export const useGetCities = <
-  TData = Awaited<ReturnType<typeof getCities>>,
-  TError = AxiosError<unknown>,
->(options?: {
-  query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getCities>>, TError, TData>>;
-  axios?: AxiosRequestConfig;
-}): UseQueryReturnType<TData, TError> & { queryKey: QueryKey } => {
-  const queryOptions = getGetCitiesQueryOptions(options);
+export const useGetBookingsActive = <
+  TData = Awaited<ReturnType<typeof getBookingsActive>>,
+  TError = AxiosError<NotFound404Response>,
+>(
+  params: MaybeRef<GetBookingsActiveParams>,
+  options?: {
+    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getBookingsActive>>, TError, TData>>;
+    axios?: AxiosRequestConfig;
+  },
+): UseQueryReturnType<TData, TError> & { queryKey: QueryKey } => {
+  const queryOptions = getGetBookingsActiveQueryOptions(params, options);
 
   const query = useQuery(queryOptions) as UseQueryReturnType<TData, TError> & {
     queryKey: QueryKey;
@@ -77,79 +80,4 @@ export const useGetCities = <
   query.queryKey = unref(queryOptions).queryKey as QueryKey;
 
   return query;
-};
-
-export const postUsersUserIdCityCityId = (
-  userId: MaybeRef<Uuid>,
-  cityId: MaybeRef<Uuid>,
-  options?: AxiosRequestConfig,
-): Promise<AxiosResponse<UserMeDTO>> => {
-  userId = unref(userId);
-  cityId = unref(cityId);
-  return axios.default.post(
-    `http://localhost:9090/users/${userId}/city/${cityId}`,
-    undefined,
-    options,
-  );
-};
-
-export const getPostUsersUserIdCityCityIdMutationOptions = <
-  TError = AxiosError<BadRequest400Response | NotFound404Response>,
-  TContext = unknown,
->(options?: {
-  mutation?: UseMutationOptions<
-    Awaited<ReturnType<typeof postUsersUserIdCityCityId>>,
-    TError,
-    { userId: Uuid; cityId: Uuid },
-    TContext
-  >;
-  axios?: AxiosRequestConfig;
-}): UseMutationOptions<
-  Awaited<ReturnType<typeof postUsersUserIdCityCityId>>,
-  TError,
-  { userId: Uuid; cityId: Uuid },
-  TContext
-> => {
-  const { mutation: mutationOptions, axios: axiosOptions } = options ?? {};
-
-  const mutationFn: MutationFunction<
-    Awaited<ReturnType<typeof postUsersUserIdCityCityId>>,
-    { userId: Uuid; cityId: Uuid }
-  > = (props) => {
-    const { userId, cityId } = props ?? {};
-
-    return postUsersUserIdCityCityId(userId, cityId, axiosOptions);
-  };
-
-  return { mutationFn, ...mutationOptions };
-};
-
-export type PostUsersUserIdCityCityIdMutationResult = NonNullable<
-  Awaited<ReturnType<typeof postUsersUserIdCityCityId>>
->;
-
-export type PostUsersUserIdCityCityIdMutationError = AxiosError<
-  BadRequest400Response | NotFound404Response
->;
-
-export const usePostUsersUserIdCityCityId = <
-  TError = AxiosError<BadRequest400Response | NotFound404Response>,
-  TContext = unknown,
->(options?: {
-  mutation?: UseMutationOptions<
-    Awaited<ReturnType<typeof postUsersUserIdCityCityId>>,
-    TError,
-    { userId: Uuid; cityId: Uuid },
-    TContext
-  >;
-  axios?: AxiosRequestConfig;
-}): UseMutationReturnType<
-  Awaited<ReturnType<typeof postUsersUserIdCityCityId>>,
-  TError,
-  { userId: Uuid; cityId: Uuid },
-  TContext
-> => {
-  const mutationOptions = getPostUsersUserIdCityCityIdMutationOptions(options);
-
-  return useMutation(mutationOptions);
 };

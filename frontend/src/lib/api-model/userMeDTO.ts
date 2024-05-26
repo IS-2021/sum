@@ -4,12 +4,12 @@
  * Sumatywny
  * OpenAPI spec version: 1.0.0
  */
-import type { CityDTO } from './cityDTO';
+import type { AddressDTO } from './addressDTO';
 import type { Uuid } from './uuid';
 import type { Role } from './role';
 
 export interface UserMeDTO {
-  city?: CityDTO;
+  address?: AddressDTO;
   email: string;
   firstName: string;
   id: Uuid;

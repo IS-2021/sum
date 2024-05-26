@@ -172,9 +172,8 @@ export const postLogin = (
   options?: AxiosRequestConfig,
 ): Promise<AxiosResponse<void>> => {
   const formUrlEncoded = new URLSearchParams();
-  const unrefedCredentialsDTO = unref(credentialsDTO);
-  formUrlEncoded.append('username', unrefedCredentialsDTO.username);
-  formUrlEncoded.append('password', unrefedCredentialsDTO.password);
+  formUrlEncoded.append('username', credentialsDTO.username);
+  formUrlEncoded.append('password', credentialsDTO.password);
 
   credentialsDTO = unref(credentialsDTO);
   return axios.default.post(`http://localhost:9090/login`, formUrlEncoded, options);
