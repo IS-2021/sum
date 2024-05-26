@@ -35,10 +35,17 @@ public class BookingController {
         return new ResponseEntity<>(BookingDTOMapper.mapBookingToBookingDTO(booking), HttpStatus.OK);
     }
 
-    @GetMapping(params = {"userId"})
+    @GetMapping( value = "/active", params = {"userId"})
     public ResponseEntity<BookingDTO> getBookingByUserId(@RequestParam("userId") UUID userId) {
         Booking booking = bookingService.getBookingByUserId(userId);
         return new ResponseEntity<>(BookingDTOMapper.mapBookingToBookingDTO(booking), HttpStatus.OK);
+    }
+
+    @GetMapping(params = {"userId"})
+    public ResponseEntity<List<BookingDTO>> getAllBookingsByUserId(@RequestParam("userId") UUID userId) {
+        List<Booking> userBookings = bookingService.getAllUserBookings(userId);
+
+        return new ResponseEntity<>(userBookings.stream().map(BookingDTOMapper::mapBookingToBookingDTO).toList(), HttpStatus.OK);
     }
 
     @GetMapping(params = {"restaurantId"})

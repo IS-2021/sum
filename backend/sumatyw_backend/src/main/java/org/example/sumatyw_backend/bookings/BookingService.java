@@ -36,7 +36,7 @@ public class BookingService {
         mealRepository.findById(booking.getMeal().getMealId())
             .orElseThrow(() -> new ObjectNotFoundException("Meal not found with ID: " + booking.getMeal().getMealId()));
 
-        Optional<Booking> mealBooking = bookingRepository.findByMealMealId(booking.getMeal().getMealId());
+        Optional<Booking> mealBooking = bookingRepository.findByMealMealIdAndActiveIsTrue(booking.getMeal().getMealId());
         if (mealBooking.isPresent()) {
             throw  new ResourceAlreadyExistsException("This meal is already booked");
         }
@@ -54,6 +54,10 @@ public class BookingService {
     public Booking getBookingByUserId(UUID userId) {
         return bookingRepository.findByUserUserIdAndActiveIsTrue(userId)
             .orElseThrow(() -> new ObjectNotFoundException("Active booking not found with user ID: " + userId));
+    }
+
+    public List<Booking> getAllUserBookings(UUID userId) {
+        return bookingRepository.findAllByUserUserId(userId);
     }
 
     public void deleteBookingById(UUID id) {

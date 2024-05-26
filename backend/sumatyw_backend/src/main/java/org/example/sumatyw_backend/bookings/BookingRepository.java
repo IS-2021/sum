@@ -12,7 +12,9 @@ public interface BookingRepository extends JpaRepository<Booking, UUID> {
 
     Optional<Booking> findByUserUserIdAndActiveIsTrue(UUID userId);
 
-    Optional<Booking> findByMealMealId(UUID mealId);
+    Optional<Booking> findByMealMealIdAndActiveIsTrue(UUID mealId);
+
+    List<Booking> findAllByUserUserId(UUID userId);
     
     List<Booking> findBookingByActiveIsTrue();
 }
