@@ -17,13 +17,11 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import CitiesComboboxInput from '@/components/maps/autocomplete/CitiesComboboxInput.vue';
 
 interface CitiesComboboxProps {
-  minCharsToBeginSearch?: number;
   completions: AutocompleteDTO[];
+  popoverClass?: string;
 }
 
-const props = withDefaults(defineProps<CitiesComboboxProps>(), {
-  minCharsToBeginSearch: 2,
-});
+const props = defineProps<CitiesComboboxProps>();
 
 const open = ref(false);
 const completionText = defineModel<string>('completionText', {
@@ -61,7 +59,7 @@ const handleCompletionInput = (payload: string) => {
         <ChevronsUpDown class="ml-2 h-4 w-4 shrink-0 opacity-50" />
       </Button>
     </PopoverTrigger>
-    <PopoverContent class="p-0 w-[calc(100svw-1.5rem)] sm:max-w-prose">
+    <PopoverContent :class="cn('p-0 w-[calc(100svw-1.5rem)] sm:max-w-prose', popoverClass)">
       <Command :key="citiesKey">
         <CitiesComboboxInput
           class="h-9"
@@ -71,11 +69,8 @@ const handleCompletionInput = (payload: string) => {
           @update:inputText="handleCompletionInput"
         />
         <CommandEmpty class="grid justify-center">
-          <p v-if="completionText.length < minCharsToBeginSearch">Begin typing to search</p>
-          <LoaderCircleIcon
-            v-if="completionText.length >= minCharsToBeginSearch"
-            class="animate-spin"
-          />
+          <p v-if="completionText.length < 3">Begin typing to search</p>
+          <LoaderCircleIcon v-if="completionText.length >= 3" class="animate-spin" />
         </CommandEmpty>
         <CommandList>
           <CommandGroup>

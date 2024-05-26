@@ -154,7 +154,7 @@ export const useGetGeoPlaces = <
 export const getGeoReverseGeocode = (
   params: MaybeRef<GetGeoReverseGeocodeParams>,
   options?: AxiosRequestConfig,
-): Promise<AxiosResponse<AddressDTO[]>> => {
+): Promise<AxiosResponse<AddressDTO>> => {
   params = unref(params);
   return axios.default.get(`http://localhost:9090/geo/reverse-geocode`, {
     ...options,

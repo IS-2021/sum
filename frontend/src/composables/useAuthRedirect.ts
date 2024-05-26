@@ -22,6 +22,11 @@ interface UseAuthRedirectorProps {
   onAuthenticatedRedirect?: () => void;
 }
 
+/**
+ * Redirects user based on their authentication status.
+ * Regular users without a complete profile will be redirected to the onboarding page.
+ * Guest
+ */
 export function useAuthRedirect({
   protectedRoutes,
   guestRoutes,
@@ -29,7 +34,7 @@ export function useAuthRedirect({
   onAuthenticatedRedirect,
 }: UseAuthRedirectorProps) {
   const router = useRouter();
-  const { isLoaded, isSignedIn } = useUser();
+  const { isLoaded, isSignedIn, isProfileComplete } = useUser();
 
   watchEffect(async () => {
     if (!isLoaded.value) {
@@ -39,6 +44,13 @@ export function useAuthRedirect({
     const currentRoute = router.currentRoute.value.name;
     const isAuthRouteMatching = protectedRoutes.includes(currentRoute);
     const isGuestRouteMatching = guestRoutes?.includes(currentRoute);
+    const isOnboardingRouteMatching = currentRoute === '/onboarding/';
+
+    if (!isProfileComplete.value && !isOnboardingRouteMatching) {
+      await router.push('/onboarding/');
+    } else if (isProfileComplete.value && isOnboardingRouteMatching) {
+      await router.push('/');
+    }
 
     if (isAuthRouteMatching && !isSignedIn.value) {
       await router.push('/sign-in');

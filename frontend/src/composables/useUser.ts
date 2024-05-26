@@ -10,6 +10,22 @@ export function useUser() {
   const isLoaded = computed(() => !isPending.value);
   const user = computed(() => data.value?.data);
 
+  const isProfileComplete = computed(() => {
+    if (!isSignedIn.value) {
+      return true;
+    }
+
+    if (!user.value || !isSignedIn.value) {
+      return false;
+    }
+
+    if (user.value?.role === 'ROLE_USER') {
+      return !!user.value?.address;
+    }
+
+    return true;
+  });
+
   const signOut = async () => {
     await postLogout();
     await refetch();
@@ -19,6 +35,7 @@ export function useUser() {
   return {
     isSignedIn,
     isLoaded,
+    isProfileComplete,
     user,
     signOut,
   };

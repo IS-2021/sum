@@ -6,6 +6,6 @@
  */
 
 export type GetGeoReverseGeocodeParams = {
-  lat: string;
-  lng: string;
+  lat: number;
+  lng: number;
 };

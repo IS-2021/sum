@@ -57,10 +57,10 @@ public class GeoController {
     }
 
     @GetMapping("/reverse-geocode")
-    public ResponseEntity<List<AddressDTO>> reverseGeocode(@RequestParam double lat, @RequestParam double lng) throws IOException, InterruptedException, ApiException {
-        GeocodingResult[] results = geocodingService.reverseGeocode(lat, lng);
+    public ResponseEntity<AddressDTO> reverseGeocode(@RequestParam double lat, @RequestParam double lng) throws IOException, InterruptedException, ApiException {
+        GeocodingResult result = geocodingService.reverseGeocode(lat, lng);
 
-        List<AddressDTO> dtos = Arrays.stream(results).map(GeocodingMapper::mapReverseGeocodeToAddressDTO).toList();
+        AddressDTO dtos = GeocodingMapper.mapReverseGeocodeToAddressDTO(result);
 
         return new ResponseEntity<>(dtos, HttpStatus.OK);
     }
