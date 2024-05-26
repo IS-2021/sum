@@ -1,15 +1,13 @@
 <script setup lang="ts">
-import Logo from '@/components/Logo.vue';
 import { formatAddress, loader } from '@/lib/googleMaps';
 import { onMounted, ref, shallowRef, watch, watchEffect } from 'vue';
 import { Button } from '@/components/ui/button';
 import AddressAutocompleteInput from '@/components/maps/autocomplete/AddressAutocompleteInput.vue';
-import { LocateFixedIcon, LogOutIcon, MapPinIcon } from 'lucide-vue-next';
+import { LocateFixedIcon, MapPinIcon } from 'lucide-vue-next';
 import { useGeolocation } from '@vueuse/core';
 import { useAddress } from '@/composables/maps/useAddress';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import type { AddressDTO } from '@/lib/api-model';
-import { useUser } from '@/composables/useUser';
 
 const coords = ref({
   latitude: 51.7484822,
@@ -28,7 +26,6 @@ const emit = defineEmits<{
   (e: 'save:address', payload: AddressDTO): void;
 }>();
 
-const { signOut } = useUser();
 const map = shallowRef<google.maps.Map>();
 const currentPosMarker = shallowRef<google.maps.marker.AdvancedMarkerElement>();
 const mapDiv = ref<HTMLDivElement | null>(null);
@@ -125,31 +122,14 @@ function onSaveClick() {
     <div class="hidden md:block h-svh border-r border-neutral-300" ref="mapDiv" />
 
     <div class="p-10 md:grid md:h-svh grid-rows-5">
-      <div class="hidden lg:grid justify-end">
-        <Button variant="ghost" class="text-neutral-500" @click="signOut">
-          <LogOutIcon class="h-4 w-4 mr-2" /> Sign out
-        </Button>
-      </div>
+      <slot name="page-header">
+        <div />
+      </slot>
 
       <div>
-        <div class="flex justify-between lg:block">
-          <RouterLink to="/">
-            <Logo class="mb-8" />
-          </RouterLink>
-
-          <Button variant="ghost" class="text-neutral-500 lg:hidden" @click="signOut">
-            <LogOutIcon class="h-4 w-4 mr-2" /> Sign out
-          </Button>
-        </div>
+        <slot name="content-header" />
 
         <div>
-          <h1 class="text-2xl font-bold mb-2">Welcome to FoodGood</h1>
-
-          <p class="mb-8 text-neutral-700 max-w-prose">
-            Before you continue, you need to set your location. We’ll use it to show restaurants
-            near you. You can always change it latter in the settings.
-          </p>
-
           <div class="max-w-screen-sm w-full">
             <p class="mb-2 text-neutral-700">Enter your address:</p>
             <AddressAutocompleteInput
