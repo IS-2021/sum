@@ -21,6 +21,7 @@ import type { MaybeRef } from 'vue';
 import type {
   BookingDTO,
   BookingInputDTO,
+  GetBookingsActiveParams,
   GetBookingsParams,
   NotFound404Response,
   Uuid,
@@ -347,4 +348,68 @@ export const usePostBookings = <
   const mutationOptions = getPostBookingsMutationOptions(options);
 
   return useMutation(mutationOptions);
+};
+export const getBookingsActive = (
+  params: MaybeRef<GetBookingsActiveParams>,
+  options?: AxiosRequestConfig,
+): Promise<AxiosResponse<BookingDTO>> => {
+  params = unref(params);
+  return axios.default.get(`http://localhost:9090/bookings/active`, {
+    ...options,
+    params: { ...unref(params), ...options?.params },
+  });
+};
+
+export const getGetBookingsActiveQueryKey = (params: MaybeRef<GetBookingsActiveParams>) => {
+  return ['http:', 'localhost:9090', 'bookings', 'active', ...(params ? [params] : [])] as const;
+};
+
+export const getGetBookingsActiveQueryOptions = <
+  TData = Awaited<ReturnType<typeof getBookingsActive>>,
+  TError = AxiosError<NotFound404Response>,
+>(
+  params: MaybeRef<GetBookingsActiveParams>,
+  options?: {
+    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getBookingsActive>>, TError, TData>>;
+    axios?: AxiosRequestConfig;
+  },
+) => {
+  const { query: queryOptions, axios: axiosOptions } = options ?? {};
+
+  const queryKey = getGetBookingsActiveQueryKey(params);
+
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof getBookingsActive>>> = ({ signal }) =>
+    getBookingsActive(params, { signal, ...axiosOptions });
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof getBookingsActive>>,
+    TError,
+    TData
+  >;
+};
+
+export type GetBookingsActiveQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getBookingsActive>>
+>;
+export type GetBookingsActiveQueryError = AxiosError<NotFound404Response>;
+
+export const useGetBookingsActive = <
+  TData = Awaited<ReturnType<typeof getBookingsActive>>,
+  TError = AxiosError<NotFound404Response>,
+>(
+  params: MaybeRef<GetBookingsActiveParams>,
+  options?: {
+    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getBookingsActive>>, TError, TData>>;
+    axios?: AxiosRequestConfig;
+  },
+): UseQueryReturnType<TData, TError> & { queryKey: QueryKey } => {
+  const queryOptions = getGetBookingsActiveQueryOptions(params, options);
+
+  const query = useQuery(queryOptions) as UseQueryReturnType<TData, TError> & {
+    queryKey: QueryKey;
+  };
+
+  query.queryKey = unref(queryOptions).queryKey as QueryKey;
+
+  return query;
 };

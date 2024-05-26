@@ -72,11 +72,24 @@ paths:
       tags:
         - restaurants
       parameters:
-        - name: name
-          description: Filter restaurants by name
+        - name: lat
+          description: double
           schema:
-            type: string
+            type: number
           in: query
+          required: true
+        - name: lon
+          description: double
+          schema:
+            type: number
+          in: query
+          required: true
+        - name: radius
+          description: double
+          schema:
+            type: number
+          in: query
+          required: true
       responses:
         "200":
           content:
@@ -369,6 +382,16 @@ paths:
       parameters:
         - name: userId
           description: "If exists, returns booking by userId, eg. /bookings?userId=123"
+          schema:
+            $ref: "#/components/schemas/UUID"
+          in: query
+        - name: restaurantId
+          description: "If exists, returns all bookings for restaurant"
+          schema:
+            $ref: "#/components/schemas/UUID"
+          in: query
+        - name: active
+          description: "Syntax: restaurantId + active - returns all pending bookings for restaurant"
           schema:
             $ref: "#/components/schemas/UUID"
           in: query
@@ -1282,6 +1305,26 @@ paths:
               schema:
                 $ref: "#/components/schemas/AddressDTO"
           description: Reverse geocoded address
+  /bookings/active:
+    get:
+      tags:
+        - bookings
+      parameters:
+        - name: userId
+          description: ""
+          schema:
+            $ref: "#/components/schemas/UUID"
+          in: query
+          required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BookingDTO"
+          description: .
+        "404":
+          $ref: "#/components/responses/NotFound_404"
 components:
   schemas:
     OpinionDTO:
