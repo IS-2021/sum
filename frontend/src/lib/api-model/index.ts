@@ -15,10 +15,7 @@ export * from './cityDTO';
 export * from './credentialsDTO';
 export * from './deleteFavouriteRestaurantsDTO';
 export * from './geoLatLngDTO';
-<<<<<<< HEAD
 export * from './getBookingsActiveParams';
-=======
->>>>>>> main
 export * from './getBookingsParams';
 export * from './getGeoAutocompleteParams';
 export * from './getGeoPlacesParams';

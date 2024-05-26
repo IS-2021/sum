@@ -385,7 +385,6 @@ paths:
           schema:
             $ref: "#/components/schemas/UUID"
           in: query
-<<<<<<< HEAD
         - name: restaurantId
           description: "If exists, returns all bookings for restaurant"
           schema:
@@ -396,8 +395,6 @@ paths:
           schema:
             $ref: "#/components/schemas/UUID"
           in: query
-=======
->>>>>>> main
       responses:
         "200":
           content:
@@ -1308,7 +1305,6 @@ paths:
               schema:
                 $ref: "#/components/schemas/AddressDTO"
           description: Reverse geocoded address
-<<<<<<< HEAD
   /bookings/active:
     get:
       parameters:
@@ -1327,8 +1323,6 @@ paths:
           description: .
         "404":
           $ref: "#/components/responses/NotFound_404"
-=======
->>>>>>> main
 components:
   schemas:
     OpinionDTO:

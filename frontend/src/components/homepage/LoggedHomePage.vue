@@ -8,7 +8,6 @@ import FavouritesDisplay from '@/components/homepage/FavouritesDisplay.vue';
 import WelcomeComponent from '@/components/homepage/WelcomeComponent.vue';
 import { useGetBookings } from '@/lib/api/bookings/bookings';
 import { unref } from 'vue';
-import type { BookingDTO } from '@/lib/api-model';
 
 useHead({
   title: 'Home',
