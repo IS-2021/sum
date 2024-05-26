@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { Button } from '@/components/ui/button';
 import { useUser } from '@/composables/useUser';
-import DropdownMenu from '@/components/DropdownMenu.vue';
-import AppNavLink from '@/components/AppNavLink.vue';
+import DropdownMenu from '@/components/navbar/DropdownMenu.vue';
+import AppNavLink from '@/components/navbar/AppNavLink.vue';
 import RequireAuth from '@/components/auth/RequireAuth.vue';
 
 const { isSignedIn, signOut } = useUser();
@@ -21,7 +21,7 @@ const { isSignedIn, signOut } = useUser();
         <li>
           <div class="h-8 w-8">
             <RouterLink to="/">
-              <img src="@/assets/logo.svg" alt="Logo" />
+              <img src="../../assets/logo.svg" alt="Logo" />
             </RouterLink>
           </div>
         </li>
