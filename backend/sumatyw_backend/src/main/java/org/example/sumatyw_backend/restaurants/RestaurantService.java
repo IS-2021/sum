@@ -3,6 +3,10 @@ package org.example.sumatyw_backend.restaurants;
 import lombok.AllArgsConstructor;
 import org.example.sumatyw_backend.exceptions.ObjectNotFoundException;
 import org.example.sumatyw_backend.exceptions.ResourceAlreadyExistsException;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.Point;
+import org.locationtech.jts.operation.distance.DistanceOp;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -41,6 +45,7 @@ public class RestaurantService {
     public List<Restaurant> getRestaurantsByCity(String city) {
         return restaurantRepository.findAllByAddress_City_AndActiveTrue(city);
     }
+
 
     public RestaurantDTO deactivateRestaurant(UUID id) {
 
@@ -96,4 +101,20 @@ public class RestaurantService {
         restaurantRepository.save(restaurant);
     }
 
+    public List<Restaurant> getLocalRestaurants(double userLat, double userLon, double radius) {
+        List<Restaurant> restaurants = restaurantRepository.findAll();
+
+        return restaurants.stream().filter(r -> getDistance(userLat, userLon, r.getAddress().getLatitude(), r.getAddress().getLongitude()) <= radius).toList();
+    }
+
+    private double getDistance(double lat1, double lon1, double lat2, double lon2) {
+
+        GeometryFactory geometryFactory = new GeometryFactory();
+        Point point1 = geometryFactory.createPoint(new Coordinate(lon1, lat1));
+        Point point2 = geometryFactory.createPoint(new Coordinate(lon2, lat2));
+        DistanceOp distanceOp = new DistanceOp(point1, point2);
+
+        return distanceOp.distance() * 111.32;
+
+    }
 }

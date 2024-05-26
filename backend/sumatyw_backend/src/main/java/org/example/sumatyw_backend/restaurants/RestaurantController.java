@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.xml.crypto.dsig.TransformException;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -73,7 +74,19 @@ public class RestaurantController {
             HttpStatus.OK
         );
     }
+    
+    @GetMapping(params = {"lat", "lon", "radius"})
+    public ResponseEntity<List<RestaurantDTO>> getLocalRestaurants(@RequestParam("lat") double lat,
+                                                                   @RequestParam("lon") double lon,
+                                                                   @RequestParam("radius") double radius) {
 
+        List<Restaurant> restaurants = restaurantService.getLocalRestaurants(lat,lon,radius);
+
+        return new ResponseEntity<>(
+            restaurants.stream().map(RestaurantDTOMapper::mapRestaurantToRestaurantDTO).toList(),
+            HttpStatus.OK
+        );
+    }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteRestaurantById(@PathVariable("id") UUID id) {
