@@ -7,16 +7,19 @@ import { useUser } from '@/composables/useUser';
 import FavouritesDisplay from '@/components/homepage/FavouritesDisplay.vue';
 import WelcomeComponent from '@/components/homepage/WelcomeComponent.vue';
 import { useGetBookings } from '@/lib/api/bookings/bookings';
-import { unref } from 'vue';
+import { computed, unref } from 'vue';
+import { nextTick } from 'vue';
 
 useHead({
   title: 'Home',
 });
 
+nextTick();
+
 const { user } = useUser();
 
 const { data } = useGetBookings({ userId: user.value?.id });
-const bookings = unref(data)?.data;
+const bookings = computed(() => unref(data)?.data);
 
 // const latest = getLatestBooking();
 // const restaurant = latest.restaurant;
