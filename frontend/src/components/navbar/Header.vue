@@ -4,8 +4,9 @@ import { useUser } from '@/composables/useUser';
 import DropdownMenu from '@/components/navbar/DropdownMenu.vue';
 import AppNavLink from '@/components/navbar/AppNavLink.vue';
 import RequireAuth from '@/components/auth/RequireAuth.vue';
+import UserActionsDropdown from '@/components/navbar/UserActionsDropdown.vue';
 
-const { isSignedIn, signOut } = useUser();
+const { isSignedIn } = useUser();
 </script>
 
 <template>
@@ -40,7 +41,8 @@ const { isSignedIn, signOut } = useUser();
         <li class="flex-grow"></li>
 
         <li class="flex gap-2">
-          <Button v-if="isSignedIn" @click="signOut">Log out</Button>
+          <UserActionsDropdown v-if="isSignedIn" />
+
           <Button v-else as-child>
             <RouterLink to="/sign-in">Sign in</RouterLink>
           </Button>
