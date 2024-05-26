@@ -12,7 +12,7 @@ import { useRouter } from 'vue-router/auto';
 import type { AddressDTO } from '@/lib/api-model';
 
 useHead({
-  title: 'Complete your profile',
+  title: 'Change your address',
 });
 
 const { user } = useUser();
