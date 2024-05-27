@@ -1307,6 +1307,8 @@ paths:
           description: Reverse geocoded address
   /bookings/active:
     get:
+      tags:
+        - bookings
       parameters:
         - name: userId
           description: ""
