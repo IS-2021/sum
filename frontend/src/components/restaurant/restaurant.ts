@@ -2,7 +2,7 @@ import type { Uuid } from '@/lib/api-model';
 import { unref, computed } from 'vue';
 
 import { useGetRestaurantsId } from '@/lib/api/restaurants/restaurants';
-import { useGetMeals } from '@/lib/api/meals/meals';
+import { useGetMeals, useGetMealsId } from '@/lib/api/meals/meals';
 import { useGetIngredients } from '@/lib/api/ingredients/ingredients';
 
 export function getRestaurant(id: Uuid) {
@@ -21,6 +21,11 @@ export function getMeals(restaurantId: Uuid) {
     meals: computed(() => unref(data)?.data),
     areMealsLoading: areMealsLoading,
   };
+}
+
+export function getMeal(mealId: Uuid) {
+  const { data } = useGetMealsId(mealId);
+  return unref(data)?.data;
 }
 
 export function getIngredients(restaurantId: Uuid) {
