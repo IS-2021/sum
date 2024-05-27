@@ -70,6 +70,7 @@ public class OpinionService {
 
         existingOpinion.setPositive(opinion.isPositive());
         existingOpinion.setTimestamp(opinion.getTimestamp());
+        restaurantRepository.save(restaurantDB);
         return opinionRepository.save(existingOpinion);
     }
 }
