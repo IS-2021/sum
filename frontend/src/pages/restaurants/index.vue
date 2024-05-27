@@ -17,7 +17,7 @@ useHead({
   title: 'Restaurants',
 });
 
-const isMapView = ref(true);
+const isMapView = ref(false);
 const toggleView = () => {
   isMapView.value = !isMapView.value;
 };
@@ -45,9 +45,13 @@ const restaurants = computed(() => unref(data)?.data);
     </div>
 
     <div v-else class="px-4 sm:container">
-      <Button @click="toggleView" size="icon" class="my-4">
-        <MapIcon />
-      </Button>
+      <div class="flex flex-col sm:flex-row sm:items-center gap-2 justify-between mt-8 mb-6">
+        <h1 class="font-bold text-2xl tracking-tight">
+          Restaurants {{ user?.address && `in ${user.address.city}` }}
+        </h1>
+
+        <Button @click="toggleView"> <MapIcon class="mr-3" /> Browse on a map </Button>
+      </div>
 
       <div>
         <ListBrowser :restaurants="restaurants" />
