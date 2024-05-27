@@ -9,5 +9,5 @@ useHead({
 
 <template>
   <Header />
-  <RouterView />
+  <RouterView class="flex-grow" />
 </template>

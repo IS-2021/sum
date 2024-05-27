@@ -17,7 +17,8 @@ const pickedRestaurant = ref<RestaurantDTO | null>(null);
 
 <template class="overflow-hidden">
   <RestaurantsMap
-    class="mb-10 flex-grow min-h-[500px]"
+    id="map"
+    class="flex-grow"
     v-if="user?.address"
     @onPinClick="(restaurant) => (pickedRestaurant = restaurant)"
     :center-lat="user.address.latitude"
@@ -27,7 +28,7 @@ const pickedRestaurant = ref<RestaurantDTO | null>(null);
 
   <RouterLink :to="`/restaurant/${pickedRestaurant.id}`" v-if="pickedRestaurant">
     <div
-      class="absolute flex gap-3 bottom-4 mx-3 px-2 py-2 left-2 right-2 rounded bg-white border border-neutral-300"
+      class="absolute sm:max-w-[500px] sm:mx-auto sm:bottom-10 shadow flex gap-3 bottom-4 mx-3 px-2 py-2 left-2 right-2 rounded bg-white border border-neutral-300"
     >
       <div class="w-28">
         <AspectRatio :ratio="16 / 9" class="overflow-clip rounded-md">
