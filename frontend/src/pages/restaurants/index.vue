@@ -49,7 +49,7 @@ const restaurants = computed(() => unref(data)?.data);
         <MapBrowser :restaurants="restaurants" />
       </div>
 
-      <div v-else class="px-4 sm:container">
+      <div v-else class="px-4 sm:container w-full">
         <div class="flex flex-col sm:flex-row sm:items-center gap-2 justify-between mb-6">
           <h1 class="font-bold text-2xl tracking-tight">
             Restaurants {{ user?.address && `in ${user.address.city}` }}
