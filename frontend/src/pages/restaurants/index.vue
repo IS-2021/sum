@@ -6,7 +6,7 @@ import RestaurantCard from '@/components/restaurants/RestaurantCard.vue';
 import { useUser } from '@/composables/useUser';
 
 useHead({
-  title: 'Restaurants',
+  title: 'Restaurants - Food Good',
 });
 
 const { user } = useUser();

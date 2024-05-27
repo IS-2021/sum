@@ -37,6 +37,11 @@ const { isSignedIn } = useUser();
             <AppNavLink to="/favourites">Favourites</AppNavLink>
           </li>
         </RequireAuth>
+        <RequireAuth>
+          <li class="hidden sm:block">
+            <AppNavLink to="/bookings">Bookings</AppNavLink>
+          </li>
+        </RequireAuth>
 
         <li class="flex-grow"></li>
 

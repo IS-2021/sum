@@ -1,9 +1,14 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { type Ref } from 'vue';
-import { Button } from '@/components/ui/button';
+
 import Filters from '@/components/restaurant/Filters.vue';
+import BookMealButton from '@/components/restaurant/BookMealButton.vue';
+
+import Button from '../ui/button/Button.vue';
+
 import type { IngredientDTO, MealDTO, Uuid } from '@/lib/api-model';
+import { useUser } from '@/composables/useUser';
 
 const props = defineProps<{
   categories: string[];
@@ -11,6 +16,8 @@ const props = defineProps<{
   meals: MealDTO[];
   areMealsLoading: boolean;
 }>();
+
+const { user } = useUser();
 
 const amount = ref(0);
 const unwantedIngredients: Ref<IngredientDTO[]> = ref([]);
@@ -63,7 +70,8 @@ function updateFilters(list: IngredientDTO[]) {
               Ingredients: {{ meal.ingredients?.map((ingredient) => ingredient.name).join(', ') }}
             </p>
           </div>
-          <Button class="w-1/2">Book</Button>
+          <BookMealButton v-if="user" :mealId="meal.mealId" :userId="user.id" />
+          <Button v-else-if="!user" class="bg-opacity-50">Book</Button>
         </div>
       </div>
     </div>
