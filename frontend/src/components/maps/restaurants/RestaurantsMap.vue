@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { onMounted, ref, shallowRef } from 'vue';
-import { loader } from '@/lib/googleMaps';
+import { type GoogleMapsMarkerClickEvent, loader } from '@/lib/googleMaps';
 import type { RestaurantDTO } from '@/lib/api-model';
 
 const props = defineProps<{
@@ -69,10 +69,13 @@ onMounted(async () => {
       gmpClickable: true,
     });
 
-    restaurantMarker.addListener('click', () => {
+    restaurantMarker.addListener('click', ({ latLng }: GoogleMapsMarkerClickEvent) => {
+      map.value?.panTo(latLng);
+
       infoWindow.close();
       infoWindow.setContent(restaurant.name);
       infoWindow.open(restaurantMarker.map, restaurantMarker);
+
       emit('onPinClick', restaurant);
     });
   }

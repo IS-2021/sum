@@ -18,3 +18,8 @@ export function formatAddress(address: AddressDTO) {
 export function formatAddressShort(address: AddressDTO) {
   return `${address.street} ${address.number}`;
 }
+
+export type GoogleMapsMarkerClickEvent = {
+  latLng: google.maps.LatLng;
+  domEvent: MouseEvent;
+};
