@@ -1,20 +1,14 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { type Ref } from 'vue';
-import { Button } from '@/components/ui/button';
-import Filters from '@/components/restaurant/Filters.vue';
-import type { IngredientDTO, MealDTO, Uuid } from '@/lib/api-model';
 
-import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from '@/components/ui/dialog';
+import Filters from '@/components/restaurant/Filters.vue';
+import BookMealButton from '@/components/restaurant/BookMealButton.vue';
+
+import Button from '../ui/button/Button.vue';
+
+import type { IngredientDTO, MealDTO, Uuid } from '@/lib/api-model';
+import { useUser } from '@/composables/useUser';
 
 const props = defineProps<{
   categories: string[];
@@ -22,6 +16,8 @@ const props = defineProps<{
   meals: MealDTO[];
   areMealsLoading: boolean;
 }>();
+
+const { user } = useUser();
 
 const amount = ref(0);
 const unwantedIngredients: Ref<IngredientDTO[]> = ref([]);
@@ -74,23 +70,8 @@ function updateFilters(list: IngredientDTO[]) {
               Ingredients: {{ meal.ingredients?.map((ingredient) => ingredient.name).join(', ') }}
             </p>
           </div>
-
-          <Dialog>
-            <DialogTrigger as-child>
-              <Button class="w-1/2">Book</Button>
-            </DialogTrigger>
-            <DialogContent class="sm:max-w-md">
-              <DialogHeader>
-                <DialogTitle class="pb-4">Do you want to book this meal?</DialogTitle>
-              </DialogHeader>
-
-              <DialogFooter class="sm:justify-start">
-                <DialogClose as-child>
-                  <Button type="button" variant="secondary"> Book meal </Button>
-                </DialogClose>
-              </DialogFooter>
-            </DialogContent>
-          </Dialog>
+          <BookMealButton v-if="user" :mealId="meal.mealId" :userId="user.id" />
+          <Button v-else-if="!user" class="bg-opacity-50">Book</Button>
         </div>
       </div>
     </div>
