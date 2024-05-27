@@ -9,17 +9,23 @@ const props = defineProps<{
   restaurants: RestaurantDTO[];
 }>();
 
+const emit = defineEmits<{
+  (e: 'onPinClick', restaurant: RestaurantDTO | null): void;
+}>();
+
 const map = shallowRef<google.maps.Map>();
 const mapDiv = ref<HTMLDivElement | null>(null);
 
 onMounted(async () => {
-  const parser = new DOMParser();
-
   if (!mapDiv.value) {
     return;
   }
 
-  const { Map } = await loader.importLibrary('maps');
+  const { Map, InfoWindow } = await loader.importLibrary('maps');
+  const { AdvancedMarkerElement, PinElement } = await loader.importLibrary('marker');
+
+  const infoWindow = new InfoWindow();
+
   map.value = new Map(mapDiv.value, {
     center: {
       lat: props.centerLat,
@@ -27,12 +33,17 @@ onMounted(async () => {
     },
     zoom: 14,
     mapId: '2ea9a80405b2230f',
+    zoomControl: false,
     fullscreenControl: false,
     mapTypeControl: false,
     streetViewControl: false,
   });
 
-  const { AdvancedMarkerElement } = await loader.importLibrary('marker');
+  map.value.addListener('click', () => {
+    emit('onPinClick', null);
+    infoWindow.close();
+  });
+
   const marker = new AdvancedMarkerElement({
     position: {
       lat: props.centerLat,
@@ -43,18 +54,31 @@ onMounted(async () => {
   });
 
   for (const restaurant of props.restaurants) {
-    new AdvancedMarkerElement({
+    const pin = new PinElement({
+      scale: 1,
+    });
+
+    const restaurantMarker = new AdvancedMarkerElement({
       position: {
         lat: restaurant.address.latitude,
         lng: restaurant.address.longitude,
       },
       map: map.value,
       title: restaurant.name,
+      content: pin.element,
+      gmpClickable: true,
+    });
+
+    restaurantMarker.addListener('click', () => {
+      infoWindow.close();
+      infoWindow.setContent(restaurant.name);
+      infoWindow.open(restaurantMarker.map, restaurantMarker);
+      emit('onPinClick', restaurant);
     });
   }
 });
 </script>
 
 <template>
-  <div class="h-96 w-full" ref="mapDiv" />
+  <div ref="mapDiv" />
 </template>
