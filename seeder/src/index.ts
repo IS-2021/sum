@@ -5,6 +5,7 @@ import { addRestaurantToUserFavourites } from "./fakes/favourites";
 import { getAddress } from "./fakes/address";
 import { addRestaurantAccount } from "./fakes/users";
 import { restaurants } from "./seedData";
+import { Mutex } from "async-mutex";
 
 axios.defaults.validateStatus = () => true;
 
@@ -31,8 +32,12 @@ async function seed() {
     }
   });
 
+  const mutex = new Mutex();
+
   for (const promise of promises) {
-    await promise;
+    await mutex.runExclusive(async () => {
+      await promise;
+    });
   }
 }
 
