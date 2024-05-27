@@ -4,14 +4,16 @@ import { getAuth } from "../lib/api/auth/auth";
 import { logEvent } from "../lib/logger";
 import { fakePassword, fakePhoneNumber } from "./helpers";
 
-export async function addRestaurantAccount() {
+export async function addRestaurantAccount(restaurantName: string) {
+  const normalizedUsername = restaurantName.toLowerCase().replace(/\s/g, "_");
+
   const restaurantAccountInput: UserInputDTO = {
     phoneNumber: fakePhoneNumber(),
-    email: faker.internet.email(),
+    email: `${normalizedUsername}@example.com`,
     password: fakePassword(),
     firstName: faker.person.firstName(),
     secondName: faker.person.lastName(),
-    username: faker.internet.userName(),
+    username: normalizedUsername,
     role: "ROLE_RESTAURANT",
   };
 
