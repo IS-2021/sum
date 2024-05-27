@@ -21,7 +21,7 @@ public class RestaurantService {
     public Restaurant addRestaurant(Restaurant restaurant) {
 
         restaurant.setRestaurantId(restaurant.getUser().getUserId());
-        restaurant.setImageUUID("default");
+        restaurant.setImageUUID("default.jpg");
 
         if (this.restaurantRepository.findByPhoneNumber(restaurant.getPhoneNumber()).isPresent())
             throw new ResourceAlreadyExistsException("Restaurant with phone number: '" + restaurant.getPhoneNumber() + "' already exists.");
