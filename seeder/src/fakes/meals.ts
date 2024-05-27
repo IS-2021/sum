@@ -24,6 +24,7 @@ export async function addMeal(name: string, description: string, restaurantId: U
         data,
       },
     });
+    return null;
   }
   return data;
 }
