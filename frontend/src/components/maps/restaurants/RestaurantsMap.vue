@@ -44,13 +44,17 @@ onMounted(async () => {
     infoWindow.close();
   });
 
-  const marker = new AdvancedMarkerElement({
+  const homePin = new PinElement({
+    glyphColor: 'white',
+  });
+  const homeMarker = new AdvancedMarkerElement({
     position: {
       lat: props.centerLat,
       lng: props.centerLng,
     },
     map: map.value,
     title: 'You are here',
+    content: homePin.element,
   });
 
   for (const restaurant of props.restaurants) {
