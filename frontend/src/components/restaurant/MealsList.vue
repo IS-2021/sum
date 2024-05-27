@@ -5,6 +5,17 @@ import { Button } from '@/components/ui/button';
 import Filters from '@/components/restaurant/Filters.vue';
 import type { IngredientDTO, MealDTO, Uuid } from '@/lib/api-model';
 
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog';
+
 const props = defineProps<{
   categories: string[];
   restaurantId: Uuid;
@@ -63,7 +74,23 @@ function updateFilters(list: IngredientDTO[]) {
               Ingredients: {{ meal.ingredients?.map((ingredient) => ingredient.name).join(', ') }}
             </p>
           </div>
-          <Button class="w-1/2">Book</Button>
+
+          <Dialog>
+            <DialogTrigger as-child>
+              <Button class="w-1/2">Book</Button>
+            </DialogTrigger>
+            <DialogContent class="sm:max-w-md">
+              <DialogHeader>
+                <DialogTitle class="pb-4">Do you want to book this meal?</DialogTitle>
+              </DialogHeader>
+
+              <DialogFooter class="sm:justify-start">
+                <DialogClose as-child>
+                  <Button type="button" variant="secondary"> Book meal </Button>
+                </DialogClose>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
         </div>
       </div>
     </div>
