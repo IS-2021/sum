@@ -11,14 +11,19 @@ import {
 import { Button } from '@/components/ui/button';
 import type { Uuid } from '@/lib/api-model';
 import { postBookings } from '@/lib/api/bookings/bookings';
+import { ref } from 'vue';
 
 const props = defineProps<{
   mealId: Uuid;
   userId: Uuid;
 }>();
 
+let bookingLink = ref('');
+
 async function bookChosenMeal() {
   const booking = await postBookings({ mealId: props.mealId, userId: props.userId });
+  const bookingId = booking.data.id;
+  bookingLink.value = `/booking/${bookingId}`;
 }
 </script>
 
@@ -34,7 +39,7 @@ async function bookChosenMeal() {
 
       <DialogFooter class="sm:justify-start">
         <DialogClose as-child>
-          <RouterLink to="/activeBooking">
+          <RouterLink :to="bookingLink">
             <Button type="button" variant="secondary" @click="bookChosenMeal()"> Book meal </Button>
           </RouterLink>
         </DialogClose>
