@@ -25,6 +25,7 @@ export async function addIngredient(mealId: Uuid, name: string, type: string) {
         data,
       },
     });
+    return null;
   }
 
   return data;
