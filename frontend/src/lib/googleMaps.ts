@@ -12,7 +12,14 @@ export type Coordinates = {
 };
 
 export function formatAddress(address: AddressDTO) {
-  return `${address.street} ${address.number}, ${address.city}, ${address.country}`;
+  const streetPart = `${address.street} ${address.number}`.trim();
+  const cityPart = `${address.city}, ${address.country}`.trim();
+
+  if (streetPart) {
+    return `${streetPart}, ${cityPart}`;
+  } else {
+    return cityPart;
+  }
 }
 
 export function formatAddressShort(address: AddressDTO) {
