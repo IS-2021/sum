@@ -1476,7 +1476,7 @@ components:
         - role
         - secondName
         - username
-        - userId
+        - id
         - isBlocked
       type: object
       properties:
@@ -1511,7 +1511,7 @@ components:
         isBlocked:
           description: ""
           type: boolean
-        userId:
+        id:
           $ref: "#/components/schemas/UUID"
           description: ""
     UserInputDTO:
@@ -1716,7 +1716,7 @@ components:
       required:
         - active
         - address
-        - restaurantId
+        - id
         - name
         - phoneNumber
         - userId
@@ -1747,7 +1747,7 @@ components:
           $ref: "#/components/schemas/AddressDTO"
         active:
           type: boolean
-        restaurantId:
+        id:
           $ref: "#/components/schemas/UUID"
     RestaurantFavouriteInputDTO:
       description: ""
@@ -1866,7 +1866,7 @@ components:
         - street
         - number
         - postalCode
-        - cityId
+        - city
         - latitude
         - longitude
       type: object
@@ -1883,15 +1883,15 @@ components:
         postalCode:
           description: ""
           type: string
-        cityId:
-          $ref: "#/components/schemas/UUID"
-          description: ""
         latitude:
           description: double
           type: number
         longitude:
           description: double
           type: number
+        city:
+          description: ""
+          type: string
     ProblemDetail:
       title: Root Type for ProblemDetail
       description: ""
