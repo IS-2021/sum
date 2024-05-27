@@ -4,6 +4,7 @@ import { useGetRestaurants } from '@/lib/api/restaurants/restaurants';
 import { computed, unref } from 'vue';
 import RestaurantCard from '@/components/restaurants/RestaurantCard.vue';
 import { useUser } from '@/composables/useUser';
+import RestaurantsMap from '@/components/maps/restaurants/RestaurantsMap.vue';
 
 useHead({
   title: 'Restaurants',
@@ -23,6 +24,14 @@ const restaurants = computed(() => unref(data)?.data);
       <h1 class="font-bold text-2xl mb-8 tracking-tight">
         Restaurants {{ user?.address && `in ${user.address.city}` }}
       </h1>
+
+      <RestaurantsMap
+        class="mb-10"
+        v-if="user?.address"
+        :center-lat="user.address.latitude"
+        :center-lng="user.address.longitude"
+        :restaurants="restaurants"
+      />
 
       <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-4" v-if="restaurants.length > 0">
         <RestaurantCard
