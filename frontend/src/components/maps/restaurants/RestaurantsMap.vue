@@ -33,7 +33,6 @@ onMounted(async () => {
     },
     zoom: 14,
     mapId: '2ea9a80405b2230f',
-    zoomControl: false,
     fullscreenControl: false,
     mapTypeControl: false,
     streetViewControl: false,
