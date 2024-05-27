@@ -16,7 +16,7 @@ import java.util.UUID;
 public class IngredientController {
     private IngredientService ingredientService;
 
-    @PostMapping()
+    @PostMapping(params = {"mealId"})
     public ResponseEntity<IngredientDTO> addIngredient(@RequestBody @Valid IngredientInputDTO ingredientInputDTO, @RequestParam("mealId") UUID mealId) {
         Ingredient ingredient = ingredientService.addIngredient(IngredientDTOMapper.mapIngredientInputDTOToIngredient(ingredientInputDTO, mealId));
 
