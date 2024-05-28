@@ -64,6 +64,10 @@ export function useAuthRedirect({ guestRoutes, onGuestRedirect }: UseAuthRedirec
   }
 
   async function profileCompletionGuard() {
+    if (!isLoaded.value) {
+      return;
+    }
+
     switch (currentRoute.value) {
       case '/onboarding/':
         if (isProfileComplete.value) {
@@ -78,10 +82,10 @@ export function useAuthRedirect({ guestRoutes, onGuestRedirect }: UseAuthRedirec
     }
   }
 
-  watch([currentRoute, isProfileComplete], profileCompletionGuard);
+  watch([isLoaded, currentRoute, isProfileComplete], profileCompletionGuard);
 
   watchEffect(async () => {
-    if (!isLoaded.value) {
+    if (!isLoaded.value || !currentRoute.value) {
       return;
     }
 
