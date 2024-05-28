@@ -19,6 +19,8 @@ import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { AlertCircleIcon } from 'lucide-vue-next';
 import { useRouter } from 'vue-router/auto';
 import { toast } from 'vue-sonner';
+import { getUsersMe } from '@/lib/api/users/users';
+import { isUserProfileComplete } from '@/composables/useUser';
 
 const router = useRouter();
 
@@ -36,10 +38,18 @@ const errorMessage = ref('');
 
 const onSubmit = form.handleSubmit(async (credentials) => {
   const res = await postLogin(credentials);
+  const resUsersMe = await getUsersMe();
 
   if (res.status === 200) {
     errorMessage.value = '';
-    toast.success('Welcome back!');
+
+    if (resUsersMe.status === 200) {
+      const greetingText = isUserProfileComplete(resUsersMe.data)
+        ? 'Welcome back!'
+        : 'Welcome! Please complete your profile.';
+      toast.success(greetingText);
+    }
+
     await router.push('/');
   } else if (res.status === 401) {
     const { message } = res.data as unknown as ValidationFailed422Response;

@@ -2,6 +2,14 @@ import { computed } from 'vue';
 import { useGetUsersMe } from '@/lib/api/users/users';
 import { postLogout } from '@/lib/api/auth/auth';
 import { toast } from 'vue-sonner';
+import type { UserMeDTO } from '@/lib/api-model';
+
+export function isUserProfileComplete(user: UserMeDTO) {
+  if (user?.role === 'ROLE_USER') {
+    return !!user?.address;
+  }
+  return true;
+}
 
 export function useUser() {
   const { isPending, data, refetch } = useGetUsersMe();
@@ -19,11 +27,7 @@ export function useUser() {
       return false;
     }
 
-    if (user.value?.role === 'ROLE_USER') {
-      return !!user.value?.address;
-    }
-
-    return true;
+    return isUserProfileComplete(user.value);
   });
 
   const signOut = async () => {

@@ -6,11 +6,21 @@ import org.example.sumatyw_backend.exceptions.ResourceAlreadyExistsException;
 import org.example.sumatyw_backend.exceptions.UserNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @RestControllerAdvice
 public class ApplicationExceptionHandler {
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ProblemDetail handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
+        ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(
+            HttpStatus.BAD_REQUEST, e.getFieldError().getDefaultMessage()
+        );
+        problemDetail.setTitle(HttpStatus.BAD_REQUEST.getReasonPhrase());
+        return problemDetail;
+    }
 
     @ExceptionHandler(InvalidDataException.class)
     public ProblemDetail handleInvalidData(InvalidDataException e) {
