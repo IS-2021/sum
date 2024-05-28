@@ -1,7 +1,7 @@
 import { useUser } from '@/composables/useUser';
 import { watchEffect } from 'vue';
 import { useRouter } from 'vue-router/auto';
-import type { AppRouteNames } from '@/lib/router';
+import type { AppRouteNames, AppRoutes } from '@/lib/router';
 
 interface UseAuthRedirectorProps {
   /**
@@ -36,6 +36,14 @@ export function useAuthRedirect({
   const router = useRouter();
   const { isLoaded, isSignedIn, isProfileComplete } = useUser();
 
+  async function redirectTo(to: AppRoutes, onRedirect?: () => void) {
+    await router.push(to);
+
+    if (onRedirect) {
+      onRedirect();
+    }
+  }
+
   watchEffect(async () => {
     if (!isLoaded.value) {
       return;
@@ -47,23 +55,15 @@ export function useAuthRedirect({
     const isOnboardingRouteMatching = currentRoute === '/onboarding/';
 
     if (!isProfileComplete.value && !isOnboardingRouteMatching) {
-      await router.push('/onboarding/');
+      await redirectTo('/onboarding/');
     } else if (isProfileComplete.value && isOnboardingRouteMatching) {
-      await router.push('/');
+      await redirectTo('/');
     }
 
     if (isAuthRouteMatching && !isSignedIn.value) {
-      await router.push('/sign-in');
-
-      if (onGuestRedirect) {
-        onGuestRedirect();
-      }
+      await redirectTo('/sign-in', onGuestRedirect);
     } else if (isGuestRouteMatching && isSignedIn.value) {
-      await router.push('/');
-
-      if (onAuthenticatedRedirect) {
-        onAuthenticatedRedirect();
-      }
+      await redirectTo('/', onAuthenticatedRedirect);
     }
   });
 }
