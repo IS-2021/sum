@@ -51,7 +51,12 @@ export function useAuthRedirect({ onGuestRedirect }: UseAuthRedirectorProps) {
   const router = useRouter();
   const { user, isLoaded, isSignedIn, isProfileComplete } = useUser();
 
+  const userRole = computed(() => user.value?.role ?? 'GUEST');
+
   const currentRoute = computed(() => router.currentRoute.value.name);
+  const allowedRoutes = computed(() => roleBasedRoutes[user.value?.role ?? 'GUEST']);
+  const isCurrentRouteAllowed = computed(() => allowedRoutes.value.includes(currentRoute.value));
+  const defaultRoute = computed(() => defaultRoutesByRole[user.value?.role ?? 'GUEST']);
 
   async function redirectTo(to: AppRoutes, onRedirect?: () => void) {
     await router.push(to);
@@ -62,9 +67,7 @@ export function useAuthRedirect({ onGuestRedirect }: UseAuthRedirectorProps) {
   }
 
   async function profileCompletionGuard() {
-    const userRole = user.value?.role ?? 'GUEST';
-
-    if (!isLoaded.value || !isSignedIn.value || userRole === 'GUEST') {
+    if (!isLoaded.value || !isSignedIn.value || userRole.value === 'GUEST') {
       return;
     }
 
@@ -89,14 +92,10 @@ export function useAuthRedirect({ onGuestRedirect }: UseAuthRedirectorProps) {
       return;
     }
 
-    const userRole = user.value?.role ?? 'GUEST';
-    const allowedRoutes = roleBasedRoutes[userRole];
-    const defaultRoute = defaultRoutesByRole[userRole];
-
-    if (isSignedIn.value && !allowedRoutes.includes(currentRoute.value)) {
-      await redirectTo(defaultRoute);
+    if (isSignedIn.value && !isCurrentRouteAllowed.value) {
+      await redirectTo(defaultRoute.value);
     } else if (!isSignedIn.value) {
-      await redirectTo(defaultRoute);
+      await redirectTo('/sign-in');
     }
   });
 }
