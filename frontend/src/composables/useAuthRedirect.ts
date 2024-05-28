@@ -78,9 +78,9 @@ export function useAuthRedirect() {
     }
 
     if (isSignedIn.value && !isCurrentRouteAllowed.value) {
-      await router.push(defaultRoute.value);
+      await router.replace(defaultRoute.value);
     } else if (!isSignedIn.value && !isCurrentRouteAllowed.value) {
-      await router.push('/sign-in');
+      await router.replace('/sign-in');
     }
   });
 }
