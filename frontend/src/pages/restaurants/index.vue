@@ -57,7 +57,13 @@ function setRadius(value: string) {
           Back to list
         </Button>
 
-        <MapBrowser :restaurants="restaurants" />
+        <MapBrowser
+          v-if="address"
+          :restaurants="restaurants"
+          :center-lat="address?.latitude"
+          :center-lng="address?.longitude"
+          :radius="radius"
+        />
       </div>
 
       <div v-else class="px-4 sm:container w-full">
