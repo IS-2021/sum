@@ -1,6 +1,7 @@
 package org.example.sumatyw_backend.meals;
 
 import org.example.sumatyw_backend.restaurants.Restaurant;
+import org.example.sumatyw_backend.restaurants.RestaurantRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -23,11 +24,13 @@ class MealServiceTest {
     private MealService mealService;
     @Mock
     private MealRepository mealRepository;
+    @Mock
+    private RestaurantRepository restaurantRepository;
 
 
     @BeforeEach
     void setUp() {
-        mealService = new MealService(mealRepository);
+        mealService = new MealService(mealRepository, restaurantRepository);
     }
 
     @Test
