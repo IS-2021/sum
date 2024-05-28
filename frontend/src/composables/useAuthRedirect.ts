@@ -9,6 +9,7 @@ interface UseAuthRedirectorProps {
    * A callback executed on redirect of unauthenticated user.
    */
   onGuestRedirect?: () => void;
+  onDisallowedRouteRedirect?: () => void;
 }
 
 // TODO: change default for admin after adding admin route
@@ -47,7 +48,10 @@ const roleBasedRoutes: Record<Role | 'GUEST', AppRouteNames[]> = {
  * Regular users without a complete profile will be redirected to the onboarding page.
  * Guest
  */
-export function useAuthRedirect({ onGuestRedirect }: UseAuthRedirectorProps) {
+export function useAuthRedirect({
+  onGuestRedirect,
+  onDisallowedRouteRedirect,
+}: UseAuthRedirectorProps) {
   const router = useRouter();
   const { user, isLoaded, isSignedIn, isProfileComplete } = useUser();
 
@@ -94,7 +98,7 @@ export function useAuthRedirect({ onGuestRedirect }: UseAuthRedirectorProps) {
 
     if (isSignedIn.value && !isCurrentRouteAllowed.value) {
       await redirectTo(defaultRoute.value);
-    } else if (!isSignedIn.value) {
+    } else if (!isSignedIn.value && !isCurrentRouteAllowed.value) {
       await redirectTo('/sign-in');
     }
   });
