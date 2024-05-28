@@ -31,9 +31,10 @@ public class RestaurantService {
 
     public RestaurantDTO banRestaurantById(UUID id) {
 
-        Restaurant restaurant = restaurantRepository.findById(id).orElseThrow();
+        Restaurant restaurant = restaurantRepository.findById(id).orElseThrow(
+            () -> new ObjectNotFoundException("Restaurant with id: " + id + " not found"));
         restaurant.setBanned(true);
-
+        restaurantRepository.save(restaurant);
         return RestaurantDTOMapper.mapRestaurantToRestaurantDTO(restaurant);
 
     }
