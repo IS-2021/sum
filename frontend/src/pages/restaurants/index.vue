@@ -67,14 +67,14 @@ function setRadius(value: string) {
       </div>
 
       <div v-else class="px-4 sm:container w-full">
-        <div class="flex flex-col sm:flex-row sm:items-center gap-2 justify-between mb-6">
+        <div class="flex flex-col lg:flex-row lg:items-center gap-2 justify-between mb-6">
           <h1 class="font-bold text-2xl tracking-tight">
             Restaurants {{ address && `in ${address.city}` }}
           </h1>
 
-          <div class="flex gap-2">
+          <div class="flex flex-wrap lg:flex-nowrap gap-2">
             <AddressAutocompleteInput @on-place-select="setPlaceId" />
-            <RadiusSelect @update:radius="setRadius" />
+            <RadiusSelect @update:radius="setRadius" class="flex-shrink" />
             <Button @click="toggleView"> <MapIcon class="mr-3" /> Browse on a map </Button>
           </div>
         </div>
