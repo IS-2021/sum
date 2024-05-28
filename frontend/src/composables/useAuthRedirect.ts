@@ -9,20 +9,18 @@ interface UseAuthRedirectorProps {
    * A callback executed on redirect of unauthenticated user.
    */
   onGuestRedirect?: () => void;
-  /**
-   * Routes that will require a non-authenticated user.
-   */
-  guestRoutes?: AppRouteNames[];
 }
 
 // TODO: change default for admin after adding admin route
-const defaultRoutesByRole: Record<Role, AppRouteNames> = {
+const defaultRoutesByRole: Record<Role | 'GUEST', AppRouteNames> = {
+  GUEST: '/sign-in/',
   ROLE_USER: '/',
   ROLE_RESTAURANT: '/manage/',
   ROLE_ADMIN: '/',
 };
 
-const roleBasedRoutes: Record<Role, AppRouteNames[]> = {
+const roleBasedRoutes: Record<Role | 'GUEST', AppRouteNames[]> = {
+  GUEST: ['/sign-in/', '/sign-up/'],
   ROLE_USER: [
     '/',
     '/onboarding/',
@@ -49,7 +47,7 @@ const roleBasedRoutes: Record<Role, AppRouteNames[]> = {
  * Regular users without a complete profile will be redirected to the onboarding page.
  * Guest
  */
-export function useAuthRedirect({ guestRoutes, onGuestRedirect }: UseAuthRedirectorProps) {
+export function useAuthRedirect({ onGuestRedirect }: UseAuthRedirectorProps) {
   const router = useRouter();
   const { user, isLoaded, isSignedIn, isProfileComplete } = useUser();
 
@@ -64,7 +62,9 @@ export function useAuthRedirect({ guestRoutes, onGuestRedirect }: UseAuthRedirec
   }
 
   async function profileCompletionGuard() {
-    if (!isLoaded.value) {
+    const userRole = user.value?.role ?? 'GUEST';
+
+    if (!isLoaded.value || !isSignedIn.value || userRole === 'GUEST') {
       return;
     }
 
@@ -89,22 +89,13 @@ export function useAuthRedirect({ guestRoutes, onGuestRedirect }: UseAuthRedirec
       return;
     }
 
-    const userRole = user.value?.role ?? Role.ROLE_USER;
+    const userRole = user.value?.role ?? 'GUEST';
     const allowedRoutes = roleBasedRoutes[userRole];
     const defaultRoute = defaultRoutesByRole[userRole];
 
-    console.log('currentRoute', currentRoute.value);
-
-    const isGuestRouteMatching = guestRoutes?.includes(currentRoute.value);
-
-    if (!isSignedIn.value && !isGuestRouteMatching) {
-      console.log('redirect cause: not signed in');
-      await redirectTo('/sign-in', onGuestRedirect);
-    } else if (isSignedIn.value && isGuestRouteMatching) {
-      console.log('redirect cause: signed in');
+    if (isSignedIn.value && !allowedRoutes.includes(currentRoute.value)) {
       await redirectTo(defaultRoute);
-    } else if (!allowedRoutes.includes(currentRoute.value)) {
-      console.log('redirect cause: not allowed');
+    } else if (!isSignedIn.value) {
       await redirectTo(defaultRoute);
     }
   });
