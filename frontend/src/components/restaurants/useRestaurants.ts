@@ -1,13 +1,15 @@
-import type { RestaurantDTO } from '@/lib/api-model';
-import { type ComputedRef, type ModelRef, type Ref, ref, watchEffect } from 'vue';
+import type { AddressDTO, RestaurantDTO } from '@/lib/api-model';
+import { type ComputedRef, type ModelRef, type Ref, ref, watch, watchEffect } from 'vue';
 import { useUser } from '@/composables/useUser';
 import { getRestaurants } from '@/lib/api/restaurants/restaurants';
+import { formatAddress } from '@/lib/googleMaps';
 
 type UseRestaurantsProps = {
   radius: Ref<number> | ComputedRef<number> | ModelRef<number>;
+  overrideAddress: Ref<AddressDTO | null>;
 };
 
-export function useRestaurants({ radius }: UseRestaurantsProps) {
+export function useRestaurants({ radius, overrideAddress }: UseRestaurantsProps) {
   const { user } = useUser();
   const restaurants = ref<RestaurantDTO[]>([]);
 
@@ -16,7 +18,11 @@ export function useRestaurants({ radius }: UseRestaurantsProps) {
       return;
     }
 
-    const { address } = user.value;
+    const { address: userAddress } = user.value;
+    const address = overrideAddress.value ?? userAddress;
+
+    console.log('address', formatAddress(address));
+
     const res = await getRestaurants({
       lat: address.latitude,
       lon: address.longitude,

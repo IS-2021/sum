@@ -16,6 +16,8 @@ import Footer from '@/components/Footer.vue';
 import { cn } from '@/lib/utils';
 import { useRestaurants } from '@/components/restaurants/useRestaurants';
 import RadiusSelect from '@/components/restaurants/RadiusSelect.vue';
+import AddressAutocompleteInput from '@/components/maps/autocomplete/AddressAutocompleteInput.vue';
+import { useAddress } from '@/composables/maps/useAddress';
 
 useHead({
   title: 'Restaurants - Food Good',
@@ -27,8 +29,13 @@ const toggleView = () => {
 };
 
 const radius = ref<number>(5);
+
 const { user } = useUser();
-const { restaurants } = useRestaurants({ radius });
+const { address, setPlaceId } = useAddress();
+const { restaurants } = useRestaurants({
+  radius,
+  overrideAddress: address,
+});
 
 function setRadius(value: string) {
   radius.value = parseInt(value);
@@ -58,8 +65,8 @@ function setRadius(value: string) {
           </h1>
 
           <div class="flex gap-2">
+            <AddressAutocompleteInput @on-place-select="setPlaceId" />
             <RadiusSelect @update:radius="setRadius" />
-
             <Button @click="toggleView"> <MapIcon class="mr-3" /> Browse on a map </Button>
           </div>
         </div>
