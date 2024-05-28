@@ -90,7 +90,7 @@ public class UserService {
     }
 
     public void banUserById(UUID id) {
-        User user = userRepository.findById(id).orElseThrow();
+        User user = userRepository.findById(id).orElseThrow(() -> new UserNotFoundException("User not found with ID: " + id));
         user.setBlocked(true);
         userRepository.save(user);
     }
