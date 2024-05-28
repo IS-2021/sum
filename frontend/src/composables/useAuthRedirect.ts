@@ -4,14 +4,6 @@ import { useRouter } from 'vue-router/auto';
 import type { AppRouteNames, AppRoutes } from '@/lib/router';
 import { Role } from '@/lib/api-model';
 
-interface UseAuthRedirectorProps {
-  /**
-   * A callback executed on redirect of unauthenticated user.
-   */
-  onGuestRedirect?: () => void;
-  onDisallowedRouteRedirect?: () => void;
-}
-
 // TODO: change default for admin after adding admin route
 const defaultRoutesByRole: Record<Role | 'GUEST', AppRouteNames> = {
   GUEST: '/sign-in/',
@@ -48,10 +40,7 @@ const roleBasedRoutes: Record<Role | 'GUEST', AppRouteNames[]> = {
  * Regular users without a complete profile will be redirected to the onboarding page.
  * Guest
  */
-export function useAuthRedirect({
-  onGuestRedirect,
-  onDisallowedRouteRedirect,
-}: UseAuthRedirectorProps) {
+export function useAuthRedirect() {
   const router = useRouter();
   const { user, isLoaded, isSignedIn, isProfileComplete } = useUser();
 
@@ -62,14 +51,6 @@ export function useAuthRedirect({
   const isCurrentRouteAllowed = computed(() => allowedRoutes.value.includes(currentRoute.value));
   const defaultRoute = computed(() => defaultRoutesByRole[user.value?.role ?? 'GUEST']);
 
-  async function redirectTo(to: AppRoutes, onRedirect?: () => void) {
-    await router.push(to);
-
-    if (onRedirect) {
-      onRedirect();
-    }
-  }
-
   async function profileCompletionGuard() {
     if (!isLoaded.value || !isSignedIn.value || userRole.value === 'GUEST') {
       return;
@@ -78,12 +59,12 @@ export function useAuthRedirect({
     switch (currentRoute.value) {
       case '/onboarding/':
         if (isProfileComplete.value) {
-          await redirectTo('/');
+          await router.push('/');
         }
         break;
       default:
         if (!isProfileComplete.value) {
-          await redirectTo('/onboarding/');
+          await router.push('/onboarding/');
         }
         break;
     }
@@ -97,9 +78,9 @@ export function useAuthRedirect({
     }
 
     if (isSignedIn.value && !isCurrentRouteAllowed.value) {
-      await redirectTo(defaultRoute.value);
+      await router.push(defaultRoute.value);
     } else if (!isSignedIn.value && !isCurrentRouteAllowed.value) {
-      await redirectTo('/sign-in');
+      await router.push('/sign-in');
     }
   });
 }

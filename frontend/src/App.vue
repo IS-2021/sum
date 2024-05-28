@@ -12,7 +12,7 @@ onMounted(() => {
   }, 10);
 });
 
-useAuthRedirect({});
+useAuthRedirect();
 </script>
 
 <template>
