@@ -5,7 +5,7 @@ meta:
 
 <script setup lang="ts">
 import { useHead } from '@unhead/vue';
-import { ref } from 'vue';
+import { ref, toRef } from 'vue';
 import { useUser } from '@/composables/useUser';
 import { Button } from '@/components/ui/button';
 import MapBrowser from '@/components/restaurants/views/MapBrowser.vue';
@@ -18,6 +18,7 @@ import { useRestaurants } from '@/components/restaurants/useRestaurants';
 import RadiusSelect from '@/components/restaurants/RadiusSelect.vue';
 import AddressAutocompleteInput from '@/components/maps/autocomplete/AddressAutocompleteInput.vue';
 import { useAddress } from '@/composables/maps/useAddress';
+import { useRefOverride } from '@/composables/maps/useRefOverride';
 
 useHead({
   title: 'Restaurants - Food Good',
@@ -31,10 +32,11 @@ const toggleView = () => {
 const radius = ref<number>(5);
 
 const { user } = useUser();
-const { address, setPlaceId } = useAddress();
+const { address: pickedAddress, setPlaceId } = useAddress();
+const address = useRefOverride(toRef(user.value?.address), pickedAddress);
 const { restaurants } = useRestaurants({
   radius,
-  overrideAddress: address,
+  address,
 });
 
 function setRadius(value: string) {
@@ -61,7 +63,7 @@ function setRadius(value: string) {
       <div v-else class="px-4 sm:container w-full">
         <div class="flex flex-col sm:flex-row sm:items-center gap-2 justify-between mb-6">
           <h1 class="font-bold text-2xl tracking-tight">
-            Restaurants {{ user?.address && `in ${user.address.city}` }}
+            Restaurants {{ address && `in ${address.city}` }}
           </h1>
 
           <div class="flex gap-2">
