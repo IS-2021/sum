@@ -13,11 +13,10 @@ onMounted(() => {
 });
 
 useAuthRedirect({
-  protectedRoutes: ['/favourites/', '/settings/'],
+  guestRoutes: ['/sign-in/', '/sign-up/'],
   onGuestRedirect: () => {
     toast.message('You need to sign-in before viewing this this page.');
   },
-  guestRoutes: ['/sign-in/', '/sign-up/'],
 });
 </script>
 

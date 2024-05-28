@@ -1,14 +1,10 @@
 import { useUser } from '@/composables/useUser';
-import { computed, unref, watch, watchEffect } from 'vue';
+import { computed, watch, watchEffect } from 'vue';
 import { useRouter } from 'vue-router/auto';
 import type { AppRouteNames, AppRoutes } from '@/lib/router';
 import { Role } from '@/lib/api-model';
 
 interface UseAuthRedirectorProps {
-  /**
-   * Routes that will require an authenticated user.
-   */
-  protectedRoutes: AppRouteNames[];
   /**
    * A callback executed on redirect of unauthenticated user.
    */
@@ -17,16 +13,35 @@ interface UseAuthRedirectorProps {
    * Routes that will require a non-authenticated user.
    */
   guestRoutes?: AppRouteNames[];
-  /**
-   * A callback executed on redirect of non-authenticated user.
-   */
-  onAuthenticatedRedirect?: () => void;
 }
 
+// TODO: change default for admin after adding admin route
 const defaultRoutesByRole: Record<Role, AppRouteNames> = {
   ROLE_USER: '/',
   ROLE_RESTAURANT: '/manage/',
   ROLE_ADMIN: '/',
+};
+
+const roleBasedRoutes: Record<Role, AppRouteNames[]> = {
+  ROLE_USER: [
+    '/',
+    '/onboarding/',
+    '/favourites/',
+    '/restaurants/',
+    '/restaurant/[id]',
+    '/restaurant/[...]',
+    '/bookings/',
+    '/activeBooking/',
+    '/settings/',
+  ],
+  ROLE_RESTAURANT: [
+    '/manage/',
+    '/manage/bookings/',
+    '/manage/meals/',
+    '/manage/reports/',
+    '/manage/settings/',
+  ],
+  ROLE_ADMIN: [],
 };
 
 /**
@@ -34,16 +49,11 @@ const defaultRoutesByRole: Record<Role, AppRouteNames> = {
  * Regular users without a complete profile will be redirected to the onboarding page.
  * Guest
  */
-export function useAuthRedirect({
-  protectedRoutes,
-  guestRoutes,
-  onGuestRedirect,
-  onAuthenticatedRedirect,
-}: UseAuthRedirectorProps) {
+export function useAuthRedirect({ guestRoutes, onGuestRedirect }: UseAuthRedirectorProps) {
   const router = useRouter();
   const { user, isLoaded, isSignedIn, isProfileComplete } = useUser();
 
-  const currentRoute = unref(computed(() => router.currentRoute.value.name));
+  const currentRoute = computed(() => router.currentRoute.value.name);
 
   async function redirectTo(to: AppRoutes, onRedirect?: () => void) {
     await router.push(to);
@@ -54,7 +64,7 @@ export function useAuthRedirect({
   }
 
   async function profileCompletionGuard() {
-    switch (currentRoute) {
+    switch (currentRoute.value) {
       case '/onboarding/':
         if (isProfileComplete.value) {
           await redirectTo('/');
@@ -75,14 +85,23 @@ export function useAuthRedirect({
       return;
     }
 
-    const isAuthRouteMatching = protectedRoutes.includes(currentRoute);
-    const isGuestRouteMatching = guestRoutes?.includes(currentRoute);
+    const userRole = user.value?.role ?? Role.ROLE_USER;
+    const allowedRoutes = roleBasedRoutes[userRole];
+    const defaultRoute = defaultRoutesByRole[userRole];
 
-    if (isAuthRouteMatching && !isSignedIn.value) {
+    console.log('currentRoute', currentRoute.value);
+
+    const isGuestRouteMatching = guestRoutes?.includes(currentRoute.value);
+
+    if (!isSignedIn.value && !isGuestRouteMatching) {
+      console.log('redirect cause: not signed in');
       await redirectTo('/sign-in', onGuestRedirect);
-    } else if (isGuestRouteMatching && isSignedIn.value) {
-      const defaultRoute = defaultRoutesByRole[user.value?.role ?? Role.ROLE_USER];
-      await redirectTo(defaultRoute, onAuthenticatedRedirect);
+    } else if (isSignedIn.value && isGuestRouteMatching) {
+      console.log('redirect cause: signed in');
+      await redirectTo(defaultRoute);
+    } else if (!allowedRoutes.includes(currentRoute.value)) {
+      console.log('redirect cause: not allowed');
+      await redirectTo(defaultRoute);
     }
   });
 }
