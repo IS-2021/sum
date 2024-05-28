@@ -1,5 +1,5 @@
 import { useUser } from '@/composables/useUser';
-import { watchEffect } from 'vue';
+import { computed, unref, watch, watchEffect } from 'vue';
 import { useRouter } from 'vue-router/auto';
 import type { AppRouteNames, AppRoutes } from '@/lib/router';
 import { Role } from '@/lib/api-model';
@@ -43,6 +43,8 @@ export function useAuthRedirect({
   const router = useRouter();
   const { user, isLoaded, isSignedIn, isProfileComplete } = useUser();
 
+  const currentRoute = unref(computed(() => router.currentRoute.value.name));
+
   async function redirectTo(to: AppRoutes, onRedirect?: () => void) {
     await router.push(to);
 
@@ -51,21 +53,30 @@ export function useAuthRedirect({
     }
   }
 
+  async function profileCompletionGuard() {
+    switch (currentRoute) {
+      case '/onboarding/':
+        if (isProfileComplete.value) {
+          await redirectTo('/');
+        }
+        break;
+      default:
+        if (!isProfileComplete.value) {
+          await redirectTo('/onboarding/');
+        }
+        break;
+    }
+  }
+
+  watch([currentRoute, isProfileComplete], profileCompletionGuard);
+
   watchEffect(async () => {
     if (!isLoaded.value) {
       return;
     }
 
-    const currentRoute = router.currentRoute.value.name;
     const isAuthRouteMatching = protectedRoutes.includes(currentRoute);
     const isGuestRouteMatching = guestRoutes?.includes(currentRoute);
-    const isOnboardingRouteMatching = currentRoute === '/onboarding/';
-
-    if (!isProfileComplete.value && !isOnboardingRouteMatching) {
-      await redirectTo('/onboarding/');
-    } else if (isProfileComplete.value && isOnboardingRouteMatching) {
-      await redirectTo('/');
-    }
 
     if (isAuthRouteMatching && !isSignedIn.value) {
       await redirectTo('/sign-in', onGuestRedirect);
