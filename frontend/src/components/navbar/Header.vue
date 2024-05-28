@@ -3,10 +3,17 @@ import { Button } from '@/components/ui/button';
 import { useUser } from '@/composables/useUser';
 import DropdownMenu from '@/components/navbar/DropdownMenu.vue';
 import AppNavLink from '@/components/navbar/AppNavLink.vue';
-import RequireAuth from '@/components/auth/RequireAuth.vue';
 import UserActionsDropdown from '@/components/navbar/UserActionsDropdown.vue';
+import type { AppRoutes } from '@/lib/router';
 
 const { isSignedIn } = useUser();
+
+const links: { name: string; to: AppRoutes }[] = [
+  { name: 'Home', to: '/' },
+  { name: 'Restaurants', to: '/restaurants' },
+  { name: 'Favourites', to: '/favourites' },
+  { name: 'Bookings', to: '/bookings' },
+];
 </script>
 
 <template>
@@ -26,22 +33,9 @@ const { isSignedIn } = useUser();
             </RouterLink>
           </div>
         </li>
-        <li class="hidden sm:block">
-          <AppNavLink to="/">Home</AppNavLink>
+        <li class="hidden sm:block" v-for="{ to, name } in links" :key="`navbar-${name}`">
+          <AppNavLink :to="to">{{ name }}</AppNavLink>
         </li>
-        <li class="hidden sm:block">
-          <AppNavLink to="/restaurants">Restaurants</AppNavLink>
-        </li>
-        <RequireAuth>
-          <li class="hidden sm:block">
-            <AppNavLink to="/favourites">Favourites</AppNavLink>
-          </li>
-        </RequireAuth>
-        <RequireAuth>
-          <li class="hidden sm:block">
-            <AppNavLink to="/bookings">Bookings</AppNavLink>
-          </li>
-        </RequireAuth>
 
         <li class="flex-grow"></li>
 
