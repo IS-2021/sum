@@ -15,6 +15,7 @@ import Header from '@/components/navbar/Header.vue';
 import Footer from '@/components/Footer.vue';
 import { cn } from '@/lib/utils';
 import { useRestaurants } from '@/components/restaurants/useRestaurants';
+import RadiusSelect from '@/components/restaurants/RadiusSelect.vue';
 
 useHead({
   title: 'Restaurants - Food Good',
@@ -25,9 +26,13 @@ const toggleView = () => {
   isMapView.value = !isMapView.value;
 };
 
+const radius = ref<number>(5);
 const { user } = useUser();
-const radiusKm = ref(0.5);
-const { restaurants } = useRestaurants({ radiusKm });
+const { restaurants } = useRestaurants({ radius });
+
+function setRadius(value: string) {
+  radius.value = parseInt(value);
+}
 </script>
 
 <template>
@@ -52,7 +57,11 @@ const { restaurants } = useRestaurants({ radiusKm });
             Restaurants {{ user?.address && `in ${user.address.city}` }}
           </h1>
 
-          <Button @click="toggleView"> <MapIcon class="mr-3" /> Browse on a map </Button>
+          <div class="flex gap-2">
+            <RadiusSelect @update:radius="setRadius" />
+
+            <Button @click="toggleView"> <MapIcon class="mr-3" /> Browse on a map </Button>
+          </div>
         </div>
 
         <div>

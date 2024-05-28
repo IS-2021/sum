@@ -1,13 +1,13 @@
 import type { RestaurantDTO } from '@/lib/api-model';
-import { type ComputedRef, type Ref, ref, watchEffect } from 'vue';
+import { type ComputedRef, type ModelRef, type Ref, ref, watchEffect } from 'vue';
 import { useUser } from '@/composables/useUser';
 import { getRestaurants } from '@/lib/api/restaurants/restaurants';
 
 type UseRestaurantsProps = {
-  radiusKm: Ref<number> | ComputedRef<number>;
+  radius: Ref<number> | ComputedRef<number> | ModelRef<number>;
 };
 
-export function useRestaurants({ radiusKm }: UseRestaurantsProps) {
+export function useRestaurants({ radius }: UseRestaurantsProps) {
   const { user } = useUser();
   const restaurants = ref<RestaurantDTO[]>([]);
 
@@ -20,7 +20,7 @@ export function useRestaurants({ radiusKm }: UseRestaurantsProps) {
     const res = await getRestaurants({
       lat: address.latitude,
       lon: address.longitude,
-      radius: radiusKm.value,
+      radius: radius.value,
     });
 
     if (res.status === 200 && res.data) {
