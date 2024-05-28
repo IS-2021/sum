@@ -5,8 +5,7 @@ meta:
 
 <script setup lang="ts">
 import { useHead } from '@unhead/vue';
-import { useGetRestaurants } from '@/lib/api/restaurants/restaurants';
-import { computed, ref, unref } from 'vue';
+import { ref } from 'vue';
 import { useUser } from '@/composables/useUser';
 import { Button } from '@/components/ui/button';
 import MapBrowser from '@/components/restaurants/views/MapBrowser.vue';
@@ -15,6 +14,7 @@ import { ChevronLeft, MapIcon } from 'lucide-vue-next';
 import Header from '@/components/navbar/Header.vue';
 import Footer from '@/components/Footer.vue';
 import { cn } from '@/lib/utils';
+import { useRestaurants } from '@/components/restaurants/useRestaurants';
 
 useHead({
   title: 'Restaurants - Food Good',
@@ -26,17 +26,14 @@ const toggleView = () => {
 };
 
 const { user } = useUser();
-const { data, isPending: areRestaurantsLoading } = useGetRestaurants();
-const restaurants = computed(() => unref(data)?.data);
+const radiusKm = ref(0.5);
+const { restaurants } = useRestaurants({ radiusKm });
 </script>
 
 <template>
   <Header />
   <div :class="cn('flex flex-grow', !isMapView && 'my-8')">
-    <template v-if="areRestaurantsLoading">
-      <p>Loading...</p>
-    </template>
-    <template v-else-if="restaurants">
+    <template v-if="restaurants">
       <div v-if="isMapView" class="flex flex-grow relative">
         <Button
           @click="toggleView"
