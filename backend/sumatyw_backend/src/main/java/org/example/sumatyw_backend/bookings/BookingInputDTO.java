@@ -1,13 +1,13 @@
 package org.example.sumatyw_backend.bookings;
 
-import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
 import java.util.UUID;
 
 public record BookingInputDTO(
-    @NotBlank(message = "Meal ID can not be empty!")
+    @NotNull(message = "Meal ID can not be empty!")
     UUID mealId,
-    @NotBlank(message = "User ID can not be empty!")
+    @NotNull(message = "User ID can not be empty!")
     UUID userId
 ) {
 }
