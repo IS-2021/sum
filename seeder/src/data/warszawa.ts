@@ -2,21 +2,6 @@ import { RestaurantData } from "./type";
 
 export const restaurantsWarszawa: RestaurantData[] = [
   {
-    name: "Bistro Warszawa",
-    address: "Ul. Jezuicka 1/3 ul. Rynek Starego Miasta 1/3, Warsaw 00-281 Poland",
-    hours: {
-      sunday: ["12:00", "00:00"],
-      monday: ["12:00", "00:00"],
-      tuesday: ["12:00", "00:00"],
-      wednesday: ["12:00", "00:00"],
-      thursday: ["12:00", "00:00"],
-      friday: ["12:00", "00:00"],
-      saturday: ["12:00", "00:00"],
-    },
-    phoneNumber: "22 635 37 69",
-    imageUrl: "https://media-cdn.tripadvisor.com/media/photo-o/05/d4/b4/80/bistro-warszawa.jpg",
-  },
-  {
     name: "Beef n' Pepper",
     address: "Nowogrodzka 47a, Warsaw 00-695 Poland",
     hours: {
