@@ -8,12 +8,21 @@ import { toTypedSchema } from '@vee-validate/zod';
 import { restaurantSchema } from '@/components/(manage)/onboarding/restaurantSchema';
 import { useForm } from 'vee-validate';
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { useStepper } from '@vueuse/core';
+import { cn } from '@/lib/utils';
 
 useHead({
   title: 'Complete restaurant profile',
 });
 
 const { restaurant, isProfileComplete, signOut } = useRestaurantUser();
+
+const { current, goToPrevious, goToNext, isCurrent } = useStepper([
+  // 'greeting',
+  'details',
+  'hours',
+  'location',
+]);
 
 const formSchema = toTypedSchema(restaurantSchema);
 const form = useForm({
@@ -22,6 +31,9 @@ const form = useForm({
     details: {
       name: 'Laxmi',
       phoneNumber: '123456789',
+    },
+    hours: {
+      monday: ['10:00', '20:00'],
     },
   },
 });
@@ -43,44 +55,55 @@ const onSubmit = form.handleSubmit((values) => {
       <h1>Restaurant form</h1>
       <form @submit="onSubmit" class="space-y-4">
         <!-- Details -->
-        <FormField v-slot="{ componentField }" name="details.name">
-          <FormItem>
-            <FormLabel>Restaurant name</FormLabel>
-            <FormControl>
-              <Input type="text" v-bind="componentField" />
-            </FormControl>
-            <FormMessage />
-          </FormItem>
-        </FormField>
-        <FormField v-slot="{ componentField }" name="details.phoneNumber">
-          <FormItem>
-            <FormLabel>Phone number</FormLabel>
-            <FormControl>
-              <Input type="text" v-bind="componentField" />
-            </FormControl>
-            <FormMessage />
-          </FormItem>
-        </FormField>
+        <div :class="cn('hidden', isCurrent('details') && 'block')">
+          <FormField v-slot="{ componentField }" name="details.name">
+            <FormItem>
+              <FormLabel>Restaurant name</FormLabel>
+              <FormControl>
+                <Input type="text" v-bind="componentField" />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          </FormField>
+          <FormField v-slot="{ componentField }" name="details.phoneNumber">
+            <FormItem>
+              <FormLabel>Phone number</FormLabel>
+              <FormControl>
+                <Input type="text" v-bind="componentField" />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          </FormField>
+        </div>
 
         <!-- Hours -->
-        <FormField v-slot="{ componentField }" name="hours.monday[0]">
-          <FormItem>
-            <FormLabel>Monday</FormLabel>
-            <FormControl>
-              <Input type="text" v-bind="componentField" />
-            </FormControl>
-            <FormMessage />
-          </FormItem>
-        </FormField>
-        <FormField v-slot="{ componentField }" name="hours.monday[1]">
-          <FormItem>
-            <FormLabel>Monday</FormLabel>
-            <FormControl>
-              <Input type="text" v-bind="componentField" />
-            </FormControl>
-            <FormMessage />
-          </FormItem>
-        </FormField>
+        <div :class="cn('hidden max-w-80', isCurrent('hours') && 'block')">
+          <div class="grid grid-cols-[max-content,1fr,1fr] gap-2 gap-x-4">
+            <p class="col-start-2 text-neutral-500">Open</p>
+            <p class="text-neutral-500">Close</p>
+
+            <p aria-hidden="true" class="h-fit self-center">Monday</p>
+
+            <FormField v-slot="{ componentField }" name="hours.monday[0]">
+              <FormItem class="space-y-0">
+                <FormLabel class="sr-only">Open</FormLabel>
+                <FormControl>
+                  <Input type="text" v-bind="componentField" />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            </FormField>
+            <FormField v-slot="{ componentField }" name="hours.monday[1]">
+              <FormItem class="space-y-0">
+                <FormLabel class="sr-only">Close</FormLabel>
+                <FormControl>
+                  <Input type="text" v-bind="componentField" />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            </FormField>
+          </div>
+        </div>
 
         <Button type="submit"> Submit </Button>
       </form>
