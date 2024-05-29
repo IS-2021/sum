@@ -5,6 +5,7 @@ import DropdownMenu from '@/components/navbar/DropdownMenu.vue';
 import AppNavLink from '@/components/navbar/AppNavLink.vue';
 import UserActionsDropdown from '@/components/navbar/UserActionsDropdown.vue';
 import type { AppRoutes } from '@/lib/router';
+import Logo from '@/components/Logo.vue';
 
 const { isSignedIn } = useUser();
 
@@ -18,35 +19,26 @@ const links: { name: string; to: AppRoutes }[] = [
 
 <template>
   <header
-    class="h-16 w-full top-0 border border-transparent bg-neutral-950 sticky flex items-center px-6 z-50"
+    class="sticky top-0 z-50 flex h-16 w-full items-center border border-transparent bg-neutral-950 px-6 text-white"
   >
-    <nav class="flex-grow">
-      <ul class="flex items-center gap-6 text-white">
-        <li>
-          <DropdownMenu />
-        </li>
+    <DropdownMenu />
 
-        <li>
-          <div class="h-8 w-8">
-            <RouterLink to="/">
-              <img src="../../assets/logo.svg" alt="Logo" />
-            </RouterLink>
-          </div>
-        </li>
+    <nav class="ml-4 flex flex-grow justify-between sm:ml-0">
+      <ul class="flex items-center gap-6">
+        <RouterLink to="/">
+          <Logo class="h-8 w-8" />
+        </RouterLink>
+
         <li class="hidden sm:block" v-for="{ to, name } in links" :key="`navbar-${name}`">
           <AppNavLink :to="to">{{ name }}</AppNavLink>
         </li>
-
-        <li class="flex-grow"></li>
-
-        <li class="flex gap-2">
-          <UserActionsDropdown v-if="isSignedIn" />
-
-          <Button v-else as-child>
-            <RouterLink to="/sign-in">Sign in</RouterLink>
-          </Button>
-        </li>
       </ul>
+
+      <Button v-if="!isSignedIn" as-child>
+        <RouterLink to="/sign-in">Sign in</RouterLink>
+      </Button>
     </nav>
+
+    <UserActionsDropdown v-if="isSignedIn" />
   </header>
 </template>
