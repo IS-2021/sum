@@ -18,6 +18,7 @@ import { postReportsUsers } from '@/lib/api/reports-users/reports-users';
 const props = defineProps<{
   restaurantId: Uuid;
   userId: Uuid;
+  buttonMessage: string;
 }>();
 
 const usersReport = ref('');
@@ -37,7 +38,7 @@ function sendReport() {
 </script>
 
 <template>
-  <Button variant="ghost" @click="toggleReportRestaurant()">Report restaurant</Button>
+  <Button variant="ghost" @click="toggleReportRestaurant()">{{ props.buttonMessage }}</Button>
   <Alert v-if="reportRestaurantSwitch" class="mt-4">
     <AlertTitle>Add report</AlertTitle>
     <AlertDescription>

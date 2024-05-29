@@ -5,6 +5,8 @@ import CompletedBookingsCount from './CompletedBookingsCount.vue';
 import { useGetBookings } from '@/lib/api/bookings/bookings';
 import { computed, unref } from 'vue';
 
+import Logo from '../Logo.vue';
+
 const props = defineProps<{
   user: UserDTO;
 }>();
@@ -23,11 +25,7 @@ const bookings = computed(() => unref(data)?.data);
     </div>
     <div class="flex gap-1 items-end ml-8 mt-8">
       <h1 class="text-primary">FoodGood team</h1>
-      <div class="h-4 w-4 mb-1">
-        <RouterLink to="/">
-          <img src="@/assets/logo.svg" alt="Logo" class="" />
-        </RouterLink>
-      </div>
+      <Logo class="h-4 w-4 mb-1" />
     </div>
   </div>
 </template>

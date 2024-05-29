@@ -21,11 +21,12 @@ const emit = defineEmits<{
   (e: 'changeIsOpen', open: boolean): void;
 }>();
 
+const buttonMessage = ref('Report restaurant');
+
 const { data } = useGetRestaurantsId(props.meal.restaurantId);
 const restaurant = computed(() => unref(data)?.data);
 
 const isBookingActive = computed(() => {
-  console.log(props.booking);
   if (!props.booking.pickedUpTimestamp) {
     return true;
   } else {
@@ -64,6 +65,11 @@ function isOpen() {
   <AccordionContent v-if="restaurant"> Contact: {{ restaurant.phoneNumber }}</AccordionContent>
 
   <AccordionContent class="mt-4">
-    <ReportComponent v-if="restaurant" :restaurantId="restaurant.id" :userId="props.userId" />
+    <ReportComponent
+      v-if="restaurant"
+      :restaurantId="restaurant.id"
+      :userId="props.userId"
+      :buttonMessage="buttonMessage"
+    />
   </AccordionContent>
 </template>
