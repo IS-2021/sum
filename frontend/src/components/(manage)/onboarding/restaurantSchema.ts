@@ -5,20 +5,23 @@ export const restaurantDetailsSchema = z.object({
   phoneNumber: z.string().min(9, 'Phone number is too short').max(11, 'Phone number is too long'),
 });
 
-export const hoursSchema = z
+const hoursSchema = z
   .string()
-  .regex(/^([01]?[0-9]|2[0-3]):[0-5][0-9]$/)
-  .array();
-// .length(2);
+  .refine((val) => {
+    if (val === '') return true;
+    return /^([01]?[0-9]|2[0-3]):[0-5][0-9]$/.test(val);
+  }, 'Invalid time format')
+  .array()
+  .max(2);
 
 export const restaurantHoursSchema = z.object({
   monday: hoursSchema,
-  // tuesday: hoursSchema,
-  // thursday: hoursSchema,
-  // wednesday: hoursSchema,
-  // friday: hoursSchema,
-  // saturday: hoursSchema,
-  // sunday: hoursSchema,
+  tuesday: hoursSchema,
+  thursday: hoursSchema,
+  wednesday: hoursSchema,
+  friday: hoursSchema,
+  saturday: hoursSchema,
+  sunday: hoursSchema,
 });
 
 export const addressSchema = z.object({

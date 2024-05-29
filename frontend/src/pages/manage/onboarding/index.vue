@@ -10,8 +10,9 @@ import { useForm } from 'vee-validate';
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { useStepper } from '@vueuse/core';
 import { cn } from '@/lib/utils';
-import { LogOutIcon, ChevronRightIcon, ChevronLeftIcon } from 'lucide-vue-next';
+import { LogOutIcon, ChevronRightIcon, ChevronLeftIcon, ClockIcon } from 'lucide-vue-next';
 import Logo from '@/components/Logo.vue';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 
 useHead({
   title: 'Complete restaurant profile',
@@ -87,12 +88,6 @@ const formFields = {
       fields: ['Open', 'Close'],
     },
   ],
-  location: {
-    address: 'Address',
-    city: 'City',
-    state: 'State',
-    zip: 'Zip',
-  },
 };
 
 const formSchema = toTypedSchema(restaurantSchema);
@@ -105,6 +100,12 @@ const form = useForm({
     },
     hours: {
       monday: ['10:00', '20:00'],
+      tuesday: ['10:00', '20:00'],
+      thursday: ['10:00', '20:00'],
+      wednesday: ['10:00', '20:00'],
+      friday: ['10:00', '20:00'],
+      saturday: ['10:00', '20:00'],
+      sunday: ['10:00', '20:00'],
     },
   },
 });
@@ -162,6 +163,18 @@ const onSubmit = form.handleSubmit((values) => {
         </div>
 
         <!-- Hours -->
+        <div :class="cn('hidden', isCurrent('hours') && 'block')">
+          <Alert class="mb-3 bg-secondary/25">
+            <ClockIcon class="h-4 w-4" />
+            <AlertTitle>How to fill the form</AlertTitle>
+            <AlertDescription>
+              <ul class="list-disc">
+                <li>Use HH:MM 24-hour format,</li>
+                <li>If restaurant is closed on a given day, leave both fields empty.</li>
+              </ul>
+            </AlertDescription>
+          </Alert>
+        </div>
         <div :class="cn('hidden max-w-80', isCurrent('hours') && 'block')">
           <div class="grid grid-cols-[max-content,1fr,1fr] gap-2 gap-x-4">
             <p class="col-start-2 text-sm font-medium">Open</p>
