@@ -1,11 +1,12 @@
 <script setup lang="ts">
-import type { BookingDTO } from '@/lib/api-model';
+import type { BookingDTO, Uuid } from '@/lib/api-model';
 
 import BookingItem from '@/components/bookings/BookingItem.vue';
 
 const props = defineProps<{
   bookings: BookingDTO[];
   username: string;
+  userId: Uuid;
 }>();
 </script>
 
@@ -20,5 +21,6 @@ const props = defineProps<{
     v-bind:key="booking.id"
     :booking="booking"
     :username="props.username"
+    :userId="props.userId"
   />
 </template>

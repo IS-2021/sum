@@ -8,8 +8,6 @@ import { useHead } from '@unhead/vue';
 import { useUser } from '@/composables/useUser';
 
 import BookingsComponent from '@/components/bookings/BookingsComponent.vue';
-import { useGetBookingsActive } from '@/lib/api/bookings/bookings';
-import { unref } from 'vue';
 
 useHead({
   title: 'Bookings - FoodGood',

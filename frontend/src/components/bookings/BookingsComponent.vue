@@ -21,6 +21,11 @@ const bookings = computed(() => unref(data)?.data);
       <h1 class="font-bold text-2xl tracking-tight mb-4 sm:mb-0">Bookings</h1>
       <ToggleToActive :userId="props.userId" />
     </div>
-    <BookingsList v-if="bookings" :bookings="bookings" :username="props.username" />
+    <BookingsList
+      v-if="bookings"
+      :bookings="bookings"
+      :username="props.username"
+      :userId="props.userId"
+    />
   </div>
 </template>

@@ -1,15 +1,24 @@
 <script setup lang="ts">
 import { AccordionContent, AccordionTrigger } from '@/components/ui/accordion';
 
-import Button from '@/components/ui/button/Button.vue';
-import type { BookingDTO, MealDTO } from '@/lib/api-model';
-import { computed, unref } from 'vue';
+import type { BookingDTO, MealDTO, Uuid } from '@/lib/api-model';
+import { computed, ref, unref } from 'vue';
 import { useGetRestaurantsId } from '@/lib/api/restaurants/restaurants';
+
+import ReportComponent from '@/components/bookings/ReportComponent.vue';
 
 const props = defineProps<{
   booking: BookingDTO;
   username: string;
+  userId: Uuid;
   meal: MealDTO;
+  open: boolean;
+}>();
+
+let open = ref(props.open);
+
+const emit = defineEmits<{
+  (e: 'changeIsOpen', open: boolean): void;
 }>();
 
 const { data } = useGetRestaurantsId(props.meal.restaurantId);
@@ -23,10 +32,15 @@ const isBookingActive = computed(() => {
     return false;
   }
 });
+
+function isOpen() {
+  open.value = !open.value;
+  emit('changeIsOpen', open.value);
+}
 </script>
 
 <template>
-  <AccordionTrigger>
+  <AccordionTrigger @click="isOpen()">
     <div class="flex flex-col items-start">
       <p class="font-bold text-lg">{{ props.meal.name }}</p>
       <p>{{ props.booking.orderedTimestamp }}</p>
@@ -48,7 +62,8 @@ const isBookingActive = computed(() => {
     Pick-up time: {{ props.booking.pickedUpTimestamp }}
   </AccordionContent>
   <AccordionContent v-if="restaurant"> Contact: {{ restaurant.phoneNumber }}</AccordionContent>
+
   <AccordionContent class="mt-4">
-    <Button>Report restaurant</Button>
+    <ReportComponent v-if="restaurant" :restaurantId="restaurant.id" :userId="props.userId" />
   </AccordionContent>
 </template>
