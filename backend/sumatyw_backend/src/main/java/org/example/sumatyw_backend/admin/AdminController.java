@@ -162,6 +162,9 @@ public class AdminController {
         try {
             List<Restaurant> restaurants = restaurantService.getAllPendingRestaurant();
             List<RestaurantDTO> mappedList = new ArrayList<>();
+            if(restaurants == null || restaurants.isEmpty()) {
+                return new ResponseEntity<>(new ArrayList<>(),HttpStatus.NO_CONTENT);
+            }
 
             for(Restaurant r: restaurants) {
                 mappedList.add(RestaurantDTOMapper.mapRestaurantToRestaurantDTO(r));

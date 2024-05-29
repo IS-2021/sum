@@ -6,6 +6,7 @@ import type { RestaurantDTO } from '@/lib/api-model';
 const props = defineProps<{
   centerLat: number;
   centerLng: number;
+  radius: number;
   restaurants: RestaurantDTO[];
 }>();
 
@@ -24,13 +25,14 @@ onMounted(async () => {
   const { Map, InfoWindow } = await loader.importLibrary('maps');
   const { AdvancedMarkerElement, PinElement } = await loader.importLibrary('marker');
 
+  const center = {
+    lat: props.centerLat,
+    lng: props.centerLng,
+  };
   const infoWindow = new InfoWindow();
 
   map.value = new Map(mapDiv.value, {
-    center: {
-      lat: props.centerLat,
-      lng: props.centerLng,
-    },
+    center,
     zoom: 14,
     mapId: '2ea9a80405b2230f',
     fullscreenControl: false,
@@ -47,13 +49,20 @@ onMounted(async () => {
     glyphColor: 'white',
   });
   const homeMarker = new AdvancedMarkerElement({
-    position: {
-      lat: props.centerLat,
-      lng: props.centerLng,
-    },
+    position: center,
     map: map.value,
     title: 'You are here',
     content: homePin.element,
+  });
+  const homeRadius = new google.maps.Circle({
+    strokeColor: '#FF0000',
+    strokeOpacity: 0.8,
+    strokeWeight: 2,
+    fillColor: '#FF0000',
+    fillOpacity: 0.03,
+    map: map.value,
+    center,
+    radius: props.radius * 1000,
   });
 
   for (const restaurant of props.restaurants) {

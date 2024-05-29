@@ -3,15 +3,16 @@ import { getImageUrl } from '@/lib/assets';
 import { formatAddressShort } from '@/lib/googleMaps';
 import { ref } from 'vue';
 import type { RestaurantDTO } from '@/lib/api-model';
-import { useUser } from '@/composables/useUser';
 import { AspectRatio } from '@/components/ui/aspect-ratio';
 import RestaurantsMap from '@/components/maps/restaurants/RestaurantsMap.vue';
 
 const props = defineProps<{
   restaurants: RestaurantDTO[];
+  centerLat: number;
+  centerLng: number;
+  radius: number;
 }>();
 
-const { user } = useUser();
 const pickedRestaurant = ref<RestaurantDTO | null>(null);
 </script>
 
@@ -19,10 +20,10 @@ const pickedRestaurant = ref<RestaurantDTO | null>(null);
   <RestaurantsMap
     id="map"
     class="flex-grow"
-    v-if="user?.address"
     @onPinClick="(restaurant) => (pickedRestaurant = restaurant)"
-    :center-lat="user.address.latitude"
-    :center-lng="user.address.longitude"
+    :center-lat="centerLat"
+    :center-lng="centerLng"
+    :radius="radius"
     :restaurants="restaurants"
   />
 
