@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { AccordionContent, AccordionTrigger } from '@/components/ui/accordion';
 
+import { format } from 'date-fns';
+
 import type { BookingDTO, MealDTO, Uuid } from '@/lib/api-model';
 import { computed, ref, unref } from 'vue';
 import { useGetRestaurantsId } from '@/lib/api/restaurants/restaurants';
@@ -58,9 +60,14 @@ function isOpen() {
     {{ restaurant.address.city }}
     {{ restaurant.address.postalCode }}
   </AccordionContent>
-  <AccordionContent> Order time: {{ props.booking.orderedTimestamp }}</AccordionContent>
+  <AccordionContent>
+    Order time:
+    {{
+      format(new Date(props.booking.orderedTimestamp), "MM/dd/yyyy HH':'mm':'ss")
+    }}</AccordionContent
+  >
   <AccordionContent v-if="props.booking.pickedUpTimestamp">
-    Pick-up time: {{ props.booking.pickedUpTimestamp }}
+    Pick-up time: {{ format(new Date(props.booking.pickedUpTimestamp), "MM/dd/yyyy HH':'mm':'ss") }}
   </AccordionContent>
   <AccordionContent v-if="restaurant"> Contact: {{ restaurant.phoneNumber }}</AccordionContent>
 
