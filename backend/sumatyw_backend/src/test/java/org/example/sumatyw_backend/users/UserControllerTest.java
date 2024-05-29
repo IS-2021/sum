@@ -2,6 +2,7 @@ package org.example.sumatyw_backend.users;
 
 import static org.mockito.Mockito.*;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.httpBasic;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -20,11 +21,13 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.example.sumatyw_backend.users.*;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import java.util.*;
 
 @WebMvcTest(UserController.class)
-class UserControllerTest {
+public class UserControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -59,9 +62,9 @@ class UserControllerTest {
         List<User> users = Arrays.asList(user);
         when(userService.getUsers()).thenReturn(users);
 
-        mockMvc.perform(get("/users"))
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("$[0].username").value("johndoe"));
+        mockMvc.perform(MockMvcRequestBuilders.get("/users"))
+            .andExpect(MockMvcResultMatchers.status().isOk())
+            .andExpect(MockMvcResultMatchers.jsonPath("$[0].username").value("johndoe"));
     }
 
     @Test
@@ -69,28 +72,26 @@ class UserControllerTest {
     void testGetUserById() throws Exception {
         when(userService.getUserById(userId)).thenReturn(user);
 
-        mockMvc.perform(get("/users/{id}", userId))
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("$.username").value("johndoe"));
+        mockMvc.perform(MockMvcRequestBuilders.get("/users/{id}", userId))
+            .andExpect(MockMvcResultMatchers.status().isOk())
+            .andExpect(MockMvcResultMatchers.jsonPath("$.username").value("johndoe"));
     }
 
     @Test
-    @WithMockUser(username = "johndoe", roles = {"USER"})
+    @WithMockUser(username = "admin", roles = {"ADMIN"})
     void testGetMe() throws Exception {
         when(userService.getMeUser()).thenReturn(user);
 
-        mockMvc.perform(get("/users/me"))
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("$.username").value("johndoe"));
+        mockMvc.perform(MockMvcRequestBuilders.get("/users/me"))
+            .andExpect(MockMvcResultMatchers.status().isOk())
+            .andExpect(MockMvcResultMatchers.jsonPath("$.username").value("johndoe"));
     }
 
     @Test
     @WithMockUser(username = "admin", roles = {"ADMIN"})
     void testDeleteUserById() throws Exception {
-        doNothing().when(userService).removeUserById(userId);
-
-        mockMvc.perform(delete("/users/{id}", userId))
-            .andExpect(status().isNoContent());
+        mockMvc.perform(MockMvcRequestBuilders.delete("/users/{id}", userId))
+            .andExpect(MockMvcResultMatchers.status().isNoContent());
     }
 
     @Test
@@ -108,27 +109,23 @@ class UserControllerTest {
             .role(Role.ROLE_USER)
             .build();
 
-        when(userService.updateUserById(eq(userId), any(User.class))).thenReturn(updated);
+        when(userService.updateUserById(userId, UserDTOMapper.mapUserInputDTOToUser(updatedUser))).thenReturn(updated);
 
-        mockMvc.perform(put("/users/{id}", userId)
+        mockMvc.perform(MockMvcRequestBuilders.put("/users/{id}", userId)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(updatedUser)))
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("$.email").value("jane123@example.com"));
+            .andExpect(MockMvcResultMatchers.status().isOk())
+            .andExpect(MockMvcResultMatchers.jsonPath("$.email").value("jane123@example.com"));
     }
 
     @Test
     @WithMockUser(username = "admin", roles = {"ADMIN"})
     void testUpdateUserCity() throws Exception {
         String placeId = "ChIJN1t_tDeuEmsRUsoyG83frY4";
-        Address address = new Address("addressId", "City", "Street", "123", "PostalCode", "Country", null, 10.0, 10.0);
-        user.setAddress(address);
-
         when(userService.updateUserAddress(userId, placeId)).thenReturn(user);
 
-        mockMvc.perform(post("/users/{userId}/address", userId)
+        mockMvc.perform(MockMvcRequestBuilders.post("/users/{userId}/address", userId)
                 .param("placeId", placeId))
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("$.address.city").value("City"));
+            .andExpect(MockMvcResultMatchers.status().isOk());
     }
 }

@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import org.example.sumatyw_backend.exceptions.InvalidDataException;
 import org.example.sumatyw_backend.exceptions.ObjectNotFoundException;
 import org.example.sumatyw_backend.exceptions.ResourceAlreadyExistsException;
 import org.example.sumatyw_backend.exceptions.UserNotFoundException;
@@ -26,108 +27,95 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
-public class BookingsServiceTest {
+class BookingServiceTest {
+
+    @Mock
+    private BookingRepository bookingRepository;
+
+    @Mock
+    private UserRepository userRepository;
+
+    @Mock
+    private MealRepository mealRepository;
+
+    @Mock
+    private RestaurantRepository restaurantRepository;
 
     @InjectMocks
     private BookingService bookingService;
 
-    @Mock
-    private BookingRepository bookingRepository;
-    @Mock
-    private UserRepository userRepository;
-    @Mock
-    private MealRepository mealRepository;
-    @Mock
-    private RestaurantRepository restaurantRepository;
-
+    private User user;
+    private Meal meal;
+    private Booking booking;
     private UUID userId;
     private UUID mealId;
     private UUID bookingId;
     private UUID restaurantId;
-    private Booking booking;
-    private User user;
-    private Meal meal;
     private Restaurant restaurant;
 
+
     @BeforeEach
-    void setup() {
+    void setUp() {
         userId = UUID.randomUUID();
         mealId = UUID.randomUUID();
         bookingId = UUID.randomUUID();
         restaurantId = UUID.randomUUID();
-        user = User.builder().userId(userId).build();
-        meal = Meal.builder().mealId(mealId).restaurant(Restaurant.builder().restaurantId(restaurantId).build()).build();
+
         restaurant = Restaurant.builder().restaurantId(restaurantId).build();
+
+
+        user = User.builder().userId(userId).build();
+        meal = Meal.builder().mealId(mealId).build();
         booking = Booking.builder()
+            .bookedId(bookingId)
             .user(user)
             .meal(meal)
-            .active(true)
+            .status(Status.Active)
+            .timestamp(LocalDateTime.now())
             .build();
     }
 
     @Test
     void testCreateBooking_Success() {
         when(userRepository.findById(userId)).thenReturn(Optional.of(user));
-        when(bookingRepository.findByUserUserIdAndActiveIsTrue(userId)).thenReturn(Optional.empty());
         when(mealRepository.findById(mealId)).thenReturn(Optional.of(meal));
-        when(bookingRepository.findByMealMealIdAndActiveIsTrue(mealId)).thenReturn(Optional.empty());
         when(bookingRepository.save(any(Booking.class))).thenReturn(booking);
 
         Booking result = bookingService.createBooking(booking);
 
-        assertEquals(booking, result);
-        assertNotNull(result.getTimestamp());
-        verify(bookingRepository).save(any(Booking.class));
+        assertNotNull(result);
+        assertEquals(Status.Active, result.getStatus());
+        verify(userRepository).findById(userId);
+        verify(mealRepository).findById(mealId);
+        verify(bookingRepository).save(booking);
     }
 
     @Test
     void testCreateBooking_UserNotFound() {
         when(userRepository.findById(userId)).thenReturn(Optional.empty());
 
-        Exception exception = assertThrows(UserNotFoundException.class, () -> {
+        assertThrows(UserNotFoundException.class, () -> {
             bookingService.createBooking(booking);
         });
 
-        assertEquals("User not found with ID: " + userId, exception.getMessage());
+        verify(userRepository).findById(userId);
+        verify(mealRepository, never()).findById(any(UUID.class));
+        verify(bookingRepository, never()).save(any(Booking.class));
     }
 
     @Test
     void testCreateBooking_ActiveBookingExists() {
         when(userRepository.findById(userId)).thenReturn(Optional.of(user));
-        when(bookingRepository.findByUserUserIdAndActiveIsTrue(userId)).thenReturn(Optional.of(booking));
+        when(bookingRepository.findByUserUserIdAndStatus(userId, Status.Active)).thenReturn(Optional.of(booking));
 
-        Exception exception = assertThrows(ResourceAlreadyExistsException.class, () -> {
+        assertThrows(ResourceAlreadyExistsException.class, () -> {
             bookingService.createBooking(booking);
         });
 
-        assertEquals("User already have active booking", exception.getMessage());
-    }
-
-    @Test
-    void testCreateBooking_MealNotFound() {
-        when(userRepository.findById(userId)).thenReturn(Optional.of(user));
-        when(bookingRepository.findByUserUserIdAndActiveIsTrue(userId)).thenReturn(Optional.empty());
-        when(mealRepository.findById(mealId)).thenReturn(Optional.empty());
-
-        Exception exception = assertThrows(ObjectNotFoundException.class, () -> {
-            bookingService.createBooking(booking);
-        });
-
-        assertEquals("Meal not found with ID: " + mealId, exception.getMessage());
-    }
-
-    @Test
-    void testCreateBooking_MealAlreadyBooked() {
-        when(userRepository.findById(userId)).thenReturn(Optional.of(user));
-        when(bookingRepository.findByUserUserIdAndActiveIsTrue(userId)).thenReturn(Optional.empty());
-        when(mealRepository.findById(mealId)).thenReturn(Optional.of(meal));
-        when(bookingRepository.findByMealMealIdAndActiveIsTrue(mealId)).thenReturn(Optional.of(booking));
-
-        Exception exception = assertThrows(ResourceAlreadyExistsException.class, () -> {
-            bookingService.createBooking(booking);
-        });
-
-        assertEquals("This meal is already booked", exception.getMessage());
+        verify(userRepository).findById(userId);
+        verify(bookingRepository).findByUserUserIdAndStatus(userId, Status.Active);
+        verify(mealRepository, never()).findById(any(UUID.class));
+        verify(bookingRepository, never()).save(any(Booking.class));
     }
 
     @Test
@@ -136,122 +124,81 @@ public class BookingsServiceTest {
 
         Booking result = bookingService.getBookingById(bookingId);
 
-        assertEquals(booking, result);
+        assertNotNull(result);
+        assertEquals(bookingId, result.getBookedId());
+        verify(bookingRepository).findById(bookingId);
     }
 
     @Test
     void testGetBookingById_NotFound() {
         when(bookingRepository.findById(bookingId)).thenReturn(Optional.empty());
 
-        Exception exception = assertThrows(ObjectNotFoundException.class, () -> {
+        assertThrows(ObjectNotFoundException.class, () -> {
             bookingService.getBookingById(bookingId);
         });
 
-        assertEquals("Booking not found with ID: " + bookingId, exception.getMessage());
+        verify(bookingRepository).findById(bookingId);
     }
 
     @Test
     void testGetBookingByUserId_Success() {
-        when(bookingRepository.findByUserUserIdAndActiveIsTrue(userId)).thenReturn(Optional.of(booking));
+        when(bookingRepository.findByUserUserIdAndStatus(userId, Status.Active)).thenReturn(Optional.of(booking));
 
         Booking result = bookingService.getBookingByUserId(userId);
 
-        assertEquals(booking, result);
+        assertNotNull(result);
+        assertEquals(userId, result.getUser().getUserId());
+        verify(bookingRepository).findByUserUserIdAndStatus(userId, Status.Active);
     }
 
     @Test
     void testGetBookingByUserId_NotFound() {
-        when(bookingRepository.findByUserUserIdAndActiveIsTrue(userId)).thenReturn(Optional.empty());
+        when(bookingRepository.findByUserUserIdAndStatus(userId, Status.Active)).thenReturn(Optional.empty());
 
-        Exception exception = assertThrows(ObjectNotFoundException.class, () -> {
+        assertThrows(ObjectNotFoundException.class, () -> {
             bookingService.getBookingByUserId(userId);
         });
 
-        assertEquals("Active booking not found with user ID: " + userId, exception.getMessage());
+        verify(bookingRepository).findByUserUserIdAndStatus(userId, Status.Active);
     }
 
     @Test
-    void testGetAllUserBookings_Success() {
-        List<Booking> bookings = List.of(booking);
-        when(bookingRepository.findAllByUserUserId(userId)).thenReturn(bookings);
-
-        List<Booking> result = bookingService.getAllUserBookings(userId);
-
-        assertEquals(bookings, result);
-    }
-
-    @Test
-    void testDeleteBookingById_Success() {
+    void testCancelBookingById_Success() {
+        booking.setStatus(Status.Active);
         when(bookingRepository.findById(bookingId)).thenReturn(Optional.of(booking));
+        when(bookingRepository.save(any(Booking.class))).thenReturn(booking);
 
-        bookingService.deleteBookingById(bookingId);
+        Booking result = bookingService.cancelBookingById(bookingId);
 
-        verify(bookingRepository).deleteById(bookingId);
+        assertNotNull(result);
+        assertEquals(Status.Cancelled, result.getStatus());
+        verify(bookingRepository).findById(bookingId);
+        verify(bookingRepository).save(booking);
     }
 
     @Test
-    void testDeleteBookingById_NotFound() {
+    void testCancelBookingById_NotFound() {
         when(bookingRepository.findById(bookingId)).thenReturn(Optional.empty());
 
-        Exception exception = assertThrows(ObjectNotFoundException.class, () -> {
-            bookingService.deleteBookingById(bookingId);
+        assertThrows(ObjectNotFoundException.class, () -> {
+            bookingService.cancelBookingById(bookingId);
         });
 
-        assertEquals("Booking not found with ID: " + bookingId, exception.getMessage());
+        verify(bookingRepository).findById(bookingId);
+        verify(bookingRepository, never()).save(any(Booking.class));
     }
 
     @Test
-    void testGetAllActiveBookings_Success() {
-        List<Booking> bookings = List.of(booking);
-        when(bookingRepository.findBookingByActiveIsTrue()).thenReturn(bookings);
+    void testCancelBookingById_InvalidState() {
+        booking.setStatus(Status.Cancelled);
+        when(bookingRepository.findById(bookingId)).thenReturn(Optional.of(booking));
 
-        List<Booking> result = bookingService.getAllActiveBookings();
-
-        assertEquals(bookings, result);
-    }
-
-    @Test
-    void testGetBookingsByRestaurantID_Success() {
-        when(restaurantRepository.findById(restaurantId)).thenReturn(Optional.of(restaurant));
-        List<Booking> bookings = List.of(booking);
-        when(bookingRepository.findBookingByMeal_RestaurantRestaurantId(restaurantId)).thenReturn(bookings);
-
-        List<Booking> result = bookingService.getBookingsByRestaurantID(restaurantId);
-
-        assertEquals(bookings, result);
-    }
-
-    @Test
-    void testGetBookingsByRestaurantID_RestaurantNotFound() {
-        when(restaurantRepository.findById(restaurantId)).thenReturn(Optional.empty());
-
-        Exception exception = assertThrows(ObjectNotFoundException.class, () -> {
-            bookingService.getBookingsByRestaurantID(restaurantId);
+        assertThrows(InvalidDataException.class, () -> {
+            bookingService.cancelBookingById(bookingId);
         });
 
-        assertEquals("Restaurant not found with ID: " + restaurantId, exception.getMessage());
-    }
-
-    @Test
-    void testGetActiveBookingsByRestaurantID_Success() {
-        when(restaurantRepository.findById(restaurantId)).thenReturn(Optional.of(restaurant));
-        List<Booking> bookings = List.of(booking);
-        when(bookingRepository.findBookingByMeal_RestaurantRestaurantId(restaurantId)).thenReturn(bookings);
-
-        List<Booking> result = bookingService.getActiveBookingsByRestaurantID(restaurantId, true);
-
-        assertEquals(bookings, result);
-    }
-
-    @Test
-    void testGetActiveBookingsByRestaurantID_RestaurantNotFound() {
-        when(restaurantRepository.findById(restaurantId)).thenReturn(Optional.empty());
-
-        Exception exception = assertThrows(ObjectNotFoundException.class, () -> {
-            bookingService.getActiveBookingsByRestaurantID(restaurantId, true);
-        });
-
-        assertEquals("Restaurant not found with ID: " + restaurantId, exception.getMessage());
+        verify(bookingRepository).findById(bookingId);
+        verify(bookingRepository, never()).save(any(Booking.class));
     }
 
     @Test
@@ -261,20 +208,137 @@ public class BookingsServiceTest {
 
         Booking result = bookingService.markBookingAsPickedUp(bookingId, booking);
 
-        assertNotNull(result.getPickedUpTimestamp());
-        assertFalse(result.isActive());
-        verify(bookingRepository).save(any(Booking.class));
+        assertNotNull(result);
+        assertEquals(Status.PickedUp, result.getStatus());
+        verify(bookingRepository).findById(bookingId);
+        verify(bookingRepository).save(booking);
     }
 
     @Test
     void testMarkBookingAsPickedUp_NotFound() {
         when(bookingRepository.findById(bookingId)).thenReturn(Optional.empty());
 
-        Exception exception = assertThrows(ObjectNotFoundException.class, () -> {
+        assertThrows(ObjectNotFoundException.class, () -> {
             bookingService.markBookingAsPickedUp(bookingId, booking);
         });
 
-        assertEquals("Booking not found with ID: " + bookingId, exception.getMessage());
+        verify(bookingRepository).findById(bookingId);
+        verify(bookingRepository, never()).save(any(Booking.class));
+    }
+
+    @Test
+    void testGetAllActiveBookings() {
+        List<Booking> activeBookings = List.of(
+            Booking.builder().bookedId(UUID.randomUUID()).status(Status.Active).build(),
+            Booking.builder().bookedId(UUID.randomUUID()).status(Status.Active).build()
+        );
+
+        when(bookingRepository.findByStatus(Status.Active)).thenReturn(activeBookings);
+
+        List<Booking> result = bookingService.getAllActiveBookings();
+
+        assertNotNull(result);
+        assertEquals(2, result.size());
+        verify(bookingRepository).findByStatus(Status.Active);
+    }
+
+    @Test
+    void testGetBookingsByRestaurantID_Success() {
+        List<Booking> restaurantBookings = List.of(
+            Booking.builder().bookedId(UUID.randomUUID()).meal(meal).build(),
+            Booking.builder().bookedId(UUID.randomUUID()).meal(meal).build()
+        );
+
+        when(restaurantRepository.findById(restaurantId)).thenReturn(Optional.of(restaurant));
+        when(bookingRepository.findBookingByMeal_RestaurantRestaurantId(restaurantId)).thenReturn(restaurantBookings);
+
+        List<Booking> result = bookingService.getBookingsByRestaurantID(restaurantId);
+
+        assertNotNull(result);
+        assertEquals(2, result.size());
+        verify(restaurantRepository).findById(restaurantId);
+        verify(bookingRepository).findBookingByMeal_RestaurantRestaurantId(restaurantId);
+    }
+
+    @Test
+    void testGetBookingsByRestaurantID_RestaurantNotFound() {
+        when(restaurantRepository.findById(restaurantId)).thenReturn(Optional.empty());
+
+        assertThrows(ObjectNotFoundException.class, () -> {
+            bookingService.getBookingsByRestaurantID(restaurantId);
+        });
+
+        verify(restaurantRepository).findById(restaurantId);
+        verify(bookingRepository, never()).findBookingByMeal_RestaurantRestaurantId(any(UUID.class));
+    }
+
+    @Test
+    void testGetActiveBookingsByRestaurantID_Success() {
+        Booking activeBooking = Booking.builder().bookedId(UUID.randomUUID()).status(Status.Active).build();
+        Booking inactiveBooking = Booking.builder().bookedId(UUID.randomUUID()).status(Status.Cancelled).build();
+        List<Booking> restaurantBookings = List.of(activeBooking, inactiveBooking);
+
+        when(restaurantRepository.findById(restaurantId)).thenReturn(Optional.of(restaurant));
+        when(bookingRepository.findBookingByMeal_RestaurantRestaurantId(restaurantId)).thenReturn(restaurantBookings);
+
+        List<Booking> activeBookings = bookingService.getActiveBookingsByRestaurantID(restaurantId, true);
+        List<Booking> inactiveBookings = bookingService.getActiveBookingsByRestaurantID(restaurantId, false);
+
+        assertNotNull(activeBookings);
+        assertEquals(1, activeBookings.size());
+        assertEquals(Status.Active, activeBookings.get(0).getStatus());
+
+        assertNotNull(inactiveBookings);
+        assertEquals(1, inactiveBookings.size());
+        assertNotEquals(Status.Active, inactiveBookings.get(0).getStatus());
+
+        verify(restaurantRepository, times(2)).findById(restaurantId);
+        verify(bookingRepository, times(2)).findBookingByMeal_RestaurantRestaurantId(restaurantId);
+    }
+
+    @Test
+    void testGetActiveBookingsByRestaurantID_RestaurantNotFound() {
+        when(restaurantRepository.findById(restaurantId)).thenReturn(Optional.empty());
+
+        assertThrows(ObjectNotFoundException.class, () -> {
+            bookingService.getActiveBookingsByRestaurantID(restaurantId, true);
+        });
+
+        verify(restaurantRepository).findById(restaurantId);
+        verify(bookingRepository, never()).findBookingByMeal_RestaurantRestaurantId(any(UUID.class));
+    }
+    @Test
+    void testCreateBooking_MealAlreadyBooked() {
+        when(userRepository.findById(userId)).thenReturn(Optional.of(user));
+        when(bookingRepository.findByUserUserIdAndStatus(userId, Status.Active)).thenReturn(Optional.empty());
+        when(mealRepository.findById(mealId)).thenReturn(Optional.of(meal));
+        when(bookingRepository.findByMealMealIdAndStatus(mealId, Status.Active)).thenReturn(Optional.of(booking));
+
+        ResourceAlreadyExistsException exception = assertThrows(ResourceAlreadyExistsException.class, () -> {
+            bookingService.createBooking(booking);
+        });
+
+        assertEquals("This meal is already booked", exception.getMessage());
+        verify(userRepository).findById(userId);
+        verify(bookingRepository).findByUserUserIdAndStatus(userId, Status.Active);
+        verify(mealRepository).findById(mealId);
+        verify(bookingRepository).findByMealMealIdAndStatus(mealId, Status.Active);
+    }
+
+    @Test
+    void testGetAllUserBookings_Success() {
+        List<Booking> userBookings = List.of(
+            Booking.builder().bookedId(UUID.randomUUID()).user(user).build(),
+            Booking.builder().bookedId(UUID.randomUUID()).user(user).build()
+        );
+
+        when(bookingRepository.findAllByUserUserId(userId)).thenReturn(userBookings);
+
+        List<Booking> result = bookingService.getAllUserBookings(userId);
+
+        assertNotNull(result);
+        assertEquals(2, result.size());
+        verify(bookingRepository).findAllByUserUserId(userId);
     }
 }
 

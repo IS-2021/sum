@@ -26,7 +26,7 @@ public class BookingValidator {
         for(Booking booking : allBookings) {
 
             if(booking.getTimestamp().plusHours(1).isBefore(currentTime)) {
-                booking.setActive(false);
+                booking.setStatus(Status.OutOfDate);
             }
         }
         bookingRepository.saveAll(allBookings);

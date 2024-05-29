@@ -5,6 +5,7 @@ import lombok.*;
 import org.example.sumatyw_backend.restaurants.Restaurant;
 import org.example.sumatyw_backend.users.User;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
@@ -25,5 +26,5 @@ public class Opinion {
     @JoinColumn(name = "restaurant_id")
     private Restaurant restaurant;
     private boolean isPositive;
-    private String timestamp;
+    private LocalDateTime timestamp;
 }

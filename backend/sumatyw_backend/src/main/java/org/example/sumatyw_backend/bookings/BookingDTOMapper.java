@@ -9,7 +9,6 @@ public class BookingDTOMapper {
         return Booking.builder()
             .meal(Meal.builder().mealId(bookingInputDTO.mealId()).build())
             .user(User.builder().userId(bookingInputDTO.userId()).build())
-            .active(true)
             .build();
     }
 
@@ -20,7 +19,8 @@ public class BookingDTOMapper {
             booking.getMeal().getMealId(),
             booking.getTimestamp(),
             booking.getTimestamp().plusHours(1),
-            booking.getPickedUpTimestamp() == null ? null : booking.getPickedUpTimestamp()
+            booking.getPickedUpTimestamp() == null ? null : booking.getPickedUpTimestamp(),
+            booking.getStatus()
         );
     }
 }

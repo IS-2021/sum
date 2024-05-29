@@ -3,6 +3,7 @@ package org.example.sumatyw_backend.meals;
 
 import lombok.AllArgsConstructor;
 import org.example.sumatyw_backend.bookings.Booking;
+import org.example.sumatyw_backend.bookings.Status;
 import org.example.sumatyw_backend.exceptions.ObjectNotFoundException;
 import org.example.sumatyw_backend.restaurants.RestaurantRepository;
 import org.springframework.stereotype.Service;
@@ -32,7 +33,7 @@ public class MealService {
         for (int i = 0; i < meals.size(); i++) {
             boolean hasActiveBooking = false;
             for (Booking booking : meals.get(i).getBookings()) {
-                if (booking.isActive() || booking.getPickedUpTimestamp() != null)
+                if (booking.getStatus() == Status.Active)
                     hasActiveBooking = true;
             }
 

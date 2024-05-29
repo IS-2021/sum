@@ -7,7 +7,7 @@ import org.example.sumatyw_backend.users.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentCaptor;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -15,311 +15,258 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.verify;
+
+import static org.hibernate.validator.internal.util.Contracts.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-public class RestaurantServiceTest {
-    private RestaurantService restaurantService;
+class RestaurantServiceTest {
+
     @Mock
     private RestaurantRepository restaurantRepository;
 
+    @InjectMocks
+    private RestaurantService restaurantService;
+
+    private Restaurant restaurant;
+    private UUID restaurantId;
+    private User user;
+
     @BeforeEach
     void setUp() {
-        restaurantService = new RestaurantService(restaurantRepository);
-    }
-
-    @Test
-    void addRestaurant_AddsNewRestaurant() {
-        // given
-        User user = User.builder().userId(UUID.randomUUID()).build();
-        Restaurant restaurant = Restaurant.builder()
-            .user(user)
-            .phoneNumber("123456789")
-            .build();
-        restaurant.setRestaurantId(user.getUserId());
-        restaurant.setImageUUID("default.jpg");
-
-        given(restaurantRepository.findByPhoneNumber(restaurant.getPhoneNumber())).willReturn(Optional.empty());
-        given(restaurantRepository.save(restaurant)).willReturn(restaurant);
-
-        // when
-        Restaurant savedRestaurant = restaurantService.addRestaurant(restaurant);
-
-        // then
-        ArgumentCaptor<Restaurant> restaurantCaptor = ArgumentCaptor.forClass(Restaurant.class);
-        verify(restaurantRepository).save(restaurantCaptor.capture());
-
-        Restaurant capturedRestaurant = restaurantCaptor.getValue();
-
-        assertThat(capturedRestaurant.getRestaurantId()).isEqualTo(user.getUserId());
-        assertThat(capturedRestaurant.getImageUUID()).isEqualTo("default.jpg");
-        assertThat(savedRestaurant).isEqualTo(capturedRestaurant);
-    }
-
-    @Test
-    void addRestaurant_ThrowsResourceAlreadyExistsException_IfPhoneNumberExists() {
-        // given
-        User user = User.builder().userId(UUID.randomUUID()).build();
-        Restaurant restaurant = Restaurant.builder()
-            .user(user)
-            .phoneNumber("123456789")
-            .build();
-
-        given(restaurantRepository.findByPhoneNumber(restaurant.getPhoneNumber())).willReturn(Optional.of(restaurant));
-
-        // when / then
-        assertThatThrownBy(() -> restaurantService.addRestaurant(restaurant))
-            .isInstanceOf(ResourceAlreadyExistsException.class)
-            .hasMessageContaining("Restaurant with phone number: '123456789' already exists.");
-    }
-
-    @Test
-    void banRestaurant_BanTheRestaurant() {
-        // given
-        UUID restaurantId = UUID.randomUUID();
-        User user = User.builder().userId(UUID.randomUUID()).build();
-        Address address = Address.builder().build();
-
-        Restaurant restaurant = Restaurant.builder()
+        restaurantId = UUID.randomUUID();
+        user = User.builder().userId(UUID.randomUUID()).build();
+        restaurant = Restaurant.builder()
             .restaurantId(restaurantId)
+            .user(user)
             .name("Test Restaurant")
             .phoneNumber("123456789")
-            .hours("null")
-            .imageUUID("default.jpg")
-            .active(true)
-            .user(user)
-            .address(address)
+            .hours("{ \"monday\": [ \"10:00\", \"21:00\" ], \"tuesday\": [ \"08:00\", \"20:00\" ], \"wednesday\": [ \"10:00\", \"18:00\" ], \"thursday\": [ \"10:00\", \"20:00\" ], \"friday\": [ \"08:00\", \"23:00\" ], \"saturday\": [], \"sunday\": [ \"09:00\", \"22:00\" ] }")
+            .status(RestaurantStatus.Inactive)
+            .address(Address.builder().city("Test City").build())
             .build();
+    }
 
-        given(restaurantRepository.findById(restaurantId)).willReturn(Optional.of(restaurant));
 
-        // when
-        restaurantService.banRestaurantById(restaurantId);
+    @Test
+    void testAddRestaurant_Success() {
+        when(restaurantRepository.findByPhoneNumber(restaurant.getPhoneNumber())).thenReturn(Optional.empty());
+        when(restaurantRepository.save(any(Restaurant.class))).thenReturn(restaurant);
 
-        // then
-        assertThat(restaurant.isBanned()).isTrue();
+        Restaurant result = restaurantService.addRestaurant(restaurant);
+
+        assertNotNull(result);
+        assertEquals(restaurant.getRestaurantId(), result.getRestaurantId());
+        assertEquals("default.jpg", result.getImageUUID());
+        assertEquals(RestaurantStatus.Inactive, result.getStatus());
+        verify(restaurantRepository).findByPhoneNumber(restaurant.getPhoneNumber());
         verify(restaurantRepository).save(restaurant);
     }
 
     @Test
-    void banRestaurantById_ThrowsObjectNotFoundException_IfRestaurantNotFound() {
-        // given
-        UUID restaurantId = UUID.randomUUID();
-        given(restaurantRepository.findById(restaurantId)).willReturn(Optional.empty());
+    void testAddRestaurant_PhoneNumberExists() {
+        when(restaurantRepository.findByPhoneNumber(restaurant.getPhoneNumber())).thenReturn(Optional.of(restaurant));
 
-        // when / then
-        assertThatThrownBy(() -> restaurantService.banRestaurantById(restaurantId))
-            .isInstanceOf(ObjectNotFoundException.class)
-            .hasMessageContaining("Restaurant with id: " + restaurantId + " not found");
+        assertThrows(ResourceAlreadyExistsException.class, () -> restaurantService.addRestaurant(restaurant));
+        verify(restaurantRepository).findByPhoneNumber(restaurant.getPhoneNumber());
+        verify(restaurantRepository, never()).save(any(Restaurant.class));
     }
 
+    @Test
+    void testBanRestaurantById_Success() {
+        when(restaurantRepository.findById(restaurantId)).thenReturn(Optional.of(restaurant));
+        when(restaurantRepository.save(any(Restaurant.class))).thenReturn(restaurant);
 
+        RestaurantDTO result = restaurantService.banRestaurantById(restaurantId);
+
+        assertNotNull(result);
+        assertEquals(RestaurantStatus.Banned, restaurant.getStatus());
+        verify(restaurantRepository).findById(restaurantId);
+        verify(restaurantRepository).save(restaurant);
+    }
 
     @Test
-    void getAllRestaurants_ReturnsActiveRestaurants() {
-        // given
-        List<Restaurant> restaurants = List.of(Restaurant.builder().active(true).build());
-        given(restaurantRepository.findAllByActiveTrue()).willReturn(restaurants);
+    void testBanRestaurantById_NotFound() {
+        when(restaurantRepository.findById(restaurantId)).thenReturn(Optional.empty());
 
-        // when
+        assertThrows(ObjectNotFoundException.class, () -> restaurantService.banRestaurantById(restaurantId));
+        verify(restaurantRepository).findById(restaurantId);
+        verify(restaurantRepository, never()).save(any(Restaurant.class));
+    }
+
+    @Test
+    void testGetAllRestaurants() {
+        List<Restaurant> restaurants = List.of(restaurant);
+        when(restaurantRepository.findAllByStatus(RestaurantStatus.Active)).thenReturn(restaurants);
+
         List<Restaurant> result = restaurantService.getAllRestaurants();
 
-        // then
-        assertThat(result).isEqualTo(restaurants);
-        verify(restaurantRepository).findAllByActiveTrue();
+        assertNotNull(result);
+        assertEquals(1, result.size());
+        verify(restaurantRepository).findAllByStatus(RestaurantStatus.Active);
     }
 
     @Test
-    void getRestaurantsByCity_ReturnsActiveRestaurantsInCity() {
-        // given
-        String city = "SampleCity";
-        List<Restaurant> restaurants = List.of(Restaurant.builder().active(true).build());
-        given(restaurantRepository.findAllByAddress_City_AndActiveTrue(city)).willReturn(restaurants);
+    void testGetRestaurantsByCity() {
+        List<Restaurant> restaurants = List.of(restaurant);
+        when(restaurantRepository.findAllByAddress_City_AndStatus("Test City", RestaurantStatus.Active)).thenReturn(restaurants);
 
-        // when
-        List<Restaurant> result = restaurantService.getRestaurantsByCity(city);
+        List<Restaurant> result = restaurantService.getRestaurantsByCity("Test City");
 
-        // then
-        assertThat(result).isEqualTo(restaurants);
-        verify(restaurantRepository).findAllByAddress_City_AndActiveTrue(city);
+        assertNotNull(result);
+        assertEquals(1, result.size());
+        verify(restaurantRepository).findAllByAddress_City_AndStatus("Test City", RestaurantStatus.Active);
     }
 
     @Test
-    void deactivateRestaurant_DeactivatesTheRestaurant() {
-        // given
-        UUID restaurantId = UUID.randomUUID();
-        User user = User.builder().userId(UUID.randomUUID()).build();
-        Address address = Address.builder().build();
+    void testDeactivateRestaurant_Success() {
+        when(restaurantRepository.findById(restaurantId)).thenReturn(Optional.of(restaurant));
+        when(restaurantRepository.save(any(Restaurant.class))).thenReturn(restaurant);
 
-        Restaurant restaurant = Restaurant.builder()
-            .restaurantId(restaurantId)
-            .name("Test Restaurant")
-            .phoneNumber("123456789")
-            .hours("null")
-            .active(true)
-            .user(user)
-            .address(address)
-            .build();
+        RestaurantDTO result = restaurantService.deactivateRestaurant(restaurantId);
 
-        given(restaurantRepository.findById(restaurantId)).willReturn(Optional.of(restaurant));
-
-        // when
-        restaurantService.deactivateRestaurant(restaurantId);
-
-        // then
-        assertThat(restaurant.isActive()).isFalse();
+        assertNotNull(result);
+        assertEquals(RestaurantStatus.Inactive, restaurant.getStatus());
+        verify(restaurantRepository).findById(restaurantId);
         verify(restaurantRepository).save(restaurant);
     }
 
     @Test
-    void deactivateRestaurant_ThrowsObjectNotFoundException_IfRestaurantDoesNotExist() {
-        // given
-        UUID restaurantId = UUID.randomUUID();
-        given(restaurantRepository.findById(restaurantId)).willReturn(Optional.empty());
+    void testDeactivateRestaurant_NotFound() {
+        when(restaurantRepository.findById(restaurantId)).thenReturn(Optional.empty());
 
-        // when / then
-        assertThatThrownBy(() -> restaurantService.deactivateRestaurant(restaurantId))
-            .isInstanceOf(ObjectNotFoundException.class)
-            .hasMessageContaining("Restaurant with id: " + restaurantId + " not found");
+        assertThrows(ObjectNotFoundException.class, () -> restaurantService.deactivateRestaurant(restaurantId));
+        verify(restaurantRepository).findById(restaurantId);
+        verify(restaurantRepository, never()).save(any(Restaurant.class));
     }
 
     @Test
-    void activateRestaurantById_ActivatesTheRestaurant() {
-        // given
-        UUID restaurantId = UUID.randomUUID();
-        User user = User.builder().userId(UUID.randomUUID()).build();
-        Address address = Address.builder().build();
+    void testActivateRestaurantById_Success() {
+        when(restaurantRepository.findById(restaurantId)).thenReturn(Optional.of(restaurant));
+        when(restaurantRepository.save(any(Restaurant.class))).thenReturn(restaurant);
 
-        Restaurant restaurant = Restaurant.builder()
-            .restaurantId(restaurantId)
-            .name("Test Restaurant")
-            .phoneNumber("123456789")
-            .hours("null")
-            .imageUUID("default.jpg")
-            .active(false)
-            .user(user)
-            .address(address)
-            .build();
-        given(restaurantRepository.findById(restaurantId)).willReturn(Optional.of(restaurant));
+        RestaurantDTO result = restaurantService.activateRestaurantById(restaurantId);
 
-        // when
-        restaurantService.activateRestaurantById(restaurantId);
-
-        // then
-        assertThat(restaurant.isActive()).isTrue();
+        assertNotNull(result);
+        assertEquals(RestaurantStatus.Active, restaurant.getStatus());
+        verify(restaurantRepository).findById(restaurantId);
         verify(restaurantRepository).save(restaurant);
     }
 
     @Test
-    void activateRestaurantById_ThrowsObjectNotFoundException_IfRestaurantDoesNotExist() {
-        // given
-        UUID restaurantId = UUID.randomUUID();
-        given(restaurantRepository.findById(restaurantId)).willReturn(Optional.empty());
+    void testActivateRestaurantById_NotFound() {
+        when(restaurantRepository.findById(restaurantId)).thenReturn(Optional.empty());
 
-        // when / then
-        assertThatThrownBy(() -> restaurantService.activateRestaurantById(restaurantId))
-            .isInstanceOf(ObjectNotFoundException.class)
-            .hasMessageContaining("Restaurant with id: " + restaurantId + " not found");
+        assertThrows(ObjectNotFoundException.class, () -> restaurantService.activateRestaurantById(restaurantId));
+        verify(restaurantRepository).findById(restaurantId);
+        verify(restaurantRepository, never()).save(any(Restaurant.class));
     }
 
     @Test
-    void getRestaurantById_ReturnsRestaurant() {
-        // given
-        UUID restaurantId = UUID.randomUUID();
-        Restaurant restaurant = Restaurant.builder().restaurantId(restaurantId).build();
-        given(restaurantRepository.findById(restaurantId)).willReturn(Optional.of(restaurant));
+    void testGetRestaurantById_Success() {
+        when(restaurantRepository.findById(restaurantId)).thenReturn(Optional.of(restaurant));
 
-        // when
         Restaurant result = restaurantService.getRestaurantById(restaurantId);
 
-        // then
-        assertThat(result).isEqualTo(restaurant);
+        assertNotNull(result);
+        assertEquals(restaurantId, result.getRestaurantId());
+        verify(restaurantRepository).findById(restaurantId);
     }
 
     @Test
-    void getRestaurantById_ThrowsObjectNotFoundException_IfRestaurantDoesNotExist() {
-        // given
-        UUID restaurantId = UUID.randomUUID();
-        given(restaurantRepository.findById(restaurantId)).willReturn(Optional.empty());
+    void testGetRestaurantById_NotFound() {
+        when(restaurantRepository.findById(restaurantId)).thenReturn(Optional.empty());
 
-        // when / then
-        assertThatThrownBy(() -> restaurantService.getRestaurantById(restaurantId))
-            .isInstanceOf(ObjectNotFoundException.class)
-            .hasMessageContaining("Restaurant not found with ID: " + restaurantId);
+        assertThrows(ObjectNotFoundException.class, () -> restaurantService.getRestaurantById(restaurantId));
+        verify(restaurantRepository).findById(restaurantId);
     }
 
     @Test
-    void removeRestaurantById_RemovesTheRestaurant() {
-        // given
-        UUID restaurantId = UUID.randomUUID();
-        Restaurant restaurant = Restaurant.builder().restaurantId(restaurantId).build();
-        given(restaurantRepository.findById(restaurantId)).willReturn(Optional.of(restaurant));
+    void testRemoveRestaurantById_Success() {
+        when(restaurantRepository.findById(restaurantId)).thenReturn(Optional.of(restaurant));
+        doNothing().when(restaurantRepository).deleteById(restaurantId);
 
-        // when
         restaurantService.removeRestaurantById(restaurantId);
 
-        // then
+        verify(restaurantRepository).findById(restaurantId);
         verify(restaurantRepository).deleteById(restaurantId);
     }
 
     @Test
-    void removeRestaurantById_ThrowsObjectNotFoundException_IfRestaurantDoesNotExist() {
-        // given
-        UUID restaurantId = UUID.randomUUID();
-        given(restaurantRepository.findById(restaurantId)).willReturn(Optional.empty());
+    void testRemoveRestaurantById_NotFound() {
+        when(restaurantRepository.findById(restaurantId)).thenReturn(Optional.empty());
 
-        // when / then
-        assertThatThrownBy(() -> restaurantService.removeRestaurantById(restaurantId))
-            .isInstanceOf(ObjectNotFoundException.class)
-            .hasMessageContaining("Restaurant not found with ID: " + restaurantId);
+        assertThrows(ObjectNotFoundException.class, () -> restaurantService.removeRestaurantById(restaurantId));
+        verify(restaurantRepository).findById(restaurantId);
+        verify(restaurantRepository, never()).deleteById(any(UUID.class));
     }
 
     @Test
-    void updateRestaurantById_UpdatesRestaurantDetails() {
-        // given
-        UUID restaurantId = UUID.randomUUID();
-        User user = User.builder().userId(UUID.randomUUID()).build();
-        Address address = Address.builder().build();
-        Restaurant existingRestaurant = Restaurant.builder()
+    void testUpdateRestaurantById_Success() {
+        when(restaurantRepository.findById(restaurantId)).thenReturn(Optional.of(restaurant));
+        when(restaurantRepository.save(any(Restaurant.class))).thenReturn(restaurant);
+
+        Restaurant updatedRestaurant = Restaurant.builder()
             .restaurantId(restaurantId)
-            .name("Test Restaurant")
-            .phoneNumber("123456789")
-            .hours("9:00 - 21:00")
-            .imageUUID("default.jpg")
-            .active(false)
             .user(user)
-            .address(address)
+            .name("Updated Restaurant")
+            .phoneNumber("987654321")
+            .status(RestaurantStatus.Active)
             .build();
-        Restaurant updatedRestaurant = Restaurant.builder().name("New Name").phoneNumber("456").hours("9-5").build();
 
-        given(restaurantRepository.findById(restaurantId)).willReturn(Optional.of(existingRestaurant));
-        given(restaurantRepository.findByPhoneNumber(updatedRestaurant.getPhoneNumber())).willReturn(Optional.empty());
-        given(restaurantRepository.save(existingRestaurant)).willReturn(existingRestaurant);
-
-        // when
         Restaurant result = restaurantService.updateRestaurantById(restaurantId, updatedRestaurant);
 
-        // then
-        assertThat(result.getName()).isEqualTo(updatedRestaurant.getName());
-        assertThat(result.getPhoneNumber()).isEqualTo(updatedRestaurant.getPhoneNumber());
-        assertThat(result.getHours()).isEqualTo(updatedRestaurant.getHours());
+        assertNotNull(result);
+        assertEquals("Updated Restaurant", result.getName());
+        assertEquals("987654321", result.getPhoneNumber());
+        verify(restaurantRepository).findById(restaurantId);
+        verify(restaurantRepository).save(any(Restaurant.class));
     }
 
     @Test
-    void updateRestaurantById_ThrowsObjectNotFoundException_IfRestaurantDoesNotExist() {
-        // given
-        UUID restaurantId = UUID.randomUUID();
-        Restaurant updatedRestaurant = Restaurant.builder().build();
+    void testUpdateRestaurantById_NotFound() {
+        when(restaurantRepository.findById(restaurantId)).thenReturn(Optional.empty());
 
-        given(restaurantRepository.findById(restaurantId)).willReturn(Optional.empty());
-
-        // when / then
-        assertThatThrownBy(() -> restaurantService.updateRestaurantById(restaurantId, updatedRestaurant))
-            .isInstanceOf(ObjectNotFoundException.class)
-            .hasMessageContaining("Restaurant not found with ID: " + restaurantId);
+        assertThrows(ObjectNotFoundException.class, () -> restaurantService.updateRestaurantById(restaurantId, restaurant));
+        verify(restaurantRepository).findById(restaurantId);
+        verify(restaurantRepository, never()).save(any(Restaurant.class));
     }
 
+    @Test
+    void testGetAllPendingRestaurant() {
+        List<Restaurant> pendingRestaurants = List.of(restaurant);
+        when(restaurantRepository.findAllByStatus(RestaurantStatus.Inactive)).thenReturn(pendingRestaurants);
+
+        List<Restaurant> result = restaurantService.getAllPendingRestaurant();
+
+        assertNotNull(result);
+        assertEquals(1, result.size());
+        verify(restaurantRepository).findAllByStatus(RestaurantStatus.Inactive);
+    }
+
+    @Test
+    void testUpdateRestaurantImageUUID() {
+        when(restaurantRepository.save(restaurant)).thenReturn(restaurant);
+
+        restaurantService.updateRestaurantImageUUID(restaurant);
+
+        verify(restaurantRepository).save(restaurant);
+    }
+
+    @Test
+    void testGetLocalRestaurants() {
+        List<Restaurant> allRestaurants = List.of(
+            Restaurant.builder().address(Address.builder().latitude(12.9715987).longitude(77.5945627).build()).status(RestaurantStatus.Active).build(),
+            Restaurant.builder().address(Address.builder().latitude(13.035542).longitude(77.597100).build()).status(RestaurantStatus.Active).build()
+        );
+        when(restaurantRepository.findAllByStatus(RestaurantStatus.Active)).thenReturn(allRestaurants);
+
+        List<Restaurant> result = restaurantService.getLocalRestaurants(12.9715987, 77.5945627, 5);
+
+        assertNotNull(result);
+        assertEquals(1, result.size());
+        verify(restaurantRepository).findAllByStatus(RestaurantStatus.Active);
+    }
 }

@@ -58,7 +58,7 @@ public class BookingController {
 
     @GetMapping(params = {"restaurantId","active"})
     public ResponseEntity<List<BookingDTO>> getActiveBookingsByRestaurantId(@RequestParam("restaurantId") UUID restaurandId, @RequestParam("active") boolean active) {
-        List<Booking> bookings = bookingService.getActiveBookingsByRestaurantID(restaurandId, active);
+        List<Booking> bookings = bookingService.getActiveBookingsByRestaurantID(restaurandId,active);
         return new ResponseEntity<>(bookings.stream().map(BookingDTOMapper::mapBookingToBookingDTO).toList(), HttpStatus.OK);
     }
 
@@ -70,8 +70,7 @@ public class BookingController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteBookingById(@PathVariable("id") UUID id) {
-        bookingService.deleteBookingById(id);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    public ResponseEntity<BookingDTO> cancelBookingById(@PathVariable("id") UUID id) {
+        return new ResponseEntity<>(BookingDTOMapper.mapBookingToBookingDTO(bookingService.cancelBookingById(id)),HttpStatus.OK);
     }
 }
