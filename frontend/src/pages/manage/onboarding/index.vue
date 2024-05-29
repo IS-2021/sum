@@ -10,6 +10,8 @@ import { useForm } from 'vee-validate';
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { useStepper } from '@vueuse/core';
 import { cn } from '@/lib/utils';
+import { LogOutIcon, ChevronRightIcon, ChevronLeftIcon } from 'lucide-vue-next';
+import Logo from '@/components/Logo.vue';
 
 useHead({
   title: 'Complete restaurant profile',
@@ -17,12 +19,25 @@ useHead({
 
 const { restaurant, isProfileComplete, signOut } = useRestaurantUser();
 
-const { current, goToPrevious, goToNext, isCurrent } = useStepper([
-  // 'greeting',
-  'details',
-  'hours',
-  'location',
-]);
+const { current, goToPrevious, goToNext, isCurrent, isFirst, isLast } = useStepper({
+  greeting: {
+    label: 'Welcome to FoodGood',
+    description:
+      'Before you continue, you need to finish setting up your restaurant profile. After your restaurant profile is verified, you can start your food saving journey.',
+  },
+  details: {
+    label: 'Restaurant details',
+    description: 'First, we need some basic information about your restaurant.',
+  },
+  hours: {
+    label: 'Opening hours',
+    description: 'Next, let us know when your restaurant is open.',
+  },
+  location: {
+    label: 'Restaurant location',
+    description: 'Finally, tell us where your restaurant is located.',
+  },
+});
 
 const formFields = {
   details: [
@@ -106,13 +121,30 @@ const onSubmit = form.handleSubmit((values) => {
 
 <template>
   <div class="grid min-h-svh grid-cols-2">
-    <div class=""></div>
-    <div class="space-y-5 p-10 md:h-svh">
-      <h1>Restaurant form</h1>
+    <div class="border-r border-neutral-300">
+      <img
+        src="@/assets/images/chris-liverani-oCsaxvGCehM-unsplash-crop.jpg"
+        alt="FoodGood background image"
+        class="aria-hidden h-svh w-full object-cover object-right-top opacity-70"
+      />
+    </div>
 
-      <form @submit="onSubmit" class="space-y-4">
+    <div class="p-10 md:h-svh">
+      <div class="flex justify-between">
+        <Logo class="mb-8" />
+
+        <Button variant="ghost" class="text-neutral-500" @click="signOut">
+          <LogOutIcon class="mr-2 h-4 w-4" /> Sign out
+        </Button>
+      </div>
+
+      <h1 class="mb-2 text-2xl font-bold">{{ current.label }}</h1>
+
+      <p class="mb-8 max-w-prose text-neutral-700">{{ current.description }}</p>
+
+      <form @submit="onSubmit">
         <!-- Details -->
-        <div :class="cn('hidden', isCurrent('details') && 'block')">
+        <div :class="cn('hidden space-y-4', isCurrent('details') && 'block')">
           <FormField
             v-for="{ label, fieldName } in formFields.details"
             :key="fieldName"
@@ -162,13 +194,16 @@ const onSubmit = form.handleSubmit((values) => {
           </div>
         </div>
 
-        <!--        <Button type="submit"> Submit </Button>-->
+        <div class="mt-8 flex gap-2">
+          <Button type="button" :disabled="isFirst" variant="outline" @click="goToPrevious">
+            <ChevronLeftIcon class="mr-2 h-4 w-4" /> Back
+          </Button>
+          <Button type="button" @click="goToNext" v-if="!isLast">
+            Continue <ChevronRightIcon class="ml-2 h-4 w-4" />
+          </Button>
+          <Button v-else type="submit">Save</Button>
+        </div>
       </form>
-
-      <div class="flex gap-2">
-        <Button @click="goToPrevious"> Previous </Button>
-        <Button @click="goToNext"> Next </Button>
-      </div>
     </div>
   </div>
 </template>
