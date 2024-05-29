@@ -21,7 +21,7 @@ const { favourites, hasAnyFavourites } = useFavourites({
     </p>
   </div>
 
-  <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-4" v-if="favourites">
+  <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-4 mb-8" v-if="favourites">
     <RestaurantCard
       v-for="restaurant in favourites.slice(0, 3)"
       :key="restaurant.id"

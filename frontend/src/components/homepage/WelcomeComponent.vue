@@ -1,14 +1,16 @@
 <script setup lang="ts">
-import type { BookingDTO, UserDTO } from '@/lib/api-model';
-import { ref } from 'vue';
+import type { UserDTO } from '@/lib/api-model';
+
+import CompletedBookingsCount from './CompletedBookingsCount.vue';
+import { useGetBookings } from '@/lib/api/bookings/bookings';
+import { computed, unref } from 'vue';
 
 const props = defineProps<{
   user: UserDTO;
-  bookings: BookingDTO[];
 }>();
 
-const completedBookings = props.bookings.filter((booking) => !booking.pickedUpTimestamp);
-const completedBookingsCount = ref(completedBookings.length);
+const { data } = useGetBookings({ userId: props.user.id });
+const bookings = computed(() => unref(data)?.data);
 </script>
 
 <template>
@@ -17,7 +19,7 @@ const completedBookingsCount = ref(completedBookings.length);
   >
     <div class="rounded-md flex flex-col justify-center items-start">
       <p v-if="user" class="text-2xl font-bold text-center">Welcome {{ props.user.firstName }}!</p>
-      <p class="text-lg text-center">You saved {{ completedBookingsCount }} meals so far!</p>
+      <CompletedBookingsCount v-if="bookings" :bookings="bookings" />
     </div>
     <div class="flex gap-1 items-end ml-8 mt-8">
       <h1 class="text-primary">FoodGood team</h1>

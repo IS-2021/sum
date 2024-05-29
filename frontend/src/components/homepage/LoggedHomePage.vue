@@ -16,17 +16,12 @@ useHead({
 nextTick();
 
 const { user } = useUser();
-
-const { data } = useGetBookings({ userId: user.value?.id });
-const bookings = computed(() => unref(data)?.data);
 </script>
 
 <template>
   <div class="w-full sm:max-w-screen-sm md:max-w-screen-md lg:max-w-screen-xl mx-auto px-4">
-    <WelcomeComponent v-if="user && bookings?.slice(0, 3)" :user="user" :bookings="bookings" />
-    <LatestBookings v-if="bookings" :bookings="bookings" />
-    <div v-if="user">
-      <FavouritesDisplay v-if="user" :user="user" />
-    </div>
+    <WelcomeComponent v-if="user" :user="user" />
+    <LatestBookings v-if="user" :userId="user.id" />
+    <FavouritesDisplay v-if="user" :user="user" />
   </div>
 </template>

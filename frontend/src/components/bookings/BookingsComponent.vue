@@ -17,8 +17,8 @@ const bookings = computed(() => unref(data)?.data);
 
 <template>
   <div class="w-full sm:max-w-screen-sm md:max-w-screen-md lg:max-w-screen-xl mx-auto px-4">
-    <div class="w-full flex justify-between">
-      <h1 class="font-bold text-2xl mb-8 tracking-tight">Bookings</h1>
+    <div class="w-full sm:flex justify-between mb-8">
+      <h1 class="font-bold text-2xl tracking-tight mb-4 sm:mb-0">Bookings</h1>
       <ToggleToActive :userId="props.userId" />
     </div>
     <BookingsList v-if="bookings" :bookings="bookings" :username="props.username" />
