@@ -8,17 +8,11 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { LogOut, MapPinIcon, UserIcon } from 'lucide-vue-next';
+import { LogOut, MapPinIcon, StarIcon, TicketCheckIcon, UserIcon } from 'lucide-vue-next';
 import { useUser } from '@/composables/useUser';
-import { useRouter } from 'vue-router/auto';
 import { formatAddress } from '@/lib/googleMaps';
 
-const router = useRouter();
 const { user, signOut } = useUser();
-
-function onChangeLocationSelect() {
-  router.push('/settings');
-}
 </script>
 
 <template>
@@ -28,15 +22,30 @@ function onChangeLocationSelect() {
     </DropdownMenuTrigger>
     <DropdownMenuContent class="w-56">
       <DropdownMenuLabel>Your Location</DropdownMenuLabel>
+
       <DropdownMenuItem disabled v-if="user?.address">
         {{ formatAddress(user.address) }}
+      </DropdownMenuItem>
+      <DropdownMenuItem as-child>
+        <RouterLink to="/settings">
+          <MapPinIcon class="mr-2 h-4 w-4" />
+          <span>Change location</span>
+        </RouterLink>
       </DropdownMenuItem>
 
       <DropdownMenuSeparator />
 
-      <DropdownMenuItem @select="onChangeLocationSelect">
-        <MapPinIcon class="mr-2 h-4 w-4" />
-        <span>Change location</span>
+      <DropdownMenuItem as-child>
+        <RouterLink to="/favourites">
+          <StarIcon class="mr-2 h-4 w-4" />
+          <span>Favourites</span>
+        </RouterLink>
+      </DropdownMenuItem>
+      <DropdownMenuItem as-child>
+        <RouterLink to="/bookings">
+          <TicketCheckIcon class="mr-2 h-4 w-4" />
+          <span>Bookings</span>
+        </RouterLink>
       </DropdownMenuItem>
 
       <DropdownMenuSeparator />
