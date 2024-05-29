@@ -10,6 +10,7 @@ public record BookingDTO(
     UUID mealId,
     LocalDateTime orderedTimestamp,
     LocalDateTime deadlinePickUpTimestamp,
-    LocalDateTime pickedUpTimestamp
+    LocalDateTime pickedUpTimestamp,
+    Status status
 ) {
 }

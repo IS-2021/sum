@@ -38,7 +38,7 @@ public class UserService {
         }
 
         if (this.userRepository.findByEmail(user.getEmail()).isPresent()) {
-            throw new ResourceAlreadyExistsException("Email: '" + user.getPhoneNumber() + "' already exists.");
+            throw new ResourceAlreadyExistsException("Email: '" + user.getEmail() + "' already exists.");
         }
 
         user.setPassword(passwordEncoder.encode(user.getPassword()));

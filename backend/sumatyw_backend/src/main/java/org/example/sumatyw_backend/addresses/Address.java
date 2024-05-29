@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.example.sumatyw_backend.restaurants.Restaurant;
 
+import java.util.List;
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Setter
@@ -22,8 +24,8 @@ public class Address {
     private String number;
     private String postalCode;
     private String country;
-    @OneToOne(mappedBy = "address")
-    private Restaurant restaurant;
+    @OneToMany(mappedBy = "address")
+    private List<Restaurant> restaurants;
     private double latitude;
     private double longitude;
 }
