@@ -10,6 +10,8 @@ const props = defineProps<{
 
 const meal = props.activeBooking.meal;
 const restaurant = props.activeBooking.restaurant;
+
+console.log(props.activeBooking);
 </script>
 
 <template>

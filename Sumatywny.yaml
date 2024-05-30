@@ -1609,7 +1609,7 @@ components:
       required:
         - userId
         - orderedTimestamp
-        - id
+        - bookingId
         - deadlinePickUpTimestamp
         - pickedUpTimestamp
         - status
@@ -1622,9 +1622,6 @@ components:
           description: ""
         pickedUpTimestamp:
           $ref: "#/components/schemas/timestamp"
-          description: ""
-        id:
-          $ref: "#/components/schemas/UUID"
           description: ""
         orderedTimestamp:
           $ref: "#/components/schemas/timestamp"
@@ -1640,6 +1637,9 @@ components:
           description: ""
         restaurant:
           $ref: "#/components/schemas/RestaurantDTO"
+          description: ""
+        bookingId:
+          $ref: "#/components/schemas/UUID"
           description: ""
     DeleteFavouriteRestaurantsDTO:
       description: ""
