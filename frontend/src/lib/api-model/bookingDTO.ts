@@ -4,14 +4,19 @@
  * Sumatywny
  * OpenAPI spec version: 1.0.0
  */
-import type { Timestamp } from './timestamp';
 import type { Uuid } from './uuid';
+import type { Timestamp } from './timestamp';
+import type { MealDTO } from './mealDTO';
+import type { RestaurantDTO } from './restaurantDTO';
+import type { BookingStatus } from './bookingStatus';
 
 export interface BookingDTO {
+  bookingId: Uuid;
   deadlinePickUpTimestamp: Timestamp;
-  id: Uuid;
-  mealId: Uuid;
+  meal: MealDTO;
   orderedTimestamp: Timestamp;
   pickedUpTimestamp: Timestamp;
+  restaurant: RestaurantDTO;
+  status: BookingStatus;
   userId: Uuid;
 }

@@ -363,8 +363,12 @@ paths:
       tags:
         - bookings
       responses:
-        "204":
-          description: Deleted
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BookingDTO"
+          description: .
         "404":
           $ref: "#/components/responses/NotFound_404"
       description: ""
@@ -1604,30 +1608,38 @@ components:
       description: ""
       required:
         - userId
-        - mealId
         - orderedTimestamp
-        - id
+        - bookingId
         - deadlinePickUpTimestamp
         - pickedUpTimestamp
+        - status
+        - meal
+        - restaurant
       type: object
       properties:
         userId:
           $ref: "#/components/schemas/UUID"
           description: ""
-        mealId:
-          $ref: "#/components/schemas/UUID"
-          description: ""
         pickedUpTimestamp:
           $ref: "#/components/schemas/timestamp"
-          description: ""
-        id:
-          $ref: "#/components/schemas/UUID"
           description: ""
         orderedTimestamp:
           $ref: "#/components/schemas/timestamp"
           description: ""
         deadlinePickUpTimestamp:
           $ref: "#/components/schemas/timestamp"
+          description: ""
+        status:
+          $ref: "#/components/schemas/BookingStatus"
+          description: ""
+        meal:
+          $ref: "#/components/schemas/MealDTO"
+          description: ""
+        restaurant:
+          $ref: "#/components/schemas/RestaurantDTO"
+          description: ""
+        bookingId:
+          $ref: "#/components/schemas/UUID"
           description: ""
     DeleteFavouriteRestaurantsDTO:
       description: ""
@@ -1723,6 +1735,7 @@ components:
         - hours
         - likesCount
         - dislikesCount
+        - status
       type: object
       properties:
         name:
@@ -1749,6 +1762,13 @@ components:
           type: boolean
         id:
           $ref: "#/components/schemas/UUID"
+        status:
+          description: ""
+          enum:
+            - Banned
+            - Active
+            - Inactive
+          type: string
     RestaurantFavouriteInputDTO:
       description: ""
       required:
@@ -1892,6 +1912,9 @@ components:
         city:
           description: ""
           type: string
+        addressId:
+          description: same as placeId from Google Maps API
+          type: string
     ProblemDetail:
       title: Root Type for ProblemDetail
       description: ""
@@ -1987,6 +2010,14 @@ components:
       example:
         description: "Warszawa, Polska"
         placeId: ChIJAZ-GmmbMHkcR_NPqiCq-8HI
+    BookingStatus:
+      description: ""
+      enum:
+        - Active
+        - Cancelled
+        - OutOfDate
+        - PickedUp
+      type: string
   responses:
     NotFound_404:
       content:
