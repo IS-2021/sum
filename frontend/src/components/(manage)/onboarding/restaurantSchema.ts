@@ -38,6 +38,7 @@ export const addressSchema = z.object({
 export const restaurantSchema = z.object({
   details: restaurantDetailsSchema,
   hours: restaurantHoursSchema,
+  address: addressSchema,
 });
 
 export type RestaurantSchema = z.infer<typeof restaurantSchema>;

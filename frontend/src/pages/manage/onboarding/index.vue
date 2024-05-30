@@ -3,22 +3,29 @@ import { useRestaurantUser } from '@/composables/useRestaurantUser';
 import { useHead } from '@unhead/vue';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { watchEffect } from 'vue';
+import { watch } from 'vue';
 import { toTypedSchema } from '@vee-validate/zod';
 import { restaurantSchema } from '@/components/(manage)/onboarding/restaurantSchema';
 import { useForm } from 'vee-validate';
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { useStepper } from '@vueuse/core';
 import { cn } from '@/lib/utils';
-import { LogOutIcon, ChevronRightIcon, ChevronLeftIcon, ClockIcon } from 'lucide-vue-next';
+import { ChevronLeftIcon, ChevronRightIcon, ClockIcon, LogOutIcon } from 'lucide-vue-next';
 import Logo from '@/components/Logo.vue';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import AddressAutocompleteInput from '@/components/maps/autocomplete/AddressAutocompleteInput.vue';
+import { useAddress } from '@/composables/maps/useAddress';
+import { postRestaurants } from '@/lib/api/restaurants/restaurants';
+import type { HoursDTO } from '@/lib/api-model';
+import { useRouter } from 'vue-router/auto';
 
 useHead({
   title: 'Complete restaurant profile',
 });
 
-const { restaurant, isProfileComplete, signOut } = useRestaurantUser();
+const router = useRouter();
+const { user, restaurant, isProfileComplete, signOut } = useRestaurantUser();
+const { address, setPlaceId } = useAddress();
 
 const { current, goToPrevious, goToNext, isCurrent, isFirst, isLast } = useStepper({
   greeting: {
@@ -104,19 +111,55 @@ const form = useForm({
       thursday: ['10:00', '20:00'],
       wednesday: ['10:00', '20:00'],
       friday: ['10:00', '20:00'],
-      saturday: ['10:00', '20:00'],
-      sunday: ['10:00', '20:00'],
+      saturday: ['12:00', '22:00'],
+      sunday: ['', ''],
     },
   },
 });
 
-watchEffect(() => {
-  console.log('Form values:', form.errors.value);
-  console.log('Formbag values:', form.errorBag.value);
+watch(address, () => {
+  if (address.value) {
+    form.setValues({
+      ...form.values,
+      address: address.value,
+    });
+  }
 });
 
-const onSubmit = form.handleSubmit((values) => {
-  console.log('Form submitted!', values);
+watch(restaurant, () => {
+  console.log(restaurant.value);
+});
+
+watch(user, () => {
+  console.log(user.value);
+});
+
+const onSubmit = form.handleSubmit(async (formValues) => {
+  if (!user.value || !address.value) {
+    return;
+  }
+
+  const sanitizeHours = (hours: string[]) => {
+    return hours.filter((hour) => hour !== '');
+  };
+  const mappedHours: HoursDTO = Object.entries(formValues.hours).reduce((acc, [key, value]) => {
+    acc[key as keyof HoursDTO] = sanitizeHours(value);
+    return acc;
+  }, {} as HoursDTO);
+
+  const res = await postRestaurants({
+    name: formValues.details.name,
+    phoneNumber: formValues.details.phoneNumber,
+    hours: mappedHours,
+    userId: user.value.id,
+    addressInputDTO: formValues.address,
+  });
+
+  if (res.status === 200) {
+    await router.push('/manage');
+  } else if (res.status === 400) {
+    // handle
+  }
 });
 </script>
 
@@ -166,9 +209,9 @@ const onSubmit = form.handleSubmit((values) => {
         <div :class="cn('hidden', isCurrent('hours') && 'block')">
           <Alert class="mb-3 bg-secondary/25">
             <ClockIcon class="h-4 w-4" />
-            <AlertTitle>How to fill the form</AlertTitle>
+            <AlertTitle>How to fill the form?</AlertTitle>
             <AlertDescription>
-              <ul class="list-disc">
+              <ul class="ml-4 list-disc">
                 <li>Use HH:MM 24-hour format,</li>
                 <li>If restaurant is closed on a given day, leave both fields empty.</li>
               </ul>
@@ -205,6 +248,14 @@ const onSubmit = form.handleSubmit((values) => {
               </FormField>
             </template>
           </div>
+        </div>
+
+        <!-- Location -->
+        <div :class="cn('hidden', isCurrent('location') && 'block')">
+          <AddressAutocompleteInput
+            popover-class="md:w-80 lg:w-full lg:max-w-prose"
+            @on-place-select="setPlaceId"
+          />
         </div>
 
         <div class="mt-8 flex gap-2">
