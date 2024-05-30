@@ -51,6 +51,8 @@ public class BookingService {
             throw  new ResourceAlreadyExistsException("This meal is already booked or picked up");
         }
 
+        mealDB.setRestaurant(restaurantDB);
+        booking.setMeal(mealDB);
         booking.setTimestamp(LocalDateTime.now());
         booking.setStatus(Status.Active);
 
