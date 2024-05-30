@@ -33,6 +33,6 @@ public class Booking {
     @ManyToOne
     @JoinColumn(name = "meal_id", nullable = false)
     private Meal meal;
-
-    private boolean active;
+    @Enumerated(EnumType.STRING)
+    Status status;
 }
