@@ -45,6 +45,33 @@ export const restaurantSchema = z.object({
 
 export type RestaurantSchema = z.infer<typeof restaurantSchema>;
 
+export const restaurantSchemaDefaults: RestaurantSchema = {
+  ownerId: '',
+  details: {
+    name: '',
+    phoneNumber: '',
+  },
+  hours: {
+    monday: ['', ''],
+    tuesday: ['', ''],
+    thursday: ['', ''],
+    wednesday: ['', ''],
+    friday: ['', ''],
+    saturday: ['', ''],
+    sunday: ['', ''],
+  },
+  address: {
+    addressId: '',
+    number: '',
+    street: '',
+    postalCode: '',
+    city: '',
+    country: '',
+    latitude: 0,
+    longitude: 0,
+  },
+};
+
 export function mapRestaurantDataToDTO(formValues: RestaurantSchema): RestaurantInputDTO {
   const sanitizeHours = (hours: string[]) => {
     return hours.filter((hour) => hour !== '');

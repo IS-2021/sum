@@ -7,6 +7,7 @@ import { toTypedSchema } from '@vee-validate/zod';
 import {
   mapRestaurantDataToDTO,
   restaurantSchema,
+  restaurantSchemaDefaults,
 } from '@/components/(manage)/onboarding/restaurantSchema';
 import { useForm } from 'vee-validate';
 import { useStepper } from '@vueuse/core';
@@ -56,31 +57,7 @@ const { current, goToPrevious, goToNext, isCurrent, isFirst, isLast } = useStepp
 const formSchema = toTypedSchema(restaurantSchema);
 const form = useForm({
   validationSchema: formSchema,
-  initialValues: {
-    details: {
-      name: 'Laxmi',
-      phoneNumber: '123456789',
-    },
-    hours: {
-      monday: ['10:00', '20:00'],
-      tuesday: ['10:00', '20:00'],
-      thursday: ['10:00', '20:00'],
-      wednesday: ['10:00', '20:00'],
-      friday: ['10:00', '20:00'],
-      saturday: ['12:00', '22:00'],
-      sunday: ['', ''],
-    },
-    address: {
-      addressId: 'ChIJqa_PbDA1GkcRG8owLC6Edws',
-      number: '215',
-      street: 'Wólczańska',
-      postalCode: '90-924',
-      city: 'Łódź',
-      country: 'Polska',
-      latitude: 51.74743249999999,
-      longitude: 19.4561056,
-    },
-  },
+  initialValues: restaurantSchemaDefaults,
 });
 
 watchEffect(() => {
