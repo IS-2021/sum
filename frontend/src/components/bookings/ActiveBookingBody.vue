@@ -5,7 +5,7 @@ import { useGetMealsId } from '@/lib/api/meals/meals';
 import { formatDate } from '@/lib/formatters';
 
 import ActiveBookingRestaurantInfo from '@/components/bookings/ActiveBookingRestaurantInfo.vue';
-import { computed, unref } from 'vue';
+import { computed, unref, watchEffect } from 'vue';
 
 const props = defineProps<{
   activeBooking: BookingDTO;
@@ -13,6 +13,9 @@ const props = defineProps<{
 
 const { data } = useGetMealsId(props.activeBooking.mealId);
 const meal = computed(() => unref(data)?.data);
+watchEffect(() => {
+  console.log(meal);
+});
 </script>
 
 <template>

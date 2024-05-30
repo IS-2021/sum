@@ -35,9 +35,6 @@ function updateFilters(list: IngredientDTO[]) {
     return !unwantedIngredients.value.some((ingredient) => ingredients?.includes(ingredient.name));
   });
 }
-
-// TODO: handle case, where user has active booking
-//       in this case, we should not allow to book another meal by blocking the buttons
 </script>
 
 <template>
