@@ -7,19 +7,29 @@ import { ArrowRightIcon } from 'lucide-vue-next';
 import { Label } from '@/components/ui/label';
 
 const emits = defineEmits<{
-  (e: 'onChange', file: File): void;
+  (e: 'onChange', file: FormData): void;
 }>();
 
-const defaultFileInputValues = {
+type FileInput = {
+  error: string;
+  url: string;
+  file: File | null;
+};
+
+const defaultFileInputValues: FileInput = {
   error: '',
-  url: undefined,
-  file: undefined,
+  url: '',
+  file: null,
 };
 
 const fileInputRef = ref<HTMLInputElement>();
-const fileInput = ref(defaultFileInputValues);
+const fileInput = ref<FileInput>(defaultFileInputValues);
 
-function getImageFromFiles(files: FileList) {
+function getImageFromFiles(files: FileList | null) {
+  if (!files) {
+    throw new Error('No file selected');
+  }
+
   if (files.length !== 1) {
     throw new Error('Only one file is allowed');
   }
@@ -37,17 +47,23 @@ function getImageFromFiles(files: FileList) {
 }
 
 const handleFileChange = (event: Event) => {
+  if (!(event.target instanceof HTMLInputElement)) {
+    return;
+  }
+
   const files = (event.target as HTMLInputElement).files;
 
   let imageFile: File;
   try {
     imageFile = getImageFromFiles(files);
   } catch (error) {
-    event.target.value = null;
+    event.target.value = '';
 
     URL.revokeObjectURL(fileInput.value.url);
     fileInput.value = defaultFileInputValues;
-    fileInput.value.error = error.message;
+    if (error instanceof Error) {
+      fileInput.value.error = error.message;
+    }
 
     return;
   }
@@ -58,6 +74,10 @@ const handleFileChange = (event: Event) => {
 };
 
 async function handleSaveRequest() {
+  if (!(fileInput.value.file instanceof Blob)) {
+    return;
+  }
+
   const formData = new FormData();
   formData.append('image', fileInput.value.file);
 
