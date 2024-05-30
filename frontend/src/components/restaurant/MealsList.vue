@@ -74,7 +74,7 @@ function updateFilters(list: IngredientDTO[]) {
             </p>
           </div>
           <BookMealButton v-if="user" :mealId="meal.mealId" :userId="user.id" />
-          <Button v-else-if="!user" class="bg-opacity-50">Book</Button>
+          <Button v-else-if="!user" class="bg-opacity-50" disabled>Book</Button>
         </div>
       </div>
     </div>

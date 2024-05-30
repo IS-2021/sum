@@ -45,8 +45,7 @@ function sendReport() {
       <Textarea placeholder="Type your message here." class="mt-4" v-model="usersReport" />
       <Dialog>
         <DialogTrigger as-child>
-          <Button v-if="usersReport === ''" class="mt-4" disabled>Send report</Button>
-          <Button v-else class="mt-4">Send report</Button>
+          <Button class="mt-4" :disabled="usersReport === ''">Send report</Button>
         </DialogTrigger>
         <DialogContent class="sm:max-w-[425px]">
           <DialogHeader>

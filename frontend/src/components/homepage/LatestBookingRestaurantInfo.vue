@@ -16,16 +16,18 @@ const restaurant = computed(() => unref(data)?.data);
 </script>
 
 <template>
-  <RestaurantImageComponent v-if="restaurant" :restaurant="restaurant" />
+  <article v-if="restaurant">
+    <RestaurantImageComponent :imageUrl="restaurant.imageUrl" :restaurantName="restaurant.name" />
 
-  <header v-if="restaurant" class="flex flex-col justify-between items-start">
-    <div class="flex">
-      <p class="font-bold mr-1">Restaurant:</p>
-      <p>{{ restaurant.name }}</p>
-    </div>
-    <div class="flex">
-      <p class="font-bold mr-1">Meal:</p>
-      <p>{{ props.mealName }}</p>
-    </div>
-  </header>
+    <header class="flex flex-col justify-between items-start">
+      <div class="flex">
+        <p class="font-bold mr-1">Restaurant:</p>
+        <p>{{ restaurant.name }}</p>
+      </div>
+      <div class="flex">
+        <p class="font-bold mr-1">Meal:</p>
+        <p>{{ props.mealName }}</p>
+      </div>
+    </header>
+  </article>
 </template>

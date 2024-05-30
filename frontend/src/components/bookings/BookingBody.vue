@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import { AccordionContent, AccordionTrigger } from '@/components/ui/accordion';
 
-import { format } from 'date-fns';
+import { formatAddress } from '@/lib/googleMaps';
+
+import { formatDate } from '@/lib/formatters';
 
 import type { BookingDTO, MealDTO, Uuid } from '@/lib/api-model';
 import { computed, ref, unref } from 'vue';
@@ -46,37 +48,35 @@ function isOpen() {
   <AccordionTrigger @click="isOpen()">
     <div class="flex flex-col items-start">
       <p class="font-bold text-lg">{{ props.meal.name }}</p>
-      <p>{{ props.booking.orderedTimestamp }}</p>
+      <p>{{ formatDate(props.booking.orderedTimestamp) }}</p>
       <p>{{ props.username }}</p>
     </div>
   </AccordionTrigger>
-  <AccordionContent v-if="isBookingActive" class="mt-4"> Status: Active</AccordionContent>
-  <AccordionContent v-else class="mt-4"> Status: Disabled</AccordionContent>
-  <AccordionContent> Meal: {{ props.meal.name }}</AccordionContent>
-  <AccordionContent v-if="restaurant"> Restaurant: {{ restaurant.name }} </AccordionContent>
-  <AccordionContent v-if="restaurant">
-    Address: {{ restaurant.address.street }}
-    {{ restaurant.address.number }}
-    {{ restaurant.address.city }}
-    {{ restaurant.address.postalCode }}
-  </AccordionContent>
   <AccordionContent>
-    Order time:
-    {{
-      format(new Date(props.booking.orderedTimestamp), "MM/dd/yyyy HH':'mm':'ss")
-    }}</AccordionContent
-  >
-  <AccordionContent v-if="props.booking.pickedUpTimestamp">
-    Pick-up time: {{ format(new Date(props.booking.pickedUpTimestamp), "MM/dd/yyyy HH':'mm':'ss") }}
-  </AccordionContent>
-  <AccordionContent v-if="restaurant"> Contact: {{ restaurant.phoneNumber }}</AccordionContent>
+    <div>
+      <p v-if="isBookingActive" class="mt-4">Status: Active</p>
+      <p v-else class="mt-4">Status: Disabled</p>
 
-  <AccordionContent class="mt-4">
-    <ReportComponent
-      v-if="restaurant"
-      :restaurantId="restaurant.id"
-      :userId="props.userId"
-      :buttonMessage="buttonMessage"
-    />
+      <p>Meal: {{ props.meal.name }}</p>
+      <p v-if="restaurant">Restaurant: {{ restaurant.name }}</p>
+      <p v-if="restaurant">Address: {{ formatAddress(restaurant.address) }}</p>
+      <p>
+        Order time:
+        {{ formatDate(props.booking.orderedTimestamp) }}
+      </p>
+      <p v-if="props.booking.pickedUpTimestamp">
+        Pick-up time:
+        {{ formatDate(props.booking.pickedUpTimestamp) }}
+      </p>
+      <p v-if="restaurant">Contact: {{ restaurant.phoneNumber }}</p>
+      <div class="mt-4">
+        <ReportComponent
+          v-if="restaurant"
+          :restaurantId="restaurant.id"
+          :userId="props.userId"
+          :buttonMessage="buttonMessage"
+        />
+      </div>
+    </div>
   </AccordionContent>
 </template>

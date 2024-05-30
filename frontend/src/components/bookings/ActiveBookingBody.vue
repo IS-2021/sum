@@ -1,16 +1,18 @@
 <script setup lang="ts">
 import type { BookingDTO } from '@/lib/api-model';
-import { getMealsId } from '@/lib/api/meals/meals';
+import { useGetMealsId } from '@/lib/api/meals/meals';
 
-import { format } from 'date-fns';
+import { formatDate } from '@/lib/formatters';
 
 import ActiveBookingRestaurantInfo from '@/components/bookings/ActiveBookingRestaurantInfo.vue';
+import { computed, unref } from 'vue';
 
 const props = defineProps<{
   activeBooking: BookingDTO;
 }>();
 
-const meal = (await getMealsId(props.activeBooking.mealId)).data;
+const { data } = useGetMealsId(props.activeBooking.mealId);
+const meal = computed(() => unref(data)?.data);
 </script>
 
 <template>
@@ -21,13 +23,13 @@ const meal = (await getMealsId(props.activeBooking.mealId)).data;
     <li>
       <p>
         Order time:
-        {{ format(new Date(activeBooking.orderedTimestamp), "MM/dd/yyyy HH':'mm':'ss") }}
+        {{ formatDate(activeBooking.orderedTimestamp) }}
       </p>
     </li>
     <li>
       <p>
         Pick-up deadline:
-        {{ format(new Date(activeBooking.deadlinePickUpTimestamp), "MM/dd/yyyy HH':'mm':'ss") }}
+        {{ formatDate(activeBooking.deadlinePickUpTimestamp) }}
       </p>
     </li>
     <ActiveBookingRestaurantInfo :restaurantId="meal.restaurantId" />

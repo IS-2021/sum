@@ -5,7 +5,7 @@ import LatestBookingBody from '@/components/homepage/LatestBookingBody.vue';
 import { useGetBookings } from '@/lib/api/bookings/bookings';
 import { computed, unref } from 'vue';
 
-import Button from '../ui/button/Button.vue';
+import Button from '@/components/ui/button/Button.vue';
 
 const props = defineProps<{
   userId: Uuid;

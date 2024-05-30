@@ -6,8 +6,9 @@ const props = defineProps<{
   bookings: BookingDTO[];
 }>();
 
-const completedBookings = props.bookings.filter((booking) => !booking.pickedUpTimestamp);
-const completedBookingsCount = ref(completedBookings.length);
+const completedBookingsCount = props.bookings.filter(
+  (booking) => !booking.pickedUpTimestamp,
+).length;
 </script>
 
 <template>

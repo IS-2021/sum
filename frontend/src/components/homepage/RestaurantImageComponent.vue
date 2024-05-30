@@ -1,15 +1,15 @@
 <script setup lang="ts">
 import { AspectRatio } from '@/components/ui/aspect-ratio';
-import type { RestaurantDTO } from '@/lib/api-model';
 
 import { getImageUrl } from '@/lib/assets';
 
 const props = defineProps<{
-  restaurant: RestaurantDTO;
+  imageUrl: string | undefined;
+  restaurantName: string;
 }>();
 
-const imgSrc = getImageUrl(props.restaurant.imageUrl);
-const imageAltText = `Image of ${props.restaurant.name}`;
+const imgSrc = getImageUrl(props.imageUrl);
+const imageAltText = `Image of ${props.restaurantName}`;
 </script>
 
 <template>

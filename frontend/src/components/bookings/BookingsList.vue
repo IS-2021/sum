@@ -11,7 +11,7 @@ const props = defineProps<{
 </script>
 
 <template>
-  <p v-if="!props.bookings || props.bookings.length === 0">
+  <p v-if="props.bookings.length === 0">
     You don't have any bookings yet. Choose your favourite restaurant and book your meal to make it
     appear here.
   </p>

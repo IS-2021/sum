@@ -19,12 +19,12 @@ const activeBooking = computed(() => unref(data)?.data);
   <div class="w-full sm:max-w-screen-sm md:max-w-screen-md lg:max-w-screen-xl mx-auto px-4">
     <h1 class="font-bold text-2xl mb-8 tracking-tight">Active Booking</h1>
     <div class="space-y-5 p-4 bg-neutral-100 border border-neutral-200 w-full">
-      <h2 class="font-semibold">Order details</h2>
+      <h2 class="font-semibold">Booking details</h2>
       <p v-if="!activeBooking">You don't have any active bookings.</p>
       <ActiveBookingBody v-if="activeBooking" :activeBooking="activeBooking" />
     </div>
-    <RouterLink to="/bookings">
-      <Button class="mt-8">View all bookings</Button>
-    </RouterLink>
+    <Button class="mt-8" as-child>
+      <RouterLink to="/bookings">View all bookings</RouterLink>
+    </Button>
   </div>
 </template>

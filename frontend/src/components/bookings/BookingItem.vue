@@ -14,7 +14,6 @@ const props = defineProps<{
 }>();
 
 const open = ref(false);
-const defaultValue = 'booking';
 
 const { data } = useGetMealsId(props.booking.mealId);
 const meal = computed(() => unref(data)?.data);
@@ -26,13 +25,13 @@ function changeIsOpen(o: boolean) {
 
 <template>
   <Accordion
-    v-if="props.booking"
+    v-if="props.booking && meal"
     type="single"
     class="w-full border p-4"
     collapsible
-    :default-value="defaultValue"
+    :default-value="meal.name"
   >
-    <AccordionItem :value="defaultValue" :open="open">
+    <AccordionItem :value="meal.name" :open="open">
       <BookingBody
         v-if="meal"
         :booking="props.booking"
