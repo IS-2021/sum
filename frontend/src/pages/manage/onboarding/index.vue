@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useRestaurantUser } from '@/composables/useRestaurantUser';
+import { useRestaurantUser, getRestaurantUserQueryKey } from '@/composables/useRestaurantUser';
 import { useHead } from '@unhead/vue';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -20,6 +20,8 @@ import AddressAutocompleteInput from '@/components/maps/autocomplete/AddressAuto
 import { useAddress } from '@/composables/maps/useAddress';
 import { postRestaurants } from '@/lib/api/restaurants/restaurants';
 import { useRouter } from 'vue-router/auto';
+import { useQueryClient } from '@tanstack/vue-query';
+import { getGetUsersMeQueryKey } from '@/lib/api/users/users';
 
 useHead({
   title: 'Complete restaurant profile',
@@ -147,11 +149,19 @@ watchEffect(() => {
   }
 });
 
+const queryClient = useQueryClient();
+
 const onSubmit = form.handleSubmit(async (formValues) => {
   const requestData = mapRestaurantDataToDTO(formValues);
   const res = await postRestaurants(requestData);
 
   if (res.status === 200) {
+    await queryClient.invalidateQueries({
+      queryKey: getGetUsersMeQueryKey(),
+    });
+    await queryClient.invalidateQueries({
+      queryKey: getRestaurantUserQueryKey(),
+    });
     await router.push('/manage');
   } else if (res.status === 400) {
     // handle
