@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, watchEffect } from 'vue';
 import type { Uuid } from '@/lib/api-model';
 
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
@@ -14,15 +14,19 @@ import {
 } from '@/components/ui/dialog';
 import Button from '@/components/ui/button/Button.vue';
 import { postReportsUsers } from '@/lib/api/reports-users/reports-users';
+import DialogClose from '../ui/dialog/DialogClose.vue';
+import { watch } from 'fs';
 
 const props = defineProps<{
   restaurantId: Uuid;
   userId: Uuid;
   buttonMessage: string;
+  bookingStatus: string;
 }>();
 
 const usersReport = ref('');
 let reportRestaurantSwitch = ref(false);
+let isReportSent = ref(false);
 
 function toggleReportRestaurant() {
   reportRestaurantSwitch.value = !reportRestaurantSwitch.value;
@@ -34,11 +38,18 @@ function sendReport() {
     userId: props.userId,
     restaurantId: props.restaurantId,
   });
+  usersReport.value = '';
+  isReportSent.value = true;
 }
 </script>
 
 <template>
-  <Button variant="ghost" @click="toggleReportRestaurant()">{{ props.buttonMessage }}</Button>
+  <Button
+    :disabled="props.bookingStatus !== 'PickedUp'"
+    variant="ghost"
+    @click="toggleReportRestaurant()"
+    >{{ props.buttonMessage }}</Button
+  >
   <Alert v-if="reportRestaurantSwitch" class="mt-4">
     <AlertTitle>Add report</AlertTitle>
     <AlertDescription>
@@ -46,13 +57,18 @@ function sendReport() {
       <Dialog>
         <DialogTrigger as-child>
           <Button class="mt-4" :disabled="usersReport === ''">Send report</Button>
+          <Alert v-if="isReportSent && usersReport === ''" class="mt-8 border-primary">
+            <AlertTitle>Report sent successfully!</AlertTitle>
+          </Alert>
         </DialogTrigger>
         <DialogContent class="sm:max-w-[425px]">
           <DialogHeader>
             <DialogTitle>Are you sure tou want to send this report?</DialogTitle>
           </DialogHeader>
           <DialogFooter>
-            <Button type="submit" @click="sendReport"> Send report </Button>
+            <DialogClose>
+              <Button type="submit" @click="sendReport"> Send report </Button>
+            </DialogClose>
           </DialogFooter>
         </DialogContent>
       </Dialog>

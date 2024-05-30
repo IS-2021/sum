@@ -18,7 +18,7 @@ const props = defineProps<{
 
   <BookingItem
     v-for="booking in bookings"
-    v-bind:key="booking.id"
+    v-bind:key="booking.bookingId"
     :booking="booking"
     :username="props.username"
     :userId="props.userId"

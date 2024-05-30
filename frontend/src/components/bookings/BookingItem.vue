@@ -1,11 +1,18 @@
 <script setup lang="ts">
-import { Accordion, AccordionItem } from '@/components/ui/accordion';
+import {
+  Accordion,
+  AccordionItem,
+  AccordionContent,
+  AccordionTrigger,
+} from '@/components/ui/accordion';
 
-import { computed, ref, unref } from 'vue';
+import { formatAddress } from '@/lib/googleMaps';
+import { formatDate } from '@/lib/formatters';
+
+import { ref } from 'vue';
 import type { BookingDTO, Uuid } from '@/lib/api-model';
 
-import BookingBody from '@/components/bookings/BookingBody.vue';
-import { useGetMealsId } from '@/lib/api/meals/meals';
+import ReportComponent from '@/components/bookings/ReportComponent.vue';
 
 const props = defineProps<{
   booking: BookingDTO;
@@ -14,12 +21,13 @@ const props = defineProps<{
 }>();
 
 const open = ref(false);
+const buttonMessage = ref('Report restaurant');
 
-const { data } = useGetMealsId(props.booking.mealId);
-const meal = computed(() => unref(data)?.data);
+const meal = props.booking.meal;
+const restaurant = props.booking.restaurant;
 
-function changeIsOpen(o: boolean) {
-  open.value = o;
+function isOpen() {
+  open.value = !open.value;
 }
 </script>
 
@@ -32,15 +40,52 @@ function changeIsOpen(o: boolean) {
     :default-value="meal.name"
   >
     <AccordionItem :value="meal.name" :open="open">
-      <BookingBody
-        v-if="meal"
-        :booking="props.booking"
-        :username="props.username"
-        :userId="props.userId"
-        :meal="meal"
-        :open="open"
-        @change-is-open="changeIsOpen"
-      />
+      <AccordionTrigger @click="isOpen()">
+        <div class="flex flex-col items-start">
+          <p class="font-bold text-lg">{{ meal.name }}</p>
+          <p>{{ formatDate(props.booking.orderedTimestamp) }}</p>
+          <p>{{ props.username }}</p>
+          <p v-if="props.booking.status === 'Active'" class="text-primary font-semi-bold">
+            {{ props.booking.status }}
+          </p>
+          <p
+            v-else-if="props.booking.status === 'Cancelled' || props.booking.status === 'OutOfDate'"
+            class="text-red-600 font-semi-bold"
+          >
+            {{ props.booking.status }}
+          </p>
+          <p v-else class="font-semi-bold">
+            {{ props.booking.status }}
+          </p>
+        </div>
+      </AccordionTrigger>
+      <AccordionContent>
+        <div>
+          <p class="mt-4">Status: {{ booking.status }}</p>
+
+          <p>Meal: {{ meal.name }}</p>
+          <p>Restaurant: {{ restaurant.name }}</p>
+          <p>Address: {{ formatAddress(restaurant.address) }}</p>
+          <p>
+            Order time:
+            {{ formatDate(props.booking.orderedTimestamp) }}
+          </p>
+          <p v-if="props.booking.pickedUpTimestamp">
+            Pick-up time:
+            {{ formatDate(props.booking.pickedUpTimestamp) }}
+          </p>
+          <p>Contact: {{ restaurant.phoneNumber }}</p>
+          <div class="mt-4">
+            <ReportComponent
+              v-if="restaurant"
+              :restaurantId="restaurant.id"
+              :userId="props.userId"
+              :buttonMessage="buttonMessage"
+              :bookingStatus="booking.status"
+            />
+          </div>
+        </div>
+      </AccordionContent>
     </AccordionItem>
   </Accordion>
 </template>
