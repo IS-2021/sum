@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, unref, type Ref } from 'vue';
+import { computed, ref, unref, type Ref } from 'vue';
 
 import { Check, ChevronsUpDown } from 'lucide-vue-next';
 import { cn } from '@/lib/utils';
@@ -36,20 +36,22 @@ const props = defineProps<{
 const open = ref(false);
 
 const { data } = useGetIngredients();
-const ingredients = unref(data)?.data;
+const ingredients = computed(() => unref(data)?.data);
+
 const chosenIngredients: Ref<IngredientDTO[]> = ref([]);
 
 function addIngredient(ingredient: IngredientDTO) {
   chosenIngredients.value.push(ingredient);
 }
 
-function postChosenIngredients() {
-  chosenIngredients.value.forEach((i) => {
+async function postChosenIngredients() {
+  const promiseList = chosenIngredients.value.map((i) => {
     postIngredients(
       { name: i.name, type: i.type },
       { mealId: props.mealId, restaurantId: props.userId },
     );
   });
+  await Promise.all(promiseList);
 }
 </script>
 

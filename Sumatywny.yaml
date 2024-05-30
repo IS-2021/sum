@@ -72,11 +72,24 @@ paths:
       tags:
         - restaurants
       parameters:
-        - name: name
-          description: Filter restaurants by name
+        - name: lat
+          description: double
           schema:
-            type: string
+            type: number
           in: query
+          required: true
+        - name: lon
+          description: double
+          schema:
+            type: number
+          in: query
+          required: true
+        - name: radius
+          description: double
+          schema:
+            type: number
+          in: query
+          required: true
       responses:
         "200":
           content:
@@ -350,8 +363,12 @@ paths:
       tags:
         - bookings
       responses:
-        "204":
-          description: Deleted
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BookingDTO"
+          description: .
         "404":
           $ref: "#/components/responses/NotFound_404"
       description: ""
@@ -369,6 +386,16 @@ paths:
       parameters:
         - name: userId
           description: "If exists, returns booking by userId, eg. /bookings?userId=123"
+          schema:
+            $ref: "#/components/schemas/UUID"
+          in: query
+        - name: restaurantId
+          description: "If exists, returns all bookings for restaurant"
+          schema:
+            $ref: "#/components/schemas/UUID"
+          in: query
+        - name: active
+          description: "Syntax: restaurantId + active - returns all pending bookings for restaurant"
           schema:
             $ref: "#/components/schemas/UUID"
           in: query
@@ -1258,6 +1285,50 @@ paths:
               schema:
                 $ref: "#/components/schemas/AddressDTO"
           description: Returns address of the place
+  /geo/reverse-geocode:
+    get:
+      tags:
+        - geo
+      parameters:
+        - name: lat
+          description: ""
+          schema:
+            type: number
+          in: query
+          required: true
+        - name: lng
+          description: ""
+          schema:
+            type: number
+          in: query
+          required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AddressDTO"
+          description: Reverse geocoded address
+  /bookings/active:
+    get:
+      tags:
+        - bookings
+      parameters:
+        - name: userId
+          description: ""
+          schema:
+            $ref: "#/components/schemas/UUID"
+          in: query
+          required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BookingDTO"
+          description: .
+        "404":
+          $ref: "#/components/responses/NotFound_404"
 components:
   schemas:
     OpinionDTO:
@@ -1409,7 +1480,7 @@ components:
         - role
         - secondName
         - username
-        - userId
+        - id
         - isBlocked
       type: object
       properties:
@@ -1444,7 +1515,7 @@ components:
         isBlocked:
           description: ""
           type: boolean
-        userId:
+        id:
           $ref: "#/components/schemas/UUID"
           description: ""
     UserInputDTO:
@@ -1537,30 +1608,38 @@ components:
       description: ""
       required:
         - userId
-        - mealId
         - orderedTimestamp
-        - id
+        - bookingId
         - deadlinePickUpTimestamp
         - pickedUpTimestamp
+        - status
+        - meal
+        - restaurant
       type: object
       properties:
         userId:
           $ref: "#/components/schemas/UUID"
           description: ""
-        mealId:
-          $ref: "#/components/schemas/UUID"
-          description: ""
         pickedUpTimestamp:
           $ref: "#/components/schemas/timestamp"
-          description: ""
-        id:
-          $ref: "#/components/schemas/UUID"
           description: ""
         orderedTimestamp:
           $ref: "#/components/schemas/timestamp"
           description: ""
         deadlinePickUpTimestamp:
           $ref: "#/components/schemas/timestamp"
+          description: ""
+        status:
+          $ref: "#/components/schemas/BookingStatus"
+          description: ""
+        meal:
+          $ref: "#/components/schemas/MealDTO"
+          description: ""
+        restaurant:
+          $ref: "#/components/schemas/RestaurantDTO"
+          description: ""
+        bookingId:
+          $ref: "#/components/schemas/UUID"
           description: ""
     DeleteFavouriteRestaurantsDTO:
       description: ""
@@ -1649,13 +1728,14 @@ components:
       required:
         - active
         - address
-        - restaurantId
+        - id
         - name
         - phoneNumber
         - userId
         - hours
         - likesCount
         - dislikesCount
+        - status
       type: object
       properties:
         name:
@@ -1680,8 +1760,15 @@ components:
           $ref: "#/components/schemas/AddressDTO"
         active:
           type: boolean
-        restaurantId:
+        id:
           $ref: "#/components/schemas/UUID"
+        status:
+          description: ""
+          enum:
+            - Banned
+            - Active
+            - Inactive
+          type: string
     RestaurantFavouriteInputDTO:
       description: ""
       required:
@@ -1764,6 +1851,8 @@ components:
         - number
         - postalCode
         - addressId
+        - latitude
+        - longitude
       type: object
       properties:
         country:
@@ -1797,7 +1886,7 @@ components:
         - street
         - number
         - postalCode
-        - cityId
+        - city
         - latitude
         - longitude
       type: object
@@ -1814,15 +1903,18 @@ components:
         postalCode:
           description: ""
           type: string
-        cityId:
-          $ref: "#/components/schemas/UUID"
-          description: ""
         latitude:
           description: double
           type: number
         longitude:
           description: double
           type: number
+        city:
+          description: ""
+          type: string
+        addressId:
+          description: same as placeId from Google Maps API
+          type: string
     ProblemDetail:
       title: Root Type for ProblemDetail
       description: ""
@@ -1918,6 +2010,14 @@ components:
       example:
         description: "Warszawa, Polska"
         placeId: ChIJAZ-GmmbMHkcR_NPqiCq-8HI
+    BookingStatus:
+      description: ""
+      enum:
+        - Active
+        - Cancelled
+        - OutOfDate
+        - PickedUp
+      type: string
   responses:
     NotFound_404:
       content:

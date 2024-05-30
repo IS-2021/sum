@@ -7,7 +7,15 @@
 
 export type GetRestaurantsParams = {
   /**
-   * Filter restaurants by name
+   * double
    */
-  name?: string;
+  lat: number;
+  /**
+   * double
+   */
+  lon: number;
+  /**
+   * double
+   */
+  radius: number;
 };

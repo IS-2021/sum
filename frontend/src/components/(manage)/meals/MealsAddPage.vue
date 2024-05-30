@@ -1,47 +1,94 @@
 <script setup lang="ts">
 import { ref } from 'vue';
-import NavLink from '@/components/(manage)/common/NavLink.vue';
 
-import Label from '@/components/ui/label/Label.vue';
 import Input from '@/components/ui/input/Input.vue';
 import Button from '@/components/ui/button/Button.vue';
+import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { toast } from 'vue-sonner';
 
 import { postMeals } from '@/lib/api/meals/meals';
 import type { Uuid } from '@/lib/api-model';
+import { useRouter } from 'vue-router';
+
+import { useForm } from 'vee-validate';
+import { toTypedSchema } from '@vee-validate/zod';
+import * as z from 'zod';
+
+import type { ValidationFailed422Response } from '@/lib/api-model';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { AlertCircleIcon } from 'lucide-vue-next';
+
+const formSchema = toTypedSchema(
+  z.object({
+    description: z.string().min(2).max(50),
+    name: z.string().min(2).max(50),
+  }),
+);
+
+const form = useForm({
+  validationSchema: formSchema,
+});
+
+const errorMessage = ref('');
 
 const props = defineProps<{
   userId: Uuid;
 }>();
 
+const router = useRouter();
+
 const mealName = ref('');
 const mealDescription = ref('');
-let mealUpdateLink = ref('');
 
-async function addNewMeal() {
+const addNewMeal = form.handleSubmit(async (values) => {
   const response = await postMeals({
-    description: mealDescription.value,
-    name: mealName.value,
+    description: values.description,
+    name: values.name,
     restaurantId: props.userId,
   });
-  mealUpdateLink.value = `/manage/mealUpdate/${response.data.mealId}`;
-}
+
+  if (response.status === 200) {
+    toast.success('Meal added successfully!');
+    await router.push(`/manage/mealUpdate/${response.data.mealId}`);
+  } else if (response.status === 401) {
+    const { message } = response.data as unknown as ValidationFailed422Response;
+
+    errorMessage.value = message;
+  }
+});
 </script>
 
 <template>
   <h1 class="text-2xl font-semibold tracking-tight mb-6">Add Meal</h1>
   <p class="mb-16">After you add your meal you will be willing to add ingredients to it</p>
-  <div class="max-w-screen-md w-full my-4">
-    <Label>Name</Label>
-    <Input placeholder="meal name..." v-model="mealName" />
-  </div>
-  <div class="max-w-screen-md w-full my-4 mb-8">
-    <Label>Type</Label>
-    <Input placeholder="meal description..." v-model="mealDescription" />
-  </div>
-  <Button v-if="mealName === '' || mealDescription === ''" disabled class="bg-opacity-70"
-    >Add meal</Button
-  >
-  <NavLink v-else :to="mealUpdateLink" class="bg-inherit">
-    <Button @click="addNewMeal()">Add meal</Button>
-  </NavLink>
+
+  <Alert variant="destructive" v-if="errorMessage" class="mb-4">
+    <AlertCircleIcon class="h-4 w-4" />
+    <AlertTitle>There's an error</AlertTitle>
+    <AlertDescription>
+      {{ errorMessage }}
+    </AlertDescription>
+  </Alert>
+
+  <form class="w-2/3 space-y-6" @submit="addNewMeal">
+    <FormField v-slot="{ componentField }" name="name">
+      <FormItem>
+        <FormLabel>Name</FormLabel>
+        <FormControl>
+          <Input type="text" placeholder="meal name..." v-bind="componentField" />
+        </FormControl>
+        <FormMessage />
+      </FormItem>
+    </FormField>
+    <FormField v-slot="{ componentField }" name="description">
+      <FormItem>
+        <FormLabel>Description</FormLabel>
+        <FormControl>
+          <Input type="text" placeholder="meal description..." v-bind="componentField" />
+        </FormControl>
+        <FormMessage />
+      </FormItem>
+    </FormField>
+    <Button :disabled="mealName === '' || mealDescription === ''" type="submit"> Add meal </Button>
+  </form>
 </template>

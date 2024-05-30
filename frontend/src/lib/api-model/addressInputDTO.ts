@@ -4,10 +4,11 @@
  * Sumatywny
  * OpenAPI spec version: 1.0.0
  */
-import type { Uuid } from './uuid';
 
 export interface AddressInputDTO {
-  cityId: Uuid;
+  /** same as placeId from Google Maps API */
+  addressId?: string;
+  city: string;
   country: string;
   /** double */
   latitude: number;

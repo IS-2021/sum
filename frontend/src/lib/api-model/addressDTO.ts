@@ -10,9 +10,9 @@ export interface AddressDTO {
   city: string;
   country: string;
   /** double */
-  latitude?: number;
+  latitude: number;
   /** double */
-  longitude?: number;
+  longitude: number;
   number: string;
   postalCode: string;
   street: string;

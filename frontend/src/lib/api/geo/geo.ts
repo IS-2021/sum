@@ -20,6 +20,7 @@ import type {
   AutocompleteDTO,
   GetGeoAutocompleteParams,
   GetGeoPlacesParams,
+  GetGeoReverseGeocodeParams,
 } from '../../api-model';
 
 export const getGeoAutocomplete = (
@@ -140,6 +141,81 @@ export const useGetGeoPlaces = <
   },
 ): UseQueryReturnType<TData, TError> & { queryKey: QueryKey } => {
   const queryOptions = getGetGeoPlacesQueryOptions(params, options);
+
+  const query = useQuery(queryOptions) as UseQueryReturnType<TData, TError> & {
+    queryKey: QueryKey;
+  };
+
+  query.queryKey = unref(queryOptions).queryKey as QueryKey;
+
+  return query;
+};
+
+export const getGeoReverseGeocode = (
+  params: MaybeRef<GetGeoReverseGeocodeParams>,
+  options?: AxiosRequestConfig,
+): Promise<AxiosResponse<AddressDTO>> => {
+  params = unref(params);
+  return axios.default.get(`http://localhost:9090/geo/reverse-geocode`, {
+    ...options,
+    params: { ...unref(params), ...options?.params },
+  });
+};
+
+export const getGetGeoReverseGeocodeQueryKey = (params: MaybeRef<GetGeoReverseGeocodeParams>) => {
+  return [
+    'http:',
+    'localhost:9090',
+    'geo',
+    'reverse-geocode',
+    ...(params ? [params] : []),
+  ] as const;
+};
+
+export const getGetGeoReverseGeocodeQueryOptions = <
+  TData = Awaited<ReturnType<typeof getGeoReverseGeocode>>,
+  TError = AxiosError<unknown>,
+>(
+  params: MaybeRef<GetGeoReverseGeocodeParams>,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof getGeoReverseGeocode>>, TError, TData>
+    >;
+    axios?: AxiosRequestConfig;
+  },
+) => {
+  const { query: queryOptions, axios: axiosOptions } = options ?? {};
+
+  const queryKey = getGetGeoReverseGeocodeQueryKey(params);
+
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof getGeoReverseGeocode>>> = ({ signal }) =>
+    getGeoReverseGeocode(params, { signal, ...axiosOptions });
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof getGeoReverseGeocode>>,
+    TError,
+    TData
+  >;
+};
+
+export type GetGeoReverseGeocodeQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getGeoReverseGeocode>>
+>;
+export type GetGeoReverseGeocodeQueryError = AxiosError<unknown>;
+
+export const useGetGeoReverseGeocode = <
+  TData = Awaited<ReturnType<typeof getGeoReverseGeocode>>,
+  TError = AxiosError<unknown>,
+>(
+  params: MaybeRef<GetGeoReverseGeocodeParams>,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof getGeoReverseGeocode>>, TError, TData>
+    >;
+    axios?: AxiosRequestConfig;
+  },
+): UseQueryReturnType<TData, TError> & { queryKey: QueryKey } => {
+  const queryOptions = getGetGeoReverseGeocodeQueryOptions(params, options);
 
   const query = useQuery(queryOptions) as UseQueryReturnType<TData, TError> & {
     queryKey: QueryKey;

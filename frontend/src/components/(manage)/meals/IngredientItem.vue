@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import type { MealDTO, Uuid } from '@/lib/api-model';
 import { ref } from 'vue';
-import NavLink from '@/components/(manage)/common/NavLink.vue';
 
 import Button from '@/components/ui/button/Button.vue';
 import { Trash2 } from 'lucide-vue-next';
@@ -45,13 +44,13 @@ function deleteMeal(id: Uuid) {
         Ingredients: {{ props.meal.ingredients?.map((ingredient) => ingredient.name).join(', ') }}
       </p>
     </div>
-    <div v-if="user" class="flex items-center gap-3 justify-between">
-      <NavLink :to="mealUpdateLink" class="w-full">
-        <Button class="w-1/2">Modify</Button>
-      </NavLink>
+    <div v-if="user" class="mt-4">
       <Dialog>
         <DialogTrigger as-child>
-          <Trash2 class="cursor-pointer" />
+          <Button size="icon" class="w-1/2">
+            <Trash2 class="mr-1" />
+            Delete
+          </Button>
         </DialogTrigger>
         <DialogContent class="sm:max-w-md">
           <DialogHeader>

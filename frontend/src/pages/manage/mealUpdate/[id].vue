@@ -21,13 +21,13 @@ import {
 import { useUser } from '@/composables/useUser';
 import { useRoute } from 'vue-router/auto';
 import { useGetMealsId } from '@/lib/api/meals/meals';
-import { unref } from 'vue';
+import { computed, unref } from 'vue';
 
 const route = useRoute('/manage/mealUpdate/[id]');
 const mealId = route.params.id;
 
 const { data } = useGetMealsId(mealId);
-const meal = unref(data)?.data;
+const meal = computed(() => unref(data)?.data);
 
 const { user } = useUser();
 
