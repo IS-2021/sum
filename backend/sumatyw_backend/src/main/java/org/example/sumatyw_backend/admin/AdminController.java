@@ -4,7 +4,6 @@ package org.example.sumatyw_backend.admin;
 import lombok.AllArgsConstructor;
 import org.example.sumatyw_backend.exceptions.ObjectNotFoundException;
 import org.example.sumatyw_backend.reports.ReportDTO;
-import org.example.sumatyw_backend.reports.ReportInputDTO;
 import org.example.sumatyw_backend.reports.ReportsDTOMapper;
 import org.example.sumatyw_backend.restaurant_reports.RestaurantReportsService;
 import org.example.sumatyw_backend.restaurants.Restaurant;
@@ -113,10 +112,6 @@ public class AdminController {
 
     }
 
-    // kazdy dzien tygodnia osobno -- najlepiej obiekt
-    // lokalizacja najblizszych restauracji
-    // odleglosc w linii prostej
-
     @PutMapping("/reports/restaurants/{id}")
     public ResponseEntity handleRestaurantReport(@PathVariable("id") UUID reportId,
                                                  @RequestParam("ban") boolean ban) {
@@ -162,6 +157,9 @@ public class AdminController {
         try {
             List<Restaurant> restaurants = restaurantService.getAllPendingRestaurant();
             List<RestaurantDTO> mappedList = new ArrayList<>();
+            if(restaurants == null || restaurants.isEmpty()) {
+                return new ResponseEntity<>(new ArrayList<>(),HttpStatus.NO_CONTENT);
+            }
 
             for(Restaurant r: restaurants) {
                 mappedList.add(RestaurantDTOMapper.mapRestaurantToRestaurantDTO(r));

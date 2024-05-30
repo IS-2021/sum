@@ -17,17 +17,16 @@ import java.util.UUID;
 @Getter
 @Entity
 @Builder
-@Table(name="restaurants")
+@Table(name = "restaurants")
 public class Restaurant {
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID restaurantId;
     private String name;
     private String phoneNumber;
     @OneToOne()
     @JoinColumn(name = "user_id")
     private User user;
-    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
+    @ManyToOne(cascade = {CascadeType.PERSIST})
     @JoinColumn(name = "address_id")
     private Address address;
     @OneToMany(mappedBy = "restaurant")
@@ -38,8 +37,8 @@ public class Restaurant {
     private List<Favourite> favourites;
     private String hours;
     private String imageUUID;
-    private boolean active;
-    private boolean banned;
+    @Enumerated(EnumType.STRING)
+    RestaurantStatus status;
     private int likesCount;
     private int dislikesCount;
 }

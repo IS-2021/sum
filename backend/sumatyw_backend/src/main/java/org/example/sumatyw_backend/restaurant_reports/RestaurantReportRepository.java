@@ -12,10 +12,8 @@ import java.util.UUID;
 @Repository
 public interface RestaurantReportRepository extends JpaRepository<RestaurantReport, UUID> {
 
-    @Query("SELECT COUNT(r) > 0 FROM RestaurantReport r WHERE r.user.id = :userId AND r.restaurant.id = :restaurantId AND r.isOpen = true")
+    @Query("SELECT COUNT(r) > 0 FROM RestaurantReport r WHERE r.user.userId = :userId AND r.restaurant.restaurantId = :restaurantId AND r.isOpen = true")
     boolean existsByUserIdAndRestaurantId(@Param("userId") UUID userId, @Param("restaurantId") UUID restaurantId);
 
-    List<RestaurantReport> findByIsOpenTrue();
-
-
+    List<RestaurantReport> findByIsOpenIsTrue();
 }

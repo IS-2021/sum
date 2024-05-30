@@ -3,6 +3,9 @@ package org.example.sumatyw_backend.meals;
 
 import lombok.AllArgsConstructor;
 import org.example.sumatyw_backend.bookings.Booking;
+import org.example.sumatyw_backend.bookings.Status;
+import org.example.sumatyw_backend.exceptions.ObjectNotFoundException;
+import org.example.sumatyw_backend.restaurants.RestaurantRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -13,8 +16,10 @@ import java.util.UUID;
 public class MealService {
 
     private MealRepository mealRepository;
+    private RestaurantRepository restaurantRepository;
 
     public Meal addMeal(Meal meal) {
+        restaurantRepository.findById(meal.getRestaurant().getRestaurantId()).orElseThrow(() -> new ObjectNotFoundException("Restaurant with id " + meal.getRestaurant().getRestaurantId() + " not found" ));
         return mealRepository.save(meal);
     }
 
@@ -28,7 +33,7 @@ public class MealService {
         for (int i = 0; i < meals.size(); i++) {
             boolean hasActiveBooking = false;
             for (Booking booking : meals.get(i).getBookings()) {
-                if (booking.isActive() || booking.getPickedUpTimestamp() != null)
+                if (booking.getStatus() == Status.Active)
                     hasActiveBooking = true;
             }
 

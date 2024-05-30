@@ -1,7 +1,9 @@
 package org.example.sumatyw_backend.bookings;
 
 
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import org.example.sumatyw_backend.exceptions.InvalidDataException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,7 +20,7 @@ public class BookingController {
 
 
     @PostMapping()
-    public ResponseEntity<BookingDTO> createBooking(@RequestBody BookingInputDTO bookingInputDTO) {
+    public ResponseEntity<BookingDTO> createBooking(@Valid @RequestBody BookingInputDTO bookingInputDTO) {
         Booking booking = bookingService.createBooking(BookingDTOMapper.mapBookingInputDTOToBooking(bookingInputDTO));
         return new ResponseEntity<>(BookingDTOMapper.mapBookingToBookingDTO(booking), HttpStatus.OK);
     }
@@ -35,10 +37,17 @@ public class BookingController {
         return new ResponseEntity<>(BookingDTOMapper.mapBookingToBookingDTO(booking), HttpStatus.OK);
     }
 
-    @GetMapping(params = {"userId"})
+    @GetMapping( value = "/active", params = {"userId"})
     public ResponseEntity<BookingDTO> getBookingByUserId(@RequestParam("userId") UUID userId) {
         Booking booking = bookingService.getBookingByUserId(userId);
         return new ResponseEntity<>(BookingDTOMapper.mapBookingToBookingDTO(booking), HttpStatus.OK);
+    }
+
+    @GetMapping(params = {"userId"})
+    public ResponseEntity<List<BookingDTO>> getAllBookingsByUserId(@RequestParam("userId") UUID userId) {
+        List<Booking> userBookings = bookingService.getAllUserBookings(userId);
+
+        return new ResponseEntity<>(userBookings.stream().map(BookingDTOMapper::mapBookingToBookingDTO).toList(), HttpStatus.OK);
     }
 
     @GetMapping(params = {"restaurantId"})
@@ -47,6 +56,13 @@ public class BookingController {
         return new ResponseEntity<>(bookings.stream().map(BookingDTOMapper::mapBookingToBookingDTO).toList(), HttpStatus.OK);
     }
 
+    @GetMapping(params = {"restaurantId","active"})
+    public ResponseEntity<List<BookingDTO>> getActiveBookingsByRestaurantId(@RequestParam("restaurantId") UUID restaurandId, @RequestParam("active") boolean active) {
+        List<Booking> bookings = bookingService.getActiveBookingsByRestaurantID(restaurandId,active);
+        return new ResponseEntity<>(bookings.stream().map(BookingDTOMapper::mapBookingToBookingDTO).toList(), HttpStatus.OK);
+    }
+
+
     @PutMapping("/{id}")
     public ResponseEntity<BookingDTO> markBookingAsPickedUp(@PathVariable("id") UUID id, @RequestBody BookingInputDTO bookingInputDTO) {
         Booking booking = bookingService.markBookingAsPickedUp(id, BookingDTOMapper.mapBookingInputDTOToBooking(bookingInputDTO));
@@ -54,8 +70,7 @@ public class BookingController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteBookingById(@PathVariable("id") UUID id) {
-        bookingService.deleteBookingById(id);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    public ResponseEntity<BookingDTO> cancelBookingById(@PathVariable("id") UUID id) {
+        return new ResponseEntity<>(BookingDTOMapper.mapBookingToBookingDTO(bookingService.cancelBookingById(id)),HttpStatus.OK);
     }
 }

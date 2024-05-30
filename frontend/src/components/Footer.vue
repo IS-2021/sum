@@ -1,24 +1,19 @@
+<script setup lang="ts">
+import Logo from '@/components/Logo.vue';
+import { navbarLinks } from '@/components/navbar/links';
+</script>
+
 <template>
-  <footer
-    class="w-full bottom-0 border border-transparent bg-neutral-800 flex items-center justify-left p-10 text-neutral-50"
-  >
-    <div class="flex flex-col items-center text-xs gap-3">
-      <div class="w-16 h-16">
-        <img src="@/assets/logo.svg" alt="Logo" />
-      </div>
-      <p>&copy; 2024</p>
+  <footer class="bottom-0 flex justify-between bg-neutral-800 p-10 text-neutral-50">
+    <div>
+      <Logo class="mb-3 h-16 w-16" />
+      <p class="text-xs text-neutral-400">&copy; 2024</p>
     </div>
-    <div class="flex-grow"></div>
-    <div class="flex flex-col w-32">
+    <div class="flex w-32 flex-col">
       <nav>
-        <ul class="flex flex-col items-center gap-3">
-          <li>
-            <RouterLink to="/">Home</RouterLink>
-          </li>
-          <li>
-            <Button as-child>
-              <RouterLink to="/sign-in">Sign in</RouterLink>
-            </Button>
+        <ul class="space-y-3">
+          <li v-for="{ to, name } in navbarLinks" :key="`footer-${name}`" class="text-right">
+            <RouterLink :to="to">{{ name }}</RouterLink>
           </li>
         </ul>
       </nav>

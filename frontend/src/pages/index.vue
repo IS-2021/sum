@@ -1,5 +1,7 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import LoggedHomePage from '@/components/homepage/LoggedHomePage.vue';
+</script>
 
 <template>
-  <div></div>
+  <LoggedHomePage />
 </template>

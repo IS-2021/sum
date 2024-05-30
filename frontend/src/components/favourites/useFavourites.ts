@@ -26,7 +26,7 @@ export function useFavourites({ userId }: UseFavouritesProps) {
   });
 
   watchEffect(() => {
-    if (data.value && data.value.data.length > 0) {
+    if (data.value && data.value.data.length >= 0) {
       favourites.value = data.value.data;
     }
   });

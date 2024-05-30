@@ -38,7 +38,7 @@ public class UserService {
         }
 
         if (this.userRepository.findByEmail(user.getEmail()).isPresent()) {
-            throw new ResourceAlreadyExistsException("Email: '" + user.getPhoneNumber() + "' already exists.");
+            throw new ResourceAlreadyExistsException("Email: '" + user.getEmail() + "' already exists.");
         }
 
         user.setPassword(passwordEncoder.encode(user.getPassword()));
@@ -90,7 +90,7 @@ public class UserService {
     }
 
     public void banUserById(UUID id) {
-        User user = userRepository.findById(id).orElseThrow();
+        User user = userRepository.findById(id).orElseThrow(() -> new UserNotFoundException("User not found with ID: " + id));
         user.setBlocked(true);
         userRepository.save(user);
     }

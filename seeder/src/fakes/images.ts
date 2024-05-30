@@ -1,9 +1,7 @@
 import axios from "axios";
 import { logEvent } from "../lib/logger";
 
-export async function getRandomFoodImage() {
-  const url = "https://source.unsplash.com/random/1920x1080/?food";
-
+export async function getImage(url: string) {
   const res = await fetch(url);
   const imgBlob = await res.blob();
 
@@ -13,8 +11,8 @@ export async function getRandomFoodImage() {
   return new File([imgBlob], filename);
 }
 
-export async function addRandomImageToRestaurant(restaurantId: string) {
-  const randomImageBlob = await getRandomFoodImage();
+export async function addRandomImageToRestaurant(restaurantId: string, imageUrl: string) {
+  const randomImageBlob = await getImage(imageUrl);
   const formData = new FormData();
   formData.append("image", randomImageBlob);
 

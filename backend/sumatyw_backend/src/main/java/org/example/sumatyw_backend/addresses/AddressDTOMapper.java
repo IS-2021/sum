@@ -4,6 +4,7 @@ public class AddressDTOMapper {
 
     public static Address mapAddressInputDTOToAddress(AddressInputDTO addressInputDTO) {
         return Address.builder()
+            .addressId(addressInputDTO.addressId())
             .number(addressInputDTO.number())
             .street(addressInputDTO.street())
             .postalCode(addressInputDTO.postalCode())

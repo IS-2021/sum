@@ -2,6 +2,7 @@ package org.example.sumatyw_backend.geo;
 
 import com.google.maps.errors.ApiException;
 import com.google.maps.model.AutocompletePrediction;
+import com.google.maps.model.GeocodingResult;
 import lombok.AllArgsConstructor;
 import org.example.sumatyw_backend.addresses.Address;
 import org.example.sumatyw_backend.addresses.AddressDTO;
@@ -10,6 +11,8 @@ import org.example.sumatyw_backend.addresses.AddressService;
 import org.example.sumatyw_backend.geo.autocomplete.AutocompleteDTO;
 import org.example.sumatyw_backend.geo.autocomplete.AutocompleteDTOMapper;
 import org.example.sumatyw_backend.geo.autocomplete.AutocompleteService;
+import org.example.sumatyw_backend.geo.geocoding.GeocodingMapper;
+import org.example.sumatyw_backend.geo.geocoding.GeocodingService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -29,9 +32,14 @@ public class GeoController {
 
     private final AutocompleteService autocompleteService;
     private final AddressService addressService;
+    private final GeocodingService geocodingService;
 
     @GetMapping("/autocomplete")
     public ResponseEntity<List<AutocompleteDTO>> autocompleteAddress(@RequestParam String query, @RequestParam UUID sessionToken) throws IOException, InterruptedException, ApiException {
+        if (query.isBlank()) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
         AutocompletePrediction[] searchResult = autocompleteService.autocompleteAddress(query, sessionToken);
 
         List<AutocompleteDTO> dtos = Arrays.stream(searchResult).map(AutocompleteDTOMapper::mapPredictionToDTO).toList();
@@ -48,4 +56,12 @@ public class GeoController {
         return new ResponseEntity<>(dto, HttpStatus.OK);
     }
 
+    @GetMapping("/reverse-geocode")
+    public ResponseEntity<AddressDTO> reverseGeocode(@RequestParam double lat, @RequestParam double lng) throws IOException, InterruptedException, ApiException {
+        GeocodingResult result = geocodingService.reverseGeocode(lat, lng);
+
+        AddressDTO dtos = GeocodingMapper.mapReverseGeocodeToAddressDTO(result);
+
+        return new ResponseEntity<>(dtos, HttpStatus.OK);
+    }
 }
