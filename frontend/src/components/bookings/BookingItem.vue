@@ -5,6 +5,7 @@ import {
   AccordionContent,
   AccordionTrigger,
 } from '@/components/ui/accordion';
+import Button from '../ui/button/Button.vue';
 
 import { formatAddress } from '@/lib/googleMaps';
 import { formatDate } from '@/lib/formatters';
@@ -12,7 +13,11 @@ import { formatDate } from '@/lib/formatters';
 import { ref } from 'vue';
 import type { BookingDTO, Uuid } from '@/lib/api-model';
 
+import { toast } from 'vue-sonner';
+
 import ReportComponent from '@/components/bookings/ReportComponent.vue';
+import { putBookingsId } from '@/lib/api/bookings/bookings';
+import { useRoute, useRouter } from 'vue-router';
 
 const props = defineProps<{
   booking: BookingDTO;
@@ -28,6 +33,24 @@ const restaurant = props.booking.restaurant;
 
 function isOpen() {
   open.value = !open.value;
+}
+
+async function cancelBooking() {
+  const res = await putBookingsId(props.booking.bookingId, {
+    bookingId: props.booking.bookingId,
+    deadlinePickUpTimestamp: props.booking.deadlinePickUpTimestamp,
+    meal: props.booking.meal,
+    orderedTimestamp: props.booking.orderedTimestamp,
+    pickedUpTimestamp: props.booking.pickedUpTimestamp,
+    restaurant: props.booking.restaurant,
+    status: 'Cancelled',
+    userId: props.booking.userId,
+  });
+
+  if (res.status === 200) {
+    location.reload();
+    toast.success('Booking cancelled successfully!');
+  }
 }
 </script>
 
@@ -83,6 +106,9 @@ function isOpen() {
               :buttonMessage="buttonMessage"
               :bookingStatus="booking.status"
             />
+            <Button v-if="props.booking.status === 'Active'" variant="ghost" @click="cancelBooking"
+              >Cancel</Button
+            >
           </div>
         </div>
       </AccordionContent>
