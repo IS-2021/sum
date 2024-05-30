@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { formFields } from '@/components/(manage)/onboarding/fields/fields';
+import { formFields } from '@/components/(manage)/common/fields/fields';
 </script>
 
 <template>

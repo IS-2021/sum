@@ -22,8 +22,8 @@ import {
   ImageField,
   RestaurantDetailsFields,
   RestaurantHoursFields,
-} from '@/components/(manage)/onboarding/fields';
-import HoursFormTip from '@/components/(manage)/onboarding/HoursFormTip.vue';
+} from '@/components/(manage)/common/fields';
+import HoursFormTip from '@/components/(manage)/common/HoursFormTip.vue';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import type { ProblemDetailResponse } from '@/lib/api-model';
 import axios from 'axios';
