@@ -37,9 +37,6 @@ const props = defineProps<{
 
 const router = useRouter();
 
-const mealName = ref('');
-const mealDescription = ref('');
-
 const addNewMeal = form.handleSubmit(async (values) => {
   const response = await postMeals({
     description: values.description,
@@ -54,8 +51,12 @@ const addNewMeal = form.handleSubmit(async (values) => {
     const { message } = response.data as unknown as ValidationFailed422Response;
 
     errorMessage.value = message;
+  } else if (response.status === 404) {
+    errorMessage.value = 'Unable to add meal';
   }
 });
+
+const isValid = form.meta.value.valid;
 </script>
 
 <template>
@@ -89,6 +90,6 @@ const addNewMeal = form.handleSubmit(async (values) => {
         <FormMessage />
       </FormItem>
     </FormField>
-    <Button :disabled="mealName === '' || mealDescription === ''" type="submit"> Add meal </Button>
+    <Button :disabled="!isValid" type="submit"> Add meal </Button>
   </form>
 </template>
