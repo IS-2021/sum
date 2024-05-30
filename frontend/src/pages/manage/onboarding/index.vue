@@ -2,7 +2,7 @@
 import { getRestaurantUserQueryKey, useRestaurantUser } from '@/composables/useRestaurantUser';
 import { useHead } from '@unhead/vue';
 import { Button } from '@/components/ui/button';
-import { watchEffect } from 'vue';
+import { ref, watchEffect } from 'vue';
 import { toTypedSchema } from '@vee-validate/zod';
 import {
   mapRestaurantDataToDTO,
@@ -12,7 +12,7 @@ import {
 import { useForm } from 'vee-validate';
 import { useStepper } from '@vueuse/core';
 import { cn } from '@/lib/utils';
-import { ChevronLeftIcon, ChevronRightIcon, LogOutIcon } from 'lucide-vue-next';
+import { AlertCircleIcon, ChevronLeftIcon, ChevronRightIcon, LogOutIcon } from 'lucide-vue-next';
 import Logo from '@/components/Logo.vue';
 import AddressAutocompleteInput from '@/components/maps/autocomplete/AddressAutocompleteInput.vue';
 import { useAddress } from '@/composables/maps/useAddress';
@@ -25,6 +25,8 @@ import {
   RestaurantHoursFields,
 } from '@/components/(manage)/onboarding/fields';
 import HoursFormTip from '@/components/(manage)/onboarding/HoursFormTip.vue';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import type { ProblemDetailResponse } from '@/lib/api-model';
 
 useHead({
   title: 'Complete restaurant profile',
@@ -33,6 +35,7 @@ useHead({
 const router = useRouter();
 const { user, signOut } = useRestaurantUser();
 const { address, setPlaceId } = useAddress();
+const errorMessage = ref('');
 
 const { current, goToPrevious, goToNext, isCurrent, isFirst, isLast } = useStepper({
   greeting: {
@@ -85,6 +88,7 @@ const onSubmit = form.handleSubmit(async (formValues) => {
   const res = await postRestaurants(requestData);
 
   if (res.status === 200) {
+    errorMessage.value = '';
     await queryClient.invalidateQueries({
       queryKey: getGetUsersMeQueryKey(),
     });
@@ -93,7 +97,11 @@ const onSubmit = form.handleSubmit(async (formValues) => {
     });
     await router.push('/manage');
   } else if (res.status === 400) {
-    // handle
+    const { detail } = res.data as unknown as ProblemDetailResponse;
+
+    if (detail) {
+      errorMessage.value = detail;
+    }
   }
 });
 </script>
@@ -139,6 +147,14 @@ const onSubmit = form.handleSubmit(async (formValues) => {
             popover-class="md:w-80 lg:w-full lg:max-w-prose"
             @on-place-select="setPlaceId"
           />
+
+          <Alert variant="destructive" v-if="errorMessage" class="my-4 bg-red-100">
+            <AlertCircleIcon class="h-4 w-4" />
+            <AlertTitle>Failed to register your restaurant</AlertTitle>
+            <AlertDescription>
+              {{ errorMessage }}
+            </AlertDescription>
+          </Alert>
         </div>
 
         <div class="mt-8 flex gap-2">
