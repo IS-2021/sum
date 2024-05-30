@@ -1,14 +1,9 @@
 <script setup lang="ts">
-import type { BookingDTO } from '@/lib/api-model';
-
 import RestaurantImageComponent from '@/components/homepage/RestaurantImageComponent.vue';
 
-const props = defineProps<{
-  booking: BookingDTO;
-}>();
-
-const meal = props.booking.meal;
-const restaurant = props.booking.restaurant;
+const {
+  booking: { meal, restaurant },
+} = defineProps;
 </script>
 
 <template>
