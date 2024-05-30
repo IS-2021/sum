@@ -25,6 +25,7 @@ export const restaurantHoursSchema = z.object({
 });
 
 export const addressSchema = z.object({
+  addressId: z.string(),
   city: z.string(),
   country: z.string(),
   latitude: z.number(),

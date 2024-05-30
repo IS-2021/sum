@@ -1892,6 +1892,9 @@ components:
         city:
           description: ""
           type: string
+        addressId:
+          description: same as placeId from Google Maps API
+          type: string
     ProblemDetail:
       title: Root Type for ProblemDetail
       description: ""
