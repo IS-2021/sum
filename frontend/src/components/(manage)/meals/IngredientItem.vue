@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { IngredientDTO, MealDTO, Uuid } from '@/lib/api-model';
+import type { IngredientDTO, Uuid } from '@/lib/api-model';
 import { ref } from 'vue';
 
 import Button from '@/components/ui/button/Button.vue';
@@ -23,8 +23,6 @@ const props = defineProps<{
   mealDescription: string;
   ingredients: IngredientDTO[] | undefined;
 }>();
-
-const mealUpdateLink = `/manage/mealUpdate/${props.mealId}`;
 
 const amount = ref(0);
 const { user } = useUser();
