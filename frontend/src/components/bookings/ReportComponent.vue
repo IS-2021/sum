@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { ref, watchEffect } from 'vue';
+import { ref } from 'vue';
+
 import type { Uuid } from '@/lib/api-model';
 
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
@@ -15,7 +16,6 @@ import {
 import Button from '@/components/ui/button/Button.vue';
 import { postReportsUsers } from '@/lib/api/reports-users/reports-users';
 import DialogClose from '../ui/dialog/DialogClose.vue';
-import { watch } from 'fs';
 
 const props = defineProps<{
   restaurantId: Uuid;

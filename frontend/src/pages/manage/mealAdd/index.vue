@@ -4,12 +4,11 @@ meta:
 </route>
 
 <script setup lang="ts">
-import BookingsPage from '@/components/(manage)/bookings/BookingsPage.vue';
+import MealsAddPage from '@/components/(manage)/meals/MealsAddPage.vue';
 import { useUser } from '@/composables/useUser';
-
 const { user } = useUser();
 </script>
 
 <template>
-  <BookingsPage v-if="user" :restaurantId="user?.id" />
+  <MealsAddPage v-if="user" :userId="user.id" />
 </template>
