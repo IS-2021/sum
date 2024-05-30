@@ -54,7 +54,7 @@ public class UserControllerTest {
         user1.setUserId(UUID.randomUUID());
         User user2 = new User();
         user2.setUserId(UUID.randomUUID());
-        List<User> users = Arrays.asList(user1, user2); // Mocked list of users
+        List<User> users = Arrays.asList(user1, user2);
         when(userService.getUsers()).thenReturn(users);
 
         mockMvc.perform(get("/users"))
@@ -128,7 +128,7 @@ public class UserControllerTest {
     public void testUpdateUserCity() throws Exception {
         UUID userId = UUID.randomUUID();
         String placeId = "somePlaceId";
-        User user = new User(); // Mocked user
+        User user = new User();
         user.setUserId(userId);
 
         when(userService.updateUserAddress(userId, placeId)).thenReturn(user);
