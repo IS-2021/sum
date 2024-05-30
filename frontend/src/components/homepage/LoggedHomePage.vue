@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { useHead } from '@unhead/vue';
 import { useUser } from '@/composables/useUser';
-import { nextTick } from 'vue';
 
 import FavouritesDisplay from '@/components/homepage/FavouritesDisplay.vue';
 import WelcomeComponent from '@/components/homepage/WelcomeComponent.vue';
@@ -10,8 +9,6 @@ import LatestBookings from '@/components/homepage/LatestBookings.vue';
 useHead({
   title: 'Home',
 });
-
-nextTick();
 
 const { user } = useUser();
 </script>
