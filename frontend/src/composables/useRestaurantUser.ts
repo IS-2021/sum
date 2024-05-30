@@ -8,8 +8,18 @@ export function getRestaurantUserQueryKey() {
 }
 
 export function useRestaurantUser() {
-  const { user, signOut, isSignedIn, isLoaded: isUserLoaded } = useUser();
-  const { data, isPending: isRestaurantLoading } = useQuery({
+  const {
+    user,
+    signOut,
+    isSignedIn,
+    isLoaded: isUserLoaded,
+    invalidateCache: invalidateUserCache,
+  } = useUser();
+  const {
+    data,
+    isPending: isRestaurantLoading,
+    refetch,
+  } = useQuery({
     queryKey: getRestaurantUserQueryKey(),
     queryFn: () => getRestaurantsId(user.value?.id ?? ''),
     enabled: isSignedIn.value,
@@ -22,6 +32,11 @@ export function useRestaurantUser() {
   const restaurant = computed(() => data.value?.data);
   const isLoaded = computed(() => isUserLoaded.value && !isRestaurantLoading.value);
 
+  async function invalidateCache() {
+    await invalidateUserCache();
+    await refetch();
+  }
+
   return {
     user,
     restaurant,
@@ -29,5 +44,6 @@ export function useRestaurantUser() {
     isLoaded,
     signOut,
     isProfileComplete,
+    invalidateCache,
   };
 }
