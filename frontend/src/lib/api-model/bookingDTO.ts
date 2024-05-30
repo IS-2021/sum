@@ -6,12 +6,17 @@
  */
 import type { Timestamp } from './timestamp';
 import type { Uuid } from './uuid';
+import type { MealDTO } from './mealDTO';
+import type { RestaurantDTO } from './restaurantDTO';
+import type { BookingStatus } from './bookingStatus';
 
 export interface BookingDTO {
   deadlinePickUpTimestamp: Timestamp;
   id: Uuid;
-  mealId: Uuid;
+  meal: MealDTO;
   orderedTimestamp: Timestamp;
   pickedUpTimestamp: Timestamp;
+  restaurant: RestaurantDTO;
+  status: BookingStatus;
   userId: Uuid;
 }

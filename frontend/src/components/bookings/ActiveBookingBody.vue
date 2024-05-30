@@ -1,21 +1,15 @@
 <script setup lang="ts">
 import type { BookingDTO } from '@/lib/api-model';
-import { useGetMealsId } from '@/lib/api/meals/meals';
 
 import { formatDate } from '@/lib/formatters';
-
-import ActiveBookingRestaurantInfo from '@/components/bookings/ActiveBookingRestaurantInfo.vue';
-import { computed, unref, watchEffect } from 'vue';
+import { formatAddress } from '@/lib/googleMaps';
 
 const props = defineProps<{
   activeBooking: BookingDTO;
 }>();
 
-const { data } = useGetMealsId(props.activeBooking.mealId);
-const meal = computed(() => unref(data)?.data);
-watchEffect(() => {
-  console.log(meal);
-});
+const meal = props.activeBooking.meal;
+const restaurant = props.activeBooking.restaurant;
 </script>
 
 <template>
@@ -35,6 +29,14 @@ watchEffect(() => {
         {{ formatDate(activeBooking.deadlinePickUpTimestamp) }}
       </p>
     </li>
-    <ActiveBookingRestaurantInfo :restaurantId="meal.restaurantId" />
+    <li>
+      <p>Restaurant: {{ restaurant.name }}</p>
+    </li>
+    <li>
+      <p>Address: {{ formatAddress(restaurant.address) }}</p>
+    </li>
+    <li>
+      <p class="mt-8">Contact: {{ restaurant.phoneNumber }}</p>
+    </li>
   </ul>
 </template>

@@ -6,6 +6,8 @@
  */
 
 export interface AddressInputDTO {
+  /** same as placeId from Google Maps API */
+  addressId?: string;
   city: string;
   country: string;
   /** double */
