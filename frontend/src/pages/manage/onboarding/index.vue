@@ -3,9 +3,12 @@ import { useRestaurantUser } from '@/composables/useRestaurantUser';
 import { useHead } from '@unhead/vue';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { watch } from 'vue';
+import { watchEffect } from 'vue';
 import { toTypedSchema } from '@vee-validate/zod';
-import { restaurantSchema } from '@/components/(manage)/onboarding/restaurantSchema';
+import {
+  mapRestaurantDataToDTO,
+  restaurantSchema,
+} from '@/components/(manage)/onboarding/restaurantSchema';
 import { useForm } from 'vee-validate';
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { useStepper } from '@vueuse/core';
@@ -16,7 +19,6 @@ import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import AddressAutocompleteInput from '@/components/maps/autocomplete/AddressAutocompleteInput.vue';
 import { useAddress } from '@/composables/maps/useAddress';
 import { postRestaurants } from '@/lib/api/restaurants/restaurants';
-import type { HoursDTO } from '@/lib/api-model';
 import { useRouter } from 'vue-router/auto';
 
 useHead({
@@ -24,7 +26,7 @@ useHead({
 });
 
 const router = useRouter();
-const { user, restaurant, isProfileComplete, signOut } = useRestaurantUser();
+const { user, signOut } = useRestaurantUser();
 const { address, setPlaceId } = useAddress();
 
 const { current, goToPrevious, goToNext, isCurrent, isFirst, isLast } = useStepper({
@@ -114,10 +116,20 @@ const form = useForm({
       saturday: ['12:00', '22:00'],
       sunday: ['', ''],
     },
+    address: {
+      addressId: 'ChIJqa_PbDA1GkcRG8owLC6Edws',
+      number: '215',
+      street: 'Wólczańska',
+      postalCode: '90-924',
+      city: 'Łódź',
+      country: 'Polska',
+      latitude: 51.74743249999999,
+      longitude: 19.4561056,
+    },
   },
 });
 
-watch(address, () => {
+watchEffect(() => {
   if (address.value) {
     form.setValues({
       ...form.values,
@@ -126,34 +138,18 @@ watch(address, () => {
   }
 });
 
-watch(restaurant, () => {
-  console.log(restaurant.value);
-});
-
-watch(user, () => {
-  console.log(user.value);
+watchEffect(() => {
+  if (user.value) {
+    form.setValues({
+      ...form.values,
+      ownerId: user.value.id,
+    });
+  }
 });
 
 const onSubmit = form.handleSubmit(async (formValues) => {
-  if (!user.value || !address.value) {
-    return;
-  }
-
-  const sanitizeHours = (hours: string[]) => {
-    return hours.filter((hour) => hour !== '');
-  };
-  const mappedHours: HoursDTO = Object.entries(formValues.hours).reduce((acc, [key, value]) => {
-    acc[key as keyof HoursDTO] = sanitizeHours(value);
-    return acc;
-  }, {} as HoursDTO);
-
-  const res = await postRestaurants({
-    name: formValues.details.name,
-    phoneNumber: formValues.details.phoneNumber,
-    hours: mappedHours,
-    userId: user.value.id,
-    addressInputDTO: formValues.address,
-  });
+  const requestData = mapRestaurantDataToDTO(formValues);
+  const res = await postRestaurants(requestData);
 
   if (res.status === 200) {
     await router.push('/manage');
@@ -265,7 +261,7 @@ const onSubmit = form.handleSubmit(async (formValues) => {
           <Button type="button" @click="goToNext" v-if="!isLast">
             Continue <ChevronRightIcon class="ml-2 h-4 w-4" />
           </Button>
-          <Button v-else type="submit">Save</Button>
+          <Button v-else type="submit" :disabled="!form.meta.value.valid">Save</Button>
         </div>
       </form>
     </div>
