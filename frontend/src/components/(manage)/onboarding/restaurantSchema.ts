@@ -10,7 +10,7 @@ const hoursSchema = z
   .string()
   .refine((val) => {
     if (val === '') return true;
-    return /^([01]?[0-9]|2[0-3]):[0-5][0-9]$/.test(val);
+    return /^([01][0-9]|2[0-3]):[0-5][0-9]$/.test(val);
   }, 'Invalid time format')
   .array()
   .max(2);
