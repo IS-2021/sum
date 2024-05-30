@@ -399,16 +399,6 @@ paths:
           schema:
             $ref: "#/components/schemas/UUID"
           in: query
-        - name: restaurantId
-          description: "If exists, returns all bookings for restaurant"
-          schema:
-            $ref: "#/components/schemas/UUID"
-          in: query
-        - name: active
-          description: "Syntax: restaurantId + active - returns all pending bookings for restaurant"
-          schema:
-            $ref: "#/components/schemas/UUID"
-          in: query
       responses:
         "200":
           content:
@@ -964,7 +954,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/RestaurantDTO"
+              $ref: "#/components/schemas/RestaurantInputDTO"
         required: true
       tags:
         - restaurants
@@ -1295,50 +1285,6 @@ paths:
               schema:
                 $ref: "#/components/schemas/AddressDTO"
           description: Returns address of the place
-  /geo/reverse-geocode:
-    get:
-      tags:
-        - geo
-      parameters:
-        - name: lat
-          description: ""
-          schema:
-            type: number
-          in: query
-          required: true
-        - name: lng
-          description: ""
-          schema:
-            type: number
-          in: query
-          required: true
-      responses:
-        "200":
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/AddressDTO"
-          description: Reverse geocoded address
-  /bookings/active:
-    get:
-      tags:
-        - bookings
-      parameters:
-        - name: userId
-          description: ""
-          schema:
-            $ref: "#/components/schemas/UUID"
-          in: query
-          required: true
-      responses:
-        "200":
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/BookingDTO"
-          description: .
-        "404":
-          $ref: "#/components/responses/NotFound_404"
   /geo/reverse-geocode:
     get:
       tags:
