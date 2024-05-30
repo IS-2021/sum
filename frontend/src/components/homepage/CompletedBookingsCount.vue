@@ -1,13 +1,12 @@
 <script setup lang="ts">
 import type { BookingDTO } from '@/lib/api-model';
-import { ref } from 'vue';
 
 const props = defineProps<{
   bookings: BookingDTO[];
 }>();
 
 const completedBookingsCount = props.bookings.filter(
-  (booking) => !booking.pickedUpTimestamp,
+  (booking) => booking.status === 'PickedUp',
 ).length;
 </script>
 
