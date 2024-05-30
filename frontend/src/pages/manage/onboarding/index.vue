@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { getRestaurantUserQueryKey, useRestaurantUser } from '@/composables/useRestaurantUser';
+import { useRestaurantUser } from '@/composables/useRestaurantUser';
 import { useHead } from '@unhead/vue';
 import { Button } from '@/components/ui/button';
 import { ref, watchEffect } from 'vue';
@@ -18,26 +18,26 @@ import AddressAutocompleteInput from '@/components/maps/autocomplete/AddressAuto
 import { useAddress } from '@/composables/maps/useAddress';
 import { postRestaurants } from '@/lib/api/restaurants/restaurants';
 import { useRouter } from 'vue-router/auto';
-import { useQueryClient } from '@tanstack/vue-query';
-import { getGetUsersMeQueryKey } from '@/lib/api/users/users';
 import {
+  ImageField,
   RestaurantDetailsFields,
   RestaurantHoursFields,
 } from '@/components/(manage)/onboarding/fields';
 import HoursFormTip from '@/components/(manage)/onboarding/HoursFormTip.vue';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import type { ProblemDetailResponse } from '@/lib/api-model';
+import axios from 'axios';
 
 useHead({
   title: 'Complete restaurant profile',
 });
 
 const router = useRouter();
-const { user, signOut } = useRestaurantUser();
+const { user, signOut, invalidateCache } = useRestaurantUser();
 const { address, setPlaceId } = useAddress();
 const errorMessage = ref('');
 
-const { current, goToPrevious, goToNext, isCurrent, isFirst, isLast } = useStepper({
+const { current, goToPrevious, goToNext, isCurrent, isFirst, isBefore, goTo } = useStepper({
   greeting: {
     label: 'Welcome to FoodGood',
     description:
@@ -54,6 +54,11 @@ const { current, goToPrevious, goToNext, isCurrent, isFirst, isLast } = useStepp
   location: {
     label: 'Restaurant location',
     description: 'Finally, tell us where your restaurant is located.',
+  },
+  photo: {
+    label: 'Restaurant photo',
+    description:
+      'Upload a photo of your restaurant to make it stand out. This step is optional and photo can be changed later in the settings.',
   },
 });
 
@@ -81,21 +86,15 @@ watchEffect(() => {
   }
 });
 
-const queryClient = useQueryClient();
-
 const onSubmit = form.handleSubmit(async (formValues) => {
   const requestData = mapRestaurantDataToDTO(formValues);
   const res = await postRestaurants(requestData);
 
   if (res.status === 200) {
     errorMessage.value = '';
-    await queryClient.invalidateQueries({
-      queryKey: getGetUsersMeQueryKey(),
-    });
-    await queryClient.invalidateQueries({
-      queryKey: getRestaurantUserQueryKey(),
-    });
-    await router.push('/manage');
+
+    await invalidateCache();
+    goTo('photo');
   } else if (res.status === 400) {
     const { detail } = res.data as unknown as ProblemDetailResponse;
 
@@ -104,6 +103,25 @@ const onSubmit = form.handleSubmit(async (formValues) => {
     }
   }
 });
+
+async function uploadRestaurantImage(data: FormData) {
+  if (!user.value?.id) {
+    return;
+  }
+
+  console.log(data);
+
+  const res = await axios.post(`http://localhost:9090/restaurants/images/${user.value.id}`, data, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  });
+
+  if (res.status === 200) {
+    await invalidateCache();
+    await router.push('/manage');
+  }
+}
 </script>
 
 <template>
@@ -129,7 +147,7 @@ const onSubmit = form.handleSubmit(async (formValues) => {
 
       <p class="mb-8 max-w-prose text-neutral-700">{{ current.description }}</p>
 
-      <form @submit="onSubmit">
+      <form @submit="onSubmit" v-if="isBefore('photo')">
         <!-- Details -->
         <div :class="cn('hidden space-y-4', isCurrent('details') && 'block')">
           <RestaurantDetailsFields />
@@ -161,12 +179,18 @@ const onSubmit = form.handleSubmit(async (formValues) => {
           <Button type="button" :disabled="isFirst" variant="outline" @click="goToPrevious">
             <ChevronLeftIcon class="mr-2 h-4 w-4" /> Back
           </Button>
-          <Button type="button" @click="goToNext" v-if="!isLast">
+          <Button type="button" @click="goToNext" v-if="isBefore('location')">
             Continue <ChevronRightIcon class="ml-2 h-4 w-4" />
           </Button>
-          <Button v-else type="submit" :disabled="!form.meta.value.valid">Save</Button>
+          <Button v-else type="submit" :disabled="!form.meta.value.valid && isCurrent('location')"
+            >Save</Button
+          >
         </div>
       </form>
+
+      <div v-else-if="isCurrent('photo')">
+        <ImageField @on-change="uploadRestaurantImage" />
+      </div>
     </div>
   </div>
 </template>
