@@ -12,6 +12,7 @@ export function useRestaurantUser() {
   const { data, isPending: isRestaurantLoading } = useQuery({
     queryKey: getRestaurantUserQueryKey(),
     queryFn: () => getRestaurantsId(user.value?.id ?? ''),
+    enabled: isSignedIn.value,
   });
 
   const isProfileComplete = computed(() => {
