@@ -39,7 +39,7 @@ function deleteMeal() {
       <p class="text-xs">Available amount: {{ amount }}</p>
     </div>
     <p class="text-neutral-950">{{ props.mealDescription }}</p>
-    <div class="flex flex-wrap">
+    <div class="flex flex-wrap mt-2">
       <p class="text-neutral-800 pr-1">
         Ingredients: {{ props.ingredients?.map((ingredient) => ingredient.name).join(', ') }}
       </p>
