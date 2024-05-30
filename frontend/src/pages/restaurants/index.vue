@@ -5,8 +5,7 @@ meta:
 
 <script setup lang="ts">
 import { useHead } from '@unhead/vue';
-import { useGetRestaurants } from '@/lib/api/restaurants/restaurants';
-import { computed, ref, unref } from 'vue';
+import { ref, toRef } from 'vue';
 import { useUser } from '@/composables/useUser';
 import { Button } from '@/components/ui/button';
 import MapBrowser from '@/components/restaurants/views/MapBrowser.vue';
@@ -15,6 +14,11 @@ import { ChevronLeft, MapIcon } from 'lucide-vue-next';
 import Header from '@/components/navbar/Header.vue';
 import Footer from '@/components/Footer.vue';
 import { cn } from '@/lib/utils';
+import { useRestaurants } from '@/components/restaurants/useRestaurants';
+import RadiusSelect from '@/components/restaurants/RadiusSelect.vue';
+import AddressAutocompleteInput from '@/components/maps/autocomplete/AddressAutocompleteInput.vue';
+import { useAddress } from '@/composables/maps/useAddress';
+import { useRefOverride } from '@/composables/maps/useRefOverride';
 
 useHead({
   title: 'Restaurants - Food Good',
@@ -25,18 +29,25 @@ const toggleView = () => {
   isMapView.value = !isMapView.value;
 };
 
+const radius = ref<number>(5);
+
 const { user } = useUser();
-const { data, isPending: areRestaurantsLoading } = useGetRestaurants();
-const restaurants = computed(() => unref(data)?.data);
+const { address: pickedAddress, setPlaceId } = useAddress();
+const address = useRefOverride(toRef(user.value?.address), pickedAddress);
+const { restaurants } = useRestaurants({
+  radius,
+  address,
+});
+
+function setRadius(value: string) {
+  radius.value = parseInt(value);
+}
 </script>
 
 <template>
   <Header />
   <div :class="cn('flex flex-grow', !isMapView && 'my-8')">
-    <template v-if="areRestaurantsLoading">
-      <p>Loading...</p>
-    </template>
-    <template v-else-if="restaurants">
+    <template v-if="restaurants">
       <div v-if="isMapView" class="flex flex-grow relative">
         <Button
           @click="toggleView"
@@ -46,16 +57,26 @@ const restaurants = computed(() => unref(data)?.data);
           Back to list
         </Button>
 
-        <MapBrowser :restaurants="restaurants" />
+        <MapBrowser
+          v-if="address"
+          :restaurants="restaurants"
+          :center-lat="address?.latitude"
+          :center-lng="address?.longitude"
+          :radius="radius"
+        />
       </div>
 
       <div v-else class="px-4 sm:container w-full">
-        <div class="flex flex-col sm:flex-row sm:items-center gap-2 justify-between mb-6">
+        <div class="flex flex-col lg:flex-row lg:items-center gap-2 justify-between mb-6">
           <h1 class="font-bold text-2xl tracking-tight">
-            Restaurants {{ user?.address && `in ${user.address.city}` }}
+            Restaurants {{ address && `in ${address.city}` }}
           </h1>
 
-          <Button @click="toggleView"> <MapIcon class="mr-3" /> Browse on a map </Button>
+          <div class="flex flex-wrap lg:flex-nowrap gap-2">
+            <AddressAutocompleteInput @on-place-select="setPlaceId" />
+            <RadiusSelect @update:radius="setRadius" class="flex-shrink" />
+            <Button @click="toggleView"> <MapIcon class="mr-3" /> Browse on a map </Button>
+          </div>
         </div>
 
         <div>
