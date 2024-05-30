@@ -128,7 +128,7 @@ public class RestaurantController {
                 oldImageFile.delete();
             }
 
-            restaurant.setImageUUID(imageName);
+            restaurant.setImageUUID(imageName + ".jpg");
 
             restaurantService.updateRestaurantImageUUID(restaurant);
 
