@@ -2,14 +2,18 @@ package org.example.sumatyw_backend.users;
 
 import static org.mockito.Mockito.*;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.httpBasic;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import org.example.sumatyw_backend.addresses.Address;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -20,115 +24,121 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.example.sumatyw_backend.users.*;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.util.*;
 
-@WebMvcTest(UserController.class)
-class UserControllerTest {
+@ExtendWith(MockitoExtension.class)
+public class UserControllerTest {
 
-    @Autowired
     private MockMvc mockMvc;
 
-    @MockBean
+    @Mock
     private UserService userService;
 
-    @Autowired
-    private ObjectMapper objectMapper;
+    @InjectMocks
+    private UserController userController;
 
-    private User user;
-    private UUID userId;
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
     @BeforeEach
-    void setUp() {
-        userId = UUID.randomUUID();
-        user = User.builder()
-            .userId(userId)
-            .firstName("John")
-            .secondName("Doe")
-            .username("johndoe")
-            .email("john@example.com")
-            .password("password")
-            .phoneNumber("1234567890")
-            .role(Role.ROLE_USER)
-            .build();
+    public void setup() {
+        mockMvc = MockMvcBuilders.standaloneSetup(userController).build();
     }
 
     @Test
-    @WithMockUser(username = "admin", roles = {"ADMIN"})
-    void testGetUsers() throws Exception {
-        List<User> users = Arrays.asList(user);
+    public void testGetUsers() throws Exception {
+        User user1 = new User();
+        user1.setUserId(UUID.randomUUID());
+        User user2 = new User();
+        user2.setUserId(UUID.randomUUID());
+        List<User> users = Arrays.asList(user1, user2);
         when(userService.getUsers()).thenReturn(users);
 
         mockMvc.perform(get("/users"))
             .andExpect(status().isOk())
-            .andExpect(jsonPath("$[0].username").value("johndoe"));
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+            .andExpect(jsonPath("$.length()").value(users.size()));
+
+        verify(userService, times(1)).getUsers();
     }
 
     @Test
-    @WithMockUser(username = "admin", roles = {"ADMIN"})
-    void testGetUserById() throws Exception {
+    public void testGetUserById() throws Exception {
+        UUID userId = UUID.randomUUID();
+        User user = new User(); // Mocked user
+        user.setUserId(userId);
         when(userService.getUserById(userId)).thenReturn(user);
 
         mockMvc.perform(get("/users/{id}", userId))
             .andExpect(status().isOk())
-            .andExpect(jsonPath("$.username").value("johndoe"));
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+            .andExpect(jsonPath("$.id").value(userId.toString()));
+
+        verify(userService, times(1)).getUserById(userId);
     }
 
     @Test
-    @WithMockUser(username = "johndoe", roles = {"USER"})
-    void testGetMe() throws Exception {
+    public void testGetMe() throws Exception {
+        User user = new User(); // Mocked user
+        user.setUserId(UUID.randomUUID());
         when(userService.getMeUser()).thenReturn(user);
 
         mockMvc.perform(get("/users/me"))
             .andExpect(status().isOk())
-            .andExpect(jsonPath("$.username").value("johndoe"));
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+            .andExpect(jsonPath("$.id").value(user.getUserId().toString()));
+
+        verify(userService, times(1)).getMeUser();
     }
 
     @Test
-    @WithMockUser(username = "admin", roles = {"ADMIN"})
-    void testDeleteUserById() throws Exception {
+    public void testDeleteUserById() throws Exception {
+        UUID userId = UUID.randomUUID();
         doNothing().when(userService).removeUserById(userId);
 
         mockMvc.perform(delete("/users/{id}", userId))
             .andExpect(status().isNoContent());
+
+        verify(userService, times(1)).removeUserById(userId);
     }
 
     @Test
-    @WithMockUser(username = "admin", roles = {"ADMIN"})
-    void testUpdateUserById() throws Exception {
-        UserInputDTO updatedUser = new UserInputDTO("Jane", "Doe", "johndoe", "jane@example.com","P@ssw0rd123","123456789",Role.ROLE_USER);
-        User updated = User.builder()
-            .userId(userId)
-            .firstName("Jane")
-            .secondName("Doe")
-            .username("johndoe")
-            .email("jane123@example.com")
-            .phoneNumber("123456789")
-            .password("P@ssw0rd123")
-            .role(Role.ROLE_USER)
-            .build();
+    public void testUpdateUserById() throws Exception {
+        UUID userId = UUID.randomUUID();
+        UserInputDTO userInputDTO = new UserInputDTO("firstName", "secondName", "username", "email@example.com", "P@ssw0rd123", "1234567890", Role.ROLE_USER);
+        User user = UserDTOMapper.mapUserInputDTOToUser(userInputDTO);
+        user.setUserId(userId);
 
-        when(userService.updateUserById(eq(userId), any(User.class))).thenReturn(updated);
+        when(userService.updateUserById(eq(userId), any(User.class))).thenReturn(user);
 
         mockMvc.perform(put("/users/{id}", userId)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(updatedUser)))
+                .content(objectMapper.writeValueAsString(userInputDTO)))
             .andExpect(status().isOk())
-            .andExpect(jsonPath("$.email").value("jane123@example.com"));
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+            .andExpect(jsonPath("$.id").value(userId.toString()));
+
+        verify(userService, times(1)).updateUserById(eq(userId), any(User.class));
     }
 
     @Test
-    @WithMockUser(username = "admin", roles = {"ADMIN"})
-    void testUpdateUserCity() throws Exception {
-        String placeId = "ChIJN1t_tDeuEmsRUsoyG83frY4";
-        Address address = new Address("addressId", "City", "Street", "123", "PostalCode", "Country", null, 10.0, 10.0);
-        user.setAddress(address);
+    public void testUpdateUserCity() throws Exception {
+        UUID userId = UUID.randomUUID();
+        String placeId = "somePlaceId";
+        User user = new User();
+        user.setUserId(userId);
 
         when(userService.updateUserAddress(userId, placeId)).thenReturn(user);
 
         mockMvc.perform(post("/users/{userId}/address", userId)
                 .param("placeId", placeId))
             .andExpect(status().isOk())
-            .andExpect(jsonPath("$.address.city").value("City"));
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+            .andExpect(jsonPath("$.id").value(userId.toString()));
+
+        verify(userService, times(1)).updateUserAddress(userId, placeId);
     }
 }

@@ -1,13 +1,13 @@
 <script setup lang="ts">
-import type { UserDTO } from '@/lib/api-model';
+import type { Uuid } from '@/lib/api-model';
 import { StarIcon } from 'lucide-vue-next';
 import { useFavourites } from '@/components/favourites/useFavourites';
 import RestaurantCard from '@/components/restaurants/RestaurantCard.vue';
 
-const { user } = defineProps<{ user: UserDTO }>();
+const { userId } = defineProps<{ userId: Uuid }>();
 
 const { favourites, hasAnyFavourites } = useFavourites({
-  userId: user.id,
+  userId,
 });
 </script>
 
@@ -21,7 +21,7 @@ const { favourites, hasAnyFavourites } = useFavourites({
     </p>
   </div>
 
-  <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-4" v-if="favourites">
+  <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-4 mb-8" v-if="favourites">
     <RestaurantCard
       v-for="restaurant in favourites.slice(0, 3)"
       :key="restaurant.id"

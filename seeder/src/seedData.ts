@@ -27,5 +27,5 @@ const singleRestauarnt: RestaurantData[] = [
   },
 ];
 
-export const restaurants = allRestaurants;
-// export const restaurants = singleRestauarnt;
+// export const restaurants = allRestaurants;
+export const restaurants = singleRestauarnt;

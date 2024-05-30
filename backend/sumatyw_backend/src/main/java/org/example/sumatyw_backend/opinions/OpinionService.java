@@ -5,12 +5,15 @@ import org.example.sumatyw_backend.exceptions.ObjectNotFoundException;
 import org.example.sumatyw_backend.exceptions.ResourceAlreadyExistsException;
 import org.example.sumatyw_backend.restaurants.Restaurant;
 import org.example.sumatyw_backend.restaurants.RestaurantRepository;
-import org.example.sumatyw_backend.users.User;
+import org.example.sumatyw_backend.restaurants.RestaurantStatus;
 import org.example.sumatyw_backend.users.UserRepository;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -20,8 +23,8 @@ public class OpinionService {
     private final UserRepository userRepository;
 
     public Opinion addOpinion(Opinion opinion) {
-        // todo mozna sprawdzic czy istnieje opinia z user_id i restaurant_id zamiast pobierac calej listy
-        List<Opinion> userOpinions = opinionRepository.findAllByUser(User.builder().userId(opinion.getUser().getUserId()).build());
+        Optional<Opinion> userRestaurantOpinion = opinionRepository
+            .findByUserUserIdAndRestaurantRestaurantId(opinion.getUser().getUserId(), opinion.getRestaurant().getRestaurantId());
 
         userRepository.findById(opinion.getUser().getUserId()).orElseThrow(
             () -> new ObjectNotFoundException("User with id: " + opinion.getUser().getUserId() + " not found"));
@@ -29,15 +32,16 @@ public class OpinionService {
         Restaurant restaurantDB = restaurantRepository.findById(opinion.getRestaurant().getRestaurantId())
             .orElseThrow(() -> new ObjectNotFoundException("Restaurant with id: " + opinion.getRestaurant().getRestaurantId() + " not found"));
 
-        for(Opinion o : userOpinions) {
-            if (o.getRestaurant().getRestaurantId().equals(opinion.getRestaurant().getRestaurantId()))
-                throw new ResourceAlreadyExistsException("User can only leave one opinion for a given restaurant");
-        }
+        if (userRestaurantOpinion.isPresent())
+            throw new ResourceAlreadyExistsException("User can only leave one opinion for a given restaurant");
 
         if (opinion.isPositive()) {
             restaurantDB.setLikesCount(restaurantDB.getLikesCount() + 1);
         } else {
             restaurantDB.setDislikesCount(restaurantDB.getDislikesCount() + 1);
+
+            if (negativeOpinionThresholdExceeded(opinion.getRestaurant().getRestaurantId()))
+                restaurantDB.setStatus(RestaurantStatus.Banned);
         }
 
         restaurantRepository.save(restaurantDB);
@@ -66,11 +70,28 @@ public class OpinionService {
         } else {
             restaurantDB.setLikesCount(restaurantDB.getLikesCount() - 1);
             restaurantDB.setDislikesCount(restaurantDB.getDislikesCount() + 1);
+
+            if (negativeOpinionThresholdExceeded(opinion.getRestaurant().getRestaurantId()))
+                restaurantDB.setStatus(RestaurantStatus.Banned);
         }
 
         existingOpinion.setPositive(opinion.isPositive());
         existingOpinion.setTimestamp(opinion.getTimestamp());
         restaurantRepository.save(restaurantDB);
         return opinionRepository.save(existingOpinion);
+    }
+
+    private boolean negativeOpinionThresholdExceeded(UUID restaurantId) {
+        List<Opinion> lastWeekRestaurantOpinions = opinionRepository.findAllByRestaurantRestaurantId(restaurantId)
+            .stream().filter(o -> o.getTimestamp().isAfter(LocalDateTime.now().minusWeeks(1))).toList();
+
+        long lastWeekOpinionsCount = lastWeekRestaurantOpinions.size() + 1;
+
+        if (lastWeekOpinionsCount >= 10) {
+            long negativeOpinionsCount = lastWeekRestaurantOpinions.stream().filter(o -> o.isPositive() == false).count() + 1;
+
+            return (double) negativeOpinionsCount / (double) lastWeekOpinionsCount > 0.7;
+        }
+        return false;
     }
 }

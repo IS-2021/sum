@@ -1,6 +1,8 @@
 package org.example.sumatyw_backend.bookings;
 
 import org.example.sumatyw_backend.meals.Meal;
+import org.example.sumatyw_backend.meals.MealDTOMapper;
+import org.example.sumatyw_backend.restaurants.RestaurantDTOMapper;
 import org.example.sumatyw_backend.users.User;
 
 public class BookingDTOMapper {
@@ -9,7 +11,6 @@ public class BookingDTOMapper {
         return Booking.builder()
             .meal(Meal.builder().mealId(bookingInputDTO.mealId()).build())
             .user(User.builder().userId(bookingInputDTO.userId()).build())
-            .active(true)
             .build();
     }
 
@@ -17,10 +18,12 @@ public class BookingDTOMapper {
         return new BookingDTO(
             booking.getBookedId(),
             booking.getUser().getUserId(),
-            booking.getMeal().getMealId(),
             booking.getTimestamp(),
             booking.getTimestamp().plusHours(1),
-            booking.getPickedUpTimestamp() == null ? null : booking.getPickedUpTimestamp()
+            booking.getPickedUpTimestamp() == null ? null : booking.getPickedUpTimestamp(),
+            booking.getStatus(),
+            MealDTOMapper.mapMealToMealDTO(booking.getMeal()),
+            RestaurantDTOMapper.mapRestaurantToRestaurantDTO(booking.getMeal().getRestaurant())
         );
     }
 }

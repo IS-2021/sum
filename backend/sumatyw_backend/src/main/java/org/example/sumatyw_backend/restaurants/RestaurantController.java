@@ -9,7 +9,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.xml.crypto.dsig.TransformException;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -129,7 +128,7 @@ public class RestaurantController {
                 oldImageFile.delete();
             }
 
-            restaurant.setImageUUID(imageName);
+            restaurant.setImageUUID(imageName + ".jpg");
 
             restaurantService.updateRestaurantImageUUID(restaurant);
 

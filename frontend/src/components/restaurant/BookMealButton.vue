@@ -10,27 +10,35 @@ import {
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import type { Uuid } from '@/lib/api-model';
-import { postBookings } from '@/lib/api/bookings/bookings';
-import { ref } from 'vue';
+import { postBookings, useGetBookingsActive } from '@/lib/api/bookings/bookings';
+import { useRouter } from 'vue-router/auto';
+import { computed, unref } from 'vue';
 
 const props = defineProps<{
   mealId: Uuid;
   userId: Uuid;
 }>();
 
-let bookingLink = ref('');
+const { data } = useGetBookingsActive({ userId: props.userId });
+const activeBooking = computed(() => unref(data));
+
+const router = useRouter();
 
 async function bookChosenMeal() {
   const booking = await postBookings({ mealId: props.mealId, userId: props.userId });
-  const bookingId = booking.data.id;
-  bookingLink.value = `/booking/${bookingId}`;
+
+  if (booking.status === 200) {
+    await router.push(`/activeBooking`);
+  }
 }
 </script>
 
 <template>
   <Dialog>
     <DialogTrigger as-child>
-      <Button class="w-1/2">Book</Button>
+      <Button v-if="activeBooking" :disabled="activeBooking.status === 200" class="w-1/2"
+        >Book</Button
+      >
     </DialogTrigger>
     <DialogContent class="sm:max-w-md">
       <DialogHeader>
@@ -39,9 +47,7 @@ async function bookChosenMeal() {
 
       <DialogFooter class="sm:justify-start">
         <DialogClose as-child>
-          <RouterLink :to="bookingLink">
-            <Button type="button" variant="secondary" @click="bookChosenMeal()"> Book meal </Button>
-          </RouterLink>
+          <Button type="button" variant="secondary" @click="bookChosenMeal"> Book meal </Button>
         </DialogClose>
       </DialogFooter>
     </DialogContent>

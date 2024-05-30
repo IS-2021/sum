@@ -6,8 +6,7 @@ public record OpinionDTO (
     UUID opinionId,
     boolean isPositive,
     UUID userId,
-    UUID restaurantId,
-    String timestamp
+    UUID restaurantId
 ) {
 
 }
