@@ -1,8 +1,7 @@
 <script setup lang="ts">
-import { useRestaurantUser, getRestaurantUserQueryKey } from '@/composables/useRestaurantUser';
+import { getRestaurantUserQueryKey, useRestaurantUser } from '@/composables/useRestaurantUser';
 import { useHead } from '@unhead/vue';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { watchEffect } from 'vue';
 import { toTypedSchema } from '@vee-validate/zod';
 import {
@@ -10,18 +9,21 @@ import {
   restaurantSchema,
 } from '@/components/(manage)/onboarding/restaurantSchema';
 import { useForm } from 'vee-validate';
-import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { useStepper } from '@vueuse/core';
 import { cn } from '@/lib/utils';
-import { ChevronLeftIcon, ChevronRightIcon, ClockIcon, LogOutIcon } from 'lucide-vue-next';
+import { ChevronLeftIcon, ChevronRightIcon, LogOutIcon } from 'lucide-vue-next';
 import Logo from '@/components/Logo.vue';
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import AddressAutocompleteInput from '@/components/maps/autocomplete/AddressAutocompleteInput.vue';
 import { useAddress } from '@/composables/maps/useAddress';
 import { postRestaurants } from '@/lib/api/restaurants/restaurants';
 import { useRouter } from 'vue-router/auto';
 import { useQueryClient } from '@tanstack/vue-query';
 import { getGetUsersMeQueryKey } from '@/lib/api/users/users';
+import {
+  RestaurantDetailsFields,
+  RestaurantHoursFields,
+} from '@/components/(manage)/onboarding/fields';
+import HoursFormTip from '@/components/(manage)/onboarding/HoursFormTip.vue';
 
 useHead({
   title: 'Complete restaurant profile',
@@ -50,56 +52,6 @@ const { current, goToPrevious, goToNext, isCurrent, isFirst, isLast } = useStepp
     description: 'Finally, tell us where your restaurant is located.',
   },
 });
-
-const formFields = {
-  details: [
-    {
-      label: 'Restaurant name',
-      fieldName: 'details.name',
-    },
-    {
-      label: 'Phone number',
-      fieldName: 'details.phoneNumber',
-    },
-  ],
-  hours: [
-    {
-      label: 'Monday',
-      fieldName: 'hours.monday',
-      fields: ['Open', 'Close'],
-    },
-    {
-      label: 'Tuesday',
-      fieldName: 'hours.tuesday',
-      fields: ['Open', 'Close'],
-    },
-    {
-      label: 'Wednesday',
-      fieldName: 'hours.wednesday',
-      fields: ['Open', 'Close'],
-    },
-    {
-      label: 'Thursday',
-      fieldName: 'hours.thursday',
-      fields: ['Open', 'Close'],
-    },
-    {
-      label: 'Friday',
-      fieldName: 'hours.friday',
-      fields: ['Open', 'Close'],
-    },
-    {
-      label: 'Saturday',
-      fieldName: 'hours.saturday',
-      fields: ['Open', 'Close'],
-    },
-    {
-      label: 'Sunday',
-      fieldName: 'hours.sunday',
-      fields: ['Open', 'Close'],
-    },
-  ],
-};
 
 const formSchema = toTypedSchema(restaurantSchema);
 const form = useForm({
@@ -195,65 +147,13 @@ const onSubmit = form.handleSubmit(async (formValues) => {
       <form @submit="onSubmit">
         <!-- Details -->
         <div :class="cn('hidden space-y-4', isCurrent('details') && 'block')">
-          <FormField
-            v-for="{ label, fieldName } in formFields.details"
-            :key="fieldName"
-            v-slot="{ componentField }"
-            :name="fieldName"
-          >
-            <FormItem>
-              <FormLabel>{{ label }}</FormLabel>
-              <FormControl>
-                <Input type="text" v-bind="componentField" />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          </FormField>
+          <RestaurantDetailsFields />
         </div>
 
         <!-- Hours -->
         <div :class="cn('hidden', isCurrent('hours') && 'block')">
-          <Alert class="mb-3 bg-secondary/25">
-            <ClockIcon class="h-4 w-4" />
-            <AlertTitle>How to fill the form?</AlertTitle>
-            <AlertDescription>
-              <ul class="ml-4 list-disc">
-                <li>Use HH:MM 24-hour format,</li>
-                <li>If restaurant is closed on a given day, leave both fields empty.</li>
-              </ul>
-            </AlertDescription>
-          </Alert>
-        </div>
-        <div :class="cn('hidden max-w-80', isCurrent('hours') && 'block')">
-          <div class="grid grid-cols-[max-content,1fr,1fr] gap-2 gap-x-4">
-            <p class="col-start-2 text-sm font-medium">Open</p>
-            <p class="text-sm font-medium">Close</p>
-
-            <template v-for="{ label, fieldName } in formFields.hours" :key="fieldName">
-              <p aria-hidden="true" class="h-fit self-center">
-                {{ label }}
-              </p>
-
-              <FormField v-slot="{ componentField }" :name="`${fieldName}[0]`">
-                <FormItem class="space-y-0">
-                  <FormLabel class="sr-only">Open</FormLabel>
-                  <FormControl>
-                    <Input type="text" v-bind="componentField" />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              </FormField>
-              <FormField v-slot="{ componentField }" :name="`${fieldName}[1]`">
-                <FormItem class="space-y-0">
-                  <FormLabel class="sr-only">Close</FormLabel>
-                  <FormControl>
-                    <Input type="text" v-bind="componentField" />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              </FormField>
-            </template>
-          </div>
+          <HoursFormTip />
+          <RestaurantHoursFields />
         </div>
 
         <!-- Location -->
