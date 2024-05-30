@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { UserDTO } from '@/lib/api-model';
+import type { UserMeDTO } from '@/lib/api-model';
 
 import CompletedBookingsCount from './CompletedBookingsCount.vue';
 import { useGetBookings } from '@/lib/api/bookings/bookings';
@@ -8,7 +8,7 @@ import { computed, unref } from 'vue';
 import Logo from '../Logo.vue';
 
 const props = defineProps<{
-  user: UserDTO;
+  user: UserMeDTO;
 }>();
 
 const { data } = useGetBookings({ userId: props.user.id });

@@ -1,8 +1,6 @@
 <script setup lang="ts">
 import { useHead } from '@unhead/vue';
 import { useUser } from '@/composables/useUser';
-import { useGetBookings } from '@/lib/api/bookings/bookings';
-import { computed, unref } from 'vue';
 import { nextTick } from 'vue';
 
 import FavouritesDisplay from '@/components/homepage/FavouritesDisplay.vue';
@@ -20,8 +18,8 @@ const { user } = useUser();
 
 <template>
   <div class="w-full sm:max-w-screen-sm md:max-w-screen-md lg:max-w-screen-xl mx-auto px-4">
-    <WelcomeComponent v-if="user" :user="user" />
-    <LatestBookings v-if="user" :userId="user.id" />
-    <FavouritesDisplay v-if="user" :user="user" />
+    <WelcomeComponent v-if="user?.id" :user="user" />
+    <LatestBookings v-if="user?.id" :userId="user.id" />
+    <FavouritesDisplay v-if="user?.id" :userId="user.id" />
   </div>
 </template>

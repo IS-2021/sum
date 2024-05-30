@@ -1,13 +1,13 @@
 <script setup lang="ts">
-import type { UserDTO } from '@/lib/api-model';
+import type { Uuid } from '@/lib/api-model';
 import { StarIcon } from 'lucide-vue-next';
 import { useFavourites } from '@/components/favourites/useFavourites';
 import RestaurantCard from '@/components/restaurants/RestaurantCard.vue';
 
-const { user } = defineProps<{ user: UserDTO }>();
+const { userId } = defineProps<{ userId: Uuid }>();
 
 const { favourites, hasAnyFavourites } = useFavourites({
-  userId: user.id,
+  userId,
 });
 </script>
 
