@@ -30,6 +30,7 @@ import { getImageUrl } from '@/lib/assets';
 import { uploadRestaurantImage } from '@/components/(manage)/common/image/api';
 import { useRestaurantUser } from '@/composables/useRestaurantUser';
 import { useRefOverride } from '@/composables/maps/useRefOverride';
+import RestaurantStatus from '@/components/(manage)/common/RestaurantStatus.vue';
 
 const props = defineProps<{ initialRestaurantData: RestaurantDTO }>();
 
@@ -118,6 +119,8 @@ const onSubmit = form.handleSubmit(async (values) => {
       <Separator class="mb-4 mt-2" />
 
       <div class="mb-4 mt-4 space-y-4">
+        <RestaurantStatus :status="restaurant.status" />
+
         <RestaurantDetailsFields />
       </div>
       <p class="mb-2 text-sm font-medium">Restaurant photo</p>
