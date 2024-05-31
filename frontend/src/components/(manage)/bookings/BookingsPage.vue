@@ -8,7 +8,7 @@ const props = defineProps<{
   restaurantId: Uuid;
 }>();
 
-const { data, refetch } = useGetBookings({ restaurantId: props.restaurantId });
+const { data, refetch, isLoading } = useGetBookings({ restaurantId: props.restaurantId });
 const bookings = computed(() => unref(data)?.data);
 
 async function updateBookingStatus(booking: BookingDTO) {
@@ -26,6 +26,7 @@ async function updateBookingStatus(booking: BookingDTO) {
 
 <template>
   <h1 class="text-2xl font-semibold tracking-tight mb-10">All Bookings</h1>
+  <div v-if="isLoading">Loading...</div>
   <div
     class="space-y-3 p-4 bg-neutral-100 border border-neutral-200 max-w-screen-md w-full flex-grow"
     v-if="bookings && bookings.length !== 0"
