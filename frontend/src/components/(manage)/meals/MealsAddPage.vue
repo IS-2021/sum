@@ -46,7 +46,7 @@ const addNewMeal = form.handleSubmit(async (values) => {
 
   if (response.status === 200) {
     toast.success('Meal added successfully!');
-    await router.push(`/manage/mealUpdate/${response.data.mealId}`);
+    await router.push(`/manage/meals/edit/${response.data.mealId}`);
   } else if (response.status === 401) {
     const { message } = response.data as unknown as ValidationFailed422Response;
 

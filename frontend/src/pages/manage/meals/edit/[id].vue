@@ -11,7 +11,7 @@ import { computed, unref } from 'vue';
 
 import AddIngredientsComponent from '@/components/(manage)/meals/AddIngredientsComponent.vue';
 
-const route = useRoute('/manage/mealUpdate/[id]');
+const route = useRoute('/manage/meals/edit/[id]');
 const mealId = route.params.id;
 
 const { data } = useGetMealsId(mealId);
