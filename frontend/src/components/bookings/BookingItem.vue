@@ -13,6 +13,7 @@ import { ref } from 'vue';
 import type { BookingDTO, Uuid } from '@/lib/api-model';
 
 import ReportComponent from '@/components/bookings/ReportComponent.vue';
+import CancelBooking from '@/components/bookings/CancelBooking.vue';
 
 const props = defineProps<{
   booking: BookingDTO;
@@ -83,6 +84,7 @@ function isOpen() {
               :buttonMessage="buttonMessage"
               :bookingStatus="booking.status"
             />
+            <CancelBooking :booking="props.booking" />
           </div>
         </div>
       </AccordionContent>

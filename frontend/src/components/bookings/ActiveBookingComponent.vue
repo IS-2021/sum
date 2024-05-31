@@ -6,6 +6,7 @@ import type { Uuid } from '@/lib/api-model';
 import { useGetBookingsActive } from '@/lib/api/bookings/bookings';
 
 import ActiveBookingBody from '@/components/bookings/ActiveBookingBody.vue';
+import CancelBooking from '@/components/bookings/CancelBooking.vue';
 
 const props = defineProps<{
   userId: Uuid;
@@ -17,10 +18,15 @@ const activeBooking = computed(() => unref(data)?.data);
 
 <template>
   <div class="w-full sm:max-w-screen-sm md:max-w-screen-md lg:max-w-screen-xl mx-auto px-4">
-    <h1 class="font-bold text-2xl mb-8 tracking-tight">Active Booking</h1>
+    <div class="flex justify-between items-center mb-8">
+      <h1 class="font-bold text-2xl tracking-tight">Active Booking</h1>
+      <CancelBooking v-if="activeBooking" :booking="activeBooking" />
+    </div>
     <div class="space-y-5 p-4 bg-neutral-100 border border-neutral-200 w-full">
       <h2 class="font-semibold">Booking details</h2>
-      <p v-if="!activeBooking">You don't have any active bookings.</p>
+      <p v-if="!activeBooking?.bookingId">
+        You don't have any active bookings. Press the button below to view your recent bookings.
+      </p>
       <ActiveBookingBody v-if="activeBooking?.bookingId" :activeBooking="activeBooking" />
     </div>
     <Button class="mt-8" as-child>
