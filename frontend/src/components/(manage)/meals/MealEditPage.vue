@@ -6,7 +6,7 @@ import { useGetIngredients } from '@/lib/api/ingredients/ingredients';
 import { computed } from 'vue';
 import { CircleCheckBigIcon, PlusIcon } from 'lucide-vue-next';
 import { cn } from '@/lib/utils';
-import { recreateMeal } from '@/components/(manage)/meals/api';
+import { addIngredientsToMeal, recreateMeal } from '@/components/(manage)/meals/api';
 import { useRouter } from 'vue-router/auto';
 import { useIngredientEdit } from '@/components/(manage)/meals/useIngredientEdit';
 import { toast } from 'vue-sonner';
@@ -25,15 +25,30 @@ const { pickedIngredients, isPicked, toggleIngredientPick } = useIngredientEdit(
   props.meal.ingredients,
 );
 
-// Since meals are immutable, we need to recreate the meal with the new ingredients
-async function handleEditMeal() {
-  const res = await recreateMeal({
+async function editExistingMeal() {
+  return recreateMeal({
     ...props.meal,
     ingredients: pickedIngredients.value,
   });
+}
+
+async function editIngredientlessMeal() {
+  return addIngredientsToMeal(props.meal.mealId, pickedIngredients.value, props.meal.restaurantId);
+}
+
+// Since meals are immutable, we need to recreate the meal with the new ingredients
+async function handleEditMeal() {
+  if (props.meal.ingredients.length === 0) {
+    await editIngredientlessMeal();
+    location.reload();
+    return;
+  }
+
+  const res = await editExistingMeal();
 
   if (res.status === 200) {
     await router.replace(`/manage/meals/edit/${res.data.mealId}`);
+    // This always guarantees that operations are performed against the updated meal
     location.reload();
   } else {
     toast.error('Failed to update meal');
