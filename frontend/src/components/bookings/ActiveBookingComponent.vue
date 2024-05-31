@@ -27,7 +27,7 @@ const activeBooking = computed(() => unref(data)?.data);
       <p v-if="!activeBooking">You don't have any active bookings.</p>
       <ActiveBookingBody v-if="activeBooking?.bookingId" :activeBooking="activeBooking" />
     </div>
-    <Button class="" as-child>
+    <Button class="mt-8" as-child>
       <RouterLink to="/bookings">View all bookings</RouterLink>
     </Button>
   </div>
