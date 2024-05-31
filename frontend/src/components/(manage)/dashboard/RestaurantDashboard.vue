@@ -2,13 +2,29 @@
 import { useHead } from '@unhead/vue';
 import StatsCard from '@/components/(manage)/dashboard/StatsCard.vue';
 import { CookingPotIcon, ThumbsUpIcon } from 'lucide-vue-next';
-import BookingCard from '@/components/(manage)/dashboard/BookingCard.vue';
-import { addMinutes, subDays } from 'date-fns';
+import { subDays } from 'date-fns';
 import ReportCard from '@/components/(manage)/dashboard/ReportCard.vue';
+import type { BookingDTO, Uuid } from '@/lib/api-model';
+import { computed, ref, unref, type Ref } from 'vue';
+import { useGetBookings } from '@/lib/api/bookings/bookings';
+import CurrentBookings from '@/components/(manage)/dashboard/CurrentBookings.vue';
 
 useHead({
   title: 'Restaurant Dashboard',
 });
+
+const props = defineProps<{
+  restaurantId: Uuid;
+}>();
+
+const { data } = useGetBookings({ restaurantId: props.restaurantId });
+const bookings = computed(() => unref(data)?.data);
+
+const activeBookings: Ref<BookingDTO[] | null> = ref(null);
+
+function updateActiveBookings(active: BookingDTO[]) {
+  activeBookings.value = active;
+}
 </script>
 
 <template>
@@ -29,31 +45,20 @@ useHead({
     <div
       class="space-y-5 p-4 bg-neutral-100 border border-neutral-200 max-w-screen-md w-full flex-grow"
     >
-      <h2 class="font-semibold">Current bookings (2)</h2>
-      <ul class="space-y-2">
-        <li>
-          <BookingCard mealName="Hawaian" :pickupAt="addMinutes(Date.now(), 58)" />
-        </li>
-        <li>
-          <BookingCard mealName="Capriciossa" :pickupAt="addMinutes(Date.now(), 43)" />
-        </li>
-      </ul>
-
-      <h2 class="font-semibold">Past bookings</h2>
-      <ul class="space-y-2">
-        <li>
-          <BookingCard mealName="Capriciossa" :pickupAt="subDays(Date.now(), 2)" />
-        </li>
-        <li>
-          <BookingCard mealName="Capriciossa" :pickupAt="subDays(Date.now(), 3)" />
-        </li>
-        <li>
-          <BookingCard
-            mealName="Lorem ipsum dolor sit amet consectetur. Senectus a egestas arcu quis urna."
-            :pickupAt="subDays(Date.now(), 3)"
-          />
-        </li>
-      </ul>
+      <div v-if="bookings">
+        <h2 v-if="activeBookings && activeBookings.length !== 0" class="font-semibold mb-4">
+          Current bookings ({{ activeBookings.length }})
+        </h2>
+        <div v-else-if="!activeBookings || (activeBookings && activeBookings.length === 0)">
+          <h2 class="font-semibold mb-4">Active bookings (0)</h2>
+          <p>No active bookings found</p>
+        </div>
+        <CurrentBookings
+          :bookings="bookings"
+          :activeBookings="activeBookings"
+          @updateCurrentBookings="updateActiveBookings"
+        />
+      </div>
     </div>
 
     <div class="space-y-5 p-4 bg-neutral-100 border border-neutral-200 max-w-screen-md flex-shrink">

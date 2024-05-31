@@ -5,8 +5,11 @@ meta:
 
 <script setup lang="ts">
 import RestaurantDashboard from '@/components/(manage)/dashboard/RestaurantDashboard.vue';
+import { useRestaurantUser } from '@/composables/useRestaurantUser';
+
+const { user } = useRestaurantUser();
 </script>
 
 <template>
-  <RestaurantDashboard />
+  <RestaurantDashboard v-if="user" :restaurantId="user.id" />
 </template>
