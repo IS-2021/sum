@@ -1,13 +1,12 @@
 <script setup lang="ts">
 import { useHead } from '@unhead/vue';
-import StatsCard from '@/components/(manage)/dashboard/StatsCard.vue';
-import { CookingPotIcon, ThumbsUpIcon } from 'lucide-vue-next';
 import { subDays } from 'date-fns';
 import ReportCard from '@/components/(manage)/dashboard/ReportCard.vue';
 import type { BookingDTO, Uuid } from '@/lib/api-model';
 import { computed, unref } from 'vue';
 import { putBookingsId, useGetBookings } from '@/lib/api/bookings/bookings';
 import BookingCard from '@/components/(manage)/dashboard/BookingCard.vue';
+import RestaurantInfo from '@/components/(manage)/dashboard/RestaurantInfo.vue';
 
 useHead({
   title: 'Restaurant Dashboard',
@@ -47,18 +46,7 @@ async function updateBookingStatus(booking: BookingDTO) {
 </script>
 
 <template>
-  <h1 class="text-2xl font-semibold tracking-tight mb-10">
-    Some local restaurant name that is kinda long
-  </h1>
-
-  <div class="flex sm:gap-6 mb-8 flex-col sm:flex-row">
-    <StatsCard measure="Positive ratings" value="97%">
-      <ThumbsUpIcon class="sm:w-9 sm:h-9 text-primary" />
-    </StatsCard>
-    <StatsCard measure="Meals saved" value="34">
-      <CookingPotIcon class="sm:w-9 sm:h-9 text-primary" />
-    </StatsCard>
-  </div>
+  <RestaurantInfo :restaurantId="restaurantId" :bookings="bookings" />
 
   <div class="flex flex-col gap-10 xl:flex-row">
     <div
