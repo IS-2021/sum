@@ -19,7 +19,7 @@ import { Separator } from '@/components/ui/separator';
 import SettingsSection from '@/components/(manage)/settings/SettingsSection.vue';
 import { Button } from '@/components/ui/button';
 import { MapPinIcon, SaveIcon } from 'lucide-vue-next';
-import { computed, watchEffect } from 'vue';
+import { computed, toRef, watchEffect } from 'vue';
 import { putRestaurantsId } from '@/lib/api/restaurants/restaurants';
 import { toast } from 'vue-sonner';
 import { formatAddress } from '@/lib/googleMaps';
@@ -29,15 +29,17 @@ import ImagePreview from '@/components/(manage)/common/image/ImagePreview.vue';
 import { getImageUrl } from '@/lib/assets';
 import { uploadRestaurantImage } from '@/components/(manage)/common/image/api';
 import { useRestaurantUser } from '@/composables/useRestaurantUser';
+import { useRefOverride } from '@/composables/maps/useRefOverride';
 
-const { restaurant } = defineProps<{ restaurant: RestaurantDTO }>();
+const props = defineProps<{ initialRestaurantData: RestaurantDTO }>();
 
-const { invalidateCache } = useRestaurantUser();
+const { restaurant: restaurantUser, invalidateCache } = useRestaurantUser();
+const restaurant = useRefOverride(toRef(props.initialRestaurantData), restaurantUser);
 
 const formSchema = toTypedSchema(restaurantSchema);
 const form = useForm({
   validationSchema: formSchema,
-  initialValues: mapDTOToRestaurantData(restaurant),
+  initialValues: mapDTOToRestaurantData(props.initialRestaurantData),
 });
 
 const { address, setPlaceId } = useAddress();
@@ -47,7 +49,7 @@ const imageUrl = computed(() => {
   if (image.value.previewUrl !== '') {
     return image.value.previewUrl;
   } else {
-    return getImageUrl(restaurant.imageUrl);
+    return getImageUrl(restaurant.value.imageUrl);
   }
 });
 
@@ -65,7 +67,7 @@ watchEffect(() => {
 const onSubmit = form.handleSubmit(async (values) => {
   const updateData = mapRestaurantDataToDTO(values);
 
-  const updateRes = await putRestaurantsId(restaurant.id, updateData);
+  const updateRes = await putRestaurantsId(restaurant.value.id, updateData);
   if (updateRes.status === 200) {
     form.resetForm({
       values: mapDTOToRestaurantData(updateRes.data),
@@ -78,7 +80,7 @@ const onSubmit = form.handleSubmit(async (values) => {
 
   let imageUploadRes: Awaited<ReturnType<typeof uploadRestaurantImage>> | undefined;
   if (image.value.file) {
-    imageUploadRes = await uploadRestaurantImage(restaurant.id, image.value.file);
+    imageUploadRes = await uploadRestaurantImage(restaurant.value.id, image.value.file);
     if (imageUploadRes.status === 200) {
       image.value = { file: null, previewUrl: '' };
       await invalidateCache();

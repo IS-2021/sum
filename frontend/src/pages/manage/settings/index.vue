@@ -16,5 +16,5 @@ const { restaurant } = useRestaurantUser();
 </script>
 
 <template>
-  <SettingsPage v-if="restaurant?.id" :restaurant="restaurant" />
+  <SettingsPage v-if="restaurant?.id" :initialRestaurantData="restaurant" />
 </template>
