@@ -15,10 +15,18 @@ export async function addIngredientsToMeal(
   ingredients: IngredientDTO[],
   restaurantId: Uuid,
 ) {
-  const promiseList = ingredients.map((ingredient) => {
-    postIngredients({ name: ingredient.name, type: ingredient.type }, { mealId, restaurantId });
-  });
-  return Promise.all(promiseList);
+  for (const ingredient of ingredients) {
+    const ingredientRes = await postIngredients(
+      {
+        name: ingredient.name,
+        type: ingredient.type,
+      },
+      {
+        mealId,
+        restaurantId,
+      },
+    );
+  }
 }
 
 export async function deleteMeal(mealId: Uuid) {
