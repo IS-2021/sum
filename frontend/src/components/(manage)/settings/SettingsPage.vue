@@ -27,8 +27,12 @@ import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { useImage } from '@/components/(manage)/common/image/useImage';
 import ImagePreview from '@/components/(manage)/common/image/ImagePreview.vue';
 import { getImageUrl } from '@/lib/assets';
+import { uploadRestaurantImage } from '@/components/(manage)/common/image/api';
+import { useRestaurantUser } from '@/composables/useRestaurantUser';
 
 const { restaurant } = defineProps<{ restaurant: RestaurantDTO }>();
+
+const { invalidateCache } = useRestaurantUser();
 
 const formSchema = toTypedSchema(restaurantSchema);
 const form = useForm({
@@ -47,6 +51,8 @@ const imageUrl = computed(() => {
   }
 });
 
+const isFormDirty = computed(() => form.meta.value.dirty || image.value.file !== null);
+
 watchEffect(() => {
   if (address.value) {
     form.setValues({
@@ -59,15 +65,26 @@ watchEffect(() => {
 const onSubmit = form.handleSubmit(async (values) => {
   const updateData = mapRestaurantDataToDTO(values);
 
-  const res = await putRestaurantsId(restaurant.id, updateData);
-
-  if (res.status === 200) {
+  const updateRes = await putRestaurantsId(restaurant.id, updateData);
+  if (updateRes.status === 200) {
     form.resetForm({
-      values: mapDTOToRestaurantData(res.data),
+      values: mapDTOToRestaurantData(updateRes.data),
     });
+    await invalidateCache();
   } else {
-    console.error('Failed to update restaurant', res);
+    console.error('Failed to update restaurant', updateRes);
     toast.error('Failed to update restaurant');
+  }
+
+  let imageUploadRes: Awaited<ReturnType<typeof uploadRestaurantImage>> | undefined;
+  if (image.value.file) {
+    imageUploadRes = await uploadRestaurantImage(restaurant.id, image.value.file);
+    if (imageUploadRes.status === 200) {
+      image.value = { file: null, previewUrl: '' };
+      await invalidateCache();
+    } else {
+      console.error('Failed to upload image', imageUploadRes);
+    }
   }
 });
 </script>
@@ -77,7 +94,7 @@ const onSubmit = form.handleSubmit(async (values) => {
     <header class="sticky top-0 flex max-w-screen-md justify-between">
       <h1 class="mb-8 text-2xl font-semibold tracking-tight">Settings</h1>
 
-      <Button type="submit" v-if="form.meta.value.dirty" :disabled="!form.meta.value.valid">
+      <Button type="submit" v-if="isFormDirty" :disabled="!form.meta.value.valid">
         <SaveIcon class="mr-2 h-4 w-4" /> Save
       </Button>
     </header>
