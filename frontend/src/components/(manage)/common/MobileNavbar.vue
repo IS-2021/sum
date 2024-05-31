@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { Sheet, SheetClose, SheetContent, SheetFooter, SheetTrigger } from '@/components/ui/sheet';
+import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
+import { Button } from '@/components/ui/button';
 import { MenuIcon } from 'lucide-vue-next';
 import Navbar from '@/components/(manage)/common/Navbar.vue';
 </script>
