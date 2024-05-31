@@ -5,9 +5,9 @@ import { CookingPotIcon, ThumbsUpIcon } from 'lucide-vue-next';
 import { subDays } from 'date-fns';
 import ReportCard from '@/components/(manage)/dashboard/ReportCard.vue';
 import type { BookingDTO, Uuid } from '@/lib/api-model';
-import { computed, ref, unref, type Ref } from 'vue';
-import { useGetBookings } from '@/lib/api/bookings/bookings';
-import CurrentBookings from '@/components/(manage)/dashboard/CurrentBookings.vue';
+import { computed, unref } from 'vue';
+import { putBookingsId, useGetBookings } from '@/lib/api/bookings/bookings';
+import BookingCard from '@/components/(manage)/dashboard/BookingCard.vue';
 
 useHead({
   title: 'Restaurant Dashboard',
@@ -17,20 +17,32 @@ const props = defineProps<{
   restaurantId: Uuid;
 }>();
 
-const { data } = useGetBookings(
+const { data, refetch } = useGetBookings(
   { restaurantId: props.restaurantId },
   {
     query: {
-      refetchInterval: 5000,
+      refetchInterval: 1000,
     },
   },
 );
 const bookings = computed(() => unref(data)?.data);
+const activeBookings = computed<BookingDTO[]>(() => {
+  if (!bookings.value || bookings.value.length === 0) {
+    return [];
+  }
 
-const activeBookings: Ref<BookingDTO[] | null> = ref(null);
+  return bookings.value.filter((booking) => booking.status === 'Active');
+});
 
-function updateActiveBookings(active: BookingDTO[]) {
-  activeBookings.value = active;
+async function updateBookingStatus(booking: BookingDTO) {
+  const res = await putBookingsId(booking.bookingId, {
+    ...booking,
+    status: 'PickedUp',
+  });
+
+  if (res.status === 200) {
+    await refetch();
+  }
 }
 </script>
 
@@ -53,18 +65,21 @@ function updateActiveBookings(active: BookingDTO[]) {
       class="space-y-5 p-4 bg-neutral-100 border border-neutral-200 max-w-screen-md w-full flex-grow"
     >
       <div v-if="bookings">
-        <h2 v-if="activeBookings && activeBookings.length !== 0" class="font-semibold mb-4">
-          Current bookings ({{ activeBookings.length }})
-        </h2>
-        <div v-else-if="!activeBookings || (activeBookings && activeBookings.length === 0)">
-          <h2 class="font-semibold mb-4">Active bookings (0)</h2>
-          <p>No active bookings found</p>
+        <h2 class="font-semibold mb-4">Current bookings ({{ activeBookings.length }})</h2>
+        <div v-if="activeBookings.length === 0">
+          <p>No active bookings</p>
         </div>
-        <CurrentBookings
-          :bookings="bookings"
-          :activeBookings="activeBookings"
-          @updateCurrentBookings="updateActiveBookings"
-        />
+
+        <ul v-if="bookings.length !== 0" class="space-y-2">
+          <li class="space-y-3">
+            <BookingCard
+              v-for="booking in activeBookings"
+              :key="booking.bookingId"
+              :booking="booking"
+              @on-booking-accept="updateBookingStatus"
+            />
+          </li>
+        </ul>
       </div>
     </div>
 
