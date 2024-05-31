@@ -58,44 +58,48 @@ async function handleEditMeal() {
 </script>
 
 <template>
-  <header class="flex justify-between">
-    <h1 class="text-2xl font-semibold tracking-tight mb-10">Add ingredients to your meal</h1>
-    <AddIngredientPopup :mealId="meal.mealId" :userId="props.userId" />
-  </header>
+  <div class="max-w-screen-md">
+    <header class="flex justify-between">
+      <h1 class="text-2xl font-semibold tracking-tight mb-10">Edit meal ingredients</h1>
 
-  <article class="bg-neutral-200 border p-4 rounded-md">
-    <div class="flex gap-1 mb-2">
-      <p><span class="font-bold">Name:</span> {{ meal.name }}</p>
-    </div>
-    <div class="flex gap-1">
-      <p><span class="font-bold">Description:</span> {{ meal.description }}</p>
-    </div>
-
-    <section class="mt-10">
       <Button @click="handleEditMeal">Save</Button>
+    </header>
 
-      <h2 class="text-lg font-semibold mt-4">Ingredients</h2>
-      <ul class="space-y-2 mt-3">
-        <li v-for="ingredient in allIngredients" :key="ingredient.ingredientId">
-          <div
-            :class="
-              cn(
-                'flex items-center gap-2 transition-colors',
-                isPicked(ingredient.ingredientId) && 'text-primary',
-              )
-            "
-          >
-            <Button size="icon" variant="ghost" @click="toggleIngredientPick(ingredient)">
-              <CircleCheckBigIcon class="h-4 w-4" v-if="isPicked(ingredient.ingredientId)" />
-              <PlusIcon class="h-4 w-4" v-else />
-            </Button>
+    <article class="bg-white border border-neutral-200 p-4 rounded-md">
+      <section class="mb-10">
+        <h2 class="text-lg font-semibold mb-3">Meal details</h2>
+        <div class="flex gap-1 mb-2">
+          <p><span class="font-bold">Name:</span> {{ meal.name }}</p>
+        </div>
+        <div class="flex gap-1">
+          <p><span class="font-bold">Description:</span> {{ meal.description }}</p>
+        </div>
+      </section>
 
-            <p>
-              {{ ingredient.name }}
-            </p>
-          </div>
-        </li>
-      </ul>
-    </section>
-  </article>
+      <section>
+        <h2 class="text-lg font-semibold mb-3">Ingredients</h2>
+        <ul class="space-y-2">
+          <li v-for="ingredient in allIngredients" :key="ingredient.ingredientId">
+            <div
+              :class="
+                cn(
+                  'flex items-center gap-2 transition-colors',
+                  isPicked(ingredient.ingredientId) && 'text-primary',
+                )
+              "
+            >
+              <Button size="icon" variant="ghost" @click="toggleIngredientPick(ingredient)">
+                <CircleCheckBigIcon class="h-4 w-4" v-if="isPicked(ingredient.ingredientId)" />
+                <PlusIcon class="h-4 w-4" v-else />
+              </Button>
+
+              <p>
+                {{ ingredient.name }}
+              </p>
+            </div>
+          </li>
+        </ul>
+      </section>
+    </article>
+  </div>
 </template>

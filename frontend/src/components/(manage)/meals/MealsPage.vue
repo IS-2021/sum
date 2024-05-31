@@ -16,8 +16,9 @@ const areMealsLoading = getMeals(props.restaurantId).areMealsLoading;
 </script>
 
 <template>
-  <div class="flex justify-between items-center mb-10">
+  <div class="flex justify-between items-center max-w-screen-md mb-10">
     <h1 class="text-2xl font-semibold tracking-tight">Meals</h1>
+
     <Button as-child>
       <RouterLink to="/manage/meals/add">
         <Plus width="16" height="16" class="mr-1" />
@@ -25,6 +26,7 @@ const areMealsLoading = getMeals(props.restaurantId).areMealsLoading;
       </RouterLink>
     </Button>
   </div>
+
   <template v-if="areMealsLoading">
     <p>Loading...</p>
   </template>
