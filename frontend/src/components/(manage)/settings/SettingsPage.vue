@@ -19,11 +19,14 @@ import { Separator } from '@/components/ui/separator';
 import SettingsSection from '@/components/(manage)/settings/SettingsSection.vue';
 import { Button } from '@/components/ui/button';
 import { MapPinIcon, SaveIcon } from 'lucide-vue-next';
-import { watchEffect } from 'vue';
+import { computed, watchEffect } from 'vue';
 import { putRestaurantsId } from '@/lib/api/restaurants/restaurants';
 import { toast } from 'vue-sonner';
 import { formatAddress } from '@/lib/googleMaps';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { useImage } from '@/components/(manage)/common/image/useImage';
+import ImagePreview from '@/components/(manage)/common/image/ImagePreview.vue';
+import { getImageUrl } from '@/lib/assets';
 
 const { restaurant } = defineProps<{ restaurant: RestaurantDTO }>();
 
@@ -34,6 +37,15 @@ const form = useForm({
 });
 
 const { address, setPlaceId } = useAddress();
+const { image, setImage } = useImage();
+
+const imageUrl = computed(() => {
+  if (image.value.previewUrl !== '') {
+    return image.value.previewUrl;
+  } else {
+    return getImageUrl(restaurant.imageUrl);
+  }
+});
 
 watchEffect(() => {
   if (address.value) {
@@ -74,10 +86,12 @@ const onSubmit = form.handleSubmit(async (values) => {
       <h2 class="text-lg font-semibold tracking-tight">Restaurant profile</h2>
       <Separator class="mb-4 mt-2" />
 
-      <ImageField />
-      <div class="mt-4 space-y-4">
+      <div class="mb-4 mt-4 space-y-4">
         <RestaurantDetailsFields />
       </div>
+      <p class="mb-2 text-sm font-medium">Restaurant photo</p>
+      <ImageField @on-change="setImage" />
+      <ImagePreview v-if="imageUrl" :src="imageUrl" />
     </SettingsSection>
 
     <SettingsSection>
