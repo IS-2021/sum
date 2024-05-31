@@ -8,6 +8,7 @@ import { CircleCheckBigIcon, PlusIcon } from 'lucide-vue-next';
 import { cn } from '@/lib/utils';
 import { recreateMeal } from '@/components/(manage)/meals/api';
 import { useRouter } from 'vue-router/auto';
+import { useIngredientEdit } from '@/components/(manage)/meals/useIngredientEdit';
 import { toast } from 'vue-sonner';
 
 const props = defineProps<{
@@ -20,25 +21,9 @@ const { data } = useGetIngredients();
 
 const allIngredients = computed(() => data.value?.data ?? []);
 
-const pickedIngredients = ref<IngredientDTO[]>(props.meal.ingredients ?? []);
-const pickedIngredientsIds = computed(() => {
-  const ids = pickedIngredients.value.map((i) => i.ingredientId);
-  return new Set(ids);
-});
-
-function isPicked(ingredient: string) {
-  return pickedIngredientsIds.value.has(ingredient);
-}
-
-function toggleIngredientPick(ingredient: IngredientDTO) {
-  if (pickedIngredientsIds.value.has(ingredient.ingredientId)) {
-    pickedIngredients.value = pickedIngredients.value.filter(
-      (i) => i.ingredientId !== ingredient.ingredientId,
-    );
-  } else {
-    pickedIngredients.value = [...pickedIngredients.value, ingredient];
-  }
-}
+const { pickedIngredients, isPicked, toggleIngredientPick } = useIngredientEdit(
+  props.meal.ingredients,
+);
 
 // Since meals are immutable, we need to recreate the meal with the new ingredients
 async function handleEditMeal() {
