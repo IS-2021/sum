@@ -34,7 +34,7 @@ import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import type { ProblemDetailResponse } from '@/lib/api-model';
 import type { ImageChangeEvent, ImageFieldData } from '@/components/(manage)/common/fields/types';
 import { uploadRestaurantImage } from '@/components/(manage)/common/image/api';
-import ImageStep from '@/components/(manage)/onboarding/ImageStep.vue';
+import ImagePreview from '@/components/(manage)/common/image/ImagePreview.vue';
 
 useHead({
   title: 'Complete restaurant profile',
@@ -204,7 +204,9 @@ async function handleSaveRestaurantImage() {
       </form>
 
       <div v-else-if="isCurrent('photo')">
-        <ImageStep @update:image="setImage" />
+        <ImageField @on-change="setImage" />
+
+        <ImagePreview v-if="image.previewUrl" :src="image.previewUrl" />
 
         <div class="mt-6 flex gap-2">
           <Button @click="handleSaveRestaurantImage" :disabled="!image.file"> Save </Button>
