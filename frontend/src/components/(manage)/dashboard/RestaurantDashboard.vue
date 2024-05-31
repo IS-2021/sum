@@ -17,7 +17,14 @@ const props = defineProps<{
   restaurantId: Uuid;
 }>();
 
-const { data } = useGetBookings({ restaurantId: props.restaurantId });
+const { data } = useGetBookings(
+  { restaurantId: props.restaurantId },
+  {
+    query: {
+      refetchInterval: 5000,
+    },
+  },
+);
 const bookings = computed(() => unref(data)?.data);
 
 const activeBookings: Ref<BookingDTO[] | null> = ref(null);

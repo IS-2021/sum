@@ -2,6 +2,7 @@
 import type { BookingDTO } from '@/lib/api-model';
 import { putBookingsId } from '@/lib/api/bookings/bookings';
 import BookingCard from './BookingCard.vue';
+import { ref } from 'vue';
 
 const props = defineProps<{
   bookings: BookingDTO[];
@@ -12,7 +13,7 @@ const emits = defineEmits<{
   (e: 'updateCurrentBookings', activeBookings: BookingDTO[]): void;
 }>();
 
-const activeBookings = props.bookings.filter((booking) => booking.status === 'Active');
+const activeBookings = ref(props.bookings.filter((booking) => booking.status === 'Active'));
 
 async function updateBookingStatus(booking: BookingDTO) {
   const res = await putBookingsId(booking.bookingId, {
