@@ -18,7 +18,7 @@ const { user, signOut } = useUser();
 <template>
   <DropdownMenu>
     <DropdownMenuTrigger as-child class="bg-opacity-0 hover:bg-opacity-15 hover:text-white">
-      <Button variant="ghost"> <UserIcon class="h-4 w-4 mr-3" /> john.cena </Button>
+      <Button variant="ghost"> <UserIcon class="h-4 w-4 mr-3" /> {{ user?.username }} </Button>
     </DropdownMenuTrigger>
     <DropdownMenuContent class="w-56">
       <DropdownMenuLabel>Your Location</DropdownMenuLabel>
