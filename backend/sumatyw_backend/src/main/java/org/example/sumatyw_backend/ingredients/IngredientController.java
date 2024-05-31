@@ -26,6 +26,16 @@ public class IngredientController {
         );
     }
 
+    @GetMapping
+    public ResponseEntity<List<IngredientDTO>> getAllIngredients() {
+        List<Ingredient> ingredients = ingredientService.getAllIngredients();
+
+        return new ResponseEntity<>(
+            ingredients.stream().map(IngredientDTOMapper::mapIngredientToIngredientDTO).toList(),
+            HttpStatus.OK
+        );
+    }
+
     @GetMapping(params = {"mealId"})
     public ResponseEntity<List<IngredientDTO>> getIngredientsByMealId(@RequestParam("mealId") UUID mealId) {
         List<Ingredient> ingredientsByMeal = ingredientService.getIngredientsByMealId(mealId);

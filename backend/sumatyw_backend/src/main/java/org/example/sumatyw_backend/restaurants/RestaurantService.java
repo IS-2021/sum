@@ -23,8 +23,12 @@ public class RestaurantService {
     private final UserRepository userRepository;
 
     public Restaurant addRestaurant(Restaurant restaurant) {
-        userRepository.findById(restaurant.getUser().getUserId())
+        User userDB = userRepository.findById(restaurant.getUser().getUserId())
                 .orElseThrow(() -> new UserNotFoundException("User not found with ID: " + restaurant.getUser().getUserId()));
+
+        if(userDB.getRestaurant() != null) {
+            throw new ResourceAlreadyExistsException("User can have only one restaurant");
+        }
 
         restaurant.setRestaurantId(restaurant.getUser().getUserId());
         restaurant.setImageUUID("default.jpg");

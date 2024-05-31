@@ -78,7 +78,7 @@ public class BookingService {
             .orElseThrow(() -> new ObjectNotFoundException("Booking not found with ID: " + id));
 
         if (booking.getStatus() != Status.Active)
-            throw new InvalidDataException("Booking is no longer in active state");
+            throw new InvalidDataException("Given booking is no longer in active state");
 
         booking.setStatus(Status.Cancelled);
         return bookingRepository.save(booking);
@@ -111,6 +111,9 @@ public class BookingService {
     public Booking markBookingAsPickedUp(UUID bookingId, Booking booking) {
         Booking bookingDB = bookingRepository.findById(bookingId)
             .orElseThrow(() -> new ObjectNotFoundException("Booking not found with ID: " + bookingId));
+
+        if (bookingDB.getStatus() != Status.Active)
+            throw new InvalidDataException("Given booking is no longer in active state");
 
         bookingDB.setPickedUpTimestamp(LocalDateTime.now());
         bookingDB.setStatus(Status.PickedUp);
