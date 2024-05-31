@@ -93,7 +93,7 @@ const onSubmit = form.handleSubmit(async (values) => {
 
 <template>
   <form @submit="onSubmit">
-    <header class="sticky top-0 flex max-w-screen-md justify-between">
+    <header class="flex max-w-screen-md justify-between">
       <h1 class="mb-8 text-2xl font-semibold tracking-tight">Settings</h1>
 
       <Button type="submit" v-if="isFormDirty" :disabled="!form.meta.value.valid">
@@ -101,7 +101,7 @@ const onSubmit = form.handleSubmit(async (values) => {
       </Button>
     </header>
 
-    <SettingsSection>
+    <SettingsSection class="pb-8">
       <h2 class="text-lg font-semibold tracking-tight">Restaurant profile</h2>
       <Separator class="mb-4 mt-2" />
 
