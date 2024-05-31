@@ -13,6 +13,15 @@ import type { BookingDTO } from '@/lib/api-model';
 import { Button } from '@/components/ui/button';
 import { useGetUsersId } from '@/lib/api/users/users';
 import { computed, unref } from 'vue';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog';
 
 interface BookingCardProps {
   booking: BookingDTO;
@@ -47,18 +56,25 @@ const { isPending, remainingTime } = useBookingCard(
   >
     <div class="flex items-center justify-between mb-4">
       <p class="flex items-center gap-5">
-        <Button
-          size="icon"
-          variant="ghost"
-          @click="emits('onBookingAccept', booking)"
-          :disabled="booking.status !== 'Active'"
-        >
-          <CircleDashedIcon v-if="isPending" />
-          <CircleCheckBigIcon v-else-if="booking.status === 'PickedUp'" />
-          <CircleXIcon v-else-if="booking.status === 'Cancelled'" />
-          <CircleIcon v-else-if="booking.status === 'Active'" />
-          <CircleSlash2Icon v-else-if="booking.status === 'OutOfDate'" />
-        </Button>
+        <Dialog>
+          <DialogTrigger as-child>
+            <Button size="icon" variant="ghost" :disabled="booking.status !== 'Active'">
+              <CircleDashedIcon v-if="isPending" />
+              <CircleCheckBigIcon v-else-if="booking.status === 'PickedUp'" />
+              <CircleXIcon v-else-if="booking.status === 'Cancelled'" />
+              <CircleIcon v-else-if="booking.status === 'Active'" />
+              <CircleSlash2Icon v-else-if="booking.status === 'OutOfDate'" />
+            </Button>
+          </DialogTrigger>
+          <DialogContent class="sm:max-w-[425px]">
+            <DialogHeader>
+              <DialogTitle>Do you want to mark this meal as picked up?</DialogTitle>
+            </DialogHeader>
+            <DialogFooter class="w-full flex sm:justify-start">
+              <Button @click="emits('onBookingAccept', booking)"> Submit </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
         {{ booking.meal.name }}
       </p>
 
