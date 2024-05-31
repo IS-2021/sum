@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { MealDTO, Uuid } from '@/lib/api-model';
-import AddIngredientPopup from '@/components/(manage)/meals/AddIngredientPopup.vue';
+import { SaveIcon } from 'lucide-vue-next';
 import { Button } from '@/components/ui/button';
 import { useGetIngredients } from '@/lib/api/ingredients/ingredients';
 import { computed } from 'vue';
@@ -21,7 +21,7 @@ const { data } = useGetIngredients();
 
 const allIngredients = computed(() => data.value?.data ?? []);
 
-const { pickedIngredients, isPicked, toggleIngredientPick } = useIngredientEdit(
+const { pickedIngredients, isModified, isPicked, toggleIngredientPick } = useIngredientEdit(
   props.meal.ingredients,
 );
 
@@ -62,7 +62,9 @@ async function handleEditMeal() {
     <header class="flex justify-between">
       <h1 class="text-2xl font-semibold tracking-tight mb-10">Edit meal ingredients</h1>
 
-      <Button @click="handleEditMeal">Save</Button>
+      <Button @click="handleEditMeal" :disabled="!isModified" class="transition-opacity">
+        <SaveIcon class="inline-block w-4 h-4 mr-2" /> Save
+      </Button>
     </header>
 
     <article class="bg-white border border-neutral-200 p-4 rounded-md">
