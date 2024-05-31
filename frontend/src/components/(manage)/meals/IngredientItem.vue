@@ -27,8 +27,12 @@ const props = defineProps<{
 const amount = ref(0);
 const { user } = useUser();
 
-function deleteMeal() {
-  deleteMealsId(props.mealId);
+async function deleteMeal() {
+  const res = await deleteMealsId(props.mealId);
+
+  if (res.status === 204) {
+    location.reload();
+  }
 }
 </script>
 
