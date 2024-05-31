@@ -17,11 +17,11 @@ const props = defineProps<{
   <article class="w-full bg-neutral-200 border p-4 rounded-md space-y-2">
     <div class="flex gap-1">
       <p class="font-bold">Name:</p>
-      <p>{{ props.meal.name }}</p>
+      <p>{{ meal.name }}</p>
     </div>
     <div class="flex gap-1">
       <p class="font-bold">Description:</p>
-      <p>{{ props.meal.description }}</p>
+      <p>{{ meal.description }}</p>
     </div>
   </article>
 </template>

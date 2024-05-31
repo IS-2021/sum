@@ -35,13 +35,13 @@ function deleteMeal() {
 <template>
   <div class="bg-neutral-200 rounded p-4 my-4">
     <div class="flex justify-between">
-      <h1 class="font-semibold text-xl">{{ props.mealName }}</h1>
+      <h1 class="font-semibold text-xl">{{ mealName }}</h1>
       <p class="text-xs">Available amount: {{ amount }}</p>
     </div>
-    <p class="text-neutral-950">{{ props.mealDescription }}</p>
+    <p class="text-neutral-950">{{ mealDescription }}</p>
     <div class="flex flex-wrap mt-2">
       <p class="text-neutral-800 pr-1">
-        Ingredients: {{ props.ingredients?.map((ingredient) => ingredient.name).join(', ') }}
+        Ingredients: {{ ingredients?.map((ingredient) => ingredient.name).join(', ') }}
       </p>
     </div>
     <div v-if="user" class="mt-4">
