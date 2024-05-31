@@ -5,9 +5,10 @@ import { AspectRatio } from '@/components/ui/aspect-ratio';
 import { ref } from 'vue';
 import { ArrowRightIcon } from 'lucide-vue-next';
 import { Label } from '@/components/ui/label';
+import type { ImageChangeEvent } from '@/components/(manage)/common/fields/types';
 
 const emits = defineEmits<{
-  (e: 'onChange', file: FormData): void;
+  (e: 'onChange', image: ImageChangeEvent): void;
 }>();
 
 type FileInput = {
@@ -74,14 +75,14 @@ const handleFileChange = (event: Event) => {
 };
 
 async function handleSaveRequest() {
-  if (!(fileInput.value.file instanceof Blob)) {
+  if (!fileInput.value.file) {
     return;
   }
 
-  const formData = new FormData();
-  formData.append('image', fileInput.value.file);
-
-  emits('onChange', formData);
+  emits('onChange', {
+    image: fileInput.value.file,
+    previewUrl: fileInput.value.url,
+  });
 }
 </script>
 

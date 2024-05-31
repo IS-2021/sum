@@ -27,6 +27,7 @@ import HoursFormTip from '@/components/(manage)/common/HoursFormTip.vue';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import type { ProblemDetailResponse } from '@/lib/api-model';
 import axios from 'axios';
+import type { ImageChangeEvent } from '@/components/(manage)/common/fields/types';
 
 useHead({
   title: 'Complete restaurant profile',
@@ -104,18 +105,27 @@ const onSubmit = form.handleSubmit(async (formValues) => {
   }
 });
 
-async function uploadRestaurantImage(data: FormData) {
+async function uploadRestaurantImage({ image }: ImageChangeEvent) {
   if (!user.value?.id) {
     return;
   }
 
-  console.log(data);
+  if (!(image instanceof Blob)) {
+    return;
+  }
 
-  const res = await axios.post(`http://localhost:9090/restaurants/images/${user.value.id}`, data, {
-    headers: {
-      'Content-Type': 'multipart/form-data',
+  const formData = new FormData();
+  formData.append('image', image);
+
+  const res = await axios.post(
+    `http://localhost:9090/restaurants/images/${user.value.id}`,
+    formData,
+    {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
     },
-  });
+  );
 
   if (res.status === 200) {
     await invalidateCache();
