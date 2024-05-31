@@ -2,8 +2,8 @@
 import type { IngredientDTO, Uuid } from '@/lib/api-model';
 import { ref } from 'vue';
 
-import Button from '@/components/ui/button/Button.vue';
-import { Trash2 } from 'lucide-vue-next';
+import { Button } from '@/components/ui/button';
+import { Trash2, Edit2Icon } from 'lucide-vue-next';
 import {
   Dialog,
   DialogClose,
@@ -48,7 +48,7 @@ async function deleteMeal() {
         Ingredients: {{ ingredients?.map((ingredient) => ingredient.name).join(', ') }}
       </p>
     </div>
-    <div v-if="user" class="mt-4">
+    <div v-if="user" class="mt-4 flex gap-2">
       <Dialog>
         <DialogTrigger as-child>
           <Button size="icon" class="w-1/2">
@@ -68,6 +68,13 @@ async function deleteMeal() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      <Button variant="secondary" as-child>
+        <RouterLink :to="`/manage/meals/edit/${mealId}`">
+          <Edit2Icon class="inline-block mr-2 h-4 w-4" />
+          Edit
+        </RouterLink>
+      </Button>
     </div>
   </div>
 </template>
