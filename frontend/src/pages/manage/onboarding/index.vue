@@ -69,7 +69,6 @@ const { current, goToPrevious, goToNext, isCurrent, isFirst, isBefore, goTo } = 
       'Upload a photo of your restaurant to make it stand out. This step is optional and photo can be changed later in the settings.',
   },
 });
-goTo('photo');
 
 const formSchema = toTypedSchema(restaurantSchema);
 const form = useForm({
