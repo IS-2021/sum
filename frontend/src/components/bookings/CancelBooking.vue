@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { putBookingsId } from '@/lib/api/bookings/bookings';
+import { deleteBookingsId, putBookingsId } from '@/lib/api/bookings/bookings';
 import type { BookingDTO } from '@/lib/api-model';
 
 import { toast } from 'vue-sonner';
@@ -18,16 +18,7 @@ const props = defineProps<{
 }>();
 
 async function cancelBooking() {
-  const res = await putBookingsId(props.booking.bookingId, {
-    bookingId: props.booking.bookingId,
-    deadlinePickUpTimestamp: props.booking.deadlinePickUpTimestamp,
-    meal: props.booking.meal,
-    orderedTimestamp: props.booking.orderedTimestamp,
-    pickedUpTimestamp: props.booking.pickedUpTimestamp,
-    restaurant: props.booking.restaurant,
-    status: 'Cancelled',
-    userId: props.booking.userId,
-  });
+  const res = await deleteBookingsId(props.booking.bookingId);
 
   if (res.status === 200) {
     toast.success('Booking cancelled successfully!');
