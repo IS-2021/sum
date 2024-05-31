@@ -1,14 +1,14 @@
 <script setup lang="ts">
-import type { IngredientDTO, MealDTO, Uuid } from '@/lib/api-model';
+import type { MealDTO, Uuid } from '@/lib/api-model';
 import AddIngredientPopup from '@/components/(manage)/meals/AddIngredientPopup.vue';
 import { Button } from '@/components/ui/button';
 import { useGetIngredients } from '@/lib/api/ingredients/ingredients';
-import { computed, ref } from 'vue';
+import { computed } from 'vue';
 import { CircleCheckBigIcon, PlusIcon } from 'lucide-vue-next';
 import { cn } from '@/lib/utils';
-import { toast } from 'vue-sonner';
-import { addIngredientsToMeal, createMeal, deleteMeal } from '@/components/(manage)/meals/api';
+import { recreateMeal } from '@/components/(manage)/meals/api';
 import { useRouter } from 'vue-router/auto';
+import { toast } from 'vue-sonner';
 
 const props = defineProps<{
   meal: MealDTO;
@@ -41,24 +41,19 @@ function toggleIngredientPick(ingredient: IngredientDTO) {
 }
 
 // Since meals are immutable, we need to recreate the meal with the new ingredients
-async function recreateMeal() {
-  const newMealRes = await createMeal(props.meal);
-  if (newMealRes.status !== 200) {
+async function handleEditMeal() {
+  const res = await recreateMeal({
+    ...props.meal,
+    ingredients: pickedIngredients.value,
+  });
+
+  if (res.status === 200) {
+    await router.replace(`/manage/meals/edit/${res.data.mealId}`);
+    location.reload();
+  } else {
     toast.error('Failed to update meal');
-    console.error('recreateMeal:postMeals', newMealRes);
+    console.error('recreateMeal:postMeals', res);
   }
-
-  console.log('pickedIngredients', pickedIngredients.value, pickedIngredients.value.length);
-  const ingredientAddRes = await addIngredientsToMeal(
-    newMealRes.data.mealId,
-    pickedIngredients.value,
-    props.meal.restaurantId,
-  );
-  console.log('recreateMeal:addIngredientsToMeal', ingredientAddRes);
-
-  await deleteMeal(props.meal.mealId);
-
-  await router.replace(`/manage/meals/edit/${newMealRes.data.mealId}`);
 }
 </script>
 
@@ -77,7 +72,7 @@ async function recreateMeal() {
     </div>
 
     <section class="mt-10">
-      <Button @click="recreateMeal">Save</Button>
+      <Button @click="handleEditMeal">Save</Button>
 
       <h2 class="text-lg font-semibold mt-4">Ingredients</h2>
       <ul class="space-y-2 mt-3">
