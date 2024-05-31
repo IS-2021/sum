@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import type { MealDTO, Uuid } from '@/lib/api-model';
-
 import AddIngredientPopup from '@/components/(manage)/meals/AddIngredientPopup.vue';
 
 const props = defineProps<{

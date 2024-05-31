@@ -1,12 +1,11 @@
 <script setup lang="ts">
 import type { Uuid } from '@/lib/api-model';
-import NavLink from '@/components/(manage)/common/NavLink.vue';
 
 import Button from '@/components/ui/button/Button.vue';
 import { Plus } from 'lucide-vue-next';
 
 import { getMeals } from '@/components/restaurant/restaurant';
-import IngredientItem from '@/components/(manage)/meals/IngredientItem.vue';
+import Meal from '@/components/(manage)/meals/Meal.vue';
 
 const props = defineProps<{
   restaurantId: Uuid;
@@ -33,7 +32,7 @@ const areMealsLoading = getMeals(props.restaurantId).areMealsLoading;
     <div class="space-y-3 mb-10 max-w-screen-md w-full">
       <p v-if="meals.length === 0">No meals found</p>
       <div v-else>
-        <IngredientItem
+        <Meal
           v-for="meal in meals"
           v-bind:key="meal.mealId"
           :mealId="meal.mealId"

@@ -9,7 +9,7 @@ import { useRoute } from 'vue-router/auto';
 import { useGetMealsId } from '@/lib/api/meals/meals';
 import { computed, unref } from 'vue';
 
-import AddIngredientsComponent from '@/components/(manage)/meals/AddIngredientsComponent.vue';
+import MealEditPage from '@/components/(manage)/meals/MealEditPage.vue';
 
 const route = useRoute('/manage/meals/edit/[id]');
 const mealId = route.params.id;
@@ -21,5 +21,5 @@ const { user } = useUser();
 </script>
 
 <template>
-  <AddIngredientsComponent v-if="meal && user" :meal="meal" :userId="user.id" />
+  <MealEditPage v-if="meal && user" :meal="meal" :userId="user.id" />
 </template>
