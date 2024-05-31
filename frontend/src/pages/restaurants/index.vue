@@ -29,7 +29,7 @@ const toggleView = () => {
   isMapView.value = !isMapView.value;
 };
 
-const radius = ref<number>(5);
+const radius = ref<number>(2);
 
 const { user } = useUser();
 const { address: pickedAddress, setPlaceId } = useAddress();
