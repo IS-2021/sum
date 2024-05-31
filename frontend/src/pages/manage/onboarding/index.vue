@@ -26,8 +26,8 @@ import {
 import HoursFormTip from '@/components/(manage)/common/HoursFormTip.vue';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import type { ProblemDetailResponse } from '@/lib/api-model';
-import axios from 'axios';
 import type { ImageChangeEvent } from '@/components/(manage)/common/fields/types';
+import { uploadRestaurantImage } from '@/components/(manage)/common/image/api';
 
 useHead({
   title: 'Complete restaurant profile',
@@ -105,27 +105,12 @@ const onSubmit = form.handleSubmit(async (formValues) => {
   }
 });
 
-async function uploadRestaurantImage({ image }: ImageChangeEvent) {
+async function handleSaveRestaurantImage({ image }: ImageChangeEvent) {
   if (!user.value?.id) {
     return;
   }
 
-  if (!(image instanceof Blob)) {
-    return;
-  }
-
-  const formData = new FormData();
-  formData.append('image', image);
-
-  const res = await axios.post(
-    `http://localhost:9090/restaurants/images/${user.value.id}`,
-    formData,
-    {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-    },
-  );
+  const res = await uploadRestaurantImage(user.value.id, image);
 
   if (res.status === 200) {
     await invalidateCache();
@@ -199,7 +184,7 @@ async function uploadRestaurantImage({ image }: ImageChangeEvent) {
       </form>
 
       <div v-else-if="isCurrent('photo')">
-        <ImageField @on-change="uploadRestaurantImage" />
+        <ImageField @on-change="handleSaveRestaurantImage" />
       </div>
     </div>
   </div>
