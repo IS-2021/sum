@@ -7,9 +7,9 @@ meta:
 import RestaurantDashboard from '@/components/(manage)/dashboard/RestaurantDashboard.vue';
 import { useRestaurantUser } from '@/composables/useRestaurantUser';
 
-const { user } = useRestaurantUser();
+const { restaurant } = useRestaurantUser();
 </script>
 
 <template>
-  <RestaurantDashboard v-if="user" :restaurantId="user.id" />
+  <RestaurantDashboard v-if="restaurant?.id" :restaurant="restaurant" />
 </template>

@@ -2,7 +2,7 @@
 import { useHead } from '@unhead/vue';
 import { subDays } from 'date-fns';
 import ReportCard from '@/components/(manage)/dashboard/ReportCard.vue';
-import type { BookingDTO, Uuid } from '@/lib/api-model';
+import type { BookingDTO, RestaurantDTO } from '@/lib/api-model';
 import { computed, unref } from 'vue';
 import { putBookingsId, useGetBookings } from '@/lib/api/bookings/bookings';
 import BookingCard from '@/components/(manage)/dashboard/BookingCard.vue';
@@ -13,11 +13,11 @@ useHead({
 });
 
 const props = defineProps<{
-  restaurantId: Uuid;
+  restaurant: RestaurantDTO;
 }>();
 
 const { data, refetch } = useGetBookings(
-  { restaurantId: props.restaurantId },
+  { restaurantId: props.restaurant.id },
   {
     query: {
       refetchInterval: 1000,
@@ -46,7 +46,7 @@ async function updateBookingStatus(booking: BookingDTO) {
 </script>
 
 <template>
-  <RestaurantInfo :restaurantId="restaurantId" :bookings="bookings" />
+  <RestaurantInfo v-if="bookings" :restaurant="restaurant" :bookings="bookings" />
 
   <div class="flex flex-col gap-10 xl:flex-row">
     <div

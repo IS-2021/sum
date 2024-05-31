@@ -1,17 +1,12 @@
 <script setup lang="ts">
 import StatsCard from '@/components/(manage)/dashboard/StatsCard.vue';
-import type { BookingDTO, Uuid } from '@/lib/api-model';
-import { useGetRestaurantsId } from '@/lib/api/restaurants/restaurants';
+import type { BookingDTO, RestaurantDTO } from '@/lib/api-model';
 import { CookingPotIcon, ThumbsUpIcon } from 'lucide-vue-next';
-import { computed, unref } from 'vue';
 
 const props = defineProps<{
-  restaurantId: Uuid;
+  restaurant: RestaurantDTO;
   bookings: BookingDTO[];
 }>();
-
-const { data } = useGetRestaurantsId(props.restaurantId);
-const restaurant = computed(() => unref(data)?.data);
 
 const savedMeals = props.bookings.filter((booking) => booking.status === 'PickedUp');
 </script>
