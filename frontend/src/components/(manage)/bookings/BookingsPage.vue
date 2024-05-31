@@ -8,7 +8,14 @@ const props = defineProps<{
   restaurantId: Uuid;
 }>();
 
-const { data, refetch, isLoading } = useGetBookings({ restaurantId: props.restaurantId });
+const { data, refetch, isLoading } = useGetBookings(
+  { restaurantId: props.restaurantId },
+  {
+    query: {
+      refetchInterval: 5000,
+    },
+  },
+);
 const bookings = computed(() => unref(data)?.data);
 
 async function updateBookingStatus(booking: BookingDTO) {
