@@ -5,8 +5,11 @@ meta:
 
 <script setup lang="ts">
 import ReportsPage from '@/components/(manage)/reports/ReportsPage.vue';
+import { useRestaurantUser } from '@/composables/useRestaurantUser';
+
+const { user } = useRestaurantUser();
 </script>
 
 <template>
-  <ReportsPage />
+  <ReportsPage v-if="user" :restaurant-id="user.id" />
 </template>
