@@ -12,7 +12,13 @@ import {
 import { useForm } from 'vee-validate';
 import { useStepper } from '@vueuse/core';
 import { cn } from '@/lib/utils';
-import { AlertCircleIcon, ChevronLeftIcon, ChevronRightIcon, LogOutIcon } from 'lucide-vue-next';
+import {
+  AlertCircleIcon,
+  ArrowRightIcon,
+  ChevronLeftIcon,
+  ChevronRightIcon,
+  LogOutIcon,
+} from 'lucide-vue-next';
 import Logo from '@/components/Logo.vue';
 import AddressAutocompleteInput from '@/components/maps/autocomplete/AddressAutocompleteInput.vue';
 import { useAddress } from '@/composables/maps/useAddress';
@@ -26,8 +32,9 @@ import {
 import HoursFormTip from '@/components/(manage)/common/HoursFormTip.vue';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import type { ProblemDetailResponse } from '@/lib/api-model';
-import type { ImageChangeEvent } from '@/components/(manage)/common/fields/types';
+import type { ImageChangeEvent, ImageFieldData } from '@/components/(manage)/common/fields/types';
 import { uploadRestaurantImage } from '@/components/(manage)/common/image/api';
+import ImageStep from '@/components/(manage)/onboarding/ImageStep.vue';
 
 useHead({
   title: 'Complete restaurant profile',
@@ -62,6 +69,7 @@ const { current, goToPrevious, goToNext, isCurrent, isFirst, isBefore, goTo } = 
       'Upload a photo of your restaurant to make it stand out. This step is optional and photo can be changed later in the settings.',
   },
 });
+goTo('photo');
 
 const formSchema = toTypedSchema(restaurantSchema);
 const form = useForm({
@@ -105,12 +113,24 @@ const onSubmit = form.handleSubmit(async (formValues) => {
   }
 });
 
-async function handleSaveRestaurantImage({ image }: ImageChangeEvent) {
-  if (!user.value?.id) {
+const image = ref<ImageFieldData>({
+  file: null,
+  previewUrl: '',
+});
+
+function setImage({ file, previewUrl }: ImageChangeEvent) {
+  image.value = {
+    file,
+    previewUrl,
+  };
+}
+
+async function handleSaveRestaurantImage() {
+  if (!user.value?.id || !image.value.file) {
     return;
   }
 
-  const res = await uploadRestaurantImage(user.value.id, image);
+  const res = await uploadRestaurantImage(user.value.id, image.value.file);
 
   if (res.status === 200) {
     await invalidateCache();
@@ -184,7 +204,16 @@ async function handleSaveRestaurantImage({ image }: ImageChangeEvent) {
       </form>
 
       <div v-else-if="isCurrent('photo')">
-        <ImageField @on-change="handleSaveRestaurantImage" />
+        <ImageStep @update:image="setImage" />
+
+        <div class="mt-6 flex gap-2">
+          <Button @click="handleSaveRestaurantImage" :disabled="!image.file"> Save </Button>
+          <Button variant="outline" as-child>
+            <RouterLink to="/manage">
+              Skip for now <ArrowRightIcon class="ml-2 h-4 w-4" />
+            </RouterLink>
+          </Button>
+        </div>
       </div>
     </div>
   </div>

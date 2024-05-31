@@ -1,4 +1,9 @@
 export type ImageChangeEvent = {
-  image: File;
+  file: File;
+  previewUrl: string;
+};
+
+export type ImageFieldData = {
+  file: File | null;
   previewUrl: string;
 };
