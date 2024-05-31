@@ -7,7 +7,6 @@ import Button from '../ui/button/Button.vue';
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
@@ -31,20 +30,20 @@ async function cancelBooking() {
   });
 
   if (res.status === 200) {
-    location.reload();
     toast.success('Booking cancelled successfully!');
+    location.reload();
   }
 }
 </script>
 
 <template>
-  <Dialog>
+  <Dialog v-if="booking.status === 'Active'">
     <DialogTrigger as-child>
       <Button variant="ghost"> Cancel Booking </Button>
     </DialogTrigger>
     <DialogContent class="sm:max-w-[425px]">
       <DialogHeader>
-        <DialogTitle>Are you want to cancel this booking?</DialogTitle>
+        <DialogTitle>Do you want to cancel this booking?</DialogTitle>
       </DialogHeader>
       <DialogFooter class="w-full flex sm:justify-start">
         <Button v-if="props.booking.status === 'Active'" @click="cancelBooking" class="mt-4"
