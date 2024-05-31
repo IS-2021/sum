@@ -40,13 +40,13 @@ public class MealService {
         List<Meal> meals = mealRepository.findAllByRestaurantRestaurantId(restaurantId);
 
         for (int i = 0; i < meals.size(); i++) {
-            boolean hasActiveBooking = false;
+            boolean hasBooking = false;
             for (Booking booking : meals.get(i).getBookings()) {
-                if (booking.getStatus() == Status.Active)
-                    hasActiveBooking = true;
+                if (booking.getStatus() == Status.Active || booking.getStatus() == Status.PickedUp)
+                    hasBooking = true;
             }
 
-            if (hasActiveBooking) {
+            if (hasBooking) {
                 meals.remove(i);
                 i--;
             }
