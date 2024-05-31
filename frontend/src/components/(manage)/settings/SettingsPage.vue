@@ -20,7 +20,7 @@ import SettingsSection from '@/components/(manage)/settings/SettingsSection.vue'
 import { Button } from '@/components/ui/button';
 import { MapPinIcon, SaveIcon } from 'lucide-vue-next';
 import { computed, toRef, watchEffect } from 'vue';
-import { putRestaurantsId } from '@/lib/api/restaurants/restaurants';
+import { putRestaurantsDeactivateId, putRestaurantsId } from '@/lib/api/restaurants/restaurants';
 import { toast } from 'vue-sonner';
 import { formatAddress } from '@/lib/googleMaps';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
@@ -63,6 +63,18 @@ watchEffect(() => {
     });
   }
 });
+
+async function deactivateRestaurant() {
+  const res = await putRestaurantsDeactivateId(restaurant.value.id);
+
+  if (res.status === 200) {
+    await invalidateCache();
+    toast.info('Restaurant deactivated');
+  } else {
+    console.error('Failed to deactivate restaurant', res);
+    toast.error('Failed to deactivate restaurant');
+  }
+}
 
 const onSubmit = form.handleSubmit(async (values) => {
   const updateData = mapRestaurantDataToDTO(values);
@@ -143,6 +155,8 @@ const onSubmit = form.handleSubmit(async (values) => {
     <h2 class="mb-2 text-lg font-semibold tracking-tight text-red-700">Danger zone</h2>
     <Separator class="mb-4 mt-2" />
 
-    <Button variant="destructive">Deactivate restaurant</Button>
+    <Button variant="destructive" @click="deactivateRestaurant" :disabled="!restaurant.active"
+      >Deactivate restaurant</Button
+    >
   </SettingsSection>
 </template>
