@@ -5,6 +5,7 @@ meta:
 
 <script setup lang="ts">
 import { useHead } from '@unhead/vue';
+import RestaurantsPage from '@/components/(admin)/restaurants/RestaurantsPage.vue';
 
 useHead({
   title: 'Admin - Restaurants',
@@ -12,7 +13,5 @@ useHead({
 </script>
 
 <template>
-  <div>
-    <h1 class="text-2xl font-semibold tracking-tight mb-10">Restaurants</h1>
-  </div>
+  <RestaurantsPage />
 </template>
