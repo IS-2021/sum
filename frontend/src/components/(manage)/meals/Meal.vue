@@ -1,9 +1,7 @@
 <script setup lang="ts">
 import type { IngredientDTO, Uuid } from '@/lib/api-model';
-import { ref } from 'vue';
-
 import { Button } from '@/components/ui/button';
-import { Trash2, Edit2Icon } from 'lucide-vue-next';
+import { Trash2, Edit2Icon, OctagonAlertIcon } from 'lucide-vue-next';
 import {
   Dialog,
   DialogClose,
@@ -13,9 +11,11 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
-
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { deleteMealsId } from '@/lib/api/meals/meals';
 import { useUser } from '@/composables/useUser';
+import { computed } from 'vue';
+import { cn } from '@/lib/utils';
 
 const props = defineProps<{
   mealId: Uuid;
@@ -33,11 +33,28 @@ async function deleteMeal() {
     location.reload();
   }
 }
+
+const hasAnyIngredients = computed(() =>
+  props.ingredients ? props.ingredients?.length > 0 : false,
+);
 </script>
 
 <template>
   <div class="bg-white border border-neutral-300 rounded p-4 my-4">
-    <h1 class="font-semibold text-xl mb-2">{{ mealName }}</h1>
+    <div :class="cn('flex items-center mb-2 gap-2', !hasAnyIngredients && 'text-red-500')">
+      <h2 class="font-semibold text-xl">{{ mealName }}</h2>
+
+      <TooltipProvider>
+        <Tooltip>
+          <TooltipTrigger>
+            <OctagonAlertIcon v-if="!hasAnyIngredients" class="h-5 w-5" />
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>This meal won't be visible unless you set it's ingredients</p>
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
+    </div>
     <p class="text-neutral-950 mb-4">{{ mealDescription }}</p>
 
     <p class="text-neutral-800 mb-4">
