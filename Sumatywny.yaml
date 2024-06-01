@@ -1727,7 +1727,6 @@ components:
       title: Root Type for RestaurantDTO
       description: ""
       required:
-        - active
         - address
         - id
         - name
@@ -1759,8 +1758,6 @@ components:
           type: integer
         address:
           $ref: "#/components/schemas/AddressDTO"
-        active:
-          type: boolean
         id:
           $ref: "#/components/schemas/UUID"
         status:
