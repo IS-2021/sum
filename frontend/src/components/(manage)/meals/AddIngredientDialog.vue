@@ -15,6 +15,7 @@ import { toTypedSchema } from '@vee-validate/zod';
 import { z } from 'zod';
 import { useForm } from 'vee-validate';
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { Plus } from 'lucide-vue-next';
 
 const emits = defineEmits<{
   (e: 'addIngredient', ingredient: FormSchema): void;
@@ -43,7 +44,9 @@ const handleSubmit = form.handleSubmit((formData) => {
 <template>
   <Dialog>
     <DialogTrigger as-child>
-      <Button variant="secondary"> Add new ingredient </Button>
+      <Button variant="secondary">
+        <Plus width="16" height="16" class="mr-2" /> Add new ingredient
+      </Button>
     </DialogTrigger>
     <DialogContent class="sm:max-w-[425px]">
       <DialogHeader>

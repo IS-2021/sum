@@ -21,7 +21,7 @@ const areMealsLoading = getMeals(props.restaurantId).areMealsLoading;
 
     <Button as-child>
       <RouterLink to="/manage/meals/add">
-        <Plus width="16" height="16" class="mr-1" />
+        <Plus width="16" height="16" class="mr-2" />
         Add meal
       </RouterLink>
     </Button>
