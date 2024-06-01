@@ -9,7 +9,7 @@ type ReportCardActions = 'banUser' | 'banRestaurant' | 'viewUser' | 'viewRestaur
 
 interface ReportCardProps {
   report: ReportDTO;
-  showActionButtons: boolean;
+  showActionButtons?: boolean;
   actions?: ReportCardActions[];
 }
 
