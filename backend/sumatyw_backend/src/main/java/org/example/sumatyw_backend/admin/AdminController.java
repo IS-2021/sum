@@ -83,14 +83,14 @@ public class AdminController {
     @GetMapping( value = "/reports/restaurants", params = {"restaurantId"})
     public ResponseEntity<List<ReportDTO>> getAllRestaurantReports(@RequestParam("restaurantId") UUID restaurantId) {
 
-            List<RestaurantReport> list = restaurantReportsService.getAllReportsByRestaurant(restaurantId);
+            List<UserReport> list = userReportsService.getAllReportsUser(restaurantId);
             if(list.isEmpty()) {
                 return new ResponseEntity<>(new ArrayList<>(),HttpStatus.NO_CONTENT);
             }
             List<ReportDTO> reports = new ArrayList<>();
 
-            for(RestaurantReport report : list) {
-                reports.add(ReportsDTOMapper.mapRestaurantReportToReportDTO(report));
+            for(UserReport report : list) {
+                reports.add(ReportsDTOMapper.mapUserReportToReportDTO(report));
             }
             return new ResponseEntity<>(reports,HttpStatus.OK);
     }
@@ -109,14 +109,14 @@ public class AdminController {
     @GetMapping( value = "/reports/users", params = {"userId"})
     public ResponseEntity<List<ReportDTO>> getAllUserReports(@RequestParam("userId") UUID userId) {
 
-        List<UserReport> list = userReportsService.getAllReportsUser(userId);
+        List<RestaurantReport> list = restaurantReportsService.getAllReportsByRestaurant(userId);
         if(list.isEmpty()) {
             return new ResponseEntity<>(new ArrayList<>(),HttpStatus.NO_CONTENT);
         }
         List<ReportDTO> reports = new ArrayList<>();
 
-        for(UserReport report : list) {
-            reports.add(ReportsDTOMapper.mapUserReportToReportDTO(report));
+        for(RestaurantReport report : list) {
+            reports.add(ReportsDTOMapper.mapRestaurantReportToReportDTO(report));
         }
         return new ResponseEntity<>(reports,HttpStatus.OK);
     }

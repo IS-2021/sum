@@ -7,6 +7,7 @@ import org.example.sumatyw_backend.exceptions.ResourceAlreadyExistsException;
 import org.example.sumatyw_backend.reports.ReportDTO;
 import org.example.sumatyw_backend.reports.ReportInputDTO;
 import org.example.sumatyw_backend.reports.ReportsDTOMapper;
+import org.example.sumatyw_backend.restaurant_reports.RestaurantReportRepository;
 import org.example.sumatyw_backend.restaurants.RestaurantService;
 import org.example.sumatyw_backend.users.UserService;
 import org.springframework.stereotype.Service;
@@ -23,6 +24,7 @@ public class UserReportsService {
     private final UserReportsRepository userReportsRepository;
     private final UserService userService;
     private final RestaurantService restaurantService;
+    private final RestaurantReportRepository restaurantReportRepository;
 
     public UserReport addUserReport(ReportInputDTO reportInputDTO) {
         if(userReportsRepository.existsByUserIdAndRestaurantId(reportInputDTO.userId(),reportInputDTO.restaurantId())) {
@@ -37,9 +39,9 @@ public class UserReportsService {
         }
     }
 
-    public List<UserReport> getAllReportsUser(UUID userId) {
+    public List<UserReport> getAllReportsUser(UUID restaurantId) {
 
-        List<UserReport> list = userReportsRepository.findAllByUserUserIdAndIsOpenTrue(userId);
+        List<UserReport> list = userReportsRepository.findAllByRestaurantRestaurantIdAndIsOpenTrue(restaurantId);
 
         if(list.isEmpty()) {
             return new ArrayList<>();

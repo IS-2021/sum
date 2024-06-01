@@ -11,6 +11,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+
 @RestController
 @AllArgsConstructor
 @RequestMapping("/reports")
@@ -29,6 +33,21 @@ public class ReportsController {
                 ReportsDTOMapper.mapRestaurantReportToReportDTO(restaurantReport),
                 HttpStatus.OK
             );
+    }
+
+    @GetMapping( value = "/restaurants", params = {"restaurantId"})
+    public ResponseEntity<List<ReportDTO>> getAllRestaurantReports(@RequestParam("restaurantId") UUID restaurantId) {
+
+        List<UserReport> list = userReportsService.getAllReportsUser(restaurantId);
+        if(list.isEmpty()) {
+            return new ResponseEntity<>(new ArrayList<>(),HttpStatus.NO_CONTENT);
+        }
+        List<ReportDTO> reports = new ArrayList<>();
+
+        for(UserReport report : list) {
+            reports.add(ReportsDTOMapper.mapUserReportToReportDTO(report));
+        }
+        return new ResponseEntity<>(reports,HttpStatus.OK);
     }
 
     @PostMapping("/users")

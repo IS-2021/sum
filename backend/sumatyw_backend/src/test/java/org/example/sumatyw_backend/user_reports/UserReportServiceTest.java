@@ -4,7 +4,9 @@ import org.example.sumatyw_backend.exceptions.ObjectNotFoundException;
 import org.example.sumatyw_backend.exceptions.ResourceAlreadyExistsException;
 import org.example.sumatyw_backend.reports.ReportDTO;
 import org.example.sumatyw_backend.reports.ReportInputDTO;
+import org.example.sumatyw_backend.restaurant_reports.RestaurantReportRepository;
 import org.example.sumatyw_backend.restaurants.Restaurant;
+import org.example.sumatyw_backend.restaurants.RestaurantRepository;
 import org.example.sumatyw_backend.restaurants.RestaurantService;
 import org.example.sumatyw_backend.users.User;
 import org.example.sumatyw_backend.users.UserService;
@@ -38,12 +40,15 @@ public class UserReportServiceTest {
     @Mock
     private RestaurantService restaurantService;
 
+    @Mock
+    private RestaurantReportRepository restaurantReportRepository;
+
     @InjectMocks
     private UserReportsService userReportsService;
 
     @BeforeEach
     void setUp() {
-        userReportsService = new UserReportsService(userReportsRepository, userService, restaurantService);
+        userReportsService = new UserReportsService(userReportsRepository, userService, restaurantService,restaurantReportRepository);
     }
 
     @Test
