@@ -20,7 +20,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 @RestController
@@ -60,16 +59,12 @@ public class AdminController {
     }
 
     @GetMapping("/users/{id}")
-    public ResponseEntity getUserByID(@PathVariable("id") UUID id) {
-        try {
+    public ResponseEntity<UserDTO> getUserByID(@PathVariable("id") UUID id) {
             User user = userService.getUserById(id);
             return new ResponseEntity<>(
                 UserDTOMapper.mapUserToUserDTO(user),
                 HttpStatus.OK
             );
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
-        }
     }
 
     @GetMapping("/reports/restaurants")
@@ -137,7 +132,7 @@ public class AdminController {
         return new ResponseEntity<>(reports,HttpStatus.OK);
     }
 
-    @PutMapping("/reports/users/{id}")
+    @PutMapping(value = "/reports/users/{id}", params = {"ban"})
     public ResponseEntity handleUserReport(@PathVariable("id") UUID reportId,
                                            @RequestParam("ban") boolean ban) {
 
@@ -159,7 +154,7 @@ public class AdminController {
 
     }
 
-    @PutMapping("/reports/restaurants/{id}")
+    @PutMapping(value = "/reports/restaurants/{id}", params = "ban")
     public ResponseEntity handleRestaurantReport(@PathVariable("id") UUID reportId,
                                                  @RequestParam("ban") boolean ban) {
         if(ban) {
@@ -212,6 +207,16 @@ public class AdminController {
 
         return new ResponseEntity<>(
             restaurants.stream().map(RestaurantDTOMapper::mapRestaurantToRestaurantDTO).toList(),
+            HttpStatus.OK
+        );
+    }
+
+    @GetMapping(value = "/restaurants/{id}")
+    public ResponseEntity<RestaurantDTO> getRestaurantById(@PathVariable("id") UUID restaurantId) {
+        Restaurant restaurant = restaurantService.getRestaurantById(restaurantId);
+
+        return new ResponseEntity<>(
+            RestaurantDTOMapper.mapRestaurantToRestaurantDTO(restaurant),
             HttpStatus.OK
         );
     }
