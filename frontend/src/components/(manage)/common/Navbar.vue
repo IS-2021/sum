@@ -1,5 +1,4 @@
-<script lang="ts">
-import { defineComponent } from 'vue';
+<script setup lang="ts">
 import NavLink from '@/components/(manage)/common/NavLink.vue';
 import Logo from '@/components/Logo.vue';
 import {
@@ -9,19 +8,6 @@ import {
   SettingsIcon,
   TicketCheckIcon,
 } from 'lucide-vue-next';
-
-export default defineComponent({
-  name: 'Navbar',
-  components: {
-    LayoutDashboardIcon,
-    TicketCheckIcon,
-    CookingPotIcon,
-    MessageCircleWarningIcon,
-    SettingsIcon,
-    Logo,
-    NavLink,
-  },
-});
 </script>
 
 <template>
