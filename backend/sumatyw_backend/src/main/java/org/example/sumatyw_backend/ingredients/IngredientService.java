@@ -2,6 +2,7 @@ package org.example.sumatyw_backend.ingredients;
 
 import lombok.AllArgsConstructor;
 import org.example.sumatyw_backend.exceptions.ObjectNotFoundException;
+import org.example.sumatyw_backend.exceptions.ResourceAlreadyExistsException;
 import org.example.sumatyw_backend.meals.Meal;
 import org.example.sumatyw_backend.meals.MealRepository;
 import org.example.sumatyw_backend.restaurants.Restaurant;
@@ -37,6 +38,10 @@ public class IngredientService {
         );
 
         if (ingredientDB.isPresent()) {
+            for (Meal m : ingredientDB.get().getMeals()) {
+                if (m.getMealId() == ingredient.getMeals().get(0).getMealId())
+                    throw new ResourceAlreadyExistsException("Given meal already has that meal");
+            }
             ingredientDB.get().getMeals().add(ingredient.getMeals().get(0));
             return ingredientRepository.save(ingredientDB.get());
         } else {
@@ -65,9 +70,6 @@ public class IngredientService {
         return ingredients.stream().distinct().toList();
     }
 
-    public void deleteIngredient(UUID id) {
-        ingredientRepository.deleteById(id);
-    }
 
     public Ingredient updateIngredientById(UUID id, Ingredient ingredient) {
         Ingredient existingIngredient = ingredientRepository.findById(id).orElseThrow(RuntimeException::new);
