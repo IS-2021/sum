@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import type { MealDTO, Uuid } from '@/lib/api-model';
+import type { IngredientInputDTO, MealDTO, Uuid } from '@/lib/api-model';
 import { SaveIcon } from 'lucide-vue-next';
 import { Button } from '@/components/ui/button';
-import { useGetIngredients } from '@/lib/api/ingredients/ingredients';
+import { postIngredients, useGetIngredients } from '@/lib/api/ingredients/ingredients';
 import { computed } from 'vue';
 import { CircleCheckBigIcon, PlusIcon } from 'lucide-vue-next';
 import { cn } from '@/lib/utils';
@@ -10,6 +10,7 @@ import { addIngredientsToMeal, recreateMeal } from '@/components/(manage)/meals/
 import { useRouter } from 'vue-router/auto';
 import { useIngredientEdit } from '@/components/(manage)/meals/useIngredientEdit';
 import { toast } from 'vue-sonner';
+import AddIngredientDialog from '@/components/(manage)/meals/AddIngredientDialog.vue';
 
 const props = defineProps<{
   meal: MealDTO;
@@ -17,7 +18,7 @@ const props = defineProps<{
 }>();
 
 const router = useRouter();
-const { data } = useGetIngredients();
+const { data, refetch } = useGetIngredients();
 
 const allIngredients = computed(() => data.value?.data ?? []);
 
@@ -53,6 +54,16 @@ async function handleEditMeal() {
   } else {
     toast.error('Failed to update meal');
     console.error('recreateMeal:postMeals', res);
+  }
+}
+
+async function handleAddNewIngredient(ingredient: IngredientInputDTO) {
+  const res = await postIngredients(ingredient, {
+    mealId: props.meal.mealId,
+  });
+
+  if (res.status === 200) {
+    await refetch();
   }
 }
 </script>
@@ -101,6 +112,8 @@ async function handleEditMeal() {
             </div>
           </li>
         </ul>
+
+        <AddIngredientDialog @add-ingredient="handleAddNewIngredient" />
       </section>
     </article>
   </div>
