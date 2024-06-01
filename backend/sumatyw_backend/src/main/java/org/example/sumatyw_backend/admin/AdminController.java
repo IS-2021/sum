@@ -106,10 +106,20 @@ public class AdminController {
         }
     }
 
-//    @GetMapping( value = "/reports/users", params = {"userId"})
-//    public ResponseEntity<List<ReportDTO>> getAllRestaurantReports() {
-//
-//    }
+    @GetMapping( value = "/reports/users", params = {"userId"})
+    public ResponseEntity<List<ReportDTO>> getAllUserReports(@RequestParam("userId") UUID userId) {
+
+        List<UserReport> list = userReportsService.getAllReportsUser(userId);
+        if(list.isEmpty()) {
+            return new ResponseEntity<>(new ArrayList<>(),HttpStatus.NO_CONTENT);
+        }
+        List<ReportDTO> reports = new ArrayList<>();
+
+        for(UserReport report : list) {
+            reports.add(ReportsDTOMapper.mapUserReportToReportDTO(report));
+        }
+        return new ResponseEntity<>(reports,HttpStatus.OK);
+    }
 
     @PutMapping("/reports/users/{id}")
     public ResponseEntity handleUserReport(@PathVariable("id") UUID reportId,

@@ -11,6 +11,7 @@ import org.example.sumatyw_backend.restaurants.RestaurantService;
 import org.example.sumatyw_backend.users.UserService;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -34,6 +35,16 @@ public class UserReportsService {
             userReport.setOpen(true);
             return userReportsRepository.save(userReport);
         }
+    }
+
+    public List<UserReport> getAllReportsUser(UUID userId) {
+
+        List<UserReport> list = userReportsRepository.findAllByUserUserIdAndIsOpenTrue(userId);
+
+        if(list.isEmpty()) {
+            return new ArrayList<>();
+        }
+        return list;
     }
 
     public ReportDTO closeUserReport(UUID reportId) {

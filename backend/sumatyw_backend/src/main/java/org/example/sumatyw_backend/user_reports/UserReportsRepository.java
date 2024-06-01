@@ -15,4 +15,6 @@ public interface UserReportsRepository extends JpaRepository<UserReport, UUID> {
     boolean existsByUserIdAndRestaurantId(@Param("userId") UUID userId, @Param("restaurantId") UUID restaurantId);
 
     List<UserReport> findByIsOpenIsTrue();
+
+    List<UserReport> findAllByUserUserIdAndIsOpenTrue(UUID userId);
 }
