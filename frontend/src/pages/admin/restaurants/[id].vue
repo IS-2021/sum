@@ -141,23 +141,11 @@ async function handleRestaurantDeactivate() {
         <TabsContent value="restaurant">
           <ul v-if="userRestaurantReports.length > 0">
             <li v-for="report in userRestaurantReports" :key="report.id">
-              <article class="rounded border border-neutral-300 bg-white px-6 py-4">
-                <div class="mb-4 flex items-center gap-6">
-                  <ThumbsDownIcon class="flex-shrink-0 text-red-500" />
-                  <p class="max-w-prose flex-shrink">{{ report.cause }}</p>
-                </div>
-
-                <Separator class="mb-4 mt-2" />
-
-                <div class="flex gap-2">
-                  <Button variant="outline-destructive">
-                    <BanIcon class="mr-2 inline-block h-4 w-4" />Ban restaurant
-                  </Button>
-                  <Button variant="secondary" as-child>
-                    <RouterLink :to="`/admin/users/${report.userId}`"> View user </RouterLink>
-                  </Button>
-                </div>
-              </article>
+              <ReportCard
+                :report="report"
+                :showActionButtons="true"
+                :actions="['banRestaurant', 'viewUser']"
+              />
             </li>
           </ul>
           <p v-else class="mt-4">No one reported this restaurant.</p>
@@ -165,7 +153,11 @@ async function handleRestaurantDeactivate() {
         <TabsContent value="users">
           <ul v-if="restaurantUserReports.length > 0">
             <li v-for="report in restaurantUserReports" :key="report.id">
-              <ReportCard :cause="report.cause" :reported-at="report.timestamp" />
+              <ReportCard
+                :report="report"
+                :showActionButtons="true"
+                :actions="['banUser', 'viewUser']"
+              />
             </li>
           </ul>
           <p v-else class="mt-4">This restaurant hasn't reported anyone.</p>
