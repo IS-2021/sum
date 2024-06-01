@@ -3,6 +3,7 @@ import type { ReportDTO, Uuid } from '@/lib/api-model';
 import { BanIcon, ThumbsDownIcon, UserRoundIcon } from 'lucide-vue-next';
 import { Separator } from '@/components/ui/separator';
 import { Button } from '@/components/ui/button';
+import ConfirmDialog from '@/components/dialogs/ConfirmDialog.vue';
 
 type ReportCardActions = 'banUser' | 'banRestaurant' | 'viewUser' | 'viewRestaurant';
 
@@ -31,20 +32,37 @@ const emits = defineEmits<{
       <Separator class="my-4" />
 
       <div class="flex gap-2">
-        <Button
-          v-if="actions?.includes('banUser')"
-          @click="emits('banUser', report.userId)"
-          variant="outline-destructive"
-        >
-          <BanIcon class="mr-2 inline-block h-4 w-4" />Ban user
-        </Button>
-        <Button
-          v-if="actions?.includes('banRestaurant')"
-          @click="emits('banRestaurant', report.restaurantId)"
-          variant="outline-destructive"
-        >
-          <BanIcon class="mr-2 inline-block h-4 w-4" />Ban restaurant
-        </Button>
+        <ConfirmDialog v-if="actions?.includes('banUser')">
+          <template v-slot:trigger>
+            <Button variant="outline-destructive">
+              <BanIcon class="mr-2 inline-block h-4 w-4" />Ban user
+            </Button>
+          </template>
+          <template v-slot:description> Are you sure you want to ban this user? </template>
+          <template v-slot:confirmButton>
+            <Button @click="emits('banUser', report.userId)" type="submit" variant="destructive">
+              Confirm
+            </Button>
+          </template>
+        </ConfirmDialog>
+
+        <ConfirmDialog v-if="actions?.includes('banRestaurant')">
+          <template v-slot:trigger>
+            <Button variant="outline-destructive">
+              <BanIcon class="mr-2 inline-block h-4 w-4" />Ban restaurant
+            </Button>
+          </template>
+          <template v-slot:description> Are you sure you want to ban this restaurant? </template>
+          <template v-slot:confirmButton>
+            <Button
+              @click="emits('banRestaurant', report.restaurantId)"
+              type="submit"
+              variant="destructive"
+            >
+              Confirm
+            </Button>
+          </template>
+        </ConfirmDialog>
 
         <Button v-if="actions?.includes('viewUser')" variant="secondary" as-child>
           <RouterLink :to="`/admin/users/${report.userId}`">
