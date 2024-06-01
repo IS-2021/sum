@@ -63,7 +63,7 @@ public class RestaurantControllerTest {
         restaurant1.setHours("null");
         restaurant2.setHours("null");
         List<Restaurant> restaurants = Arrays.asList(restaurant1, restaurant2);
-        when(restaurantService.getAllRestaurants()).thenReturn(restaurants);
+        when(restaurantService.getAllActiveRestaurants()).thenReturn(restaurants);
 
         // when // then
         mockMvc.perform(get("/restaurants"))
@@ -71,7 +71,7 @@ public class RestaurantControllerTest {
             .andExpect(content().contentType(MediaType.APPLICATION_JSON))
             .andExpect(jsonPath("$.length()").value(restaurants.size()));
 
-        verify(restaurantService, times(1)).getAllRestaurants();
+        verify(restaurantService, times(1)).getAllActiveRestaurants();
     }
 
     @Test

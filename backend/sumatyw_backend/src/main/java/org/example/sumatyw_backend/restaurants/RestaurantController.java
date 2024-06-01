@@ -41,7 +41,7 @@ public class RestaurantController {
 
     @GetMapping
     public ResponseEntity<List<RestaurantDTO>> getRestaurants() {
-        List<Restaurant> restaurants = restaurantService.getAllRestaurants();
+        List<Restaurant> restaurants = restaurantService.getAllActiveRestaurants();
 
         return new ResponseEntity<>(
             restaurants.stream().map(RestaurantDTOMapper::mapRestaurantToRestaurantDTO).toList(),

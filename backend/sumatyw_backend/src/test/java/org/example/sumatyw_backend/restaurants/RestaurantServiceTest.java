@@ -101,7 +101,7 @@ class RestaurantServiceTest {
         List<Restaurant> restaurants = List.of(restaurant);
         when(restaurantRepository.findAllByStatus(RestaurantStatus.Active)).thenReturn(restaurants);
 
-        List<Restaurant> result = restaurantService.getAllRestaurants();
+        List<Restaurant> result = restaurantService.getAllActiveRestaurants();
 
         assertNotNull(result);
         assertEquals(1, result.size());
