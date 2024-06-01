@@ -10,7 +10,7 @@ import type { Uuid } from './uuid';
 export interface MealDTO {
   description: string;
   /** List of ingredients */
-  ingredients?: IngredientDTO[];
+  ingredients: IngredientDTO[];
   mealId: Uuid;
   name: string;
   restaurantId: Uuid;
