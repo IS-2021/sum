@@ -23,6 +23,10 @@ import OpeningHoursRow from '@/components/restaurants/OpeningHoursRow.vue';
 import { putRestaurantsDeactivateId } from '@/lib/api/restaurants/restaurants';
 import { useUserRating } from '@/components/user-rating/useUserRating';
 import UserRating from '@/components/user-rating/UserRating.vue';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { useUserRestaurantReports } from '@/components/(admin)/composables/useUserRestaurantReports';
+import ReportCard from '@/components/(manage)/dashboard/ReportCard.vue';
+import { useRestaurantUserReports } from '@/components/(admin)/composables/useRestaurantUserReports';
 
 useHead({
   title: 'Restaurant',
@@ -31,12 +35,15 @@ useHead({
 const route = useRoute('/admin/restaurants/[id]');
 const restaurantId = route.params.id;
 
-const { data, refetch } = useGetAdminRestaurantsId(restaurantId);
-const restaurant = computed(() => data?.value?.data);
+const { data: restaurantData, refetch } = useGetAdminRestaurantsId(restaurantId);
+const restaurant = computed(() => restaurantData?.value?.data);
 const { totalRatings } = useUserRating(
   restaurant.value?.likesCount,
   restaurant.value?.dislikesCount,
 );
+
+const { userRestaurantReports } = useUserRestaurantReports(restaurantId);
+const { restaurantUserReports } = useRestaurantUserReports(restaurantId);
 
 async function handleRestaurantActivate() {
   const res = await putAdminRestaurantsId(restaurantId);
@@ -120,6 +127,34 @@ async function handleRestaurantDeactivate() {
           />
         </li>
       </ul>
+    </SettingsSection>
+
+    <SettingsSection>
+      <h2 class="text-lg font-semibold tracking-tight">Reports</h2>
+      <Separator class="mb-4 mt-2" />
+
+      <Tabs default-value="restaurant">
+        <TabsList class="grid w-full grid-cols-2">
+          <TabsTrigger value="restaurant"> By users </TabsTrigger>
+          <TabsTrigger value="users"> By restaurant </TabsTrigger>
+        </TabsList>
+        <TabsContent value="restaurant">
+          <ul v-if="userRestaurantReports.length > 0">
+            <li v-for="report in userRestaurantReports" :key="report.id">
+              <ReportCard :cause="report.cause" :reported-at="report.timestamp" />
+            </li>
+          </ul>
+          <p v-else class="mt-4">No one reported this restaurant.</p>
+        </TabsContent>
+        <TabsContent value="users">
+          <ul v-if="restaurantUserReports.length > 0">
+            <li v-for="report in restaurantUserReports" :key="report.id">
+              <ReportCard :cause="report.cause" :reported-at="report.timestamp" />
+            </li>
+          </ul>
+          <p v-else class="mt-4">This restaurant hasn't reported anyone.</p>
+        </TabsContent>
+      </Tabs>
     </SettingsSection>
   </div>
 </template>
