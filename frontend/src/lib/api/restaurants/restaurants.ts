@@ -219,12 +219,12 @@ export const useGetRestaurantsId = <
 
 export const putRestaurantsId = (
   id: MaybeRef<Uuid>,
-  restaurantDTO: MaybeRef<RestaurantDTO>,
+  restaurantInputDTO: MaybeRef<RestaurantInputDTO>,
   options?: AxiosRequestConfig,
 ): Promise<AxiosResponse<RestaurantDTO>> => {
   id = unref(id);
-  restaurantDTO = unref(restaurantDTO);
-  return axios.default.put(`http://localhost:9090/restaurants/${id}`, restaurantDTO, options);
+  restaurantInputDTO = unref(restaurantInputDTO);
+  return axios.default.put(`http://localhost:9090/restaurants/${id}`, restaurantInputDTO, options);
 };
 
 export const getPutRestaurantsIdMutationOptions = <
@@ -234,21 +234,21 @@ export const getPutRestaurantsIdMutationOptions = <
   mutation?: UseMutationOptions<
     Awaited<ReturnType<typeof putRestaurantsId>>,
     TError,
-    { id: Uuid; data: RestaurantDTO },
+    { id: Uuid; data: RestaurantInputDTO },
     TContext
   >;
   axios?: AxiosRequestConfig;
 }): UseMutationOptions<
   Awaited<ReturnType<typeof putRestaurantsId>>,
   TError,
-  { id: Uuid; data: RestaurantDTO },
+  { id: Uuid; data: RestaurantInputDTO },
   TContext
 > => {
   const { mutation: mutationOptions, axios: axiosOptions } = options ?? {};
 
   const mutationFn: MutationFunction<
     Awaited<ReturnType<typeof putRestaurantsId>>,
-    { id: Uuid; data: RestaurantDTO }
+    { id: Uuid; data: RestaurantInputDTO }
   > = (props) => {
     const { id, data } = props ?? {};
 
@@ -261,7 +261,7 @@ export const getPutRestaurantsIdMutationOptions = <
 export type PutRestaurantsIdMutationResult = NonNullable<
   Awaited<ReturnType<typeof putRestaurantsId>>
 >;
-export type PutRestaurantsIdMutationBody = RestaurantDTO;
+export type PutRestaurantsIdMutationBody = RestaurantInputDTO;
 export type PutRestaurantsIdMutationError = AxiosError<
   NotFound404Response | ValidationFailed422Response
 >;
@@ -273,14 +273,14 @@ export const usePutRestaurantsId = <
   mutation?: UseMutationOptions<
     Awaited<ReturnType<typeof putRestaurantsId>>,
     TError,
-    { id: Uuid; data: RestaurantDTO },
+    { id: Uuid; data: RestaurantInputDTO },
     TContext
   >;
   axios?: AxiosRequestConfig;
 }): UseMutationReturnType<
   Awaited<ReturnType<typeof putRestaurantsId>>,
   TError,
-  { id: Uuid; data: RestaurantDTO },
+  { id: Uuid; data: RestaurantInputDTO },
   TContext
 > => {
   const mutationOptions = getPutRestaurantsIdMutationOptions(options);

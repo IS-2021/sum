@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import type { HoursDTO, RestaurantInputDTO } from '@/lib/api-model';
+import type { HoursDTO, RestaurantDTO, RestaurantInputDTO } from '@/lib/api-model';
 
 export const restaurantDetailsSchema = z.object({
   name: z.string().min(1, "Name can't be empty").max(50, 'Name is too long'),
@@ -10,7 +10,7 @@ const hoursSchema = z
   .string()
   .refine((val) => {
     if (val === '') return true;
-    return /^([01]?[0-9]|2[0-3]):[0-5][0-9]$/.test(val);
+    return /^([01][0-9]|2[0-3]):[0-5][0-9]$/.test(val);
   }, 'Invalid time format')
   .array()
   .max(2);
@@ -87,5 +87,29 @@ export function mapRestaurantDataToDTO(formValues: RestaurantSchema): Restaurant
     hours: mappedHours,
     userId: formValues.ownerId,
     addressInputDTO: formValues.address,
+  };
+}
+
+export function mapDTOToRestaurantData(dto: RestaurantDTO): RestaurantSchema {
+  const mappedHours = Object.entries(dto.hours).reduce((acc, [key, value]) => {
+    const hours: string[] = value;
+
+    if (hours.length === 0) {
+      acc[key as keyof HoursDTO] = ['', ''];
+      return acc;
+    }
+
+    acc[key as keyof HoursDTO] = value;
+    return acc;
+  }, {} as HoursDTO);
+
+  return {
+    ownerId: dto.userId,
+    details: {
+      name: dto.name,
+      phoneNumber: dto.phoneNumber,
+    },
+    hours: mappedHours,
+    address: dto.address,
   };
 }
