@@ -9,6 +9,7 @@ import { toast } from 'vue-sonner';
 import { postMeals } from '@/lib/api/meals/meals';
 import type { Uuid } from '@/lib/api-model';
 import { useRouter } from 'vue-router';
+import { PlusIcon } from 'lucide-vue-next';
 
 import { useForm } from 'vee-validate';
 import { toTypedSchema } from '@vee-validate/zod';
@@ -60,36 +61,41 @@ const isValid = form.meta.value.valid;
 </script>
 
 <template>
-  <h1 class="text-2xl font-semibold tracking-tight mb-6">Add Meal</h1>
-  <p class="mb-16">After you add your meal you will be willing to add ingredients to it</p>
+  <div class="max-w-screen-md">
+    <h1 class="text-2xl font-semibold tracking-tight mb-4">Add Meal</h1>
+    <p class="mb-10">After you add your meal, you will be able to edit it's ingredients.</p>
 
-  <Alert variant="destructive" v-if="errorMessage" class="mb-4">
-    <AlertCircleIcon class="h-4 w-4" />
-    <AlertTitle>There's an error</AlertTitle>
-    <AlertDescription>
-      {{ errorMessage }}
-    </AlertDescription>
-  </Alert>
+    <Alert variant="destructive" v-if="errorMessage" class="mb-4">
+      <AlertCircleIcon class="h-4 w-4" />
+      <AlertTitle>There's an error</AlertTitle>
+      <AlertDescription>
+        {{ errorMessage }}
+      </AlertDescription>
+    </Alert>
 
-  <form class="w-2/3 space-y-6" @submit="addNewMeal">
-    <FormField v-slot="{ componentField }" name="name">
-      <FormItem>
-        <FormLabel>Name</FormLabel>
-        <FormControl>
-          <Input type="text" placeholder="meal name..." v-bind="componentField" />
-        </FormControl>
-        <FormMessage />
-      </FormItem>
-    </FormField>
-    <FormField v-slot="{ componentField }" name="description">
-      <FormItem>
-        <FormLabel>Description</FormLabel>
-        <FormControl>
-          <Input type="text" placeholder="meal description..." v-bind="componentField" />
-        </FormControl>
-        <FormMessage />
-      </FormItem>
-    </FormField>
-    <Button :disabled="!isValid" type="submit"> Add meal </Button>
-  </form>
+    <form class="space-y-4" @submit="addNewMeal">
+      <FormField v-slot="{ componentField }" name="name">
+        <FormItem>
+          <FormLabel>Name</FormLabel>
+          <FormControl>
+            <Input type="text" placeholder="meal name..." v-bind="componentField" />
+          </FormControl>
+          <FormMessage />
+        </FormItem>
+      </FormField>
+      <FormField v-slot="{ componentField }" name="description">
+        <FormItem>
+          <FormLabel>Description</FormLabel>
+          <FormControl>
+            <Input type="text" placeholder="meal description..." v-bind="componentField" />
+          </FormControl>
+          <FormMessage />
+        </FormItem>
+      </FormField>
+
+      <Button :disabled="!isValid" type="submit">
+        <PlusIcon class="mr-2 inline-block h-4 w-4" /> Add meal
+      </Button>
+    </form>
+  </div>
 </template>

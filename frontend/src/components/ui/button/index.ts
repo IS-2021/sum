@@ -10,6 +10,8 @@ export const buttonVariants = cva(
         default: 'bg-primary text-neutral-950 hover:bg-primary/90 ',
         destructive: 'bg-red-500 text-neutral-50 hover:bg-red-500/90 ',
         outline: 'border border-neutral-200 bg-white hover:bg-neutral-100 hover:text-neutral-900 ',
+        'outline-destructive':
+          'border border-red-500 bg-white text-red-500 hover:bg-red-500/90 hover:text-neutral-50',
         secondary: 'bg-neutral-100 text-neutral-900 hover:bg-neutral-100/80 ',
         ghost: 'hover:bg-neutral-100 hover:text-neutral-900 ',
         link: 'text-neutral-900 underline-offset-4 hover:underline ',

@@ -59,8 +59,8 @@ async function handleEditMeal() {
 
 <template>
   <div class="max-w-screen-md">
-    <header class="flex justify-between">
-      <h1 class="text-2xl font-semibold tracking-tight mb-10">Edit meal ingredients</h1>
+    <header class="flex justify-between mb-10">
+      <h1 class="text-2xl font-semibold tracking-tight">Edit meal ingredients</h1>
 
       <Button @click="handleEditMeal" :disabled="!isModified" class="transition-opacity">
         <SaveIcon class="inline-block w-4 h-4 mr-2" /> Save
@@ -69,7 +69,7 @@ async function handleEditMeal() {
 
     <article class="bg-white border border-neutral-200 p-4 rounded-md">
       <section class="mb-10">
-        <h2 class="text-lg font-semibold mb-3">Meal details</h2>
+        <h2 class="text-xl font-semibold mb-3">Meal details</h2>
         <div class="flex gap-1 mb-2">
           <p><span class="font-bold">Name:</span> {{ meal.name }}</p>
         </div>
@@ -79,7 +79,7 @@ async function handleEditMeal() {
       </section>
 
       <section>
-        <h2 class="text-lg font-semibold mb-3">Ingredients</h2>
+        <h2 class="text-xl font-semibold mb-3">Ingredients</h2>
         <ul class="space-y-2">
           <li v-for="ingredient in allIngredients" :key="ingredient.ingredientId">
             <div
