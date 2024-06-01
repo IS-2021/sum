@@ -1,6 +1,6 @@
 <route lang="yaml">
 meta:
-  layout: manage
+  layout: admin
 </route>
 
 <script setup lang="ts">
