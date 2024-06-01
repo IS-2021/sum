@@ -10,7 +10,6 @@ import type { Uuid } from './uuid';
 import type { RestaurantDTOStatus } from './restaurantDTOStatus';
 
 export interface RestaurantDTO {
-  active: boolean;
   address: AddressDTO;
   dislikesCount: number;
   hours: HoursDTO;
