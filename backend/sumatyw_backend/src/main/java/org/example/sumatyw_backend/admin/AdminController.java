@@ -15,6 +15,7 @@ import org.example.sumatyw_backend.user_reports.UserReportsService;
 import org.example.sumatyw_backend.users.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -32,6 +33,7 @@ public class AdminController {
     private final UserReportsService userReportsService;
 
     @GetMapping("/users")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<UserDTO>> getUsers() {
 
         List<User> users = userService.getNotBannedUsers();
@@ -43,6 +45,7 @@ public class AdminController {
 
 
     @GetMapping("/users/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity getUserByID(@PathVariable("id") UUID id) {
         try {
             User user = userService.getUserById(id);
@@ -56,6 +59,7 @@ public class AdminController {
     }
 
     @GetMapping("/reports/restaurants")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<ReportDTO>> getAllOpenedRestaurantReports() {
 
         try {
@@ -68,6 +72,7 @@ public class AdminController {
     }
 
     @GetMapping("/reports/restaurants/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity getRestaurantReportById(@PathVariable("id") UUID id) {
 
         try {
@@ -80,6 +85,7 @@ public class AdminController {
     }
 
     @GetMapping("/reports/users/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity getUserReportById(@PathVariable("id") UUID id) {
 
         try {
@@ -91,6 +97,7 @@ public class AdminController {
     }
 
     @PutMapping("/reports/users/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity handleUserReport(@PathVariable("id") UUID reportId,
                                            @RequestParam("ban") boolean ban) {
 
@@ -113,6 +120,7 @@ public class AdminController {
     }
 
     @PutMapping("/reports/restaurants/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity handleRestaurantReport(@PathVariable("id") UUID reportId,
                                                  @RequestParam("ban") boolean ban) {
         if(ban) {
@@ -133,6 +141,7 @@ public class AdminController {
     }
 
     @GetMapping("/reports/users")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<ReportDTO>> getAllOpenedUserReports() {
 
         try {
@@ -152,6 +161,7 @@ public class AdminController {
 
 
     @GetMapping("/restaurants")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<RestaurantDTO>> getAllPendingRestaurants() {
 
         try {
@@ -173,6 +183,7 @@ public class AdminController {
     }
 
     @PutMapping("/restaurants/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<RestaurantDTO> activateRestaurant(@PathVariable("id") UUID id) {
 
         return new ResponseEntity<>(restaurantService.activateRestaurantById(id),HttpStatus.OK);

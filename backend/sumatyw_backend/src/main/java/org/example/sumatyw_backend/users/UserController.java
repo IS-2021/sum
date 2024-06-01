@@ -6,6 +6,7 @@ import jakarta.websocket.server.PathParam;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
@@ -20,6 +21,7 @@ public class UserController {
     private UserService userService;
 
     @GetMapping()
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<UserDTO>> getUsers() {
         List<User> users = userService.getUsers();
 
@@ -30,6 +32,7 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasRole('USER')")
     public ResponseEntity<UserDTO> getUserById(@PathVariable("id") UUID id) {
         User user = userService.getUserById(id);
 
@@ -40,6 +43,7 @@ public class UserController {
     }
 
     @GetMapping("/me")
+    @PreAuthorize("hasRole('RESTAURANT')")
     public ResponseEntity<UserMeDTO> getMe() {
         return new ResponseEntity<>(
             UserDTOMapper.mapUserToUserMeDTO(userService.getMeUser()),
@@ -48,6 +52,7 @@ public class UserController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('USER')")
     public ResponseEntity<Void> deleteUserById(@PathVariable("id") UUID id) {
         userService.removeUserById(id);
 
@@ -57,6 +62,7 @@ public class UserController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('USER')")
     public ResponseEntity<UserDTO> updateUserById(@PathVariable("id") UUID id, @Valid @RequestBody UserInputDTO updatedUser) {
         User user = userService.updateUserById(id, UserDTOMapper.mapUserInputDTOToUser(updatedUser));
 
@@ -67,6 +73,7 @@ public class UserController {
     }
 
     @PostMapping("/{userId}/address")
+    @PreAuthorize("hasRole('USER')")
     public ResponseEntity<UserMeDTO> updateUserCity(@PathVariable("userId") UUID userId, @PathParam("placeId") String placeId) throws IOException, InterruptedException, ApiException {
         User user = userService.updateUserAddress(userId, placeId);
 

@@ -3,10 +3,11 @@ package org.example.sumatyw_backend.security;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.web.client.HttpMessageConvertersRestClientCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -24,13 +25,15 @@ import static org.springframework.security.config.Customizer.withDefaults;
 
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity
 @AllArgsConstructor
 public class SecurityConfig {
 
     private final CustomUserDetails userDetailsService;
 
+
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http, HttpMessageConvertersRestClientCustomizer httpMessageConvertersRestClientCustomizer) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
             .cors(httpSecurityCorsConfigurer -> {
                 CorsConfiguration configuration = new CorsConfiguration();
@@ -45,13 +48,8 @@ public class SecurityConfig {
             })
             .csrf(AbstractHttpConfigurer::disable)
             .authorizeHttpRequests(authorize -> authorize
-//                .requestMatchers(HttpMethod.GET, "/users/{id}").hasAnyRole("USER", "ADMIN")
-//                .requestMatchers(HttpMethod.PUT, "/users/{id}").hasAnyRole("USER", "ADMIN")
-//                .requestMatchers("/login").permitAll()
-//                .requestMatchers("/auth/register").permitAll()
-//                .requestMatchers( "/admin/**").hasAnyRole("ADMIN")
-                .anyRequest().permitAll()
-//                .anyRequest().authenticated()
+                .requestMatchers(HttpMethod.POST, "/auth/register").permitAll()
+                .anyRequest().authenticated()
             )
             .httpBasic(withDefaults())
             .formLogin(httpSecurityFormLoginConfigurer -> httpSecurityFormLoginConfigurer
@@ -82,17 +80,6 @@ public class SecurityConfig {
     public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
         auth.userDetailsService(userDetailsService);
     }
-
-//    @Bean
-//    public CustomUserDetails getUserDetailsService() {
-//        return
-//    }
-//
-//    @Bean
-//    public AuthenticationProvider authenticationProvider() {
-//        DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
-//        authenticationProvider.setUserDetailsService();
-//    }
 
     @Bean
     public PasswordEncoder passwordEncoder() {

@@ -40,7 +40,7 @@ public class IngredientService {
         if (ingredientDB.isPresent()) {
             for (Meal m : ingredientDB.get().getMeals()) {
                 if (m.getMealId() == ingredient.getMeals().get(0).getMealId())
-                    throw new ResourceAlreadyExistsException("Given meal already has that meal");
+                    throw new ResourceAlreadyExistsException("Given meal already has that ingredient");
             }
             ingredientDB.get().getMeals().add(ingredient.getMeals().get(0));
             return ingredientRepository.save(ingredientDB.get());
