@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import StatsCard from '@/components/(manage)/dashboard/StatsCard.vue';
+import { useUserRating } from '@/components/user-rating/useUserRating';
 import type { BookingDTO, RestaurantDTO } from '@/lib/api-model';
 import { CookingPotIcon, ThumbsUpIcon } from 'lucide-vue-next';
 
@@ -9,6 +10,11 @@ const props = defineProps<{
 }>();
 
 const savedMeals = props.bookings.filter((booking) => booking.status === 'PickedUp');
+
+const { totalRatings, ratingPercentage } = useUserRating(
+  props.restaurant.likesCount,
+  props.restaurant.dislikesCount,
+);
 </script>
 
 <template>
@@ -20,7 +26,7 @@ const savedMeals = props.bookings.filter((booking) => booking.status === 'Picked
   </div>
 
   <div class="flex sm:gap-6 mb-8 flex-col sm:flex-row">
-    <StatsCard measure="Positive ratings" value="97%">
+    <StatsCard measure="Positive ratings" :value="ratingPercentage">
       <ThumbsUpIcon class="sm:w-9 sm:h-9 text-primary" />
     </StatsCard>
     <StatsCard v-if="savedMeals" measure="Meals saved" :value="savedMeals.length.toString()">
