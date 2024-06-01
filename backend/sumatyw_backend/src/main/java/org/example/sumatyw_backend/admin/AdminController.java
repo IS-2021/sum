@@ -6,10 +6,7 @@ import org.example.sumatyw_backend.exceptions.ObjectNotFoundException;
 import org.example.sumatyw_backend.reports.ReportDTO;
 import org.example.sumatyw_backend.reports.ReportsDTOMapper;
 import org.example.sumatyw_backend.restaurant_reports.RestaurantReportsService;
-import org.example.sumatyw_backend.restaurants.Restaurant;
-import org.example.sumatyw_backend.restaurants.RestaurantDTO;
-import org.example.sumatyw_backend.restaurants.RestaurantDTOMapper;
-import org.example.sumatyw_backend.restaurants.RestaurantService;
+import org.example.sumatyw_backend.restaurants.*;
 import org.example.sumatyw_backend.user_reports.RestaurantReport;
 import org.example.sumatyw_backend.user_reports.UserReport;
 import org.example.sumatyw_backend.user_reports.UserReportsService;
@@ -35,7 +32,7 @@ public class AdminController {
     @GetMapping("/users")
     public ResponseEntity<List<UserDTO>> getUsers() {
 
-        List<User> users = userService.getNotBannedUsers();
+        List<User> users = userService.getUsers();
         return new ResponseEntity<>(
             users.stream().map(UserDTOMapper::mapUserToUserDTO).toList(),
             HttpStatus.OK
@@ -183,24 +180,12 @@ public class AdminController {
 
 
     @GetMapping("/restaurants")
-    public ResponseEntity<List<RestaurantDTO>> getAllPendingRestaurants() {
+    public ResponseEntity<List<RestaurantDTO>> getAllRestaurants() {
+        List<Restaurant> restaurants = restaurantService.getAllRestaurants();
 
-        try {
-            List<Restaurant> restaurants = restaurantService.getAllPendingRestaurant();
-            List<RestaurantDTO> mappedList = new ArrayList<>();
-            if(restaurants == null || restaurants.isEmpty()) {
-                return new ResponseEntity<>(new ArrayList<>(),HttpStatus.NO_CONTENT);
-            }
+        List<RestaurantDTO> mappedList = restaurants.stream().map(RestaurantDTOMapper::mapRestaurantToRestaurantDTO).toList();
 
-            for(Restaurant r: restaurants) {
-                mappedList.add(RestaurantDTOMapper.mapRestaurantToRestaurantDTO(r));
-            }
-
-            return new ResponseEntity<>(mappedList,HttpStatus.OK);
-
-        } catch (ObjectNotFoundException e) {
-            return new ResponseEntity<>(new ArrayList<>(),HttpStatus.OK);
-        }
+        return new ResponseEntity<>(mappedList, HttpStatus.OK);
     }
 
     @PutMapping("/restaurants/{id}")
