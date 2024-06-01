@@ -39,13 +39,11 @@ export async function recreateMeal(meal: MealDTO) {
     return newMealRes;
   }
 
-  console.log('pickedIngredients', meal.ingredients, meal.ingredients.length);
   const ingredientAddRes = await addIngredientsToMeal(
     newMealRes.data.mealId,
     meal.ingredients,
     meal.restaurantId,
   );
-  console.log('recreateMeal:addIngredientsToMeal', ingredientAddRes);
 
   await deleteMeal(meal.mealId);
 
