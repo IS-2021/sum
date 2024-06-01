@@ -10,13 +10,17 @@ import org.example.sumatyw_backend.restaurants.*;
 import org.example.sumatyw_backend.user_reports.RestaurantReport;
 import org.example.sumatyw_backend.user_reports.UserReport;
 import org.example.sumatyw_backend.user_reports.UserReportsService;
-import org.example.sumatyw_backend.users.*;
+import org.example.sumatyw_backend.users.User;
+import org.example.sumatyw_backend.users.UserDTO;
+import org.example.sumatyw_backend.users.UserDTOMapper;
+import org.example.sumatyw_backend.users.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @RestController
@@ -29,10 +33,20 @@ public class AdminController {
     private final RestaurantReportsService restaurantReportsService;
     private final UserReportsService userReportsService;
 
-    @GetMapping("/users")
-    public ResponseEntity<List<UserDTO>> getUsers() {
+    @GetMapping(value = "/users", params = {"blocked"})
+    public ResponseEntity<List<UserDTO>> getUsers(@RequestParam("blocked") boolean blocked) {
+        List<User> users = userService.getUsersByBlockedStatus(blocked);
 
+        return new ResponseEntity<>(
+            users.stream().map(UserDTOMapper::mapUserToUserDTO).toList(),
+            HttpStatus.OK
+        );
+    }
+
+    @GetMapping(value = "/users")
+    public ResponseEntity<List<UserDTO>> getUsers() {
         List<User> users = userService.getUsers();
+
         return new ResponseEntity<>(
             users.stream().map(UserDTOMapper::mapUserToUserDTO).toList(),
             HttpStatus.OK
@@ -167,7 +181,6 @@ public class AdminController {
 
     @GetMapping("/reports/users")
     public ResponseEntity<List<ReportDTO>> getAllOpenedUserReports() {
-
         try {
             List<UserReport> userReports = userReportsService.getAllOpenedUserReports();
             List<ReportDTO> mappedList = new ArrayList<>();
@@ -183,14 +196,24 @@ public class AdminController {
 
     }
 
-
-    @GetMapping("/restaurants")
+    @GetMapping(value = "/restaurants")
     public ResponseEntity<List<RestaurantDTO>> getAllRestaurants() {
         List<Restaurant> restaurants = restaurantService.getAllRestaurants();
 
-        List<RestaurantDTO> mappedList = restaurants.stream().map(RestaurantDTOMapper::mapRestaurantToRestaurantDTO).toList();
+        return new ResponseEntity<>(
+            restaurants.stream().map(RestaurantDTOMapper::mapRestaurantToRestaurantDTO).toList(),
+            HttpStatus.OK
+        );
+    }
 
-        return new ResponseEntity<>(mappedList, HttpStatus.OK);
+    @GetMapping(value = "/restaurants", params = {"status"})
+    public ResponseEntity<List<RestaurantDTO>> getAllRestaurants(@RequestParam(value = "status") RestaurantStatus status) {
+        List<Restaurant> restaurants = restaurantService.getAllRestaurantsByStatus(status);
+
+        return new ResponseEntity<>(
+            restaurants.stream().map(RestaurantDTOMapper::mapRestaurantToRestaurantDTO).toList(),
+            HttpStatus.OK
+        );
     }
 
     @PutMapping("/restaurants/{id}")

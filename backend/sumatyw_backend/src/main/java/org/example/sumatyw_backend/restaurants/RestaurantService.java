@@ -51,7 +51,15 @@ public class RestaurantService {
     }
 
     public List<Restaurant> getAllRestaurants() {
+        return restaurantRepository.findAll();
+    }
+
+    public List<Restaurant> getAllActiveRestaurants() {
         return restaurantRepository.findAllByStatus(RestaurantStatus.Active);
+    }
+
+    public List<Restaurant> getAllRestaurantsByStatus(RestaurantStatus status) {
+        return restaurantRepository.findAllByStatus(status);
     }
 
     public List<Restaurant> getRestaurantsByCity(String city) {

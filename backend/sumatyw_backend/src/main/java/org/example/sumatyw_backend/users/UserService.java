@@ -50,8 +50,8 @@ public class UserService {
         return userRepository.findAll();
     }
 
-    public List<User> getNotBannedUsers() {
-        return userRepository.findByBlockedFalse();
+    public List<User> getUsersByBlockedStatus(boolean blocked) {
+        return userRepository.findAllByBlocked(blocked);
     }
 
     public User getUserById(UUID id) {
