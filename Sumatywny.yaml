@@ -1359,6 +1359,7 @@ components:
         - name
         - description
         - mealId
+        - ingredients
       type: object
       properties:
         name:

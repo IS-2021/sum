@@ -2,8 +2,8 @@
 import type { IngredientDTO, Uuid } from '@/lib/api-model';
 import { ref } from 'vue';
 
-import Button from '@/components/ui/button/Button.vue';
-import { Trash2 } from 'lucide-vue-next';
+import { Button } from '@/components/ui/button';
+import { Trash2, Edit2Icon } from 'lucide-vue-next';
 import {
   Dialog,
   DialogClose,
@@ -24,7 +24,6 @@ const props = defineProps<{
   ingredients: IngredientDTO[] | undefined;
 }>();
 
-const amount = ref(0);
 const { user } = useUser();
 
 async function deleteMeal() {
@@ -37,22 +36,26 @@ async function deleteMeal() {
 </script>
 
 <template>
-  <div class="bg-neutral-200 rounded p-4 my-4">
-    <div class="flex justify-between">
-      <h1 class="font-semibold text-xl">{{ mealName }}</h1>
-      <p class="text-xs">Available amount: {{ amount }}</p>
-    </div>
-    <p class="text-neutral-950">{{ mealDescription }}</p>
-    <div class="flex flex-wrap mt-2">
-      <p class="text-neutral-800 pr-1">
-        Ingredients: {{ ingredients?.map((ingredient) => ingredient.name).join(', ') }}
-      </p>
-    </div>
-    <div v-if="user" class="mt-4">
+  <div class="bg-white border border-neutral-300 rounded p-4 my-4">
+    <h1 class="font-semibold text-xl mb-2">{{ mealName }}</h1>
+    <p class="text-neutral-950 mb-4">{{ mealDescription }}</p>
+
+    <p class="text-neutral-800 mb-4">
+      Ingredients: {{ ingredients?.map((ingredient) => ingredient.name).join(', ') }}
+    </p>
+
+    <div v-if="user" class="justify-between flex gap-2">
+      <Button variant="secondary" as-child>
+        <RouterLink :to="`/manage/meals/edit/${mealId}`">
+          <Edit2Icon class="inline-block mr-2 h-4 w-4" />
+          Edit
+        </RouterLink>
+      </Button>
+
       <Dialog>
         <DialogTrigger as-child>
-          <Button size="icon" class="w-1/2">
-            <Trash2 class="mr-1" />
+          <Button variant="outline-destructive">
+            <Trash2 class="mr-2 h-4 w-4" />
             Delete
           </Button>
         </DialogTrigger>
@@ -63,7 +66,7 @@ async function deleteMeal() {
 
           <DialogFooter class="sm:justify-start">
             <DialogClose as-child>
-              <Button type="button" variant="secondary" @click="deleteMeal"> Delete meal </Button>
+              <Button type="button" variant="destructive" @click="deleteMeal"> Delete meal </Button>
             </DialogClose>
           </DialogFooter>
         </DialogContent>
