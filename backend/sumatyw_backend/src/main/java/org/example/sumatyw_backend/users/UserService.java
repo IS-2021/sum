@@ -59,6 +59,13 @@ public class UserService {
             .orElseThrow(() -> new UserNotFoundException("User not found with ID: " + id));
     }
 
+    public User unbanUser(UserDTO userDTO) {
+        User user = userRepository.findById(UUID.fromString(userDTO.id()))
+            .orElseThrow(() -> new UserNotFoundException("User not found with ID: " + UUID.fromString(userDTO.id())));
+        user.setBlocked(false);
+        return userRepository.save(user);
+    }
+
     public User getUserByEmail(String email) {
         return userRepository.findByEmail(email)
             .orElseThrow(() -> new UserNotFoundException("User not found with email: " + email));

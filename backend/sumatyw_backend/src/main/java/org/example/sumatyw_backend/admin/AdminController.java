@@ -39,6 +39,11 @@ public class AdminController {
         );
     }
 
+    @PutMapping("/users")
+    public ResponseEntity<UserDTO> unbanUser(@RequestBody UserDTO userDTO) {
+
+        return new ResponseEntity<>(UserDTOMapper.mapUserToUserDTO(userService.unbanUser(userDTO)),HttpStatus.OK);
+    }
 
     @GetMapping("/users/{id}")
     public ResponseEntity getUserByID(@PathVariable("id") UUID id) {
