@@ -1,13 +1,13 @@
 <route lang="yaml">
 meta:
-  layout: manage
+  layout: admin
 </route>
 
 <script setup lang="ts">
 import { useHead } from '@unhead/vue';
 import { useRoute } from 'vue-router/auto';
 import { computed } from 'vue';
-import { useGetRestaurantsId } from '@/lib/api/restaurants/restaurants';
+import { useGetAdminRestaurantsId } from '@/lib/api/admin-restaurants/admin-restaurants';
 
 useHead({
   title: 'Restaurant',
@@ -16,7 +16,7 @@ useHead({
 const route = useRoute('/admin/restaurants/[id]');
 const restaurantId = route.params.id;
 
-const { data } = useGetRestaurantsId(restaurantId);
+const { data } = useGetAdminRestaurantsId(restaurantId);
 const restaurant = computed(() => data?.value?.data);
 </script>
 

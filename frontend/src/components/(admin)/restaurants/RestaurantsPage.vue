@@ -7,11 +7,14 @@ import RestaurantCard from '@/components/(admin)/restaurants/RestaurantCard.vue'
 
 const { user, isLoaded } = useUser();
 
-const { data } = useGetAdminRestaurants({
-  query: {
-    enabled: isLoaded,
+const { data } = useGetAdminRestaurants(
+  {},
+  {
+    query: {
+      enabled: isLoaded,
+    },
   },
-});
+);
 const restaurants: ComputedRef<RestaurantDTO[]> = computed(() => {
   if (!data.value) {
     return [];
