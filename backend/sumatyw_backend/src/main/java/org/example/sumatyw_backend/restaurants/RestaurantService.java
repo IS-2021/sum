@@ -98,6 +98,7 @@ public class RestaurantService {
 
         existingRestaurant.setName(restaurant.getName());
         existingRestaurant.setHours(restaurant.getHours());
+        existingRestaurant.setAddress(restaurant.getAddress());
 
         return restaurantRepository.save(existingRestaurant);
     }

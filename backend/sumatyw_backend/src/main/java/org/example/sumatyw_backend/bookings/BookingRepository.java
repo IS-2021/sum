@@ -1,5 +1,6 @@
 package org.example.sumatyw_backend.bookings;
 
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
@@ -8,7 +9,7 @@ import java.util.UUID;
 
 public interface BookingRepository extends JpaRepository<Booking, UUID> {
 
-    List<Booking> findBookingByMeal_RestaurantRestaurantId(UUID restaurantId);
+    List<Booking> findBookingByMeal_RestaurantRestaurantId(UUID restaurantId, Sort sort);
 
     Optional<Booking> findByUserUserIdAndStatus(UUID userId, Status status);
 
@@ -16,7 +17,7 @@ public interface BookingRepository extends JpaRepository<Booking, UUID> {
 
     List<Booking> findAllByMealMealId(UUID mealId);
 
-    List<Booking> findAllByUserUserId(UUID userId);
+    List<Booking> findAllByUserUserId(UUID userId,Sort sort);
     
-    List<Booking> findByStatus(Status status);
+    List<Booking> findByStatus(Status status,Sort sort);
 }

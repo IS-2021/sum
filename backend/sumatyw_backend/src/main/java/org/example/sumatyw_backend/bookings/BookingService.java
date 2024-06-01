@@ -12,6 +12,7 @@ import org.example.sumatyw_backend.restaurants.Restaurant;
 import org.example.sumatyw_backend.restaurants.RestaurantRepository;
 import org.example.sumatyw_backend.restaurants.RestaurantStatus;
 import org.example.sumatyw_backend.users.UserRepository;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -27,6 +28,8 @@ public class BookingService {
     private final UserRepository userRepository;
     private final MealRepository mealRepository;
     private final RestaurantRepository restaurantRepository;
+
+    private final Sort sort = Sort.by(Sort.Order.desc("timestamp"));
 
     public Booking createBooking(Booking booking) {
         userRepository.findById(booking.getUser().getUserId())
@@ -70,7 +73,7 @@ public class BookingService {
     }
 
     public List<Booking> getAllUserBookings(UUID userId) {
-        return bookingRepository.findAllByUserUserId(userId);
+        return bookingRepository.findAllByUserUserId(userId,sort);
     }
 
     public Booking cancelBookingById(UUID id) {
@@ -86,20 +89,19 @@ public class BookingService {
 
 
     public List<Booking> getAllActiveBookings() {
-        return bookingRepository.findByStatus(Status.Active);
+        return bookingRepository.findByStatus(Status.Active,sort);
     }
 
     public List<Booking> getBookingsByRestaurantID(UUID restaurantId) {
         restaurantRepository.findById(restaurantId)
             .orElseThrow(() -> new ObjectNotFoundException("Restaurant not found with ID: " + restaurantId));
-        return bookingRepository.findBookingByMeal_RestaurantRestaurantId(restaurantId);
+        return bookingRepository.findBookingByMeal_RestaurantRestaurantId(restaurantId,sort);
     }
 
     public List<Booking> getActiveBookingsByRestaurantID(UUID restaurantId, boolean active) {
         restaurantRepository.findById(restaurantId)
             .orElseThrow(() -> new ObjectNotFoundException("Restaurant not found with ID: " + restaurantId));
-
-        List<Booking> bookings = bookingRepository.findBookingByMeal_RestaurantRestaurantId(restaurantId);
+        List<Booking> bookings = bookingRepository.findBookingByMeal_RestaurantRestaurantId(restaurantId,sort);
 
         if (active) {
             return bookings.stream().filter(b -> b.getStatus() == Status.Active).toList();
