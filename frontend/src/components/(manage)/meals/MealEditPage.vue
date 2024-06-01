@@ -91,7 +91,8 @@ async function handleAddNewIngredient(ingredient: IngredientInputDTO) {
 
       <section>
         <h2 class="text-xl font-semibold mb-3">Ingredients</h2>
-        <ul class="space-y-2">
+
+        <ul class="space-y-2 mb-4">
           <li v-for="ingredient in allIngredients" :key="ingredient.ingredientId">
             <div
               :class="
@@ -102,8 +103,8 @@ async function handleAddNewIngredient(ingredient: IngredientInputDTO) {
               "
             >
               <Button size="icon" variant="ghost" @click="toggleIngredientPick(ingredient)">
-                <CircleCheckBigIcon class="h-4 w-4" v-if="isPicked(ingredient.ingredientId)" />
-                <PlusIcon class="h-4 w-4" v-else />
+                <CircleCheckBigIcon class="h-5 w-5" v-if="isPicked(ingredient.ingredientId)" />
+                <PlusIcon class="h-5 w-5" v-else />
               </Button>
 
               <p>
