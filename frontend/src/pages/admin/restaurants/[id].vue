@@ -18,7 +18,7 @@ import { getImageUrl } from '@/lib/assets';
 import { Separator } from '@/components/ui/separator';
 import SettingsSection from '@/components/(manage)/settings/SettingsSection.vue';
 import { formatAddress } from '@/lib/googleMaps';
-import { MapPinIcon, PhoneIcon, ThumbsUpIcon } from 'lucide-vue-next';
+import { BanIcon, MapPinIcon, PhoneIcon, ThumbsDownIcon, ThumbsUpIcon } from 'lucide-vue-next';
 import OpeningHoursRow from '@/components/restaurants/OpeningHoursRow.vue';
 import { putRestaurantsDeactivateId } from '@/lib/api/restaurants/restaurants';
 import { useUserRating } from '@/components/user-rating/useUserRating';
@@ -141,7 +141,23 @@ async function handleRestaurantDeactivate() {
         <TabsContent value="restaurant">
           <ul v-if="userRestaurantReports.length > 0">
             <li v-for="report in userRestaurantReports" :key="report.id">
-              <ReportCard :cause="report.cause" :reported-at="report.timestamp" />
+              <article class="rounded border border-neutral-300 bg-white px-6 py-4">
+                <div class="mb-4 flex items-center gap-6">
+                  <ThumbsDownIcon class="flex-shrink-0 text-red-500" />
+                  <p class="max-w-prose flex-shrink">{{ report.cause }}</p>
+                </div>
+
+                <Separator class="mb-4 mt-2" />
+
+                <div class="flex gap-2">
+                  <Button variant="outline-destructive">
+                    <BanIcon class="mr-2 inline-block h-4 w-4" />Ban restaurant
+                  </Button>
+                  <Button variant="secondary" as-child>
+                    <RouterLink :to="`/admin/users/${report.userId}`"> View user </RouterLink>
+                  </Button>
+                </div>
+              </article>
             </li>
           </ul>
           <p v-else class="mt-4">No one reported this restaurant.</p>
