@@ -10,6 +10,7 @@ import org.example.sumatyw_backend.restaurants.Restaurant;
 import org.example.sumatyw_backend.restaurants.RestaurantDTO;
 import org.example.sumatyw_backend.restaurants.RestaurantDTOMapper;
 import org.example.sumatyw_backend.restaurants.RestaurantService;
+import org.example.sumatyw_backend.user_reports.RestaurantReport;
 import org.example.sumatyw_backend.user_reports.UserReport;
 import org.example.sumatyw_backend.user_reports.UserReportsService;
 import org.example.sumatyw_backend.users.*;
@@ -79,6 +80,21 @@ public class AdminController {
 
     }
 
+    @GetMapping( value = "/reports/restaurants", params = {"restaurantId"})
+    public ResponseEntity<List<ReportDTO>> getAllRestaurantReports(@RequestParam("restaurantId") UUID restaurantId) {
+
+            List<RestaurantReport> list = restaurantReportsService.getAllReportsByRestaurant(restaurantId);
+            if(list.isEmpty()) {
+                return new ResponseEntity<>(new ArrayList<>(),HttpStatus.NO_CONTENT);
+            }
+            List<ReportDTO> reports = new ArrayList<>();
+
+            for(RestaurantReport report : list) {
+                reports.add(ReportsDTOMapper.mapRestaurantReportToReportDTO(report));
+            }
+            return new ResponseEntity<>(reports,HttpStatus.OK);
+    }
+
     @GetMapping("/reports/users/{id}")
     public ResponseEntity getUserReportById(@PathVariable("id") UUID id) {
 
@@ -89,6 +105,11 @@ public class AdminController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
+
+//    @GetMapping( value = "/reports/users", params = {"userId"})
+//    public ResponseEntity<List<ReportDTO>> getAllRestaurantReports() {
+//
+//    }
 
     @PutMapping("/reports/users/{id}")
     public ResponseEntity handleUserReport(@PathVariable("id") UUID reportId,
