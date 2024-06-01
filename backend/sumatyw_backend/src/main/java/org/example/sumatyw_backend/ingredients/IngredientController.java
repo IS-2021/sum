@@ -5,6 +5,7 @@ import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -17,6 +18,7 @@ public class IngredientController {
     private IngredientService ingredientService;
 
     @PostMapping(params = {"mealId"})
+    @PreAuthorize("hasRole('RESTAURANT')")
     public ResponseEntity<IngredientDTO> addIngredient(@RequestBody @Valid IngredientInputDTO ingredientInputDTO, @RequestParam("mealId") UUID mealId) {
         Ingredient ingredient = ingredientService.addIngredient(IngredientDTOMapper.mapIngredientInputDTOToIngredient(ingredientInputDTO, mealId));
 
@@ -27,6 +29,7 @@ public class IngredientController {
     }
 
     @GetMapping
+    @PreAuthorize("hasRole('RESTAURANT')")
     public ResponseEntity<List<IngredientDTO>> getAllIngredients() {
         List<Ingredient> ingredients = ingredientService.getAllIngredients();
 
@@ -37,6 +40,7 @@ public class IngredientController {
     }
 
     @GetMapping(params = {"mealId"})
+    @PreAuthorize("hasAnyRole('USER, RESTAURANT')")
     public ResponseEntity<List<IngredientDTO>> getIngredientsByMealId(@RequestParam("mealId") UUID mealId) {
         List<Ingredient> ingredientsByMeal = ingredientService.getIngredientsByMealId(mealId);
         return new ResponseEntity<>(ingredientsByMeal.stream().map(IngredientDTOMapper::mapIngredientToIngredientDTO).toList(), HttpStatus.OK);
@@ -44,6 +48,7 @@ public class IngredientController {
     }
 
     @GetMapping(params = {"restaurantId"})
+    @PreAuthorize("hasAnyRole('USER, RESTAURANT')")
     public ResponseEntity<List<IngredientDTO>> getIngredientsByRestaurantId(@RequestParam("restaurantId") UUID restaurandId) {
         List<Ingredient> ingredients = ingredientService.getIngredientsByRestaurant(restaurandId);
 
@@ -51,6 +56,7 @@ public class IngredientController {
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasAnyRole('USER, RESTAURANT')")
     public ResponseEntity<IngredientDTO> getIngredientById(@PathVariable UUID id) {
 
         Ingredient ingredient = ingredientService.getIngredientById(id);
@@ -58,6 +64,7 @@ public class IngredientController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('RESTAURANT')")
     public ResponseEntity<IngredientDTO> updateIngredient(@PathVariable("id") UUID id, @RequestBody @Valid IngredientInputDTO ingredientInputDTO) {
         Ingredient ingredient = ingredientService.updateIngredientById(id, IngredientDTOMapper.mapIngredientInputDTOToIngredient(ingredientInputDTO));
 
