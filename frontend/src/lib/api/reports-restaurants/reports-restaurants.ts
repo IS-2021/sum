@@ -19,6 +19,7 @@ import type { AxiosError, AxiosRequestConfig, AxiosResponse } from 'axios';
 import { computed, unref } from 'vue';
 import type { MaybeRef } from 'vue';
 import type {
+  GetReportsRestaurantsParams,
   HttpException,
   NotFound404Response,
   ReportDTO,
@@ -232,30 +233,46 @@ export const useDeleteReportsRestaurantsId = <
   return useMutation(mutationOptions);
 };
 export const getReportsRestaurants = (
+  params?: MaybeRef<GetReportsRestaurantsParams>,
   options?: AxiosRequestConfig,
-): Promise<AxiosResponse<ReportDTO[]>> => {
-  return axios.default.get(`http://localhost:9090/reports/restaurants`, options);
+): Promise<AxiosResponse<ReportDTO[] | unknown[]>> => {
+  params = unref(params);
+  return axios.default.get(`http://localhost:9090/reports/restaurants`, {
+    ...options,
+    params: { ...unref(params), ...options?.params },
+  });
 };
 
-export const getGetReportsRestaurantsQueryKey = () => {
-  return ['http:', 'localhost:9090', 'reports', 'restaurants'] as const;
+export const getGetReportsRestaurantsQueryKey = (
+  params?: MaybeRef<GetReportsRestaurantsParams>,
+) => {
+  return [
+    'http:',
+    'localhost:9090',
+    'reports',
+    'restaurants',
+    ...(params ? [params] : []),
+  ] as const;
 };
 
 export const getGetReportsRestaurantsQueryOptions = <
   TData = Awaited<ReturnType<typeof getReportsRestaurants>>,
   TError = AxiosError<unknown>,
->(options?: {
-  query?: Partial<
-    UseQueryOptions<Awaited<ReturnType<typeof getReportsRestaurants>>, TError, TData>
-  >;
-  axios?: AxiosRequestConfig;
-}) => {
+>(
+  params?: MaybeRef<GetReportsRestaurantsParams>,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof getReportsRestaurants>>, TError, TData>
+    >;
+    axios?: AxiosRequestConfig;
+  },
+) => {
   const { query: queryOptions, axios: axiosOptions } = options ?? {};
 
-  const queryKey = getGetReportsRestaurantsQueryKey();
+  const queryKey = getGetReportsRestaurantsQueryKey(params);
 
   const queryFn: QueryFunction<Awaited<ReturnType<typeof getReportsRestaurants>>> = ({ signal }) =>
-    getReportsRestaurants({ signal, ...axiosOptions });
+    getReportsRestaurants(params, { signal, ...axiosOptions });
 
   return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
     Awaited<ReturnType<typeof getReportsRestaurants>>,
@@ -272,13 +289,16 @@ export type GetReportsRestaurantsQueryError = AxiosError<unknown>;
 export const useGetReportsRestaurants = <
   TData = Awaited<ReturnType<typeof getReportsRestaurants>>,
   TError = AxiosError<unknown>,
->(options?: {
-  query?: Partial<
-    UseQueryOptions<Awaited<ReturnType<typeof getReportsRestaurants>>, TError, TData>
-  >;
-  axios?: AxiosRequestConfig;
-}): UseQueryReturnType<TData, TError> & { queryKey: QueryKey } => {
-  const queryOptions = getGetReportsRestaurantsQueryOptions(options);
+>(
+  params?: MaybeRef<GetReportsRestaurantsParams>,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof getReportsRestaurants>>, TError, TData>
+    >;
+    axios?: AxiosRequestConfig;
+  },
+): UseQueryReturnType<TData, TError> & { queryKey: QueryKey } => {
+  const queryOptions = getGetReportsRestaurantsQueryOptions(params, options);
 
   const query = useQuery(queryOptions) as UseQueryReturnType<TData, TError> & {
     queryKey: QueryKey;

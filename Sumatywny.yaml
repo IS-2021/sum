@@ -430,6 +430,12 @@ paths:
     get:
       tags:
         - reports_restaurants
+      parameters:
+        - name: restaurantId
+          description: Optional
+          schema:
+            $ref: "#/components/schemas/UUID"
+          in: query
       responses:
         "200":
           content:
@@ -439,6 +445,13 @@ paths:
                 items:
                   $ref: "#/components/schemas/ReportDTO"
           description: Get list of restaurant reports
+        "204":
+          content:
+            application/json:
+              schema:
+                type: array
+                items: {}
+          description: If nothing to return
     post:
       requestBody:
         content:
@@ -781,6 +794,12 @@ paths:
     get:
       tags:
         - admin_users
+      parameters:
+        - name: blocked
+          description: ""
+          schema:
+            type: boolean
+          in: query
       responses:
         "200":
           content:
@@ -790,10 +809,30 @@ paths:
                 items:
                   $ref: "#/components/schemas/UserDTO"
           description: Get list of users
+    put:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UserDTO"
+        required: true
+      tags:
+        - admin_users
+      responses:
+        "200":
+          description: User unbanned
+        "404":
+          $ref: "#/components/responses/NotFound_404"
   /admin/restaurants:
     get:
       tags:
         - admin_restaurants
+      parameters:
+        - name: status
+          description: ""
+          schema:
+            $ref: "#/components/schemas/RestaurantStatus"
+          in: query
       responses:
         "200":
           content:
@@ -803,6 +842,13 @@ paths:
                 items:
                   $ref: "#/components/schemas/RestaurantDTO"
           description: Get list of restaurants.
+        "204":
+          content:
+            application/json:
+              schema:
+                type: array
+                items: {}
+          description: If no pending restaurants are present
   "/admin/users/{id}":
     get:
       tags:
@@ -816,26 +862,6 @@ paths:
           description: Get user
         "404":
           $ref: "#/components/responses/NotFound_404"
-    put:
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/UserDTO"
-        required: true
-      tags:
-        - admin_users
-      responses:
-        "200":
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/UserDTO"
-          description: Get user
-        "404":
-          $ref: "#/components/responses/NotFound_404"
-        "422":
-          description: Validation failed
     parameters:
       - name: id
         schema:
@@ -864,69 +890,6 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/RestaurantDTO"
-          description: OK
-        "422":
-          description: Validation failed
-    parameters:
-      - name: id
-        schema:
-          $ref: "#/components/schemas/UUID"
-        in: path
-        required: true
-  /admin/reports:
-    get:
-      tags:
-        - admin_reports
-      responses:
-        "200":
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: "#/components/schemas/ReportDTO"
-          description: Get list of reports
-  "/admin/reports/{id}":
-    get:
-      tags:
-        - admin_reports
-      parameters:
-        - name: id
-          schema:
-            $ref: "#/components/schemas/UUID"
-          in: path
-          required: true
-      responses:
-        "200":
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ReportDTO"
-          description: Get report
-        "404":
-          $ref: "#/components/responses/NotFound_404"
-      description: ""
-    put:
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/ReportDTO"
-        required: true
-      tags:
-        - admin_reports
-      parameters:
-        - name: id
-          schema:
-            $ref: "#/components/schemas/UUID"
-          in: path
-          required: true
-      responses:
-        "200":
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ReportDTO"
           description: OK
         "422":
           description: Validation failed
@@ -1011,6 +974,13 @@ paths:
     get:
       tags:
         - admin_reports
+      parameters:
+        - name: ban
+          description: ""
+          schema:
+            type: boolean
+          in: query
+          required: true
       responses:
         "200":
           content:
@@ -1051,6 +1021,13 @@ paths:
     get:
       tags:
         - admin_reports
+      parameters:
+        - name: status
+          description: ""
+          schema:
+            $ref: "#/components/schemas/RestaurantStatus"
+          in: query
+          required: true
       responses:
         "200":
           content:
@@ -1066,6 +1043,13 @@ paths:
     get:
       tags:
         - admin_reports
+      parameters:
+        - name: ban
+          description: ""
+          schema:
+            type: boolean
+          in: query
+          required: true
       responses:
         "200":
           content:
@@ -1106,6 +1090,12 @@ paths:
     get:
       tags:
         - admin_reports
+      parameters:
+        - name: userId
+          description: Optional
+          schema:
+            $ref: "#/components/schemas/UUID"
+          in: query
       responses:
         "200":
           content:
@@ -1761,12 +1751,8 @@ components:
         id:
           $ref: "#/components/schemas/UUID"
         status:
+          $ref: "#/components/schemas/RestaurantStatus"
           description: ""
-          enum:
-            - Banned
-            - Active
-            - Inactive
-          type: string
     RestaurantFavouriteInputDTO:
       description: ""
       required:
@@ -2015,6 +2001,13 @@ components:
         - Cancelled
         - OutOfDate
         - PickedUp
+      type: string
+    RestaurantStatus:
+      description: ""
+      enum:
+        - Banned
+        - Active
+        - Inactive
       type: string
   responses:
     NotFound_404:
