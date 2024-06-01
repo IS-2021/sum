@@ -6,6 +6,11 @@ meta:
 <script setup lang="ts">
 import MealsPage from '@/components/(manage)/meals/MealsPage.vue';
 import { useRestaurantUser } from '@/composables/useRestaurantUser';
+import { useHead } from '@unhead/vue';
+
+useHead({
+  title: 'Meals',
+});
 
 const { user } = useRestaurantUser();
 </script>
