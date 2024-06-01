@@ -1,9 +1,11 @@
 package org.example.sumatyw_backend.user_reports;
 
+import org.example.sumatyw_backend.user_reports.RestaurantReport;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+
 
 import java.util.List;
 import java.util.UUID;
@@ -17,4 +19,6 @@ public interface UserReportsRepository extends JpaRepository<UserReport, UUID> {
     List<UserReport> findByIsOpenIsTrue();
 
     List<UserReport> findAllByUserUserIdAndIsOpenTrue(UUID userId);
+
+    List<UserReport> findAllByRestaurantRestaurantIdAndIsOpenTrue(UUID restaurantId);
 }

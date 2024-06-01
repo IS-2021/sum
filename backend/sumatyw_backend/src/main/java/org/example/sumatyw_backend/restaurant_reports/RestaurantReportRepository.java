@@ -2,6 +2,7 @@ package org.example.sumatyw_backend.restaurant_reports;
 
 import org.example.sumatyw_backend.reports.ReportDTO;
 import org.example.sumatyw_backend.user_reports.RestaurantReport;
+import org.example.sumatyw_backend.user_reports.UserReport;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -19,4 +20,7 @@ public interface RestaurantReportRepository extends JpaRepository<RestaurantRepo
     List<RestaurantReport> findByIsOpenIsTrue();
 
     List<RestaurantReport> findAllByRestaurantRestaurantIdAndIsOpenTrue(UUID restaurantId);
+
+    List<RestaurantReport> findAllByUserUserIdAndIsOpenTrue(UUID restaurantId);
+
 }

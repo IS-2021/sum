@@ -43,7 +43,7 @@ public class RestaurantReportsService {
 
     public List<RestaurantReport> getAllReportsByRestaurant(UUID restaurantId) {
 
-        List<RestaurantReport> list = restaurantReportRepository.findAllByRestaurantRestaurantIdAndIsOpenTrue(restaurantId);
+        List<RestaurantReport> list = restaurantReportRepository.findAllByUserUserIdAndIsOpenTrue(restaurantId);
 
         if(list.isEmpty()) {
             return new ArrayList<>();
