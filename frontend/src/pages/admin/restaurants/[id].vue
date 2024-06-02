@@ -74,81 +74,84 @@ async function handleBanUser(userId: string) {
 </script>
 
 <template>
-  <div v-if="restaurant" class="max-w-screen-md">
+  <div v-if="restaurant">
     <h1 class="mb-10 text-2xl font-semibold tracking-tight">{{ restaurant.name }}</h1>
 
-    <SettingsSection class="pb-8">
-      <h2 class="text-lg font-semibold tracking-tight">Restaurant profile</h2>
-      <Separator class="mb-4 mt-2" />
+    <div class="grid-cols-2 gap-10 2xl:grid">
+      <SettingsSection class="pb-8">
+        <h2 class="text-lg font-semibold tracking-tight">Restaurant profile</h2>
+        <Separator class="mb-4 mt-2" />
 
-      <div class="mb-4 mt-4 space-y-3">
-        <div class="flex items-center justify-between">
-          <RestaurantStatus :status="restaurant.status" />
+        <div class="mb-4 mt-4 space-y-3">
+          <div class="flex items-center justify-between">
+            <RestaurantStatus :status="restaurant.status" />
 
-          <Button
-            @click="handleRestaurantActivate"
-            v-if="restaurant.status === 'Inactive'"
-            class="bg-yellow-500 hover:bg-yellow-500/80"
-          >
-            Activate
-          </Button>
-          <Button
-            @click="handleRestaurantDeactivate"
-            v-if="restaurant.status === 'Active'"
-            variant="secondary"
-          >
-            Deactivate
-          </Button>
+            <Button
+              @click="handleRestaurantActivate"
+              v-if="restaurant.status === 'Inactive'"
+              class="bg-yellow-500 hover:bg-yellow-500/80"
+            >
+              Activate
+            </Button>
+            <Button
+              @click="handleRestaurantDeactivate"
+              v-if="restaurant.status === 'Active'"
+              variant="secondary"
+            >
+              Deactivate
+            </Button>
+          </div>
+
+          <p class="flex items-center gap-3">
+            <ThumbsUpIcon class="h-4 w-4" />
+            <UserRating
+              v-if="totalRatings > 0"
+              :likes="restaurant.likesCount"
+              :dislikes="restaurant.dislikesCount"
+            />
+            <span v-else>N/A</span>
+          </p>
+          <p class="flex items-center gap-3">
+            <PhoneIcon class="h-4 w-4" />
+            {{ restaurant.phoneNumber }}
+          </p>
+          <p class="flex items-center gap-3">
+            <MapPinIcon class="h-4 w-4" />
+            {{ formatAddress(restaurant.address) }}
+          </p>
+
+          <ImagePreview :src="getImageUrl(restaurant.imageUrl)" />
         </div>
 
-        <p class="flex items-center gap-3">
-          <ThumbsUpIcon class="h-4 w-4" />
-          <UserRating
-            v-if="totalRatings > 0"
-            :likes="restaurant.likesCount"
-            :dislikes="restaurant.dislikesCount"
-          />
-          <span v-else>N/A</span>
-        </p>
-        <p class="flex items-center gap-3">
-          <PhoneIcon class="h-4 w-4" />
-          {{ restaurant.phoneNumber }}
-        </p>
-        <p class="flex items-center gap-3">
-          <MapPinIcon class="h-4 w-4" />
-          {{ formatAddress(restaurant.address) }}
-        </p>
+        <h2 class="mt-8 text-lg font-semibold tracking-tight">Opening Hours</h2>
+        <Separator class="mb-4 mt-2" />
 
-        <ImagePreview :src="getImageUrl(restaurant.imageUrl)" />
-      </div>
+        <ul>
+          <li
+            v-for="[day, [openingHours, closingHours]] in Object.entries(restaurant.hours)"
+            :key="day"
+          >
+            <OpeningHoursRow
+              :day="day"
+              :opening-hours="openingHours"
+              :closing-hours="closingHours"
+              :is-current-day="false"
+            />
+          </li>
+        </ul>
+      </SettingsSection>
 
-      <h2 class="mt-8 text-lg font-semibold tracking-tight">Opening Hours</h2>
-      <Separator class="mb-4 mt-2" />
+      <SettingsSection>
+        <h2 class="text-lg font-semibold tracking-tight">Reports</h2>
+        <Separator class="mb-4 mt-2" />
 
-      <ul>
-        <li
-          v-for="[day, [openingHours, closingHours]] in Object.entries(restaurant.hours)"
-          :key="day"
-        >
-          <OpeningHoursRow
-            :day="day"
-            :opening-hours="openingHours"
-            :closing-hours="closingHours"
-            :is-current-day="false"
-          />
-        </li>
-      </ul>
-    </SettingsSection>
-
-    <SettingsSection>
-      <h2 class="text-lg font-semibold tracking-tight">Reports</h2>
-      <Separator class="mb-4 mt-2" />
-
-      <RestaurantReportsViewer
-        @ban-restaurant="handleBanRestaurant"
-        :restaurant-user-reports="restaurantUserReports"
-        :user-restaurant-reports="userRestaurantReports"
-      />
-    </SettingsSection>
+        <RestaurantReportsViewer
+          @ban-restaurant="handleBanRestaurant"
+          :show-closed-reports="true"
+          :restaurant-user-reports="reportsFromRestaurant"
+          :user-restaurant-reports="reportsAboutRestaurant"
+        />
+      </SettingsSection>
+    </div>
   </div>
 </template>
