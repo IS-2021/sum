@@ -40,7 +40,7 @@ public class ReportsController {
 
         List<UserReport> list = userReportsService.getAllReportsUser(restaurantId);
         if(list.isEmpty()) {
-            return new ResponseEntity<>(new ArrayList<>(),HttpStatus.NO_CONTENT);
+            return new ResponseEntity<>(new ArrayList<>(),HttpStatus.OK);
         }
         List<ReportDTO> reports = new ArrayList<>();
 

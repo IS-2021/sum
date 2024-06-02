@@ -1296,7 +1296,7 @@ paths:
       tags:
         - admin_users
       parameters:
-        - name: banned
+        - name: ban
           description: ""
           schema:
             type: boolean
@@ -1470,7 +1470,7 @@ components:
         - secondName
         - username
         - id
-        - isBlocked
+        - blocked
       type: object
       properties:
         username:
@@ -1501,12 +1501,12 @@ components:
           x-faker:
             phone.phoneNumber:
               - "###-###-###"
-        isBlocked:
-          description: ""
-          type: boolean
         id:
           $ref: "#/components/schemas/UUID"
           description: ""
+        blocked:
+          description: ""
+          type: boolean
     UserInputDTO:
       title: Root Type for UserDTO
       description: User object.
