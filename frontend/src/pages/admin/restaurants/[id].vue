@@ -27,6 +27,7 @@ import {
   closeReportAboutUser,
   updateRestaurantStatus,
 } from '@/components/(admin)/reports/api';
+import { useQueryClient } from '@tanstack/vue-query';
 
 useHead({
   title: 'Restaurant',
@@ -34,6 +35,8 @@ useHead({
 
 const route = useRoute('/admin/restaurants/[id]');
 const restaurantId = route.params.id;
+
+const queryClient = useQueryClient();
 
 const { data: restaurantData, refetch } = useGetAdminRestaurantsId(restaurantId);
 const restaurant = computed(() => restaurantData?.value?.data);
@@ -65,7 +68,15 @@ async function handleBanRestaurant(reportId: string) {
   const res = await closeReportAboutRestaurant(reportId, true);
 
   if (res.status === 200) {
-    await refetch();
+    await queryClient.invalidateQueries();
+  }
+}
+
+async function handleBanUser(reportId: string) {
+  const res = await closeReportAboutUser(reportId, true);
+
+  if (res.status === 200) {
+    await queryClient.invalidateQueries();
   }
 }
 
@@ -160,6 +171,7 @@ async function handleCloseReport(reportId: string, reportAbout: 'user' | 'restau
 
         <RestaurantReportsViewer
           @ban-restaurant="handleBanRestaurant"
+          @ban-user="handleBanUser"
           @close-report="handleCloseReport"
           :show-closed-reports="true"
           :reports-about-user="reportsFromRestaurant"
