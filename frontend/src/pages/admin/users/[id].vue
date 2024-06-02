@@ -13,6 +13,7 @@ import { MailIcon, PhoneIcon, UserRoundIcon } from 'lucide-vue-next';
 import { Separator } from '@/components/ui/separator';
 import { Button } from '@/components/ui/button';
 import UserStatusIcon from '@/components/(admin)/users/UserStatusIcon.vue';
+import ConfirmDialog from '@/components/dialogs/ConfirmDialog.vue';
 
 useHead({
   title: 'User',
@@ -28,6 +29,10 @@ async function handleUnbanUser() {}
 </script>
 
 <template>
+  <div v-if="isLoading">
+    <p>Loading</p>
+  </div>
+
   <div v-if="user">
     <h1 class="mb-10 text-2xl font-semibold tracking-tight">
       {{ user.firstName }} {{ user.secondName }}
@@ -48,7 +53,17 @@ async function handleUnbanUser() {}
           </template>
         </p>
 
-        <Button @click="handleUnbanUser" v-if="user.blocked" variant="secondary"> Unban </Button>
+        <ConfirmDialog v-if="user.blocked">
+          <template v-slot:trigger>
+            <Button variant="secondary"> Unban </Button>
+          </template>
+          <template v-slot:description>
+            <p>Are you sure you want to unban this user?</p>
+          </template>
+          <template v-slot:confirmButton>
+            <Button @click="handleUnbanUser" variant="destructive"> Unban </Button>
+          </template>
+        </ConfirmDialog>
       </div>
 
       <div>
