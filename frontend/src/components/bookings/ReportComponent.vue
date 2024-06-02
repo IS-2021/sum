@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 
-import type { Uuid } from '@/lib/api-model';
+import type { ProblemDetailResponse, Uuid } from '@/lib/api-model';
 
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Textarea } from '@/components/ui/textarea';
@@ -27,7 +27,6 @@ const props = defineProps<{
 
 const usersReport = ref('');
 let reportRestaurantSwitch = ref(false);
-let isReportSent = ref(false);
 
 function toggleReportRestaurant() {
   reportRestaurantSwitch.value = !reportRestaurantSwitch.value;
@@ -42,10 +41,11 @@ async function sendReport() {
 
   if (res.status === 200) {
     usersReport.value = '';
-    isReportSent.value = true;
     toast.success('Report sent successfully!');
-  } else {
-    toast.error('Failed to send report');
+  } else if (res.status === 400) {
+    usersReport.value = '';
+    const { detail } = res.data as any | ProblemDetailResponse;
+    toast.error(detail);
   }
 }
 </script>
