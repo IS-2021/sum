@@ -16,6 +16,7 @@ import {
 import Button from '@/components/ui/button/Button.vue';
 import { postReportsUsers } from '@/lib/api/reports-users/reports-users';
 import DialogClose from '../ui/dialog/DialogClose.vue';
+import { toast } from 'vue-sonner';
 
 const props = defineProps<{
   restaurantId: Uuid;
@@ -32,14 +33,20 @@ function toggleReportRestaurant() {
   reportRestaurantSwitch.value = !reportRestaurantSwitch.value;
 }
 
-function sendReport() {
-  postReportsUsers({
+async function sendReport() {
+  const res = await postReportsUsers({
     cause: usersReport.value,
     userId: props.userId,
     restaurantId: props.restaurantId,
   });
-  usersReport.value = '';
-  isReportSent.value = true;
+
+  if (res.status === 200) {
+    usersReport.value = '';
+    isReportSent.value = true;
+    toast.success('Report sent successfully!');
+  } else {
+    toast.error('Failed to send report');
+  }
 }
 </script>
 
@@ -57,9 +64,6 @@ function sendReport() {
       <Dialog>
         <DialogTrigger as-child>
           <Button class="mt-4" :disabled="usersReport === ''">Send report</Button>
-          <Alert v-if="isReportSent && usersReport === ''" class="mt-8 border-primary">
-            <AlertTitle>Report sent successfully!</AlertTitle>
-          </Alert>
         </DialogTrigger>
         <DialogContent class="sm:max-w-[425px]">
           <DialogHeader>
