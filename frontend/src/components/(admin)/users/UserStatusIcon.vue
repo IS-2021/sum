@@ -9,6 +9,6 @@ defineProps<UserStatusIconProps>();
 </script>
 
 <template>
-  <BanIcon v-if="isBanned" />
+  <BanIcon v-if="isBanned" class="text-red-500" />
   <CircleIcon v-else class="fill-secondary text-secondary" />
 </template>
