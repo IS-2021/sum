@@ -17,16 +17,16 @@ const props = withDefaults(defineProps<GMapsComponentProps>(), {
 
 const mapDiv = ref<HTMLDivElement | null>(null);
 const map = shallowRef<google.maps.Map>();
-// const currentPosMarker = shallowRef<google.maps.marker.AdvancedMarkerElement>();
+const currentPosMarker = shallowRef<google.maps.marker.AdvancedMarkerElement>();
 
 function updateMap() {
   if (map.value) {
     map.value.setZoom(props.panZoom);
     map.value.panTo({ lat: props.latitude, lng: props.longitude });
   }
-  // if (currentPosMarker.value) {
-  //   currentPosMarker.value.position = { lat: latitude, lng: longitude };
-  // }
+  if (currentPosMarker.value) {
+    currentPosMarker.value.position = { lat: props.latitude, lng: props.longitude };
+  }
 }
 
 watch(() => [props.latitude, props.longitude, props.zoom], updateMap, { immediate: true });
@@ -48,16 +48,15 @@ onMounted(async () => {
     mapTypeControl: false,
     streetViewControl: false,
   });
-  //
-  // const { AdvancedMarkerElement } = await loader.importLibrary('marker');
-  // currentPosMarker.value = new AdvancedMarkerElement({
-  //   position: {
-  //     lat: coords.value.latitude,
-  //     lng: coords.value.longitude,
-  //   },
-  //   map: map.value,
-  // });
-  //
+
+  const { AdvancedMarkerElement } = await loader.importLibrary('marker');
+  currentPosMarker.value = new AdvancedMarkerElement({
+    position: {
+      lat: props.latitude,
+      lng: props.longitude,
+    },
+    map: map.value,
+  });
 
   if (props.onClick) {
     map.value.addListener('click', props.onClick);
