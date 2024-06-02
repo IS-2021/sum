@@ -37,7 +37,7 @@ const emits = defineEmits<{
     <template v-if="showActionButtons">
       <Separator class="my-4" />
 
-      <div class="flex gap-2">
+      <div class="flex flex-wrap gap-2">
         <ConfirmDialog v-if="actions?.includes('banUser')">
           <template v-slot:trigger>
             <Button variant="outline-destructive">
