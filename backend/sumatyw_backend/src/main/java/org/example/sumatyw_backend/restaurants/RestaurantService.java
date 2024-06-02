@@ -75,10 +75,10 @@ public class RestaurantService {
         return RestaurantDTOMapper.mapRestaurantToRestaurantDTO(restaurant);
     }
 
-    public RestaurantDTO activateRestaurantById(UUID id) {
+    public RestaurantDTO changeRestaurantStatus(UUID id, RestaurantStatus status) {
         Restaurant restaurant = restaurantRepository.findById(id).orElseThrow(
             () -> new ObjectNotFoundException("Restaurant with id: " + id + " not found"));
-        restaurant.setStatus(RestaurantStatus.Active);
+        restaurant.setStatus(status);
         restaurantRepository.save(restaurant);
         return RestaurantDTOMapper.mapRestaurantToRestaurantDTO(restaurant);
     }

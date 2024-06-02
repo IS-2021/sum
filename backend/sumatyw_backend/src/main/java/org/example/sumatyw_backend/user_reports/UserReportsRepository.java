@@ -21,4 +21,6 @@ public interface UserReportsRepository extends JpaRepository<UserReport, UUID> {
     List<UserReport> findAllByUserUserIdAndIsOpenTrue(UUID userId);
 
     List<UserReport> findAllByRestaurantRestaurantIdAndIsOpenTrue(UUID restaurantId);
+
+    List<UserReport> findAllByRestaurantRestaurantIdAndUserUserIdAndIsOpenTrue(UUID restaurantId, UUID userId);
 }
