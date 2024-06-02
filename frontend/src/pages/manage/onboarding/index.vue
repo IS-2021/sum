@@ -139,8 +139,8 @@ async function handleSaveRestaurantImage() {
 </script>
 
 <template>
-  <div class="grid min-h-svh grid-cols-2">
-    <div class="border-r border-neutral-300">
+  <div class="min-h-svh grid-cols-2 lg:grid">
+    <div class="hidden border-r border-neutral-300 lg:block">
       <img
         src="@/assets/images/chris-liverani-oCsaxvGCehM-unsplash-crop.jpg"
         alt="FoodGood background image"
