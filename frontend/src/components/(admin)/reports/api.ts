@@ -6,12 +6,12 @@ import {
   putAdminReportsUsersId,
 } from '@/lib/api/admin-reports/admin-reports';
 
-export async function closeReportAboutUser(reportId: Uuid, banUser: boolean) {
-  return putAdminReportsUsersId(reportId, { ban: banUser });
+export async function closeReportAboutRestaurant(reportId: Uuid, banRestaurant: boolean) {
+  return putAdminReportsUsersId(reportId, { ban: banRestaurant });
 }
 
-export async function closeReportAboutRestaurant(reportId: Uuid, banRestaurant: boolean) {
-  return putAdminReportsRestaurantsId(reportId, { ban: banRestaurant });
+export async function closeReportAboutUser(reportId: Uuid, banUser: boolean) {
+  return putAdminReportsRestaurantsId(reportId, { ban: banUser });
 }
 
 export async function updateRestaurantStatus(restaurantId: Uuid, status: RestaurantStatus) {
