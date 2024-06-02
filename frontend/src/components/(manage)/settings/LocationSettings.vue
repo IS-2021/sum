@@ -50,7 +50,12 @@ watchEffect(() => {
       popover-class="md:w-80 lg:w-full lg:max-w-prose"
       @on-place-select="setPlaceId"
     />
-    <Button v-if="isGeolocationSupported" @click="resumeGeolocation" variant="outline">
+    <Button
+      v-if="isGeolocationSupported"
+      @click="resumeGeolocation"
+      variant="outline"
+      type="button"
+    >
       <LocateFixedIcon class="mr-2 h-4 w-4" /> Use my current location
     </Button>
   </div>
