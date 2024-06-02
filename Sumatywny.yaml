@@ -445,6 +445,14 @@ paths:
                 items:
                   $ref: "#/components/schemas/ReportDTO"
           description: Get list of restaurant reports
+        "204":
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ReportDTO"
+          description: If nothing to return
     post:
       requestBody:
         content:
