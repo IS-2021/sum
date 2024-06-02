@@ -19,5 +19,5 @@ export async function updateRestaurantStatus(restaurantId: Uuid, status: Restaur
 }
 
 export async function updateUserStatus(userId: Uuid, banned: boolean) {
-  return putAdminUsersId(userId, { banned });
+  return putAdminUsersId(userId, { ban: banned });
 }

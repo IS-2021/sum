@@ -17,7 +17,11 @@ import ConfirmDialog from '@/components/dialogs/ConfirmDialog.vue';
 import { useReportsAboutUser } from '@/components/(admin)/composables/useReportsAboutUser';
 import { useReportsFromUser } from '@/components/(admin)/composables/useReportsFromUser';
 import UserReportsViewer from '@/components/(admin)/reports/UserReportsViewer.vue';
-import { closeReportAboutRestaurant, closeReportAboutUser } from '@/components/(admin)/reports/api';
+import {
+  closeReportAboutRestaurant,
+  closeReportAboutUser,
+  updateUserStatus,
+} from '@/components/(admin)/reports/api';
 import { useQueryClient } from '@tanstack/vue-query';
 
 useHead({
@@ -35,7 +39,13 @@ const user = computed(() => data.value?.data);
 const { reportsAboutUser } = useReportsAboutUser(userId);
 const { reportsFromUser } = useReportsFromUser(userId);
 
-async function handleUnbanUser() {}
+async function handleUnbanUser() {
+  const res = await updateUserStatus(userId, false);
+
+  if (res.status === 200) {
+    await queryClient.invalidateQueries();
+  }
+}
 
 async function handleBanRestaurant(reportId: string) {
   const res = await closeReportAboutRestaurant(reportId, true);
@@ -87,7 +97,7 @@ async function handleCloseReport(reportId: string, reportAbout: 'user' | 'restau
 
         <div class="flex items-center justify-between">
           <p v-if="user.blocked">
-            <UserStatusIcon :is-banned="user.blocked" class="h-4 w-4 mr-2 inline-block" />
+            <UserStatusIcon :is-banned="user.blocked" class="mr-2 inline-block h-4 w-4" />
             <template v-if="user.blocked">
               <span class="text-red-500">Account banned</span>
             </template>
