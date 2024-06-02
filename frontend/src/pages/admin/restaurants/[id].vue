@@ -18,15 +18,15 @@ import { getImageUrl } from '@/lib/assets';
 import { Separator } from '@/components/ui/separator';
 import SettingsSection from '@/components/(manage)/settings/SettingsSection.vue';
 import { formatAddress } from '@/lib/googleMaps';
-import { BanIcon, MapPinIcon, PhoneIcon, ThumbsDownIcon, ThumbsUpIcon } from 'lucide-vue-next';
+import { MapPinIcon, PhoneIcon, ThumbsUpIcon } from 'lucide-vue-next';
 import OpeningHoursRow from '@/components/restaurants/OpeningHoursRow.vue';
 import { putRestaurantsDeactivateId } from '@/lib/api/restaurants/restaurants';
 import { useUserRating } from '@/components/user-rating/useUserRating';
 import UserRating from '@/components/user-rating/UserRating.vue';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useUserRestaurantReports } from '@/components/(admin)/composables/useUserRestaurantReports';
-import ReportCard from '@/components/(manage)/dashboard/ReportCard.vue';
 import { useRestaurantUserReports } from '@/components/(admin)/composables/useRestaurantUserReports';
+import RestaurantReportsViewer from '@/components/(admin)/reports/RestaurantReportsViewer.vue';
+import { banRestaurant, banUser } from '@/components/(admin)/reports/api';
 
 useHead({
   title: 'Restaurant',
@@ -59,6 +59,18 @@ async function handleRestaurantDeactivate() {
   if (res.status === 200) {
     await refetch();
   }
+}
+
+async function handleBanRestaurant(reportId: string) {
+  const res = await banRestaurant(reportId);
+
+  if (res.status === 200) {
+    await refetch();
+  }
+}
+
+async function handleBanUser(userId: string) {
+  await banUser(userId);
 }
 </script>
 
@@ -133,36 +145,11 @@ async function handleRestaurantDeactivate() {
       <h2 class="text-lg font-semibold tracking-tight">Reports</h2>
       <Separator class="mb-4 mt-2" />
 
-      <Tabs default-value="restaurant">
-        <TabsList class="grid w-full grid-cols-2">
-          <TabsTrigger value="restaurant"> By users </TabsTrigger>
-          <TabsTrigger value="users"> By restaurant </TabsTrigger>
-        </TabsList>
-        <TabsContent value="restaurant">
-          <ul v-if="userRestaurantReports.length > 0">
-            <li v-for="report in userRestaurantReports" :key="report.id">
-              <ReportCard
-                :report="report"
-                :showActionButtons="true"
-                :actions="['banRestaurant', 'viewUser']"
-              />
-            </li>
-          </ul>
-          <p v-else class="mt-4">No one reported this restaurant.</p>
-        </TabsContent>
-        <TabsContent value="users">
-          <ul v-if="restaurantUserReports.length > 0">
-            <li v-for="report in restaurantUserReports" :key="report.id">
-              <ReportCard
-                :report="report"
-                :showActionButtons="true"
-                :actions="['banUser', 'viewUser']"
-              />
-            </li>
-          </ul>
-          <p v-else class="mt-4">This restaurant hasn't reported anyone.</p>
-        </TabsContent>
-      </Tabs>
+      <RestaurantReportsViewer
+        @ban-restaurant="handleBanRestaurant"
+        :restaurant-user-reports="restaurantUserReports"
+        :user-restaurant-reports="userRestaurantReports"
+      />
     </SettingsSection>
   </div>
 </template>
