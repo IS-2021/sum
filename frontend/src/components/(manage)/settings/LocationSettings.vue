@@ -7,11 +7,15 @@ import GoogleMaps from '@/components/maps/GoogleMaps.vue';
 import { useAddressSettings } from '@/components/maps/useAddressSettings';
 import type { AddressDTO } from '@/lib/api-model';
 import { useRefOverride } from '@/composables/maps/useRefOverride';
-import { toRef } from 'vue';
+import { toRef, watchEffect } from 'vue';
 import { Button } from '@/components/ui/button';
 
 const props = defineProps<{
   address: AddressDTO;
+}>();
+
+const emit = defineEmits<{
+  (e: 'save:address', payload: AddressDTO): void;
 }>();
 
 const {
@@ -24,6 +28,12 @@ const {
 } = useAddressSettings();
 
 const address = useRefOverride(toRef(props.address), settingsAddress);
+
+watchEffect(() => {
+  if (address.value) {
+    emit('save:address', address.value);
+  }
+});
 </script>
 
 <template>
@@ -52,6 +62,4 @@ const address = useRefOverride(toRef(props.address), settingsAddress);
     :longitude="coords.longitude"
     :onClick="handleMapsClick"
   />
-
-  <Button class="mt-3 w-full bg-secondary hover:bg-secondary/80">Save</Button>
 </template>

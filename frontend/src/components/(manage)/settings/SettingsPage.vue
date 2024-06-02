@@ -11,7 +11,7 @@ import {
   restaurantSchema,
 } from '@/components/(manage)/onboarding/restaurantSchema';
 import { useForm } from 'vee-validate';
-import type { RestaurantDTO } from '@/lib/api-model';
+import type { AddressDTO, RestaurantDTO } from '@/lib/api-model';
 import HoursFormTip from '@/components/(manage)/common/HoursFormTip.vue';
 import { useAddress } from '@/composables/maps/useAddress';
 import { Separator } from '@/components/ui/separator';
@@ -74,6 +74,13 @@ async function deactivateRestaurant() {
     console.error('Failed to deactivate restaurant', res);
     toast.error('Failed to deactivate restaurant');
   }
+}
+
+function setRestaurantAddress(address: AddressDTO) {
+  form.setValues({
+    ...form.values,
+    address,
+  });
 }
 
 const onSubmit = form.handleSubmit(async (values) => {
@@ -139,7 +146,7 @@ const onSubmit = form.handleSubmit(async (values) => {
       <h2 class="mb-2 text-lg font-semibold tracking-tight">Location</h2>
       <Separator class="mb-4 mt-2" />
 
-      <LocationSettings :address="restaurant.address" />
+      <LocationSettings :address="restaurant.address" @save:address="setRestaurantAddress" />
     </SettingsSection>
   </form>
 
