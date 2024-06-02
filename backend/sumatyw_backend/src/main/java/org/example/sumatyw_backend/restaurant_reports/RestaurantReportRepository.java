@@ -23,4 +23,6 @@ public interface RestaurantReportRepository extends JpaRepository<RestaurantRepo
 
     List<RestaurantReport> findAllByUserUserIdAndIsOpenTrue(UUID restaurantId);
 
+    List<RestaurantReport> findAllByUserUserIdAndRestaurantRestaurantIdAndIsOpenTrue(UUID userId, UUID restaurantId);
+
 }
