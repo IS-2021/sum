@@ -1,32 +1,17 @@
 <script setup lang="ts">
 import { Star } from 'lucide-vue-next';
 import { Button } from './ui/button';
-import { useFavourites } from '@/components/favourites/useFavourites';
-import type { Uuid } from '@/lib/api-model';
-import { ref, watchEffect } from 'vue';
+import { ref } from 'vue';
 
 const props = defineProps<{
-  userId: Uuid;
-  restaurantId: Uuid;
+  isFavourite: boolean;
 }>();
+
+const isFavourite = ref(props.isFavourite);
 
 const emit = defineEmits<{
   (e: 'favouriteChange', isFavourite: Boolean): void;
 }>();
-
-const { checkIfFavourite } = useFavourites({
-  userId: props.userId,
-});
-
-let isFavourite = ref(false);
-
-watchEffect(() => {
-  if (checkIfFavourite(props.restaurantId)) {
-    isFavourite.value = true;
-  } else if (!checkIfFavourite(props.restaurantId)) {
-    isFavourite.value = false;
-  }
-});
 
 const toggleFavourite = () => {
   isFavourite.value = !isFavourite.value;
