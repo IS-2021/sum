@@ -16,13 +16,13 @@ const reports = computed(() => unref(data)?.data);
 <template>
   <div
     v-if="reports"
-    class="space-y-5 p-4 bg-neutral-100 border border-neutral-200 max-w-screen-md flex-shrink"
+    class="max-w-screen-md flex-shrink space-y-5 border border-neutral-200 bg-neutral-100 p-4"
   >
-    <h2 class="font-semibold">Ratings ({{ reports.length }})</h2>
+    <h2 class="font-semibold">Reports ({{ reports.length }})</h2>
     <p class="mt-4" v-if="reports.length === 0">No reports found</p>
     <ul v-else class="space-y-2">
       <li v-for="report in reports" v-bind:key="report.id">
-        <ReportCard :cause="report.cause" :reportedAt="report.timestamp" />
+        <ReportCard :report="report" />
       </li>
     </ul>
   </div>
