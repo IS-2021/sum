@@ -24,7 +24,6 @@ public class UserReportsService {
     private final UserReportsRepository userReportsRepository;
     private final UserService userService;
     private final RestaurantService restaurantService;
-    private final RestaurantReportRepository restaurantReportRepository;
 
     public UserReport addUserReport(ReportInputDTO reportInputDTO) {
         if(userReportsRepository.existsByUserIdAndRestaurantId(reportInputDTO.userId(),reportInputDTO.restaurantId())) {
@@ -75,13 +74,8 @@ public class UserReportsService {
     }
 
     public UserReport getUserReportById(UUID id) {
-
-        if(userReportsRepository.findById(id).isPresent()) {
-            return userReportsRepository.findById(id).get();
-        } else {
-            throw new ObjectNotFoundException("User report not found.");
-        }
-
+            return userReportsRepository.findById(id).
+                orElseThrow(() -> new ObjectNotFoundException("User report not found."));
     }
 
     public List<UserReport> getAllOpenedUserReports() {

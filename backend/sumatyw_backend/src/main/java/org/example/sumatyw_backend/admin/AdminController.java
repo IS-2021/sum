@@ -2,10 +2,12 @@ package org.example.sumatyw_backend.admin;
 
 
 import lombok.AllArgsConstructor;
+import org.example.sumatyw_backend.exceptions.ObjectNotFoundException;
 import org.example.sumatyw_backend.reports.ReportDTO;
 import org.example.sumatyw_backend.reports.ReportsDTOMapper;
 import org.example.sumatyw_backend.restaurant_reports.RestaurantReportsService;
 import org.example.sumatyw_backend.restaurants.*;
+import org.example.sumatyw_backend.user_reports.RestaurantReport;
 import org.example.sumatyw_backend.user_reports.UserReport;
 import org.example.sumatyw_backend.user_reports.UserReportsService;
 import org.example.sumatyw_backend.users.User;
@@ -57,6 +59,20 @@ public class AdminController {
             );
     }
 
+    @PutMapping("/users/{id}")
+    public ResponseEntity<UserDTO> updateUser(@PathVariable("id") UUID userId,
+                                              @RequestParam(value = "ban", required = true) boolean ban) {
+
+        User user = userService.getUserById(userId);
+
+        if(ban) {
+            userService.banUserById(user.getUserId());
+        } else {
+            userService.unbanUser(user.getUserId());
+        }
+        return new ResponseEntity<>(UserDTOMapper.mapUserToUserDTO(user), HttpStatus.OK);
+    }
+
     @GetMapping(value = "/restaurants")
     public ResponseEntity<List<RestaurantDTO>> getAllRestaurants() {
         List<Restaurant> restaurants = restaurantService.getAllRestaurants();
@@ -95,13 +111,13 @@ public class AdminController {
         if (userId == null && restaurantId == null) {
             userReports = userReportsService.getAllOpenedUserReports();
         }
-        else if (userId != null && restaurantId == null) {
-            userReports = userReportsService.getAllUserReportsByUserId(userId);
-        }
-        else if (restaurantId != null && userId == null){
-            userReports = userReportsService.getAllUserReportByRestaurantId(restaurantId);
-        } else {
+        else if (userId != null && restaurantId != null) {
             userReports = userReportsService.getUserReportByRestaurantAndUserId(restaurantId, userId);
+        }
+        else if (userId != null) {
+            userReports = userReportsService.getAllUserReportsByUserId(userId);
+        } else {
+            userReports = userReportsService.getAllUserReportByRestaurantId(restaurantId);
         }
 
         return new ResponseEntity<>(
@@ -117,124 +133,95 @@ public class AdminController {
         return new ResponseEntity<>(restaurantService.changeRestaurantStatus(id, status), HttpStatus.OK);
     }
 
-//
+
 //    @PutMapping("/users")
-//    public ResponseEntity<UserDTO> unbanUser(@RequestBody UserDTO userDTO) {
+//    public ResponseEntity<UserDTO> unbanUser(@RequestParam(value = "userId", required = true) UUID userId,
+//                                             @RequestParam("ban",re)) {
 //
 //        return new ResponseEntity<>(UserDTOMapper.mapUserToUserDTO(userService.unbanUser(userDTO)),HttpStatus.OK);
 //    }
-//
-//
-//    @GetMapping("/reports/restaurants")
-//    public ResponseEntity<List<ReportDTO>> getAllOpenedRestaurantReports() {
-//
-//        try {
-//            return new ResponseEntity<>(restaurantReportsService.getAllOpenedRestaurantReports(),HttpStatus.OK);
-//        } catch (ObjectNotFoundException e) {
-//
-//            return new ResponseEntity<>(new ArrayList<>(),HttpStatus.OK);
-//        }
-//
-//    }
-//
-//    @GetMapping("/reports/restaurants/{id}")
-//    public ResponseEntity getRestaurantReportById(@PathVariable("id") UUID id) {
-//
-//        try {
-//            return new ResponseEntity<>(ReportsDTOMapper.mapRestaurantReportToReportDTO(
-//                restaurantReportsService.getRestaurantReportById(id)),HttpStatus.OK);
-//        } catch (ObjectNotFoundException e) {
-//            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-//        }
-//
-//    }
-//
-//    @GetMapping( value = "/reports/restaurants", params = {"restaurantId"})
-//    public ResponseEntity<List<ReportDTO>> getAllRestaurantReports(@RequestParam("restaurantId") UUID restaurantId) {
-//
-//            List<UserReport> list = userReportsService.getAllReportsUser(restaurantId);
-//            if(list.isEmpty()) {
-//                return new ResponseEntity<>(new ArrayList<>(),HttpStatus.NO_CONTENT);
-//            }
-//            List<ReportDTO> reports = new ArrayList<>();
-//
-//            for(UserReport report : list) {
-//                reports.add(ReportsDTOMapper.mapUserReportToReportDTO(report));
-//            }
-//            return new ResponseEntity<>(reports,HttpStatus.OK);
-//    }
-//
-//    @GetMapping("/reports/users/{id}")
-//    public ResponseEntity getUserReportById(@PathVariable("id") UUID id) {
-//
-//        try {
-//            return new ResponseEntity<>(ReportsDTOMapper.mapUserReportToReportDTO(
-//                userReportsService.getUserReportById(id)),HttpStatus.OK);
-//        } catch (ObjectNotFoundException e) {
-//            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-//        }
-//    }
-//
-//
-//
-//    @PutMapping(value = "/reports/users/{id}", params = {"ban"})
-//    public ResponseEntity handleUserReport(@PathVariable("id") UUID reportId,
-//                                           @RequestParam("ban") boolean ban) {
-//
-//        if(ban) {
-//            try {
-//                userService.banUserById(userReportsService.getUserReportById(reportId).getUser().getUserId());
-//
-//                return new ResponseEntity<>(userReportsService.closeUserReport(reportId),HttpStatus.OK);
-//            } catch (ObjectNotFoundException e) {
-//                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-//            }
-//        } else {
-//            try {
-//                return new ResponseEntity<>(userReportsService.closeUserReport(reportId),HttpStatus.OK);
-//            } catch (ObjectNotFoundException e) {
-//                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-//            }
-//        }
-//
-//    }
-//
-//    @PutMapping(value = "/reports/restaurants/{id}", params = "ban")
-//    public ResponseEntity handleRestaurantReport(@PathVariable("id") UUID reportId,
-//                                                 @RequestParam("ban") boolean ban) {
-//        if(ban) {
-//            try {
-//                restaurantService.banRestaurantById(restaurantReportsService.getRestaurantReportById(reportId).getRestaurant().getRestaurantId());
-//
-//                return new ResponseEntity<>(restaurantReportsService.closeRestaurantReport(reportId),HttpStatus.OK);
-//            } catch (ObjectNotFoundException e) {
-//                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-//            }
-//        } else {
-//            try {
-//                return new ResponseEntity<>(restaurantReportsService.closeRestaurantReport(reportId),HttpStatus.OK);
-//            } catch (ObjectNotFoundException e) {
-//                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-//            }
-//        }
-//    }
-//
-//    @GetMapping("/reports/users")
-//    public ResponseEntity<List<ReportDTO>> getAllOpenedUserReports() {
-//        try {
-//            List<UserReport> userReports = userReportsService.getAllOpenedUserReports();
-//            List<ReportDTO> mappedList = new ArrayList<>();
-//
-//            for(UserReport r: userReports) {
-//                mappedList.add(ReportsDTOMapper.mapUserReportToReportDTO(r));
-//            }
-//            return new ResponseEntity<>(mappedList,HttpStatus.OK);
-//
-//        } catch (ObjectNotFoundException e) {
-//            return new ResponseEntity<>(new ArrayList<>(),HttpStatus.OK);
-//        }
-//
-//    }
-//
+
+
+    @GetMapping("/reports/restaurants")
+    public ResponseEntity<List<ReportDTO>> getAllOpenedRestaurantReports(@RequestParam(value = "restaurantId",required = false) UUID restaurantId,
+                                                                         @RequestParam(value = "userId",required = false) UUID userId) {
+        List<RestaurantReport> restaurantReports;
+
+        if(userId == null && restaurantId == null) {
+            restaurantReports = restaurantReportsService.getAllOpenedRestaurantReports();
+        }
+        else if(userId != null && restaurantId != null) {
+            restaurantReports = restaurantReportsService.getRestaurantReportsByUserIdRestaurantId(userId,restaurantId);
+        }
+        else if(userId != null) {
+            restaurantReports = restaurantReportsService.getAllReportsByUserId(userId);
+        } else {
+             restaurantReports = restaurantReportsService.getRestaurantReportsByRestaurantId(restaurantId);
+         }
+
+        return new ResponseEntity<>(
+            restaurantReports.stream().map(ReportsDTOMapper::mapRestaurantReportToReportDTO).toList(),
+            HttpStatus.OK);
+
+    }
+
+    @GetMapping("/reports/restaurants/{id}")
+    public ResponseEntity<ReportDTO> getRestaurantReportById(@PathVariable("id") UUID id) {
+
+            return new ResponseEntity<>(ReportsDTOMapper.mapRestaurantReportToReportDTO(
+                restaurantReportsService.getRestaurantReportById(id)),HttpStatus.OK);
+
+        }
+
+    @GetMapping("/reports/users/{id}")
+    public ResponseEntity<ReportDTO> getUserReportById(@PathVariable("id") UUID id) {
+            return new ResponseEntity<>(ReportsDTOMapper.mapUserReportToReportDTO(
+                userReportsService.getUserReportById(id)),HttpStatus.OK);
+    }
+
+
+    @PutMapping(value = "/reports/restaurants/{id}", params = {"ban"})
+    public ResponseEntity handleRestaurantReport(@PathVariable("id") UUID reportId,
+                                           @RequestParam(value = "ban") boolean ban) {
+
+        if(ban) {
+            try {
+                userService.banUserById(userReportsService.getUserReportById(reportId).getUser().getUserId());
+
+                return new ResponseEntity<>(userReportsService.closeUserReport(reportId),HttpStatus.OK);
+            } catch (ObjectNotFoundException e) {
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            }
+        } else {
+            try {
+                return new ResponseEntity<>(userReportsService.closeUserReport(reportId),HttpStatus.OK);
+            } catch (ObjectNotFoundException e) {
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            }
+        }
+
+    }
+
+    @PutMapping(value = "/reports/users/{id}", params = "ban")
+    public ResponseEntity handleUserReport(@PathVariable("id") UUID reportId,
+                                                 @RequestParam("ban") boolean ban) {
+        if(ban) {
+
+            try {
+                restaurantService.banRestaurantById(restaurantReportsService.getRestaurantReportById(reportId).getRestaurant().getRestaurantId());
+
+                return new ResponseEntity<>(restaurantReportsService.closeRestaurantReport(reportId),HttpStatus.OK);
+            } catch (ObjectNotFoundException e) {
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            }
+        } else {
+            try {
+                return new ResponseEntity<>(restaurantReportsService.closeRestaurantReport(reportId),HttpStatus.OK);
+            } catch (ObjectNotFoundException e) {
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            }
+        }
+    }
+
 
 }

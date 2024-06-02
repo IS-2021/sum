@@ -59,11 +59,11 @@ public class UserService {
             .orElseThrow(() -> new UserNotFoundException("User not found with ID: " + id));
     }
 
-    public User unbanUser(UserDTO userDTO) {
-        User user = userRepository.findById(UUID.fromString(userDTO.id()))
-            .orElseThrow(() -> new UserNotFoundException("User not found with ID: " + UUID.fromString(userDTO.id())));
+    public void unbanUser(UUID userId) {
+        User user = userRepository.findById(userId)
+            .orElseThrow(() -> new UserNotFoundException("User not found with ID: " + userId));
         user.setBlocked(false);
-        return userRepository.save(user);
+        userRepository.save(user);
     }
 
     public User getUserByEmail(String email) {
