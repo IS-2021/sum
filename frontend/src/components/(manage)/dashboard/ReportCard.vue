@@ -16,8 +16,8 @@ interface ReportCardProps {
 defineProps<ReportCardProps>();
 
 const emits = defineEmits<{
-  (e: 'banUser', userId: Uuid): void;
-  (e: 'banRestaurant', restaurantId: Uuid): void;
+  (e: 'banUser', reportId: Uuid): void;
+  (e: 'banRestaurant', reportId: Uuid): void;
 }>();
 </script>
 
@@ -40,7 +40,7 @@ const emits = defineEmits<{
           </template>
           <template v-slot:description> Are you sure you want to ban this user? </template>
           <template v-slot:confirmButton>
-            <Button @click="emits('banUser', report.userId)" type="submit" variant="destructive">
+            <Button @click="emits('banUser', report.id)" type="submit" variant="destructive">
               Confirm
             </Button>
           </template>
@@ -54,11 +54,7 @@ const emits = defineEmits<{
           </template>
           <template v-slot:description> Are you sure you want to ban this restaurant? </template>
           <template v-slot:confirmButton>
-            <Button
-              @click="emits('banRestaurant', report.restaurantId)"
-              type="submit"
-              variant="destructive"
-            >
+            <Button @click="emits('banRestaurant', report.id)" type="submit" variant="destructive">
               Confirm
             </Button>
           </template>
