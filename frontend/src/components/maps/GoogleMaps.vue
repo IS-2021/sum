@@ -7,6 +7,7 @@ interface GMapsComponentProps {
   longitude: number;
   zoom?: number;
   panZoom?: number;
+  onClick?: (event: google.maps.MapMouseEvent) => void;
 }
 
 const props = withDefaults(defineProps<GMapsComponentProps>(), {
@@ -57,16 +58,10 @@ onMounted(async () => {
   //   map: map.value,
   // });
   //
-  // map.value.addListener('click', ({ latLng }: google.maps.MapMouseEvent) => {
-  //   if (!latLng) {
-  //     return;
-  //   }
-  //
-  //   setCoords({
-  //     latitude: latLng.lat(),
-  //     longitude: latLng.lng(),
-  //   });
-  // });
+
+  if (props.onClick) {
+    map.value.addListener('click', props.onClick);
+  }
 });
 </script>
 

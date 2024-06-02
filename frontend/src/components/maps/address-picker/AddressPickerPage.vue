@@ -55,6 +55,18 @@ watch(coordsReading, () => {
   setCoords(coords.value);
 });
 
+function handleMapsClick({ latLng }: google.maps.MapMouseEvent) {
+  if (!latLng) {
+    return;
+  }
+
+  coords.value = {
+    latitude: latLng.lat(),
+    longitude: latLng.lng(),
+  };
+  setCoords(coords.value);
+}
+
 function onSaveClick() {
   if (!address.value) {
     return;
@@ -66,7 +78,11 @@ function onSaveClick() {
 
 <template>
   <div class="grid max-h-svh w-full grid-cols-1 md:grid-cols-2">
-    <GoogleMaps :latitude="coords.latitude" :longitude="coords.longitude" />
+    <GoogleMaps
+      :latitude="coords.latitude"
+      :longitude="coords.longitude"
+      :onClick="handleMapsClick"
+    />
 
     <div class="grid-rows-5 p-10 md:grid md:h-svh">
       <slot name="page-header">
