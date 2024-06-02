@@ -118,10 +118,10 @@ function onSaveClick() {
 </script>
 
 <template>
-  <div class="w-full grid grid-cols-1 md:grid-cols-2 max-h-svh">
-    <div class="hidden md:block h-svh border-r border-neutral-300" ref="mapDiv" />
+  <div class="grid max-h-svh w-full grid-cols-1 md:grid-cols-2">
+    <div class="hidden h-svh border-r border-neutral-300 md:block" ref="mapDiv" />
 
-    <div class="p-10 md:grid md:h-svh grid-rows-5">
+    <div class="grid-rows-5 p-10 md:grid md:h-svh">
       <slot name="page-header">
         <div />
       </slot>
@@ -130,7 +130,7 @@ function onSaveClick() {
         <slot name="content-header" />
 
         <div>
-          <div class="max-w-screen-sm w-full">
+          <div class="w-full max-w-screen-sm">
             <p class="mb-2 text-neutral-700">Enter your address:</p>
             <AddressAutocompleteInput
               popover-class="md:w-80 lg:w-full lg:max-w-prose"
@@ -138,15 +138,15 @@ function onSaveClick() {
             />
 
             <div v-if="isGeolocationSupported">
-              <p class="mt-3 mb-2 text-neutral-700">or use your current location:</p>
+              <p class="mb-2 mt-3 text-neutral-700">or use your current location:</p>
               <Button @click="resumeGeolocation" variant="outline">
-                <LocateFixedIcon class="h-4 w-4 mr-2" /> Use my current location
+                <LocateFixedIcon class="mr-2 h-4 w-4" /> Use my current location
               </Button>
             </div>
           </div>
 
           <div class="mt-8" v-if="address">
-            <Alert class="bg-secondary/25 mb-3">
+            <Alert class="mb-3 bg-secondary/25">
               <MapPinIcon class="h-4 w-4" />
               <AlertTitle>Selected address</AlertTitle>
               <AlertDescription>
