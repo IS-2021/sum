@@ -12,7 +12,7 @@ import { useBookingCard } from '@/components/(manage)/dashboard/useBookingCard';
 import type { BookingDTO } from '@/lib/api-model';
 import { Button } from '@/components/ui/button';
 import { useGetUsersId } from '@/lib/api/users/users';
-import { computed, unref } from 'vue';
+import { computed, ref, unref } from 'vue';
 import {
   Dialog,
   DialogContent,
@@ -21,12 +21,17 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
+import ReportUserComponent from '@/components/(manage)/bookings/ReportUserComponent.vue';
+import { useUser } from '@/composables/useUser';
 
 interface BookingCardProps {
   booking: BookingDTO;
 }
 
 const props = defineProps<BookingCardProps>();
+
+const { user } = useUser();
+const buttonMessage = ref('Report user');
 
 const { data } = useGetUsersId(props.booking.userId);
 const client = computed(() => unref(data)?.data);
@@ -82,9 +87,17 @@ const { isPending, remainingTime } = useBookingCard(
         <Clock4Icon />
       </p>
     </div>
-    <div v-if="client">
+    <div v-if="client" class="mb-8">
       <p>Client: {{ client.firstName }} {{ client.secondName }}</p>
       <p>Phone: {{ client.phoneNumber }}</p>
     </div>
+
+    <ReportUserComponent
+      v-if="user"
+      :restaurantId="user.id"
+      :userId="booking.userId"
+      :button-message="buttonMessage"
+      :booking-status="booking.status"
+    />
   </div>
 </template>
