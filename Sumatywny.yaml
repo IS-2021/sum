@@ -450,12 +450,8 @@ paths:
             application/json:
               schema:
                 type: array
-<<<<<<< HEAD
                 items:
                   $ref: "#/components/schemas/ReportDTO"
-=======
-                items: {}
->>>>>>> main
           description: If nothing to return
     post:
       requestBody:
