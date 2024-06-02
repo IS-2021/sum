@@ -31,6 +31,20 @@ export function useFavourites({ userId }: UseFavouritesProps) {
     }
   });
 
+  const checkIfFavourite = (restaurantId: string) => {
+    const found = [];
+    favourites.value.forEach((element) => {
+      if (element.id === restaurantId) {
+        found.push(element);
+      }
+    });
+    if (found.length === 0) {
+      return false;
+    } else {
+      return true;
+    }
+  };
+
   const handleDeleteFavourite = async (isFavourite: Boolean, restaurantId: string) => {
     if (isFavourite) {
       return;
@@ -66,5 +80,6 @@ export function useFavourites({ userId }: UseFavouritesProps) {
     favourites,
     hasAnyFavourites,
     handleDeleteFavourite,
+    checkIfFavourite,
   };
 }

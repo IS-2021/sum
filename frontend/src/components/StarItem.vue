@@ -1,17 +1,17 @@
 <script setup lang="ts">
 import { Star } from 'lucide-vue-next';
-import { ref } from 'vue';
 import { Button } from './ui/button';
+import { ref } from 'vue';
 
 const props = defineProps<{
-  isFavourite: Boolean;
+  isFavourite: boolean;
 }>();
+
+const isFavourite = ref(props.isFavourite);
 
 const emit = defineEmits<{
   (e: 'favouriteChange', isFavourite: Boolean): void;
 }>();
-
-const isFavourite = ref(props.isFavourite);
 
 const toggleFavourite = () => {
   isFavourite.value = !isFavourite.value;
