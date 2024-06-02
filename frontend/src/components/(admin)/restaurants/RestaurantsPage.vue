@@ -5,6 +5,7 @@ import { computed, type ComputedRef } from 'vue';
 import type { RestaurantDTO } from '@/lib/api-model';
 import RestaurantCard from '@/components/(admin)/restaurants/RestaurantCard.vue';
 import SearchInput from '@/components/(admin)/common/SearchInput.vue';
+import RestaurantStatusSelect from '@/components/(admin)/common/RestaurantStatusSelect.vue';
 
 const { user, isLoaded } = useUser();
 
@@ -22,18 +23,27 @@ const searchText = defineModel<string>('searchText', {
   type: String,
   default: '',
 });
+const statusFilter = defineModel<string>('statusFilter', {
+  default: 'all',
+});
 
 type FilterableRestaurantProperties = 'name' | 'phoneNumber' | 'id';
 
 const filteredRestaurants = computed(() => {
   const propertiesToFilterBy: FilterableRestaurantProperties[] = ['name', 'phoneNumber', 'id'];
 
-  return restaurants.value.filter((restaurant: RestaurantDTO) => {
+  const filteredByProperty = restaurants.value.filter((restaurant: RestaurantDTO) => {
     return propertiesToFilterBy.some((property) => {
       const restaurantProperty = restaurant[property];
       return restaurantProperty.toLowerCase().includes(searchText.value.toLowerCase());
     });
   });
+
+  return statusFilter.value === 'all'
+    ? filteredByProperty
+    : filteredByProperty.filter(
+        (restaurant: RestaurantDTO) => restaurant.status === statusFilter.value,
+      );
 });
 </script>
 
@@ -45,6 +55,7 @@ const filteredRestaurants = computed(() => {
 
     <div class="flex flex-wrap gap-2 lg:flex-nowrap">
       <SearchInput v-model="searchText" />
+      <RestaurantStatusSelect @update:modelValue="(val) => (statusFilter = val)" />
     </div>
   </div>
 
