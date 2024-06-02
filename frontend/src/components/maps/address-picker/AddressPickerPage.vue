@@ -51,7 +51,6 @@ watch(coordsReading, () => {
     latitude: coordsReading.value?.latitude ?? coords.value.latitude,
     longitude: coordsReading.value?.longitude ?? coords.value.longitude,
   };
-
   setCoords(coords.value);
 });
 
@@ -79,6 +78,7 @@ function onSaveClick() {
 <template>
   <div class="grid max-h-svh w-full grid-cols-1 md:grid-cols-2">
     <GoogleMaps
+      class="hidden h-svh border-r border-neutral-300 md:block"
       :latitude="coords.latitude"
       :longitude="coords.longitude"
       :onClick="handleMapsClick"
