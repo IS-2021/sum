@@ -7,10 +7,7 @@ meta:
 import { useHead } from '@unhead/vue';
 import { useRoute } from 'vue-router/auto';
 import { computed } from 'vue';
-import {
-  putAdminRestaurantsId,
-  useGetAdminRestaurantsId,
-} from '@/lib/api/admin-restaurants/admin-restaurants';
+import { useGetAdminRestaurantsId } from '@/lib/api/admin-restaurants/admin-restaurants';
 import RestaurantStatus from '@/components/(manage)/common/RestaurantStatus.vue';
 import { Button } from '@/components/ui/button';
 import ImagePreview from '@/components/(manage)/common/image/ImagePreview.vue';
@@ -20,13 +17,15 @@ import SettingsSection from '@/components/(manage)/settings/SettingsSection.vue'
 import { formatAddress } from '@/lib/googleMaps';
 import { MapPinIcon, PhoneIcon, ThumbsUpIcon } from 'lucide-vue-next';
 import OpeningHoursRow from '@/components/restaurants/OpeningHoursRow.vue';
-import { putRestaurantsDeactivateId } from '@/lib/api/restaurants/restaurants';
 import { useUserRating } from '@/components/user-rating/useUserRating';
 import UserRating from '@/components/user-rating/UserRating.vue';
-import { useUserRestaurantReports } from '@/components/(admin)/composables/useUserRestaurantReports';
-import { useRestaurantUserReports } from '@/components/(admin)/composables/useRestaurantUserReports';
+import { useReportsFromRestaurant } from '@/components/(admin)/composables/useReportsFromRestaurant';
+import { useReportsAboutRestaurant } from '@/components/(admin)/composables/useReportsAboutRestaurant';
 import RestaurantReportsViewer from '@/components/(admin)/reports/RestaurantReportsViewer.vue';
-import { banRestaurant, banUser } from '@/components/(admin)/reports/api';
+import {
+  closeReportAboutRestaurant,
+  updateRestaurantStatus,
+} from '@/components/(admin)/reports/api';
 
 useHead({
   title: 'Restaurant',
@@ -42,11 +41,11 @@ const { totalRatings } = useUserRating(
   restaurant.value?.dislikesCount,
 );
 
-const { userRestaurantReports } = useUserRestaurantReports(restaurantId);
-const { restaurantUserReports } = useRestaurantUserReports(restaurantId);
+const { reportsAboutRestaurant } = useReportsAboutRestaurant(restaurantId);
+const { reportsFromRestaurant } = useReportsFromRestaurant(restaurantId);
 
 async function handleRestaurantActivate() {
-  const res = await putAdminRestaurantsId(restaurantId);
+  const res = await updateRestaurantStatus(restaurantId, 'Active');
 
   if (res.status === 200) {
     await refetch();
@@ -54,7 +53,7 @@ async function handleRestaurantActivate() {
 }
 
 async function handleRestaurantDeactivate() {
-  const res = await putRestaurantsDeactivateId(restaurantId);
+  const res = await updateRestaurantStatus(restaurantId, 'Inactive');
 
   if (res.status === 200) {
     await refetch();
@@ -62,7 +61,7 @@ async function handleRestaurantDeactivate() {
 }
 
 async function handleBanRestaurant(reportId: string) {
-  const res = await banRestaurant(reportId);
+  const res = await closeReportAboutRestaurant(reportId, true);
 
   if (res.status === 200) {
     await refetch();
