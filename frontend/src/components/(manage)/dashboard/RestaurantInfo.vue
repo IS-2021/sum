@@ -3,6 +3,7 @@ import StatsCard from '@/components/(manage)/dashboard/StatsCard.vue';
 import { useUserRating } from '@/components/user-rating/useUserRating';
 import type { BookingDTO, RestaurantDTO } from '@/lib/api-model';
 import { CookingPotIcon, ThumbsUpIcon } from 'lucide-vue-next';
+import RestaurantStatus from '@/components/(manage)/common/RestaurantStatus.vue';
 
 const props = defineProps<{
   restaurant: RestaurantDTO;
@@ -19,18 +20,18 @@ const { totalRatings, ratingPercentage } = useUserRating(
 
 <template>
   <div v-if="restaurant" class="mb-10">
-    <h1 class="text-2xl font-semibold tracking-tight mb-2">
+    <h1 class="mb-2 text-2xl font-semibold tracking-tight">
       {{ restaurant.name }}
     </h1>
-    <p class="text-lg tracking-tight">Current status: {{ restaurant.status }}</p>
+    <RestaurantStatus :status="restaurant.status" />
   </div>
 
-  <div class="flex sm:gap-6 mb-8 flex-col sm:flex-row">
+  <div class="mb-8 flex flex-col sm:flex-row sm:gap-6">
     <StatsCard measure="Positive ratings" :value="ratingPercentage">
-      <ThumbsUpIcon class="sm:w-9 sm:h-9 text-primary" />
+      <ThumbsUpIcon class="text-primary sm:h-9 sm:w-9" />
     </StatsCard>
     <StatsCard v-if="savedMeals" measure="Meals saved" :value="savedMeals.length.toString()">
-      <CookingPotIcon class="sm:w-9 sm:h-9 text-primary" />
+      <CookingPotIcon class="text-primary sm:h-9 sm:w-9" />
     </StatsCard>
   </div>
 </template>

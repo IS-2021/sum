@@ -1,18 +1,19 @@
 <script setup lang="ts">
 import { useHead } from '@unhead/vue';
-import StatsCard from '@/components/(manage)/dashboard/StatsCard.vue';
-import { CookingPotIcon, ThumbsUpIcon } from 'lucide-vue-next';
 import BookingCard from '@/components/(manage)/dashboard/BookingCard.vue';
-import { addMinutes, subDays } from 'date-fns';
 import ReportsPage from '../reports/ReportsPage.vue';
 import { useUser } from '@/composables/useUser';
+import type { BookingDTO, RestaurantDTO } from '@/lib/api-model';
+import { putBookingsId, useGetBookings } from '@/lib/api/bookings/bookings';
+import { computed, unref } from 'vue';
+import RestaurantInfo from '@/components/(manage)/dashboard/RestaurantInfo.vue';
 
 useHead({
   title: 'Restaurant Dashboard',
 });
 
 const { user } = useUser();
-=======
+
 const props = defineProps<{
   restaurant: RestaurantDTO;
 }>();
@@ -51,10 +52,10 @@ async function updateBookingStatus(booking: BookingDTO) {
 
   <div class="flex flex-col gap-10 xl:flex-row">
     <div
-      class="space-y-5 p-4 bg-neutral-100 border border-neutral-200 max-w-screen-md w-full flex-grow"
+      class="w-full max-w-screen-md flex-grow space-y-5 border border-neutral-200 bg-neutral-100 p-4"
     >
       <div v-if="bookings">
-        <h2 class="font-semibold mb-4">Current bookings ({{ activeBookings.length }})</h2>
+        <h2 class="mb-4 font-semibold">Current bookings ({{ activeBookings.length }})</h2>
         <div v-if="activeBookings.length === 0">
           <p>No active bookings</p>
         </div>
