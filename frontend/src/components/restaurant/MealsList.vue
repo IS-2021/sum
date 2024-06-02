@@ -21,16 +21,17 @@ const { user } = useUser();
 
 const amount = ref(0);
 const unwantedIngredients: Ref<IngredientDTO[]> = ref([]);
-let filteredMeals: Ref<MealDTO[]> = ref(props.meals);
+const mealsWithIngredients = props.meals.filter((meal) => meal.ingredients.length !== 0);
+let filteredMeals: Ref<MealDTO[]> = ref(mealsWithIngredients);
 
 function updateFilters(list: IngredientDTO[]) {
   unwantedIngredients.value = list;
   filteredMeals.value = [];
-  props.meals.forEach((e) => {
+  mealsWithIngredients.forEach((e) => {
     filteredMeals.value.push(e);
   });
 
-  filteredMeals.value = props.meals.filter((meal) => {
+  filteredMeals.value = mealsWithIngredients.filter((meal) => {
     const ingredients = meal.ingredients?.map((ingredient) => ingredient.name);
     return !unwantedIngredients.value.some((ingredient) => ingredients?.includes(ingredient.name));
   });
