@@ -186,15 +186,16 @@ public class AdminController {
 
         if(ban) {
             try {
-                userService.banUserById(userReportsService.getUserReportById(reportId).getUser().getUserId());
+                RestaurantReport restaurantReport = restaurantReportsService.getRestaurantReportById(reportId);
+                userService.banUserById(restaurantReport.getUser().getUserId());
 
-                return new ResponseEntity<>(userReportsService.closeUserReport(reportId),HttpStatus.OK);
+                return new ResponseEntity<>(restaurantReportsService.closeRestaurantReport(reportId),HttpStatus.OK);
             } catch (ObjectNotFoundException e) {
                 return new ResponseEntity<>(HttpStatus.NOT_FOUND);
             }
         } else {
             try {
-                return new ResponseEntity<>(userReportsService.closeUserReport(reportId),HttpStatus.OK);
+                return new ResponseEntity<>(restaurantReportsService.closeRestaurantReport(reportId),HttpStatus.OK);
             } catch (ObjectNotFoundException e) {
                 return new ResponseEntity<>(HttpStatus.NOT_FOUND);
             }
@@ -208,15 +209,16 @@ public class AdminController {
         if(ban) {
 
             try {
-                restaurantService.banRestaurantById(restaurantReportsService.getRestaurantReportById(reportId).getRestaurant().getRestaurantId());
+                UserReport userReport = userReportsService.getUserReportById(reportId);
+                restaurantService.banRestaurantById(userReport.getRestaurant().getRestaurantId());
 
-                return new ResponseEntity<>(restaurantReportsService.closeRestaurantReport(reportId),HttpStatus.OK);
+                return new ResponseEntity<>(userReportsService.closeUserReport(reportId),HttpStatus.OK);
             } catch (ObjectNotFoundException e) {
                 return new ResponseEntity<>(HttpStatus.NOT_FOUND);
             }
         } else {
             try {
-                return new ResponseEntity<>(restaurantReportsService.closeRestaurantReport(reportId),HttpStatus.OK);
+                return new ResponseEntity<>(userReportsService.closeUserReport(reportId),HttpStatus.OK);
             } catch (ObjectNotFoundException e) {
                 return new ResponseEntity<>(HttpStatus.NOT_FOUND);
             }
