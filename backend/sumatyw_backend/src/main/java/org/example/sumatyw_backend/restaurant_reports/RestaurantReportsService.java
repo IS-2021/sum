@@ -41,14 +41,8 @@ public class RestaurantReportsService {
         }
     }
 
-    public List<RestaurantReport> getAllReportsByRestaurant(UUID restaurantId) {
-
-        List<RestaurantReport> list = restaurantReportRepository.findAllByUserUserIdAndIsOpenTrue(restaurantId);
-
-        if(list.isEmpty()) {
-            return new ArrayList<>();
-        }
-        return list;
+    public List<RestaurantReport> getAllReportsByUserId(UUID userId) {
+        return restaurantReportRepository.findAllByUserUserIdAndIsOpenTrue(userId);
     }
 
     public ReportDTO closeRestaurantReport(UUID restaurantReportId) {
