@@ -6,5 +6,5 @@
  */
 
 export type PutAdminUsersIdParams = {
-  banned: boolean;
+  ban: boolean;
 };
