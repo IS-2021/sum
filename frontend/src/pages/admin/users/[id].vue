@@ -16,6 +16,7 @@ import UserStatusIcon from '@/components/(admin)/users/UserStatusIcon.vue';
 import ConfirmDialog from '@/components/dialogs/ConfirmDialog.vue';
 import { useReportsAboutUser } from '@/components/(admin)/composables/useReportsAboutUser';
 import { useReportsFromUser } from '@/components/(admin)/composables/useReportsFromUser';
+import UserReportsViewer from '@/components/(admin)/reports/UserReportsViewer.vue';
 
 useHead({
   title: 'User',
@@ -81,6 +82,17 @@ async function handleUnbanUser() {}
           <li><MailIcon class="mr-2 inline-block h-4 w-4" />Email: {{ user.email }}</li>
         </ul>
       </div>
+    </SettingsSection>
+
+    <SettingsSection>
+      <h2 class="text-lg font-semibold tracking-tight">Reports</h2>
+      <Separator class="mb-4 mt-2" />
+
+      <UserReportsViewer
+        :show-closed-reports="true"
+        :reports-from-user="reportsFromUser"
+        :reports-about-user="reportsAboutUser"
+      />
     </SettingsSection>
   </div>
 </template>
