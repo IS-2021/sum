@@ -62,7 +62,7 @@ const filteredRestaurants = computed(() => {
   <div v-if="!user || !isLoaded">loading...</div>
 
   <div
-    v-else-if="restaurants"
+    v-else-if="filteredRestaurants.length > 0"
     class="mb-10 grid max-w-screen-xl grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2"
   >
     <RestaurantCard
@@ -70,5 +70,8 @@ const filteredRestaurants = computed(() => {
       :key="restaurant.id"
       :restaurant="restaurant"
     />
+  </div>
+  <div v-else>
+    <p>No restaurants found</p>
   </div>
 </template>
