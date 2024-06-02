@@ -7,15 +7,16 @@ interface RestaurantReportsViewerProps {
   /**
    * Reports made by users about the restaurant.
    */
-  userRestaurantReports: ReportDTO[];
+  reportsAboutRestaurant: ReportDTO[];
   /**
    * Reports made by the restaurant about users.
    */
-  restaurantUserReports: ReportDTO[];
+  reportsAboutUser: ReportDTO[];
+  showClosedReports: boolean;
 }
 
 withDefaults(defineProps<RestaurantReportsViewerProps>(), {
-  defaultTab: 'userRestaurant',
+  showClosedReports: true,
 });
 
 const emits = defineEmits<{
@@ -24,9 +25,9 @@ const emits = defineEmits<{
   (e: 'closeReport', reportId: Uuid, reportAbout: 'restaurant' | 'user'): void;
 }>();
 
-const banRestaurantHandler = (reportId: Uuid) => {
+function banRestaurantHandler(reportId: Uuid) {
   emits('banRestaurant', reportId);
-};
+}
 function banUserHandler(reportId: Uuid) {
   emits('banUser', reportId);
 }
@@ -42,8 +43,8 @@ function closeReportHandler(reportId: Uuid, reportAbout: 'restaurant' | 'user') 
       <TabsTrigger value="restaurantUsers"> By restaurant </TabsTrigger>
     </TabsList>
     <TabsContent value="userRestaurant">
-      <ul v-if="userRestaurantReports.length > 0">
-        <li v-for="report in userRestaurantReports" :key="report.id">
+      <ul v-if="reportsAboutRestaurant.length > 0">
+        <li v-for="report in reportsAboutRestaurant" :key="report.id">
           <ReportCard
             @ban-user="banUserHandler"
             @ban-restaurant="banRestaurantHandler"
@@ -57,8 +58,8 @@ function closeReportHandler(reportId: Uuid, reportAbout: 'restaurant' | 'user') 
       <p v-else class="mt-4">No one reported this restaurant.</p>
     </TabsContent>
     <TabsContent value="restaurantUsers">
-      <ul v-if="restaurantUserReports.length > 0">
-        <li v-for="report in restaurantUserReports" :key="report.id">
+      <ul v-if="reportsAboutUser.length > 0">
+        <li v-for="report in reportsAboutUser" :key="report.id">
           <ReportCard
             @ban-user="banUserHandler"
             @ban-restaurant="banRestaurantHandler"

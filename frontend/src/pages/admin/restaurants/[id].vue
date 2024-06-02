@@ -162,8 +162,8 @@ async function handleCloseReport(reportId: string, reportAbout: 'user' | 'restau
           @ban-restaurant="handleBanRestaurant"
           @close-report="handleCloseReport"
           :show-closed-reports="true"
-          :restaurant-user-reports="reportsFromRestaurant"
-          :user-restaurant-reports="reportsAboutRestaurant"
+          :reports-about-user="reportsFromRestaurant"
+          :reports-about-restaurant="reportsAboutRestaurant"
         />
       </SettingsSection>
     </div>
