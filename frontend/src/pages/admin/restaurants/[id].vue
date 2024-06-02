@@ -64,6 +64,14 @@ async function handleRestaurantDeactivate() {
   }
 }
 
+async function handleRestaurantUnban() {
+  const res = await updateRestaurantStatus(restaurantId, 'Inactive');
+
+  if (res.status === 200) {
+    await refetch();
+  }
+}
+
 async function handleBanRestaurant(reportId: string) {
   const res = await closeReportAboutRestaurant(reportId, true);
 
@@ -123,6 +131,13 @@ async function handleCloseReport(reportId: string, reportAbout: 'user' | 'restau
               variant="secondary"
             >
               Deactivate
+            </Button>
+            <Button
+              @click="handleRestaurantUnban"
+              v-if="restaurant.status === 'Banned'"
+              variant="secondary"
+            >
+              Unban
             </Button>
           </div>
 
