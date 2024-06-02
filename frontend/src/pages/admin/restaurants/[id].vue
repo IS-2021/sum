@@ -95,7 +95,7 @@ async function handleCloseReport(reportId: string, reportAbout: 'user' | 'restau
     <h1 class="mb-10 text-2xl font-semibold tracking-tight">{{ restaurant.name }}</h1>
 
     <div class="grid-cols-2 gap-10 2xl:grid">
-      <SettingsSection class="pb-8">
+      <SettingsSection class="h-fit pb-8">
         <h2 class="text-lg font-semibold tracking-tight">Restaurant profile</h2>
         <Separator class="mb-4 mt-2" />
 
@@ -165,7 +165,7 @@ async function handleCloseReport(reportId: string, reportAbout: 'user' | 'restau
         </ul>
       </SettingsSection>
 
-      <SettingsSection>
+      <SettingsSection class="h-fit">
         <h2 class="text-lg font-semibold tracking-tight">Reports</h2>
         <Separator class="mb-4 mt-2" />
 
