@@ -146,7 +146,7 @@ public class RestaurantReportServiceTest {
         given(restaurantReportRepository.findByIsOpenIsTrue()).willReturn(restaurantReports);
 
         // when
-        List<ReportDTO> retrievedReports = restaurantReportsService.getAllOpenedRestaurantReports();
+        List<RestaurantReport> retrievedReports = restaurantReportsService.getAllOpenedRestaurantReports();
 
         // then
         assertThat(retrievedReports.size()).isEqualTo(restaurantReports.size());
