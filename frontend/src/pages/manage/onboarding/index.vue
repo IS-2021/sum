@@ -12,15 +12,8 @@ import {
 import { useForm } from 'vee-validate';
 import { useStepper } from '@vueuse/core';
 import { cn } from '@/lib/utils';
-import {
-  AlertCircleIcon,
-  ArrowRightIcon,
-  ChevronLeftIcon,
-  ChevronRightIcon,
-  LogOutIcon,
-} from 'lucide-vue-next';
+import { ArrowRightIcon, ChevronLeftIcon, ChevronRightIcon, LogOutIcon } from 'lucide-vue-next';
 import Logo from '@/components/Logo.vue';
-import AddressAutocompleteInput from '@/components/maps/autocomplete/AddressAutocompleteInput.vue';
 import { useAddress } from '@/composables/maps/useAddress';
 import { postRestaurants } from '@/lib/api/restaurants/restaurants';
 import { useRouter } from 'vue-router/auto';
@@ -30,11 +23,11 @@ import {
   RestaurantHoursFields,
 } from '@/components/(manage)/common/fields';
 import HoursFormTip from '@/components/(manage)/common/HoursFormTip.vue';
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import type { ProblemDetailResponse } from '@/lib/api-model';
+import type { AddressDTO, ProblemDetailResponse } from '@/lib/api-model';
 import type { ImageChangeEvent, ImageFieldData } from '@/components/(manage)/common/fields/types';
 import { uploadRestaurantImage } from '@/components/(manage)/common/image/api';
 import ImagePreview from '@/components/(manage)/common/image/ImagePreview.vue';
+import AddressPicker from '@/components/(manage)/onboarding/AddressPicker.vue';
 
 useHead({
   title: 'Complete restaurant profile',
@@ -124,6 +117,13 @@ function setImage({ file, previewUrl }: ImageChangeEvent) {
   };
 }
 
+function setFormAddress(address: AddressDTO) {
+  form.setValues({
+    ...form.values,
+    address,
+  });
+}
+
 async function handleSaveRestaurantImage() {
   if (!user.value?.id || !image.value.file) {
     return;
@@ -175,18 +175,7 @@ async function handleSaveRestaurantImage() {
 
         <!-- Location -->
         <div :class="cn('hidden', isCurrent('location') && 'block')">
-          <AddressAutocompleteInput
-            popover-class="md:w-80 lg:w-full lg:max-w-prose"
-            @on-place-select="setPlaceId"
-          />
-
-          <Alert variant="destructive" v-if="errorMessage" class="my-4 bg-red-100">
-            <AlertCircleIcon class="h-4 w-4" />
-            <AlertTitle>Failed to register your restaurant</AlertTitle>
-            <AlertDescription>
-              {{ errorMessage }}
-            </AlertDescription>
-          </Alert>
+          <AddressPicker @save:address="setFormAddress" />
         </div>
 
         <div class="mt-8 flex gap-2">
