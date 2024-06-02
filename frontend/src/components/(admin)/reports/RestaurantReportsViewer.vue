@@ -43,7 +43,7 @@ function closeReportHandler(reportId: Uuid, reportAbout: 'restaurant' | 'user') 
       <TabsTrigger value="restaurantUsers"> By restaurant </TabsTrigger>
     </TabsList>
     <TabsContent value="userRestaurant">
-      <ul v-if="reportsAboutRestaurant.length > 0">
+      <ul v-if="reportsAboutRestaurant.length > 0" class="space-y-2">
         <li v-for="report in reportsAboutRestaurant" :key="report.id">
           <ReportCard
             @ban-user="banUserHandler"
