@@ -14,6 +14,8 @@ import { Separator } from '@/components/ui/separator';
 import { Button } from '@/components/ui/button';
 import UserStatusIcon from '@/components/(admin)/users/UserStatusIcon.vue';
 import ConfirmDialog from '@/components/dialogs/ConfirmDialog.vue';
+import { useReportsAboutUser } from '@/components/(admin)/composables/useReportsAboutUser';
+import { useReportsFromUser } from '@/components/(admin)/composables/useReportsFromUser';
 
 useHead({
   title: 'User',
@@ -24,6 +26,9 @@ const userId = route.params.id;
 
 const { data, isLoading } = useGetAdminUsersId(userId);
 const user = computed(() => data.value?.data);
+
+const { reportsAboutUser } = useReportsAboutUser(userId);
+const { reportsFromUser } = useReportsFromUser(userId);
 
 async function handleUnbanUser() {}
 </script>
