@@ -32,7 +32,6 @@ const areMealsLoading = getMeals(id).areMealsLoading;
 const imgSrc = computed(() => getImageUrl(restaurant.value?.imageUrl));
 const imageAltText = `${restaurant.value?.name} restaurant`;
 
-const isFavourite = ref(false);
 const categories = ref(['Kategoria 1']);
 const { user } = useUser();
 
@@ -64,7 +63,12 @@ const { totalRatings, ratingPercentage } = useUserRating(
           <div class="flex flex-row mb-4 gap-4 items-center">
             <p class="font-semibold text-3xl">{{ restaurant.name }}</p>
             <RequireAuth>
-              <StarItem :isFavourite="isFavourite" @favourite-change="postFavourite" />
+              <StarItem
+                v-if="user"
+                :userId="user.id"
+                :restaurantId="id"
+                @favourite-change="postFavourite"
+              />
             </RequireAuth>
 
             <div class="flex-grow" />
