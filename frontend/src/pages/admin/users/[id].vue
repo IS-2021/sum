@@ -91,7 +91,7 @@ async function handleCloseReport(reportId: string, reportAbout: 'user' | 'restau
     </h1>
 
     <div class="grid-cols-2 gap-10 2xl:grid">
-      <SettingsSection>
+      <SettingsSection class="h-fit">
         <h2 class="text-lg font-semibold tracking-tight">Profile details</h2>
         <Separator class="mb-4 mt-2" />
 
@@ -135,7 +135,7 @@ async function handleCloseReport(reportId: string, reportAbout: 'user' | 'restau
         </div>
       </SettingsSection>
 
-      <SettingsSection>
+      <SettingsSection class="h-fit">
         <h2 class="text-lg font-semibold tracking-tight">Reports</h2>
         <Separator class="mb-4 mt-2" />
 
