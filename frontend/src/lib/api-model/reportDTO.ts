@@ -10,6 +10,7 @@ import type { Timestamp } from './timestamp';
 export interface ReportDTO {
   cause: string;
   id: Uuid;
+  isOpen: boolean;
   restaurantId: Uuid;
   timestamp: Timestamp;
   userId: Uuid;

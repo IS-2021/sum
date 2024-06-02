@@ -450,7 +450,8 @@ paths:
             application/json:
               schema:
                 type: array
-                items: {}
+                items:
+                  $ref: "#/components/schemas/ReportDTO"
           description: If nothing to return
     post:
       requestBody:
@@ -1407,6 +1408,7 @@ components:
         - userId
         - timestamp
         - id
+        - isOpen
       type: object
       properties:
         cause:
@@ -1425,6 +1427,9 @@ components:
         userId:
           $ref: "#/components/schemas/UUID"
           description: ""
+        isOpen:
+          description: ""
+          type: boolean
     timestamp:
       description: ""
       type: integer
