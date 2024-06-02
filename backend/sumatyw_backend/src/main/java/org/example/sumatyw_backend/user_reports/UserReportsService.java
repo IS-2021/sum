@@ -39,6 +39,18 @@ public class UserReportsService {
         }
     }
 
+    public List<UserReport> getAllUserReportsByUserId(UUID userId) {
+        return userReportsRepository.findAllByUserUserIdAndIsOpenTrue(userId);
+    }
+
+    public List<UserReport> getAllUserReportByRestaurantId(UUID restaurantId) {
+        return userReportsRepository.findAllByRestaurantRestaurantIdAndIsOpenTrue(restaurantId);
+    }
+
+    public List<UserReport> getUserReportByRestaurantAndUserId(UUID restaurantId, UUID userId) {
+        return userReportsRepository.findAllByRestaurantRestaurantIdAndUserUserIdAndIsOpenTrue(restaurantId, userId);
+    }
+
     public List<UserReport> getAllReportsUser(UUID restaurantId) {
 
         List<UserReport> list = userReportsRepository.findAllByRestaurantRestaurantIdAndIsOpenTrue(restaurantId);
@@ -73,12 +85,6 @@ public class UserReportsService {
     }
 
     public List<UserReport> getAllOpenedUserReports() {
-
-        if(!userReportsRepository.findByIsOpenIsTrue().isEmpty()) {
-            return userReportsRepository.findByIsOpenIsTrue();
-        } else {
-            throw new ObjectNotFoundException("No opened reports present in database.");
-        }
-
+        return userReportsRepository.findByIsOpenIsTrue();
     }
 }
