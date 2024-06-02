@@ -16,7 +16,6 @@ import { computed, unref } from 'vue';
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,

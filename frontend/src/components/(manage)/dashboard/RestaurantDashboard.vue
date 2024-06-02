@@ -1,59 +1,74 @@
 <script setup lang="ts">
 import { useHead } from '@unhead/vue';
-import StatsCard from '@/components/(manage)/dashboard/StatsCard.vue';
-import { CookingPotIcon, ThumbsUpIcon } from 'lucide-vue-next';
-import BookingCard from '@/components/(manage)/dashboard/BookingCard.vue';
-import { addMinutes, subDays } from 'date-fns';
+import { subDays } from 'date-fns';
 import ReportCard from '@/components/(manage)/dashboard/ReportCard.vue';
+import type { BookingDTO, RestaurantDTO } from '@/lib/api-model';
+import { computed, unref } from 'vue';
+import { putBookingsId, useGetBookings } from '@/lib/api/bookings/bookings';
+import BookingCard from '@/components/(manage)/dashboard/BookingCard.vue';
+import RestaurantInfo from '@/components/(manage)/dashboard/RestaurantInfo.vue';
 
 useHead({
   title: 'Restaurant Dashboard',
 });
+
+const props = defineProps<{
+  restaurant: RestaurantDTO;
+}>();
+
+const { data, refetch } = useGetBookings(
+  { restaurantId: props.restaurant.id },
+  {
+    query: {
+      refetchInterval: 1000,
+    },
+  },
+);
+const bookings = computed(() => unref(data)?.data);
+const activeBookings = computed<BookingDTO[]>(() => {
+  if (!bookings.value || bookings.value.length === 0) {
+    return [];
+  }
+
+  return bookings.value.filter((booking) => booking.status === 'Active');
+});
+
+async function updateBookingStatus(booking: BookingDTO) {
+  const res = await putBookingsId(booking.bookingId, {
+    ...booking,
+    status: 'PickedUp',
+  });
+
+  if (res.status === 200) {
+    await refetch();
+  }
+}
 </script>
 
 <template>
-  <h1 class="text-2xl font-semibold tracking-tight mb-10">
-    Some local restaurant name that is kinda long
-  </h1>
-
-  <div class="flex sm:gap-6 mb-8 flex-col sm:flex-row">
-    <StatsCard measure="Positive ratings" value="97%">
-      <ThumbsUpIcon class="sm:w-9 sm:h-9 text-primary" />
-    </StatsCard>
-    <StatsCard measure="Meals saved" value="34">
-      <CookingPotIcon class="sm:w-9 sm:h-9 text-primary" />
-    </StatsCard>
-  </div>
+  <RestaurantInfo v-if="bookings" :restaurant="restaurant" :bookings="bookings" />
 
   <div class="flex flex-col gap-10 xl:flex-row">
     <div
       class="space-y-5 p-4 bg-neutral-100 border border-neutral-200 max-w-screen-md w-full flex-grow"
     >
-      <h2 class="font-semibold">Current bookings (2)</h2>
-      <ul class="space-y-2">
-        <li>
-          <BookingCard mealName="Hawaian" :pickupAt="addMinutes(Date.now(), 58)" />
-        </li>
-        <li>
-          <BookingCard mealName="Capriciossa" :pickupAt="addMinutes(Date.now(), 43)" />
-        </li>
-      </ul>
+      <div v-if="bookings">
+        <h2 class="font-semibold mb-4">Current bookings ({{ activeBookings.length }})</h2>
+        <div v-if="activeBookings.length === 0">
+          <p>No active bookings</p>
+        </div>
 
-      <h2 class="font-semibold">Past bookings</h2>
-      <ul class="space-y-2">
-        <li>
-          <BookingCard mealName="Capriciossa" :pickupAt="subDays(Date.now(), 2)" />
-        </li>
-        <li>
-          <BookingCard mealName="Capriciossa" :pickupAt="subDays(Date.now(), 3)" />
-        </li>
-        <li>
-          <BookingCard
-            mealName="Lorem ipsum dolor sit amet consectetur. Senectus a egestas arcu quis urna."
-            :pickupAt="subDays(Date.now(), 3)"
-          />
-        </li>
-      </ul>
+        <ul v-if="bookings.length !== 0" class="space-y-2">
+          <li class="space-y-3">
+            <BookingCard
+              v-for="booking in activeBookings"
+              :key="booking.bookingId"
+              :booking="booking"
+              @on-booking-accept="updateBookingStatus"
+            />
+          </li>
+        </ul>
+      </div>
     </div>
 
     <div class="space-y-5 p-4 bg-neutral-100 border border-neutral-200 max-w-screen-md flex-shrink">
