@@ -11,10 +11,10 @@ import type { Role } from './role';
  * User object.
  */
 export interface UserDTO {
+  blocked: boolean;
   email: string;
   firstName: string;
   id: Uuid;
-  isBlocked: boolean;
   password: string;
   phoneNumber: string;
   role: Role;
