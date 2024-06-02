@@ -235,7 +235,11 @@ export const useDeleteReportsRestaurantsId = <
 export const getReportsRestaurants = (
   params?: MaybeRef<GetReportsRestaurantsParams>,
   options?: AxiosRequestConfig,
+<<<<<<< HEAD
 ): Promise<AxiosResponse<ReportDTO[]>> => {
+=======
+): Promise<AxiosResponse<ReportDTO[] | unknown[]>> => {
+>>>>>>> main
   params = unref(params);
   return axios.default.get(`http://localhost:9090/reports/restaurants`, {
     ...options,

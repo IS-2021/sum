@@ -11,5 +11,5 @@ const { user } = useUser();
 </script>
 
 <template>
-  <BookingsPage v-if="user" :restaurantId="user?.id" />
+  <BookingsPage v-if="user" :restaurantId="user.id" />
 </template>

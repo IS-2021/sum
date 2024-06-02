@@ -50,13 +50,20 @@ public class UserService {
         return userRepository.findAll();
     }
 
-    public List<User> getNotBannedUsers() {
-        return userRepository.findByBlockedFalse();
+    public List<User> getUsersByBlockedStatus(boolean blocked) {
+        return userRepository.findAllByBlocked(blocked);
     }
 
     public User getUserById(UUID id) {
         return userRepository.findById(id)
             .orElseThrow(() -> new UserNotFoundException("User not found with ID: " + id));
+    }
+
+    public void unbanUser(UUID userId) {
+        User user = userRepository.findById(userId)
+            .orElseThrow(() -> new UserNotFoundException("User not found with ID: " + userId));
+        user.setBlocked(false);
+        userRepository.save(user);
     }
 
     public User getUserByEmail(String email) {

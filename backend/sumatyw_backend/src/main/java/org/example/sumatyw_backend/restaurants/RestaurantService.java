@@ -51,7 +51,15 @@ public class RestaurantService {
     }
 
     public List<Restaurant> getAllRestaurants() {
+        return restaurantRepository.findAll();
+    }
+
+    public List<Restaurant> getAllActiveRestaurants() {
         return restaurantRepository.findAllByStatus(RestaurantStatus.Active);
+    }
+
+    public List<Restaurant> getAllRestaurantsByStatus(RestaurantStatus status) {
+        return restaurantRepository.findAllByStatus(status);
     }
 
     public List<Restaurant> getRestaurantsByCity(String city) {
@@ -67,10 +75,10 @@ public class RestaurantService {
         return RestaurantDTOMapper.mapRestaurantToRestaurantDTO(restaurant);
     }
 
-    public RestaurantDTO activateRestaurantById(UUID id) {
+    public RestaurantDTO changeRestaurantStatus(UUID id, RestaurantStatus status) {
         Restaurant restaurant = restaurantRepository.findById(id).orElseThrow(
             () -> new ObjectNotFoundException("Restaurant with id: " + id + " not found"));
-        restaurant.setStatus(RestaurantStatus.Active);
+        restaurant.setStatus(status);
         restaurantRepository.save(restaurant);
         return RestaurantDTOMapper.mapRestaurantToRestaurantDTO(restaurant);
     }
@@ -98,6 +106,7 @@ public class RestaurantService {
 
         existingRestaurant.setName(restaurant.getName());
         existingRestaurant.setHours(restaurant.getHours());
+        existingRestaurant.setAddress(restaurant.getAddress());
 
         return restaurantRepository.save(existingRestaurant);
     }

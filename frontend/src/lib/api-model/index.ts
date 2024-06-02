@@ -16,7 +16,13 @@ export * from './cityDTO';
 export * from './credentialsDTO';
 export * from './deleteFavouriteRestaurantsDTO';
 export * from './geoLatLngDTO';
+<<<<<<< HEAD
 export * from './getAdminReportsRestaurantsParams';
+=======
+export * from './getAdminReportsRestaurantsIdParams';
+export * from './getAdminReportsRestaurantsParams';
+export * from './getAdminReportsUsersIdParams';
+>>>>>>> main
 export * from './getAdminReportsUsersParams';
 export * from './getAdminRestaurantsParams';
 export * from './getAdminUsersParams';

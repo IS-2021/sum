@@ -1,13 +1,11 @@
 <script setup lang="ts">
 import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
-import { AspectRatio } from '@/components/ui/aspect-ratio';
 import { ref } from 'vue';
-import { ArrowRightIcon } from 'lucide-vue-next';
 import { Label } from '@/components/ui/label';
+import type { ImageChangeEvent } from '@/components/(manage)/common/fields/types';
 
 const emits = defineEmits<{
-  (e: 'onChange', file: FormData): void;
+  (e: 'onChange', image: ImageChangeEvent): void;
 }>();
 
 type FileInput = {
@@ -53,6 +51,8 @@ const handleFileChange = (event: Event) => {
 
   const files = (event.target as HTMLInputElement).files;
 
+  fileInput.value.error = '';
+
   let imageFile: File;
   try {
     imageFile = getImageFromFiles(files);
@@ -71,18 +71,12 @@ const handleFileChange = (event: Event) => {
   fileInput.value = defaultFileInputValues;
   fileInput.value.url = URL.createObjectURL(imageFile);
   fileInput.value.file = imageFile;
+
+  emits('onChange', {
+    file: fileInput.value.file,
+    previewUrl: fileInput.value.url,
+  });
 };
-
-async function handleSaveRequest() {
-  if (!(fileInput.value.file instanceof Blob)) {
-    return;
-  }
-
-  const formData = new FormData();
-  formData.append('image', fileInput.value.file);
-
-  emits('onChange', formData);
-}
 </script>
 
 <template>
@@ -92,17 +86,4 @@ async function handleSaveRequest() {
   </Label>
 
   <p v-if="fileInput.error" class="mb-4 text-red-500">{{ fileInput.error }}</p>
-
-  <AspectRatio v-if="fileInput.url" :ratio="16 / 9" class="overflow-clip rounded-md">
-    <img aria-hidden="true" :src="fileInput.url" alt="" class="h-full w-full object-cover" />
-  </AspectRatio>
-
-  <div class="mt-6 flex gap-2">
-    <Button @click="handleSaveRequest" :disabled="!fileInput.file"> Save </Button>
-    <Button variant="outline" as-child>
-      <RouterLink to="/manage/dashboard">
-        Skip for now <ArrowRightIcon class="ml-2 h-4 w-4" />
-      </RouterLink>
-    </Button>
-  </div>
 </template>

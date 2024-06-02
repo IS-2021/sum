@@ -12,7 +12,13 @@ import {
 import { useForm } from 'vee-validate';
 import { useStepper } from '@vueuse/core';
 import { cn } from '@/lib/utils';
-import { AlertCircleIcon, ChevronLeftIcon, ChevronRightIcon, LogOutIcon } from 'lucide-vue-next';
+import {
+  AlertCircleIcon,
+  ArrowRightIcon,
+  ChevronLeftIcon,
+  ChevronRightIcon,
+  LogOutIcon,
+} from 'lucide-vue-next';
 import Logo from '@/components/Logo.vue';
 import AddressAutocompleteInput from '@/components/maps/autocomplete/AddressAutocompleteInput.vue';
 import { useAddress } from '@/composables/maps/useAddress';
@@ -26,7 +32,9 @@ import {
 import HoursFormTip from '@/components/(manage)/common/HoursFormTip.vue';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import type { ProblemDetailResponse } from '@/lib/api-model';
-import axios from 'axios';
+import type { ImageChangeEvent, ImageFieldData } from '@/components/(manage)/common/fields/types';
+import { uploadRestaurantImage } from '@/components/(manage)/common/image/api';
+import ImagePreview from '@/components/(manage)/common/image/ImagePreview.vue';
 
 useHead({
   title: 'Complete restaurant profile',
@@ -104,18 +112,24 @@ const onSubmit = form.handleSubmit(async (formValues) => {
   }
 });
 
-async function uploadRestaurantImage(data: FormData) {
-  if (!user.value?.id) {
+const image = ref<ImageFieldData>({
+  file: null,
+  previewUrl: '',
+});
+
+function setImage({ file, previewUrl }: ImageChangeEvent) {
+  image.value = {
+    file,
+    previewUrl,
+  };
+}
+
+async function handleSaveRestaurantImage() {
+  if (!user.value?.id || !image.value.file) {
     return;
   }
 
-  console.log(data);
-
-  const res = await axios.post(`http://localhost:9090/restaurants/images/${user.value.id}`, data, {
-    headers: {
-      'Content-Type': 'multipart/form-data',
-    },
-  });
+  const res = await uploadRestaurantImage(user.value.id, image.value.file);
 
   if (res.status === 200) {
     await invalidateCache();
@@ -189,7 +203,18 @@ async function uploadRestaurantImage(data: FormData) {
       </form>
 
       <div v-else-if="isCurrent('photo')">
-        <ImageField @on-change="uploadRestaurantImage" />
+        <ImageField @on-change="setImage" />
+
+        <ImagePreview v-if="image.previewUrl" :src="image.previewUrl" />
+
+        <div class="mt-6 flex gap-2">
+          <Button @click="handleSaveRestaurantImage" :disabled="!image.file"> Save </Button>
+          <Button variant="outline" as-child>
+            <RouterLink to="/manage">
+              Skip for now <ArrowRightIcon class="ml-2 h-4 w-4" />
+            </RouterLink>
+          </Button>
+        </div>
       </div>
     </div>
   </div>
