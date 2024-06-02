@@ -1,70 +1,19 @@
 <script setup lang="ts">
 import { formatAddress } from '@/lib/googleMaps';
-import { ref, watch, watchEffect } from 'vue';
 import { Button } from '@/components/ui/button';
 import AddressAutocompleteInput from '@/components/maps/autocomplete/AddressAutocompleteInput.vue';
 import { LocateFixedIcon, MapPinIcon } from 'lucide-vue-next';
-import { useGeolocation } from '@vueuse/core';
-import { useAddress } from '@/composables/maps/useAddress';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import type { AddressDTO } from '@/lib/api-model';
 import GoogleMaps from '@/components/maps/GoogleMaps.vue';
-
-const coords = ref({
-  latitude: 51.7484822,
-  longitude: 19.4499251,
-});
-const {
-  isSupported: isGeolocationSupported,
-  coords: coordsReading,
-  resume: resumeGeolocation,
-  pause: pauseGeolocation,
-} = useGeolocation({
-  immediate: false,
-});
+import { useAddressSettings } from '@/components/maps/useAddressSettings';
 
 const emit = defineEmits<{
   (e: 'save:address', payload: AddressDTO): void;
 }>();
 
-const { address, setPlaceId, setCoords } = useAddress();
-
-watchEffect(() => {
-  if (!address.value) {
-    return;
-  }
-
-  coords.value = {
-    latitude: address.value.latitude,
-    longitude: address.value.longitude,
-  };
-});
-
-watch(coordsReading, () => {
-  if (![coordsReading.value.latitude, coordsReading.value.longitude].every((v) => isFinite(v))) {
-    return;
-  }
-
-  pauseGeolocation();
-
-  coords.value = {
-    latitude: coordsReading.value?.latitude ?? coords.value.latitude,
-    longitude: coordsReading.value?.longitude ?? coords.value.longitude,
-  };
-  setCoords(coords.value);
-});
-
-function handleMapsClick({ latLng }: google.maps.MapMouseEvent) {
-  if (!latLng) {
-    return;
-  }
-
-  coords.value = {
-    latitude: latLng.lat(),
-    longitude: latLng.lng(),
-  };
-  setCoords(coords.value);
-}
+const { coords, handleMapsClick, address, isGeolocationSupported, setPlaceId, resumeGeolocation } =
+  useAddressSettings();
 
 function onSaveClick() {
   if (!address.value) {
