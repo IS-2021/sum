@@ -21,6 +21,7 @@ withDefaults(defineProps<RestaurantReportsViewerProps>(), {
 const emits = defineEmits<{
   (e: 'banRestaurant', reportId: Uuid): void;
   (e: 'banUser', reportId: Uuid): void;
+  (e: 'closeReport', reportId: Uuid, reportAbout: 'restaurant' | 'user'): void;
 }>();
 
 const banRestaurantHandler = (reportId: Uuid) => {
@@ -28,6 +29,9 @@ const banRestaurantHandler = (reportId: Uuid) => {
 };
 function banUserHandler(reportId: Uuid) {
   emits('banUser', reportId);
+}
+function closeReportHandler(reportId: Uuid, reportAbout: 'restaurant' | 'user') {
+  emits('closeReport', reportId, reportAbout);
 }
 </script>
 
@@ -43,6 +47,7 @@ function banUserHandler(reportId: Uuid) {
           <ReportCard
             @ban-user="banUserHandler"
             @ban-restaurant="banRestaurantHandler"
+            @close-report="(reportId) => closeReportHandler(reportId, 'restaurant')"
             :report="report"
             :showActionButtons="report.isOpen"
             :actions="['banRestaurant', 'viewUser']"
@@ -57,6 +62,7 @@ function banUserHandler(reportId: Uuid) {
           <ReportCard
             @ban-user="banUserHandler"
             @ban-restaurant="banRestaurantHandler"
+            @close-report="(reportId) => closeReportHandler(reportId, 'user')"
             :report="report"
             :showActionButtons="report.isOpen"
             :actions="['banUser', 'viewUser']"

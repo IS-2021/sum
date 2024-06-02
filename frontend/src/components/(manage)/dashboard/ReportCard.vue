@@ -1,11 +1,16 @@
 <script setup lang="ts">
 import type { ReportDTO, Uuid } from '@/lib/api-model';
-import { BanIcon, ThumbsDownIcon, UserRoundIcon } from 'lucide-vue-next';
+import { BanIcon, ThumbsDownIcon, UserRoundIcon, XIcon } from 'lucide-vue-next';
 import { Separator } from '@/components/ui/separator';
 import { Button } from '@/components/ui/button';
 import ConfirmDialog from '@/components/dialogs/ConfirmDialog.vue';
 
-type ReportCardActions = 'banUser' | 'banRestaurant' | 'viewUser' | 'viewRestaurant';
+type ReportCardActions =
+  | 'banUser'
+  | 'banRestaurant'
+  | 'closeReport'
+  | 'viewUser'
+  | 'viewRestaurant';
 
 interface ReportCardProps {
   report: ReportDTO;
@@ -18,6 +23,7 @@ defineProps<ReportCardProps>();
 const emits = defineEmits<{
   (e: 'banUser', reportId: Uuid): void;
   (e: 'banRestaurant', reportId: Uuid): void;
+  (e: 'closeReport', reportId: Uuid): void;
 }>();
 </script>
 
@@ -59,6 +65,10 @@ const emits = defineEmits<{
             </Button>
           </template>
         </ConfirmDialog>
+
+        <Button variant="secondary" @click="emits('closeReport', report.id)">
+          <XIcon class="mr-2 inline-block h-4 w-4" /> Close report
+        </Button>
 
         <Button v-if="actions?.includes('viewUser')" variant="secondary" as-child>
           <RouterLink :to="`/admin/users/${report.userId}`">

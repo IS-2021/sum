@@ -24,6 +24,7 @@ import { useReportsAboutRestaurant } from '@/components/(admin)/composables/useR
 import RestaurantReportsViewer from '@/components/(admin)/reports/RestaurantReportsViewer.vue';
 import {
   closeReportAboutRestaurant,
+  closeReportAboutUser,
   updateRestaurantStatus,
 } from '@/components/(admin)/reports/api';
 
@@ -68,8 +69,20 @@ async function handleBanRestaurant(reportId: string) {
   }
 }
 
-async function handleBanUser(userId: string) {
-  await banUser(userId);
+async function handleCloseReport(reportId: string, reportAbout: 'user' | 'restaurant') {
+  if (reportAbout === 'restaurant') {
+    const res = await closeReportAboutRestaurant(reportId, false);
+
+    if (res.status === 200) {
+      await queryClient.invalidateQueries();
+    }
+  } else if (reportAbout === 'user') {
+    const res = await closeReportAboutUser(reportId, false);
+
+    if (res.status === 200) {
+      await queryClient.invalidateQueries();
+    }
+  }
 }
 </script>
 
@@ -147,6 +160,7 @@ async function handleBanUser(userId: string) {
 
         <RestaurantReportsViewer
           @ban-restaurant="handleBanRestaurant"
+          @close-report="handleCloseReport"
           :show-closed-reports="true"
           :restaurant-user-reports="reportsFromRestaurant"
           :user-restaurant-reports="reportsAboutRestaurant"
