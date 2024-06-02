@@ -58,7 +58,7 @@ function closeReportHandler(reportId: Uuid, reportAbout: 'restaurant' | 'user') 
       <p v-else class="mt-4">No one reported this restaurant.</p>
     </TabsContent>
     <TabsContent value="restaurantUsers">
-      <ul v-if="reportsAboutUser.length > 0">
+      <ul v-if="reportsAboutUser.length > 0" class="space-y-2">
         <li v-for="report in reportsAboutUser" :key="report.id">
           <ReportCard
             @ban-user="banUserHandler"

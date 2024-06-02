@@ -80,58 +80,64 @@ async function handleCloseReport(reportId: string, reportAbout: 'user' | 'restau
       {{ user.firstName }} {{ user.secondName }}
     </h1>
 
-    <SettingsSection>
-      <h2 class="text-lg font-semibold tracking-tight">Profile details</h2>
-      <Separator class="mb-4 mt-2" />
+    <div class="grid-cols-2 gap-10 2xl:grid">
+      <SettingsSection>
+        <h2 class="text-lg font-semibold tracking-tight">Profile details</h2>
+        <Separator class="mb-4 mt-2" />
 
-      <div class="flex items-center justify-between">
-        <p v-if="user.blocked">
-          <UserStatusIcon :is-banned="user.blocked" class="h-4 w-4 mr-2 inline-block" />
-          <template v-if="user.blocked">
-            <span class="text-red-500">Account banned</span>
-          </template>
-          <template v-else>
-            <span class="text-primary">Account active</span>
-          </template>
-        </p>
+        <div class="flex items-center justify-between">
+          <p v-if="user.blocked">
+            <UserStatusIcon :is-banned="user.blocked" class="h-4 w-4 mr-2 inline-block" />
+            <template v-if="user.blocked">
+              <span class="text-red-500">Account banned</span>
+            </template>
+            <template v-else>
+              <span class="text-primary">Account active</span>
+            </template>
+          </p>
 
-        <ConfirmDialog v-if="user.blocked">
-          <template v-slot:trigger>
-            <Button variant="secondary"> Unban </Button>
-          </template>
-          <template v-slot:description>
-            <p>Are you sure you want to unban this user?</p>
-          </template>
-          <template v-slot:confirmButton>
-            <Button @click="handleUnbanUser" variant="destructive"> Unban </Button>
-          </template>
-        </ConfirmDialog>
-      </div>
+          <ConfirmDialog v-if="user.blocked">
+            <template v-slot:trigger>
+              <Button variant="secondary"> Unban </Button>
+            </template>
+            <template v-slot:description>
+              <p>Are you sure you want to unban this user?</p>
+            </template>
+            <template v-slot:confirmButton>
+              <Button @click="handleUnbanUser" variant="destructive"> Unban </Button>
+            </template>
+          </ConfirmDialog>
+        </div>
 
-      <div>
-        <ul class="space-y-1.5">
-          <li><UserRoundIcon class="mr-2 inline-block h-4 w-4" />Username: {{ user.username }}</li>
-          <li><PhoneIcon class="mr-2 inline-block h-4 w-4" />Telephone: {{ user.phoneNumber }}</li>
-          <!--        <li>-->
-          <!--          <MapPinIcon class="mr-2 inline-block h-4 w-4" />Address: {{ formatAddress(user.address) }}-->
-          <!--        </li>-->
-          <li><MailIcon class="mr-2 inline-block h-4 w-4" />Email: {{ user.email }}</li>
-        </ul>
-      </div>
-    </SettingsSection>
+        <div>
+          <ul class="space-y-1.5">
+            <li>
+              <UserRoundIcon class="mr-2 inline-block h-4 w-4" />Username: {{ user.username }}
+            </li>
+            <li>
+              <PhoneIcon class="mr-2 inline-block h-4 w-4" />Telephone: {{ user.phoneNumber }}
+            </li>
+            <!--        <li>-->
+            <!--          <MapPinIcon class="mr-2 inline-block h-4 w-4" />Address: {{ formatAddress(user.address) }}-->
+            <!--        </li>-->
+            <li><MailIcon class="mr-2 inline-block h-4 w-4" />Email: {{ user.email }}</li>
+          </ul>
+        </div>
+      </SettingsSection>
 
-    <SettingsSection>
-      <h2 class="text-lg font-semibold tracking-tight">Reports</h2>
-      <Separator class="mb-4 mt-2" />
+      <SettingsSection>
+        <h2 class="text-lg font-semibold tracking-tight">Reports</h2>
+        <Separator class="mb-4 mt-2" />
 
-      <UserReportsViewer
-        @ban-restaurant="handleBanRestaurant"
-        @ban-user="handleBanUser"
-        @close-report="handleCloseReport"
-        :show-closed-reports="true"
-        :reports-from-user="reportsFromUser"
-        :reports-about-user="reportsAboutUser"
-      />
-    </SettingsSection>
+        <UserReportsViewer
+          @ban-restaurant="handleBanRestaurant"
+          @ban-user="handleBanUser"
+          @close-report="handleCloseReport"
+          :show-closed-reports="true"
+          :reports-from-user="reportsFromUser"
+          :reports-about-user="reportsAboutUser"
+        />
+      </SettingsSection>
+    </div>
   </div>
 </template>
