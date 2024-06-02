@@ -13,17 +13,14 @@ import {
 import { useForm } from 'vee-validate';
 import type { RestaurantDTO } from '@/lib/api-model';
 import HoursFormTip from '@/components/(manage)/common/HoursFormTip.vue';
-import AddressAutocompleteInput from '@/components/maps/autocomplete/AddressAutocompleteInput.vue';
 import { useAddress } from '@/composables/maps/useAddress';
 import { Separator } from '@/components/ui/separator';
 import SettingsSection from '@/components/(manage)/settings/SettingsSection.vue';
 import { Button } from '@/components/ui/button';
-import { MapPinIcon, SaveIcon } from 'lucide-vue-next';
+import { SaveIcon } from 'lucide-vue-next';
 import { computed, toRef, watchEffect } from 'vue';
 import { putRestaurantsDeactivateId, putRestaurantsId } from '@/lib/api/restaurants/restaurants';
 import { toast } from 'vue-sonner';
-import { formatAddress } from '@/lib/googleMaps';
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { useImage } from '@/components/(manage)/common/image/useImage';
 import ImagePreview from '@/components/(manage)/common/image/ImagePreview.vue';
 import { getImageUrl } from '@/lib/assets';
@@ -32,6 +29,7 @@ import { useRestaurantUser } from '@/composables/useRestaurantUser';
 import { useRefOverride } from '@/composables/maps/useRefOverride';
 import RestaurantStatus from '@/components/(manage)/common/RestaurantStatus.vue';
 import ConfirmDialog from '@/components/dialogs/ConfirmDialog.vue';
+import LocationSettings from '@/components/(manage)/settings/LocationSettings.vue';
 
 const props = defineProps<{ initialRestaurantData: RestaurantDTO }>();
 
@@ -141,17 +139,7 @@ const onSubmit = form.handleSubmit(async (values) => {
       <h2 class="mb-2 text-lg font-semibold tracking-tight">Location</h2>
       <Separator class="mb-4 mt-2" />
 
-      <Alert class="mb-3">
-        <MapPinIcon class="h-4 w-4" />
-        <AlertTitle>Current address</AlertTitle>
-        <AlertDescription>
-          {{ formatAddress(restaurant.address) }}
-        </AlertDescription>
-      </Alert>
-      <AddressAutocompleteInput
-        popover-class="md:w-80 lg:w-full lg:max-w-prose"
-        @on-place-select="setPlaceId"
-      />
+      <LocationSettings :address="restaurant.address" />
     </SettingsSection>
   </form>
 
