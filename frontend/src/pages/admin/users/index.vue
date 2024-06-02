@@ -18,7 +18,7 @@ const users = computed(() => data.value?.data ?? []);
 </script>
 
 <template>
-  <div class="max-w-screen-md">
+  <div class="mb-10 max-w-screen-md">
     <h1 class="mb-10 text-2xl font-semibold tracking-tight">Users</h1>
 
     <ul v-if="users.length > 0" class="space-y-2">

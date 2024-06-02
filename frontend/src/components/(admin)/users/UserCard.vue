@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { UserDTO } from '@/lib/api-model';
 import UserStatusIcon from '@/components/(admin)/users/UserStatusIcon.vue';
+import { UserRoundIcon, PhoneIcon } from 'lucide-vue-next';
 
 interface UserCardProps {
   user: UserDTO;
@@ -20,7 +21,12 @@ defineProps<UserCardProps>();
         <p v-if="user.role === 'ROLE_RESTAURANT'" class="text-primary">Restaurant</p>
       </header>
 
-      <p class="text-neutral-500">Username: {{ user.username }}</p>
+      <p class="mb-1 text-neutral-500">
+        <UserRoundIcon class="mr-2 inline-block h-4 w-4" /> {{ user.username }}
+      </p>
+      <p class="text-neutral-500">
+        <PhoneIcon class="mr-2 inline-block h-4 w-4" /> {{ user.phoneNumber }}
+      </p>
     </div>
   </article>
 </template>
