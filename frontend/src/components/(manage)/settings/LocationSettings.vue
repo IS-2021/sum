@@ -62,7 +62,8 @@ watchEffect(() => {
 
   <GoogleMaps
     class="mt-3 h-[400px] border border-neutral-300"
-    :zoom="15"
+    :zoom="16"
+    :pan-zoom="16"
     :latitude="coords.latitude"
     :longitude="coords.longitude"
     :onClick="handleMapsClick"
