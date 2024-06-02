@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import type { ReportDTO, Uuid } from '@/lib/api-model';
-import { BanIcon, ThumbsDownIcon, UserRoundIcon, XIcon } from 'lucide-vue-next';
+import { BanIcon, CalendarPlusIcon, ThumbsDownIcon, UserRoundIcon, XIcon } from 'lucide-vue-next';
 import { Separator } from '@/components/ui/separator';
 import { Button } from '@/components/ui/button';
 import ConfirmDialog from '@/components/dialogs/ConfirmDialog.vue';
+import { formatDateShort } from '@/lib/formatters';
 
 type ReportCardActions =
   | 'banUser'
@@ -29,10 +30,13 @@ const emits = defineEmits<{
 
 <template>
   <article class="rounded border border-neutral-300 bg-white px-6 py-4">
-    <div class="flex items-center gap-6">
+    <div class="mb-4 flex items-center gap-6">
       <ThumbsDownIcon class="flex-shrink-0 text-red-500" />
       <p class="max-w-prose flex-shrink">{{ report.cause }}</p>
     </div>
+    <p class="flex items-center text-right text-sm text-neutral-500">
+      <CalendarPlusIcon class="mr-2 size-4" /> {{ formatDateShort(report.timestamp) }}
+    </p>
 
     <template v-if="showActionButtons">
       <Separator class="my-4" />
