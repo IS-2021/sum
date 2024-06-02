@@ -4,11 +4,14 @@ import StatsCard from '@/components/(manage)/dashboard/StatsCard.vue';
 import { CookingPotIcon, ThumbsUpIcon } from 'lucide-vue-next';
 import BookingCard from '@/components/(manage)/dashboard/BookingCard.vue';
 import { addMinutes, subDays } from 'date-fns';
-import ReportCard from '@/components/(manage)/dashboard/ReportCard.vue';
+import ReportsPage from '../reports/ReportsPage.vue';
+import { useUser } from '@/composables/useUser';
 
 useHead({
   title: 'Restaurant Dashboard',
 });
+
+const { user } = useUser();
 </script>
 
 <template>
@@ -56,29 +59,6 @@ useHead({
       </ul>
     </div>
 
-    <div class="space-y-5 p-4 bg-neutral-100 border border-neutral-200 max-w-screen-md flex-shrink">
-      <h2 class="font-semibold">Ratings (17)</h2>
-      <ul class="space-y-2">
-        <li>
-          <ReportCard
-            cause="The package contained much less than expected. Meal tasted as if it was microwaved. An eggless omelette?
-Wakanda shit is this? The package contained much less than expected. Meal tasted as if it was microwaved. An eggless omelette?
-Wakanda shit is this? The package contained much less than expected. Meal tasted as if it was microwaved. An eggless omelette?
-Wakanda shit is this? The package contained much less than expected. Meal tasted as if it was microwaved. An eggless omelette?
-Wakanda shit is this? The package contained much less than expected. Meal tasted as if it was microwaved. An eggless omelette?
-Wakanda shit is this? The package contained much less than expected. Meal tasted as if it was microwaved. An eggless omelette?
-Wakanda shit is this? The package contained much less than expected. Meal tasted as if it was microwaved. An eggless omelette?
-Wakanda shit is this?"
-            :reportedAt="subDays(Date.now(), 3)"
-          />
-        </li>
-        <li>
-          <ReportCard
-            cause="The package contained much less than expected."
-            :reportedAt="subDays(Date.now(), 3)"
-          />
-        </li>
-      </ul>
-    </div>
+    <ReportsPage v-if="user" :restaurantId="user.id" />
   </div>
 </template>
