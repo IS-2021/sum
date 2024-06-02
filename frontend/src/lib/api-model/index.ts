@@ -49,6 +49,8 @@ export * from './problemDetail';
 export * from './problemDetailResponse';
 export * from './putAdminReportsRestaurantsIdParams';
 export * from './putAdminReportsUsersIdParams';
+export * from './putAdminRestaurantsIdParams';
+export * from './putAdminUsersIdParams';
 export * from './reportDTO';
 export * from './reportsInputDTO';
 export * from './restaurantDTO';

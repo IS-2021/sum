@@ -21,6 +21,7 @@ import type { MaybeRef } from 'vue';
 import type {
   GetAdminRestaurantsParams,
   NotFound404Response,
+  PutAdminRestaurantsIdParams,
   RestaurantDTO,
   Uuid,
 } from '../../api-model';
@@ -28,7 +29,7 @@ import type {
 export const getAdminRestaurants = (
   params?: MaybeRef<GetAdminRestaurantsParams>,
   options?: AxiosRequestConfig,
-): Promise<AxiosResponse<RestaurantDTO[] | unknown[]>> => {
+): Promise<AxiosResponse<RestaurantDTO[]>> => {
   params = unref(params);
   return axios.default.get(`http://localhost:9090/admin/restaurants`, {
     ...options,
@@ -161,12 +162,20 @@ export const useGetAdminRestaurantsId = <
   return query;
 };
 
+/**
+ * @summary Updates restaurant status
+ */
 export const putAdminRestaurantsId = (
   id: MaybeRef<Uuid>,
+  params: MaybeRef<PutAdminRestaurantsIdParams>,
   options?: AxiosRequestConfig,
 ): Promise<AxiosResponse<RestaurantDTO>> => {
   id = unref(id);
-  return axios.default.put(`http://localhost:9090/admin/restaurants/${id}`, undefined, options);
+  params = unref(params);
+  return axios.default.put(`http://localhost:9090/admin/restaurants/${id}`, undefined, {
+    ...options,
+    params: { ...unref(params), ...options?.params },
+  });
 };
 
 export const getPutAdminRestaurantsIdMutationOptions = <
@@ -176,25 +185,25 @@ export const getPutAdminRestaurantsIdMutationOptions = <
   mutation?: UseMutationOptions<
     Awaited<ReturnType<typeof putAdminRestaurantsId>>,
     TError,
-    { id: Uuid },
+    { id: Uuid; params: PutAdminRestaurantsIdParams },
     TContext
   >;
   axios?: AxiosRequestConfig;
 }): UseMutationOptions<
   Awaited<ReturnType<typeof putAdminRestaurantsId>>,
   TError,
-  { id: Uuid },
+  { id: Uuid; params: PutAdminRestaurantsIdParams },
   TContext
 > => {
   const { mutation: mutationOptions, axios: axiosOptions } = options ?? {};
 
   const mutationFn: MutationFunction<
     Awaited<ReturnType<typeof putAdminRestaurantsId>>,
-    { id: Uuid }
+    { id: Uuid; params: PutAdminRestaurantsIdParams }
   > = (props) => {
-    const { id } = props ?? {};
+    const { id, params } = props ?? {};
 
-    return putAdminRestaurantsId(id, axiosOptions);
+    return putAdminRestaurantsId(id, params, axiosOptions);
   };
 
   return { mutationFn, ...mutationOptions };
@@ -206,18 +215,21 @@ export type PutAdminRestaurantsIdMutationResult = NonNullable<
 
 export type PutAdminRestaurantsIdMutationError = AxiosError<void>;
 
+/**
+ * @summary Updates restaurant status
+ */
 export const usePutAdminRestaurantsId = <TError = AxiosError<void>, TContext = unknown>(options?: {
   mutation?: UseMutationOptions<
     Awaited<ReturnType<typeof putAdminRestaurantsId>>,
     TError,
-    { id: Uuid },
+    { id: Uuid; params: PutAdminRestaurantsIdParams },
     TContext
   >;
   axios?: AxiosRequestConfig;
 }): UseMutationReturnType<
   Awaited<ReturnType<typeof putAdminRestaurantsId>>,
   TError,
-  { id: Uuid },
+  { id: Uuid; params: PutAdminRestaurantsIdParams },
   TContext
 > => {
   const mutationOptions = getPutAdminRestaurantsIdMutationOptions(options);
