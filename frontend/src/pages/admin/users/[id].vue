@@ -17,6 +17,8 @@ import ConfirmDialog from '@/components/dialogs/ConfirmDialog.vue';
 import { useReportsAboutUser } from '@/components/(admin)/composables/useReportsAboutUser';
 import { useReportsFromUser } from '@/components/(admin)/composables/useReportsFromUser';
 import UserReportsViewer from '@/components/(admin)/reports/UserReportsViewer.vue';
+import { closeReportAboutRestaurant, closeReportAboutUser } from '@/components/(admin)/reports/api';
+import { useQueryClient } from '@tanstack/vue-query';
 
 useHead({
   title: 'User',
@@ -25,6 +27,8 @@ useHead({
 const route = useRoute('/admin/restaurants/[id]');
 const userId = route.params.id;
 
+const queryClient = useQueryClient();
+
 const { data, isLoading } = useGetAdminUsersId(userId);
 const user = computed(() => data.value?.data);
 
@@ -32,6 +36,38 @@ const { reportsAboutUser } = useReportsAboutUser(userId);
 const { reportsFromUser } = useReportsFromUser(userId);
 
 async function handleUnbanUser() {}
+
+async function handleBanRestaurant(reportId: string) {
+  const res = await closeReportAboutRestaurant(reportId, true);
+
+  if (res.status === 200) {
+    await queryClient.invalidateQueries();
+  }
+}
+
+async function handleBanUser(reportId: string) {
+  const res = await closeReportAboutUser(reportId, true);
+
+  if (res.status === 200) {
+    await queryClient.invalidateQueries();
+  }
+}
+
+async function handleCloseReport(reportId: string, reportAbout: 'user' | 'restaurant') {
+  if (reportAbout === 'restaurant') {
+    const res = await closeReportAboutRestaurant(reportId, false);
+
+    if (res.status === 200) {
+      await queryClient.invalidateQueries();
+    }
+  } else if (reportAbout === 'user') {
+    const res = await closeReportAboutUser(reportId, false);
+
+    if (res.status === 200) {
+      await queryClient.invalidateQueries();
+    }
+  }
+}
 </script>
 
 <template>
@@ -89,6 +125,9 @@ async function handleUnbanUser() {}
       <Separator class="mb-4 mt-2" />
 
       <UserReportsViewer
+        @ban-restaurant="handleBanRestaurant"
+        @ban-user="handleBanUser"
+        @close-report="handleCloseReport"
         :show-closed-reports="true"
         :reports-from-user="reportsFromUser"
         :reports-about-user="reportsAboutUser"
