@@ -432,7 +432,7 @@ paths:
         - reports_restaurants
       parameters:
         - name: restaurantId
-          description: Optional
+          description: Optional - returns reports associated with passed restaurantId
           schema:
             $ref: "#/components/schemas/UUID"
           in: query
@@ -790,39 +790,6 @@ paths:
         in: path
         required: true
   /admin: {}
-  /admin/users:
-    get:
-      tags:
-        - admin_users
-      parameters:
-        - name: blocked
-          description: ""
-          schema:
-            type: boolean
-          in: query
-      responses:
-        "200":
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: "#/components/schemas/UserDTO"
-          description: Get list of users
-    put:
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/UserDTO"
-        required: true
-      tags:
-        - admin_users
-      responses:
-        "200":
-          description: User unbanned
-        "404":
-          $ref: "#/components/responses/NotFound_404"
   /admin/restaurants:
     get:
       tags:
@@ -842,32 +809,6 @@ paths:
                 items:
                   $ref: "#/components/schemas/RestaurantDTO"
           description: Get list of restaurants.
-        "204":
-          content:
-            application/json:
-              schema:
-                type: array
-                items: {}
-          description: If no pending restaurants are present
-  "/admin/users/{id}":
-    get:
-      tags:
-        - admin_users
-      responses:
-        "200":
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/UserDTO"
-          description: Get user
-        "404":
-          $ref: "#/components/responses/NotFound_404"
-    parameters:
-      - name: id
-        schema:
-          $ref: "#/components/schemas/UUID"
-        in: path
-        required: true
   "/admin/restaurants/{id}":
     get:
       tags:
@@ -884,6 +825,13 @@ paths:
     put:
       tags:
         - admin_restaurants
+      parameters:
+        - name: status
+          description: ""
+          schema:
+            $ref: "#/components/schemas/RestaurantStatus"
+          in: query
+          required: true
       responses:
         "200":
           content:
@@ -893,6 +841,7 @@ paths:
           description: OK
         "422":
           description: Validation failed
+      summary: Updates restaurant status
     parameters:
       - name: id
         schema:
@@ -975,12 +924,16 @@ paths:
       tags:
         - admin_reports
       parameters:
-        - name: status
-          description: ""
+        - name: userId
+          description: Optional
           schema:
-            $ref: "#/components/schemas/RestaurantStatus"
+            $ref: "#/components/schemas/UUID"
           in: query
-          required: true
+        - name: restaurantId
+          description: Optional
+          schema:
+            $ref: "#/components/schemas/UUID"
+          in: query
       responses:
         "200":
           content:
@@ -990,8 +943,6 @@ paths:
                 items:
                   $ref: "#/components/schemas/ReportDTO"
           description: All reports of every restaurant
-        "204":
-          description: No reports found
   /login:
     post:
       requestBody:
@@ -1214,6 +1165,11 @@ paths:
           schema:
             $ref: "#/components/schemas/UUID"
           in: query
+        - name: restaurantId
+          description: Optional
+          schema:
+            $ref: "#/components/schemas/UUID"
+          in: query
       responses:
         "200":
           content:
@@ -1222,20 +1178,11 @@ paths:
                 type: array
                 items:
                   $ref: "#/components/schemas/ReportDTO"
-          description: All reports of every user
-        "204":
-          description: No reports found
+          description: .
   "/admin/reports/users/{id}":
     get:
       tags:
         - admin_reports
-      parameters:
-        - name: ban
-          description: ""
-          schema:
-            type: boolean
-          in: query
-          required: true
       responses:
         "200":
           content:
@@ -1251,7 +1198,7 @@ paths:
       parameters:
         - name: ban
           description: |-
-            true = ban user and close
+            true = ban restaurant with associated reportId (path variable) and close
             false = close report
           schema:
             type: boolean
@@ -1276,13 +1223,6 @@ paths:
     get:
       tags:
         - admin_reports
-      parameters:
-        - name: ban
-          description: ""
-          schema:
-            type: boolean
-          in: query
-          required: true
       responses:
         "200":
           content:
@@ -1298,7 +1238,7 @@ paths:
       parameters:
         - name: ban
           description: |-
-            true = ban restaurant and close report
+            true = ban user associated with reportId (path variable) and close report
             false = close report
           schema:
             type: boolean
@@ -1313,6 +1253,59 @@ paths:
           description: Return report of clicked restaurant
         "404":
           description: "not found "
+    parameters:
+      - name: id
+        schema:
+          $ref: "#/components/schemas/UUID"
+        in: path
+        required: true
+  /admin/users:
+    get:
+      tags:
+        - admin_users
+      parameters:
+        - name: blocked
+          description: ""
+          schema:
+            type: boolean
+          in: query
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/UserDTO"
+          description: Get list of users
+  "/admin/users/{id}":
+    get:
+      tags:
+        - admin_users
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserDTO"
+          description: Get user
+        "404":
+          $ref: "#/components/responses/NotFound_404"
+    put:
+      tags:
+        - admin_users
+      parameters:
+        - name: banned
+          description: ""
+          schema:
+            type: boolean
+          in: query
+          required: true
+      responses:
+        "200":
+          description: User unbanned
+        "404":
+          $ref: "#/components/responses/NotFound_404"
     parameters:
       - name: id
         schema:
