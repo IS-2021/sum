@@ -51,7 +51,7 @@ function closeReportHandler(reportId: Uuid, reportAbout: 'restaurant' | 'user') 
             @close-report="(reportId) => closeReportHandler(reportId, 'restaurant')"
             :report="report"
             :showActionButtons="report.isOpen"
-            :actions="['banRestaurant', 'viewUser']"
+            :actions="['banRestaurant', 'closeReport', 'viewUser']"
           />
         </li>
       </ul>
@@ -66,7 +66,7 @@ function closeReportHandler(reportId: Uuid, reportAbout: 'restaurant' | 'user') 
             @close-report="(reportId) => closeReportHandler(reportId, 'user')"
             :report="report"
             :showActionButtons="report.isOpen"
-            :actions="['banUser', 'viewUser']"
+            :actions="['banUser', 'closeReport', 'viewUser']"
           />
         </li>
       </ul>

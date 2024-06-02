@@ -66,7 +66,11 @@ const emits = defineEmits<{
           </template>
         </ConfirmDialog>
 
-        <Button variant="secondary" @click="emits('closeReport', report.id)">
+        <Button
+          v-if="actions?.includes('closeReport')"
+          variant="secondary"
+          @click="emits('closeReport', report.id)"
+        >
           <XIcon class="mr-2 inline-block h-4 w-4" /> Close report
         </Button>
 
