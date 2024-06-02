@@ -9,7 +9,7 @@ const props = defineProps<{
   restaurantId: Uuid;
 }>();
 
-const { data } = useGetReportsRestaurants(props.restaurantId);
+const { data } = useGetReportsRestaurants({ restaurantId: props.restaurantId });
 const reports = computed(() => unref(data)?.data);
 </script>
 
