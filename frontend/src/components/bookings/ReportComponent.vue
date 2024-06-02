@@ -43,8 +43,7 @@ async function sendReport() {
     usersReport.value = '';
     toast.success('Report sent successfully!');
   } else if (res.status === 400) {
-    usersReport.value = '';
-    const { detail } = res.data as any | ProblemDetailResponse;
+    const { detail } = res.data as unknown as ProblemDetailResponse;
     toast.error(detail);
   }
 }
