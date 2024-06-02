@@ -28,6 +28,7 @@ import {
   updateRestaurantStatus,
 } from '@/components/(admin)/reports/api';
 import { useQueryClient } from '@tanstack/vue-query';
+import type { RestaurantDTOStatus } from '@/lib/api-model';
 
 useHead({
   title: 'Restaurant',
@@ -48,24 +49,8 @@ const { totalRatings } = useUserRating(
 const { reportsAboutRestaurant } = useReportsAboutRestaurant(restaurantId);
 const { reportsFromRestaurant } = useReportsFromRestaurant(restaurantId);
 
-async function handleRestaurantActivate() {
-  const res = await updateRestaurantStatus(restaurantId, 'Active');
-
-  if (res.status === 200) {
-    await refetch();
-  }
-}
-
-async function handleRestaurantDeactivate() {
-  const res = await updateRestaurantStatus(restaurantId, 'Inactive');
-
-  if (res.status === 200) {
-    await refetch();
-  }
-}
-
-async function handleRestaurantUnban() {
-  const res = await updateRestaurantStatus(restaurantId, 'Inactive');
+async function setRestaurantStatus(status: RestaurantDTOStatus) {
+  const res = await updateRestaurantStatus(restaurantId, status);
 
   if (res.status === 200) {
     await refetch();
@@ -119,21 +104,21 @@ async function handleCloseReport(reportId: string, reportAbout: 'user' | 'restau
             <RestaurantStatus :status="restaurant.status" />
 
             <Button
-              @click="handleRestaurantActivate"
+              @click="setRestaurantStatus('Active')"
               v-if="restaurant.status === 'Inactive'"
               class="bg-yellow-500 hover:bg-yellow-500/80"
             >
               Activate
             </Button>
             <Button
-              @click="handleRestaurantDeactivate"
+              @click="setRestaurantStatus('Inactive')"
               v-if="restaurant.status === 'Active'"
               variant="secondary"
             >
               Deactivate
             </Button>
             <Button
-              @click="handleRestaurantUnban"
+              @click="setRestaurantStatus('Inactive')"
               v-if="restaurant.status === 'Banned'"
               variant="secondary"
             >
