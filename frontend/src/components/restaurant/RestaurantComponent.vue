@@ -5,7 +5,7 @@ import MealsList from '@/components/restaurant/MealsList.vue';
 import { ThumbsUp } from 'lucide-vue-next';
 
 import { useRoute } from 'vue-router/auto';
-import { computed, ref, watchEffect } from 'vue';
+import { computed, ref, watchEffect, watch } from 'vue';
 
 import { postUsersDeleteFavourites, postUsersIdFavourites } from '@/lib/api/favourites/favourites';
 import { useUserRating } from '@/components/user-rating/useUserRating';
@@ -34,11 +34,16 @@ const imageAltText = `${restaurant.value?.name} restaurant`;
 
 const categories = ref(['Kategoria 1']);
 
+const { IsFavourite, addFavourite, handleDeleteFavourite } = useFavourites({
+  userId: props.userId,
+  restaurantId: id,
+});
+
 function postFavourite(fav: Boolean) {
-  if (fav === true && restaurant.value) {
-    postUsersIdFavourites(props.userId, { orderNumber: 0, restaurantId: restaurant.value.id });
-  } else if (fav === false && restaurant.value) {
-    postUsersDeleteFavourites({ restaurantIds: [restaurant.value.id], userId: props.userId });
+  if (fav) {
+    addFavourite(id);
+  } else {
+    handleDeleteFavourite(false, id);
   }
 }
 
@@ -46,20 +51,6 @@ const { totalRatings, ratingPercentage } = useUserRating(
   restaurant.value?.likesCount,
   restaurant.value?.dislikesCount,
 );
-
-const { checkIfFavourite } = useFavourites({
-  userId: props.userId,
-});
-
-const isFavourite = ref(checkIfFavourite(id));
-
-watchEffect(() => {
-  if (checkIfFavourite(id)) {
-    isFavourite.value = true;
-  } else if (!checkIfFavourite(id)) {
-    isFavourite.value = false;
-  }
-});
 </script>
 
 <template>
@@ -76,7 +67,7 @@ watchEffect(() => {
           <div class="flex flex-row mb-4 gap-4 items-center">
             <p class="font-semibold text-3xl">{{ restaurant.name }}</p>
             <RequireAuth>
-              <StarItem :isFavourite="isFavourite" @favourite-change="postFavourite" />
+              <StarItem :isFavourite="IsFavourite" @favourite-change="postFavourite" />
             </RequireAuth>
 
             <div class="flex-grow" />
