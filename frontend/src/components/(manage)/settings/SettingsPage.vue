@@ -31,6 +31,7 @@ import { uploadRestaurantImage } from '@/components/(manage)/common/image/api';
 import { useRestaurantUser } from '@/composables/useRestaurantUser';
 import { useRefOverride } from '@/composables/maps/useRefOverride';
 import RestaurantStatus from '@/components/(manage)/common/RestaurantStatus.vue';
+import ConfirmDialog from '@/components/dialogs/ConfirmDialog.vue';
 
 const props = defineProps<{ initialRestaurantData: RestaurantDTO }>();
 
@@ -158,7 +159,10 @@ const onSubmit = form.handleSubmit(async (values) => {
     <h2 class="mb-2 text-lg font-semibold tracking-tight text-red-700">Danger zone</h2>
     <Separator class="mb-4 mt-2" />
 
-    <Button variant="destructive" @click="deactivateRestaurant" :disabled="!restaurant.active"
+    <Button
+      variant="destructive"
+      @click="deactivateRestaurant"
+      :disabled="restaurant.status !== 'Active'"
       >Deactivate restaurant</Button
     >
   </SettingsSection>
