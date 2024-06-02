@@ -159,11 +159,21 @@ const onSubmit = form.handleSubmit(async (values) => {
     <h2 class="mb-2 text-lg font-semibold tracking-tight text-red-700">Danger zone</h2>
     <Separator class="mb-4 mt-2" />
 
-    <Button
-      variant="destructive"
-      @click="deactivateRestaurant"
-      :disabled="restaurant.status !== 'Active'"
-      >Deactivate restaurant</Button
-    >
+    <ConfirmDialog>
+      <template v-slot:trigger>
+        <Button variant="destructive" :disabled="restaurant.status !== 'Active'">
+          Deactivate restaurant
+        </Button>
+      </template>
+      <template v-slot:description>
+        <p>
+          Are you sure you want to deactivate your restaurant? It will have to be activated again by
+          one of admins.
+        </p>
+      </template>
+      <template v-slot:confirmButton>
+        <Button variant="destructive" @click="deactivateRestaurant">Confirm</Button>
+      </template>
+    </ConfirmDialog>
   </SettingsSection>
 </template>
