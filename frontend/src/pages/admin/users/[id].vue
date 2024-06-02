@@ -95,8 +95,8 @@ async function handleCloseReport(reportId: string, reportAbout: 'user' | 'restau
         <h2 class="text-lg font-semibold tracking-tight">Profile details</h2>
         <Separator class="mb-4 mt-2" />
 
-        <div class="flex items-center justify-between">
-          <p v-if="user.blocked">
+        <div class="flex h-10 items-center justify-between">
+          <p>
             <UserStatusIcon :is-banned="user.blocked" class="mr-2 inline-block h-4 w-4" />
             <template v-if="user.blocked">
               <span class="text-red-500">Account banned</span>
