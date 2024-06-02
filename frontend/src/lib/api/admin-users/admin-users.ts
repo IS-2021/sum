@@ -18,7 +18,13 @@ import * as axios from 'axios';
 import type { AxiosError, AxiosRequestConfig, AxiosResponse } from 'axios';
 import { computed, unref } from 'vue';
 import type { MaybeRef } from 'vue';
-import type { GetAdminUsersParams, NotFound404Response, UserDTO, Uuid } from '../../api-model';
+import type {
+  GetAdminUsersParams,
+  NotFound404Response,
+  PutAdminUsersIdParams,
+  UserDTO,
+  Uuid,
+} from '../../api-model';
 
 export const getAdminUsers = (
   params?: MaybeRef<GetAdminUsersParams>,
@@ -83,70 +89,6 @@ export const useGetAdminUsers = <
   return query;
 };
 
-export const putAdminUsers = (
-  userDTO: MaybeRef<UserDTO>,
-  options?: AxiosRequestConfig,
-): Promise<AxiosResponse<void>> => {
-  userDTO = unref(userDTO);
-  return axios.default.put(`http://localhost:9090/admin/users`, userDTO, options);
-};
-
-export const getPutAdminUsersMutationOptions = <
-  TError = AxiosError<NotFound404Response>,
-  TContext = unknown,
->(options?: {
-  mutation?: UseMutationOptions<
-    Awaited<ReturnType<typeof putAdminUsers>>,
-    TError,
-    { data: UserDTO },
-    TContext
-  >;
-  axios?: AxiosRequestConfig;
-}): UseMutationOptions<
-  Awaited<ReturnType<typeof putAdminUsers>>,
-  TError,
-  { data: UserDTO },
-  TContext
-> => {
-  const { mutation: mutationOptions, axios: axiosOptions } = options ?? {};
-
-  const mutationFn: MutationFunction<
-    Awaited<ReturnType<typeof putAdminUsers>>,
-    { data: UserDTO }
-  > = (props) => {
-    const { data } = props ?? {};
-
-    return putAdminUsers(data, axiosOptions);
-  };
-
-  return { mutationFn, ...mutationOptions };
-};
-
-export type PutAdminUsersMutationResult = NonNullable<Awaited<ReturnType<typeof putAdminUsers>>>;
-export type PutAdminUsersMutationBody = UserDTO;
-export type PutAdminUsersMutationError = AxiosError<NotFound404Response>;
-
-export const usePutAdminUsers = <
-  TError = AxiosError<NotFound404Response>,
-  TContext = unknown,
->(options?: {
-  mutation?: UseMutationOptions<
-    Awaited<ReturnType<typeof putAdminUsers>>,
-    TError,
-    { data: UserDTO },
-    TContext
-  >;
-  axios?: AxiosRequestConfig;
-}): UseMutationReturnType<
-  Awaited<ReturnType<typeof putAdminUsers>>,
-  TError,
-  { data: UserDTO },
-  TContext
-> => {
-  const mutationOptions = getPutAdminUsersMutationOptions(options);
-
-  return useMutation(mutationOptions);
-};
 export const getAdminUsersId = (
   id: MaybeRef<Uuid>,
   options?: AxiosRequestConfig,
@@ -206,4 +148,76 @@ export const useGetAdminUsersId = <
   query.queryKey = unref(queryOptions).queryKey as QueryKey;
 
   return query;
+};
+
+export const putAdminUsersId = (
+  id: MaybeRef<Uuid>,
+  params: MaybeRef<PutAdminUsersIdParams>,
+  options?: AxiosRequestConfig,
+): Promise<AxiosResponse<void>> => {
+  id = unref(id);
+  params = unref(params);
+  return axios.default.put(`http://localhost:9090/admin/users/${id}`, undefined, {
+    ...options,
+    params: { ...unref(params), ...options?.params },
+  });
+};
+
+export const getPutAdminUsersIdMutationOptions = <
+  TError = AxiosError<NotFound404Response>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof putAdminUsersId>>,
+    TError,
+    { id: Uuid; params: PutAdminUsersIdParams },
+    TContext
+  >;
+  axios?: AxiosRequestConfig;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof putAdminUsersId>>,
+  TError,
+  { id: Uuid; params: PutAdminUsersIdParams },
+  TContext
+> => {
+  const { mutation: mutationOptions, axios: axiosOptions } = options ?? {};
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof putAdminUsersId>>,
+    { id: Uuid; params: PutAdminUsersIdParams }
+  > = (props) => {
+    const { id, params } = props ?? {};
+
+    return putAdminUsersId(id, params, axiosOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type PutAdminUsersIdMutationResult = NonNullable<
+  Awaited<ReturnType<typeof putAdminUsersId>>
+>;
+
+export type PutAdminUsersIdMutationError = AxiosError<NotFound404Response>;
+
+export const usePutAdminUsersId = <
+  TError = AxiosError<NotFound404Response>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof putAdminUsersId>>,
+    TError,
+    { id: Uuid; params: PutAdminUsersIdParams },
+    TContext
+  >;
+  axios?: AxiosRequestConfig;
+}): UseMutationReturnType<
+  Awaited<ReturnType<typeof putAdminUsersId>>,
+  TError,
+  { id: Uuid; params: PutAdminUsersIdParams },
+  TContext
+> => {
+  const mutationOptions = getPutAdminUsersIdMutationOptions(options);
+
+  return useMutation(mutationOptions);
 };

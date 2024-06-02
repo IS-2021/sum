@@ -11,4 +11,8 @@ export type GetAdminReportsUsersParams = {
    * Optional
    */
   userId?: Uuid;
+  /**
+   * Optional
+   */
+  restaurantId?: Uuid;
 };

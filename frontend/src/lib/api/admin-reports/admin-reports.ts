@@ -19,9 +19,7 @@ import type { AxiosError, AxiosRequestConfig, AxiosResponse } from 'axios';
 import { computed, unref } from 'vue';
 import type { MaybeRef } from 'vue';
 import type {
-  GetAdminReportsRestaurantsIdParams,
   GetAdminReportsRestaurantsParams,
-  GetAdminReportsUsersIdParams,
   GetAdminReportsUsersParams,
   PutAdminReportsRestaurantsIdParams,
   PutAdminReportsUsersIdParams,
@@ -29,167 +27,10 @@ import type {
   Uuid,
 } from '../../api-model';
 
-export const getAdminReportsRestaurantsId = (
-  id: MaybeRef<Uuid>,
-  params: MaybeRef<GetAdminReportsRestaurantsIdParams>,
-  options?: AxiosRequestConfig,
-): Promise<AxiosResponse<ReportDTO>> => {
-  id = unref(id);
-  params = unref(params);
-  return axios.default.get(`http://localhost:9090/admin/reports/restaurants/${id}/`, {
-    ...options,
-    params: { ...unref(params), ...options?.params },
-  });
-};
-
-export const getGetAdminReportsRestaurantsIdQueryKey = (
-  id: MaybeRef<Uuid>,
-  params: MaybeRef<GetAdminReportsRestaurantsIdParams>,
-) => {
-  return [
-    'http:',
-    'localhost:9090',
-    'admin',
-    'reports',
-    'restaurants',
-    id,
-    ...(params ? [params] : []),
-  ] as const;
-};
-
-export const getGetAdminReportsRestaurantsIdQueryOptions = <
-  TData = Awaited<ReturnType<typeof getAdminReportsRestaurantsId>>,
-  TError = AxiosError<void>,
->(
-  id: MaybeRef<Uuid>,
-  params: MaybeRef<GetAdminReportsRestaurantsIdParams>,
-  options?: {
-    query?: Partial<
-      UseQueryOptions<Awaited<ReturnType<typeof getAdminReportsRestaurantsId>>, TError, TData>
-    >;
-    axios?: AxiosRequestConfig;
-  },
-) => {
-  const { query: queryOptions, axios: axiosOptions } = options ?? {};
-
-  const queryKey = getGetAdminReportsRestaurantsIdQueryKey(id, params);
-
-  const queryFn: QueryFunction<Awaited<ReturnType<typeof getAdminReportsRestaurantsId>>> = ({
-    signal,
-  }) => getAdminReportsRestaurantsId(id, params, { signal, ...axiosOptions });
-
-  return {
-    queryKey,
-    queryFn,
-    enabled: computed(() => !!unref(id)),
-    ...queryOptions,
-  } as UseQueryOptions<Awaited<ReturnType<typeof getAdminReportsRestaurantsId>>, TError, TData>;
-};
-
-export type GetAdminReportsRestaurantsIdQueryResult = NonNullable<
-  Awaited<ReturnType<typeof getAdminReportsRestaurantsId>>
->;
-export type GetAdminReportsRestaurantsIdQueryError = AxiosError<void>;
-
-export const useGetAdminReportsRestaurantsId = <
-  TData = Awaited<ReturnType<typeof getAdminReportsRestaurantsId>>,
-  TError = AxiosError<void>,
->(
-  id: MaybeRef<Uuid>,
-  params: MaybeRef<GetAdminReportsRestaurantsIdParams>,
-  options?: {
-    query?: Partial<
-      UseQueryOptions<Awaited<ReturnType<typeof getAdminReportsRestaurantsId>>, TError, TData>
-    >;
-    axios?: AxiosRequestConfig;
-  },
-): UseQueryReturnType<TData, TError> & { queryKey: QueryKey } => {
-  const queryOptions = getGetAdminReportsRestaurantsIdQueryOptions(id, params, options);
-
-  const query = useQuery(queryOptions) as UseQueryReturnType<TData, TError> & {
-    queryKey: QueryKey;
-  };
-
-  query.queryKey = unref(queryOptions).queryKey as QueryKey;
-
-  return query;
-};
-
-export const putAdminReportsRestaurantsId = (
-  id: MaybeRef<Uuid>,
-  params: MaybeRef<PutAdminReportsRestaurantsIdParams>,
-  options?: AxiosRequestConfig,
-): Promise<AxiosResponse<ReportDTO>> => {
-  id = unref(id);
-  params = unref(params);
-  return axios.default.put(`http://localhost:9090/admin/reports/restaurants/${id}/`, undefined, {
-    ...options,
-    params: { ...unref(params), ...options?.params },
-  });
-};
-
-export const getPutAdminReportsRestaurantsIdMutationOptions = <
-  TError = AxiosError<void>,
-  TContext = unknown,
->(options?: {
-  mutation?: UseMutationOptions<
-    Awaited<ReturnType<typeof putAdminReportsRestaurantsId>>,
-    TError,
-    { id: Uuid; params: PutAdminReportsRestaurantsIdParams },
-    TContext
-  >;
-  axios?: AxiosRequestConfig;
-}): UseMutationOptions<
-  Awaited<ReturnType<typeof putAdminReportsRestaurantsId>>,
-  TError,
-  { id: Uuid; params: PutAdminReportsRestaurantsIdParams },
-  TContext
-> => {
-  const { mutation: mutationOptions, axios: axiosOptions } = options ?? {};
-
-  const mutationFn: MutationFunction<
-    Awaited<ReturnType<typeof putAdminReportsRestaurantsId>>,
-    { id: Uuid; params: PutAdminReportsRestaurantsIdParams }
-  > = (props) => {
-    const { id, params } = props ?? {};
-
-    return putAdminReportsRestaurantsId(id, params, axiosOptions);
-  };
-
-  return { mutationFn, ...mutationOptions };
-};
-
-export type PutAdminReportsRestaurantsIdMutationResult = NonNullable<
-  Awaited<ReturnType<typeof putAdminReportsRestaurantsId>>
->;
-
-export type PutAdminReportsRestaurantsIdMutationError = AxiosError<void>;
-
-export const usePutAdminReportsRestaurantsId = <
-  TError = AxiosError<void>,
-  TContext = unknown,
->(options?: {
-  mutation?: UseMutationOptions<
-    Awaited<ReturnType<typeof putAdminReportsRestaurantsId>>,
-    TError,
-    { id: Uuid; params: PutAdminReportsRestaurantsIdParams },
-    TContext
-  >;
-  axios?: AxiosRequestConfig;
-}): UseMutationReturnType<
-  Awaited<ReturnType<typeof putAdminReportsRestaurantsId>>,
-  TError,
-  { id: Uuid; params: PutAdminReportsRestaurantsIdParams },
-  TContext
-> => {
-  const mutationOptions = getPutAdminReportsRestaurantsIdMutationOptions(options);
-
-  return useMutation(mutationOptions);
-};
 export const getAdminReportsRestaurants = (
-  params: MaybeRef<GetAdminReportsRestaurantsParams>,
+  params?: MaybeRef<GetAdminReportsRestaurantsParams>,
   options?: AxiosRequestConfig,
-): Promise<AxiosResponse<ReportDTO[] | void>> => {
+): Promise<AxiosResponse<ReportDTO[]>> => {
   params = unref(params);
   return axios.default.get(`http://localhost:9090/admin/reports/restaurants`, {
     ...options,
@@ -198,7 +39,7 @@ export const getAdminReportsRestaurants = (
 };
 
 export const getGetAdminReportsRestaurantsQueryKey = (
-  params: MaybeRef<GetAdminReportsRestaurantsParams>,
+  params?: MaybeRef<GetAdminReportsRestaurantsParams>,
 ) => {
   return [
     'http:',
@@ -214,7 +55,7 @@ export const getGetAdminReportsRestaurantsQueryOptions = <
   TData = Awaited<ReturnType<typeof getAdminReportsRestaurants>>,
   TError = AxiosError<unknown>,
 >(
-  params: MaybeRef<GetAdminReportsRestaurantsParams>,
+  params?: MaybeRef<GetAdminReportsRestaurantsParams>,
   options?: {
     query?: Partial<
       UseQueryOptions<Awaited<ReturnType<typeof getAdminReportsRestaurants>>, TError, TData>
@@ -246,7 +87,7 @@ export const useGetAdminReportsRestaurants = <
   TData = Awaited<ReturnType<typeof getAdminReportsRestaurants>>,
   TError = AxiosError<unknown>,
 >(
-  params: MaybeRef<GetAdminReportsRestaurantsParams>,
+  params?: MaybeRef<GetAdminReportsRestaurantsParams>,
   options?: {
     query?: Partial<
       UseQueryOptions<Awaited<ReturnType<typeof getAdminReportsRestaurants>>, TError, TData>
@@ -265,165 +106,12 @@ export const useGetAdminReportsRestaurants = <
   return query;
 };
 
-export const getAdminReportsUsersId = (
-  id: MaybeRef<Uuid>,
-  params: MaybeRef<GetAdminReportsUsersIdParams>,
-  options?: AxiosRequestConfig,
-): Promise<AxiosResponse<ReportDTO>> => {
-  id = unref(id);
-  params = unref(params);
-  return axios.default.get(`http://localhost:9090/admin/reports/users/${id}/`, {
-    ...options,
-    params: { ...unref(params), ...options?.params },
-  });
-};
-
-export const getGetAdminReportsUsersIdQueryKey = (
-  id: MaybeRef<Uuid>,
-  params: MaybeRef<GetAdminReportsUsersIdParams>,
-) => {
-  return [
-    'http:',
-    'localhost:9090',
-    'admin',
-    'reports',
-    'users',
-    id,
-    ...(params ? [params] : []),
-  ] as const;
-};
-
-export const getGetAdminReportsUsersIdQueryOptions = <
-  TData = Awaited<ReturnType<typeof getAdminReportsUsersId>>,
-  TError = AxiosError<void>,
->(
-  id: MaybeRef<Uuid>,
-  params: MaybeRef<GetAdminReportsUsersIdParams>,
-  options?: {
-    query?: Partial<
-      UseQueryOptions<Awaited<ReturnType<typeof getAdminReportsUsersId>>, TError, TData>
-    >;
-    axios?: AxiosRequestConfig;
-  },
-) => {
-  const { query: queryOptions, axios: axiosOptions } = options ?? {};
-
-  const queryKey = getGetAdminReportsUsersIdQueryKey(id, params);
-
-  const queryFn: QueryFunction<Awaited<ReturnType<typeof getAdminReportsUsersId>>> = ({ signal }) =>
-    getAdminReportsUsersId(id, params, { signal, ...axiosOptions });
-
-  return {
-    queryKey,
-    queryFn,
-    enabled: computed(() => !!unref(id)),
-    ...queryOptions,
-  } as UseQueryOptions<Awaited<ReturnType<typeof getAdminReportsUsersId>>, TError, TData>;
-};
-
-export type GetAdminReportsUsersIdQueryResult = NonNullable<
-  Awaited<ReturnType<typeof getAdminReportsUsersId>>
->;
-export type GetAdminReportsUsersIdQueryError = AxiosError<void>;
-
-export const useGetAdminReportsUsersId = <
-  TData = Awaited<ReturnType<typeof getAdminReportsUsersId>>,
-  TError = AxiosError<void>,
->(
-  id: MaybeRef<Uuid>,
-  params: MaybeRef<GetAdminReportsUsersIdParams>,
-  options?: {
-    query?: Partial<
-      UseQueryOptions<Awaited<ReturnType<typeof getAdminReportsUsersId>>, TError, TData>
-    >;
-    axios?: AxiosRequestConfig;
-  },
-): UseQueryReturnType<TData, TError> & { queryKey: QueryKey } => {
-  const queryOptions = getGetAdminReportsUsersIdQueryOptions(id, params, options);
-
-  const query = useQuery(queryOptions) as UseQueryReturnType<TData, TError> & {
-    queryKey: QueryKey;
-  };
-
-  query.queryKey = unref(queryOptions).queryKey as QueryKey;
-
-  return query;
-};
-
-export const putAdminReportsUsersId = (
-  id: MaybeRef<Uuid>,
-  params: MaybeRef<PutAdminReportsUsersIdParams>,
-  options?: AxiosRequestConfig,
-): Promise<AxiosResponse<ReportDTO>> => {
-  id = unref(id);
-  params = unref(params);
-  return axios.default.put(`http://localhost:9090/admin/reports/users/${id}/`, undefined, {
-    ...options,
-    params: { ...unref(params), ...options?.params },
-  });
-};
-
-export const getPutAdminReportsUsersIdMutationOptions = <
-  TError = AxiosError<void>,
-  TContext = unknown,
->(options?: {
-  mutation?: UseMutationOptions<
-    Awaited<ReturnType<typeof putAdminReportsUsersId>>,
-    TError,
-    { id: Uuid; params: PutAdminReportsUsersIdParams },
-    TContext
-  >;
-  axios?: AxiosRequestConfig;
-}): UseMutationOptions<
-  Awaited<ReturnType<typeof putAdminReportsUsersId>>,
-  TError,
-  { id: Uuid; params: PutAdminReportsUsersIdParams },
-  TContext
-> => {
-  const { mutation: mutationOptions, axios: axiosOptions } = options ?? {};
-
-  const mutationFn: MutationFunction<
-    Awaited<ReturnType<typeof putAdminReportsUsersId>>,
-    { id: Uuid; params: PutAdminReportsUsersIdParams }
-  > = (props) => {
-    const { id, params } = props ?? {};
-
-    return putAdminReportsUsersId(id, params, axiosOptions);
-  };
-
-  return { mutationFn, ...mutationOptions };
-};
-
-export type PutAdminReportsUsersIdMutationResult = NonNullable<
-  Awaited<ReturnType<typeof putAdminReportsUsersId>>
->;
-
-export type PutAdminReportsUsersIdMutationError = AxiosError<void>;
-
-export const usePutAdminReportsUsersId = <TError = AxiosError<void>, TContext = unknown>(options?: {
-  mutation?: UseMutationOptions<
-    Awaited<ReturnType<typeof putAdminReportsUsersId>>,
-    TError,
-    { id: Uuid; params: PutAdminReportsUsersIdParams },
-    TContext
-  >;
-  axios?: AxiosRequestConfig;
-}): UseMutationReturnType<
-  Awaited<ReturnType<typeof putAdminReportsUsersId>>,
-  TError,
-  { id: Uuid; params: PutAdminReportsUsersIdParams },
-  TContext
-> => {
-  const mutationOptions = getPutAdminReportsUsersIdMutationOptions(options);
-
-  return useMutation(mutationOptions);
-};
 export const getAdminReportsUsers = (
   params?: MaybeRef<GetAdminReportsUsersParams>,
   options?: AxiosRequestConfig,
-): Promise<AxiosResponse<ReportDTO[] | void>> => {
+): Promise<AxiosResponse<ReportDTO[]>> => {
   params = unref(params);
-  return axios.default.get(`http://localhost:9090/admin/reports/users/`, {
+  return axios.default.get(`http://localhost:9090/admin/reports/users`, {
     ...options,
     params: { ...unref(params), ...options?.params },
   });
@@ -492,4 +180,279 @@ export const useGetAdminReportsUsers = <
   query.queryKey = unref(queryOptions).queryKey as QueryKey;
 
   return query;
+};
+
+export const getAdminReportsUsersId = (
+  id: MaybeRef<Uuid>,
+  options?: AxiosRequestConfig,
+): Promise<AxiosResponse<ReportDTO>> => {
+  id = unref(id);
+  return axios.default.get(`http://localhost:9090/admin/reports/users/${id}`, options);
+};
+
+export const getGetAdminReportsUsersIdQueryKey = (id: MaybeRef<Uuid>) => {
+  return ['http:', 'localhost:9090', 'admin', 'reports', 'users', id] as const;
+};
+
+export const getGetAdminReportsUsersIdQueryOptions = <
+  TData = Awaited<ReturnType<typeof getAdminReportsUsersId>>,
+  TError = AxiosError<void>,
+>(
+  id: MaybeRef<Uuid>,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof getAdminReportsUsersId>>, TError, TData>
+    >;
+    axios?: AxiosRequestConfig;
+  },
+) => {
+  const { query: queryOptions, axios: axiosOptions } = options ?? {};
+
+  const queryKey = getGetAdminReportsUsersIdQueryKey(id);
+
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof getAdminReportsUsersId>>> = ({ signal }) =>
+    getAdminReportsUsersId(id, { signal, ...axiosOptions });
+
+  return {
+    queryKey,
+    queryFn,
+    enabled: computed(() => !!unref(id)),
+    ...queryOptions,
+  } as UseQueryOptions<Awaited<ReturnType<typeof getAdminReportsUsersId>>, TError, TData>;
+};
+
+export type GetAdminReportsUsersIdQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getAdminReportsUsersId>>
+>;
+export type GetAdminReportsUsersIdQueryError = AxiosError<void>;
+
+export const useGetAdminReportsUsersId = <
+  TData = Awaited<ReturnType<typeof getAdminReportsUsersId>>,
+  TError = AxiosError<void>,
+>(
+  id: MaybeRef<Uuid>,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof getAdminReportsUsersId>>, TError, TData>
+    >;
+    axios?: AxiosRequestConfig;
+  },
+): UseQueryReturnType<TData, TError> & { queryKey: QueryKey } => {
+  const queryOptions = getGetAdminReportsUsersIdQueryOptions(id, options);
+
+  const query = useQuery(queryOptions) as UseQueryReturnType<TData, TError> & {
+    queryKey: QueryKey;
+  };
+
+  query.queryKey = unref(queryOptions).queryKey as QueryKey;
+
+  return query;
+};
+
+export const putAdminReportsUsersId = (
+  id: MaybeRef<Uuid>,
+  params: MaybeRef<PutAdminReportsUsersIdParams>,
+  options?: AxiosRequestConfig,
+): Promise<AxiosResponse<ReportDTO>> => {
+  id = unref(id);
+  params = unref(params);
+  return axios.default.put(`http://localhost:9090/admin/reports/users/${id}`, undefined, {
+    ...options,
+    params: { ...unref(params), ...options?.params },
+  });
+};
+
+export const getPutAdminReportsUsersIdMutationOptions = <
+  TError = AxiosError<void>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof putAdminReportsUsersId>>,
+    TError,
+    { id: Uuid; params: PutAdminReportsUsersIdParams },
+    TContext
+  >;
+  axios?: AxiosRequestConfig;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof putAdminReportsUsersId>>,
+  TError,
+  { id: Uuid; params: PutAdminReportsUsersIdParams },
+  TContext
+> => {
+  const { mutation: mutationOptions, axios: axiosOptions } = options ?? {};
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof putAdminReportsUsersId>>,
+    { id: Uuid; params: PutAdminReportsUsersIdParams }
+  > = (props) => {
+    const { id, params } = props ?? {};
+
+    return putAdminReportsUsersId(id, params, axiosOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type PutAdminReportsUsersIdMutationResult = NonNullable<
+  Awaited<ReturnType<typeof putAdminReportsUsersId>>
+>;
+
+export type PutAdminReportsUsersIdMutationError = AxiosError<void>;
+
+export const usePutAdminReportsUsersId = <TError = AxiosError<void>, TContext = unknown>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof putAdminReportsUsersId>>,
+    TError,
+    { id: Uuid; params: PutAdminReportsUsersIdParams },
+    TContext
+  >;
+  axios?: AxiosRequestConfig;
+}): UseMutationReturnType<
+  Awaited<ReturnType<typeof putAdminReportsUsersId>>,
+  TError,
+  { id: Uuid; params: PutAdminReportsUsersIdParams },
+  TContext
+> => {
+  const mutationOptions = getPutAdminReportsUsersIdMutationOptions(options);
+
+  return useMutation(mutationOptions);
+};
+export const getAdminReportsRestaurantsId = (
+  id: MaybeRef<Uuid>,
+  options?: AxiosRequestConfig,
+): Promise<AxiosResponse<ReportDTO>> => {
+  id = unref(id);
+  return axios.default.get(`http://localhost:9090/admin/reports/restaurants/${id}`, options);
+};
+
+export const getGetAdminReportsRestaurantsIdQueryKey = (id: MaybeRef<Uuid>) => {
+  return ['http:', 'localhost:9090', 'admin', 'reports', 'restaurants', id] as const;
+};
+
+export const getGetAdminReportsRestaurantsIdQueryOptions = <
+  TData = Awaited<ReturnType<typeof getAdminReportsRestaurantsId>>,
+  TError = AxiosError<void>,
+>(
+  id: MaybeRef<Uuid>,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof getAdminReportsRestaurantsId>>, TError, TData>
+    >;
+    axios?: AxiosRequestConfig;
+  },
+) => {
+  const { query: queryOptions, axios: axiosOptions } = options ?? {};
+
+  const queryKey = getGetAdminReportsRestaurantsIdQueryKey(id);
+
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof getAdminReportsRestaurantsId>>> = ({
+    signal,
+  }) => getAdminReportsRestaurantsId(id, { signal, ...axiosOptions });
+
+  return {
+    queryKey,
+    queryFn,
+    enabled: computed(() => !!unref(id)),
+    ...queryOptions,
+  } as UseQueryOptions<Awaited<ReturnType<typeof getAdminReportsRestaurantsId>>, TError, TData>;
+};
+
+export type GetAdminReportsRestaurantsIdQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getAdminReportsRestaurantsId>>
+>;
+export type GetAdminReportsRestaurantsIdQueryError = AxiosError<void>;
+
+export const useGetAdminReportsRestaurantsId = <
+  TData = Awaited<ReturnType<typeof getAdminReportsRestaurantsId>>,
+  TError = AxiosError<void>,
+>(
+  id: MaybeRef<Uuid>,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof getAdminReportsRestaurantsId>>, TError, TData>
+    >;
+    axios?: AxiosRequestConfig;
+  },
+): UseQueryReturnType<TData, TError> & { queryKey: QueryKey } => {
+  const queryOptions = getGetAdminReportsRestaurantsIdQueryOptions(id, options);
+
+  const query = useQuery(queryOptions) as UseQueryReturnType<TData, TError> & {
+    queryKey: QueryKey;
+  };
+
+  query.queryKey = unref(queryOptions).queryKey as QueryKey;
+
+  return query;
+};
+
+export const putAdminReportsRestaurantsId = (
+  id: MaybeRef<Uuid>,
+  params: MaybeRef<PutAdminReportsRestaurantsIdParams>,
+  options?: AxiosRequestConfig,
+): Promise<AxiosResponse<ReportDTO>> => {
+  id = unref(id);
+  params = unref(params);
+  return axios.default.put(`http://localhost:9090/admin/reports/restaurants/${id}`, undefined, {
+    ...options,
+    params: { ...unref(params), ...options?.params },
+  });
+};
+
+export const getPutAdminReportsRestaurantsIdMutationOptions = <
+  TError = AxiosError<void>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof putAdminReportsRestaurantsId>>,
+    TError,
+    { id: Uuid; params: PutAdminReportsRestaurantsIdParams },
+    TContext
+  >;
+  axios?: AxiosRequestConfig;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof putAdminReportsRestaurantsId>>,
+  TError,
+  { id: Uuid; params: PutAdminReportsRestaurantsIdParams },
+  TContext
+> => {
+  const { mutation: mutationOptions, axios: axiosOptions } = options ?? {};
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof putAdminReportsRestaurantsId>>,
+    { id: Uuid; params: PutAdminReportsRestaurantsIdParams }
+  > = (props) => {
+    const { id, params } = props ?? {};
+
+    return putAdminReportsRestaurantsId(id, params, axiosOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type PutAdminReportsRestaurantsIdMutationResult = NonNullable<
+  Awaited<ReturnType<typeof putAdminReportsRestaurantsId>>
+>;
+
+export type PutAdminReportsRestaurantsIdMutationError = AxiosError<void>;
+
+export const usePutAdminReportsRestaurantsId = <
+  TError = AxiosError<void>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof putAdminReportsRestaurantsId>>,
+    TError,
+    { id: Uuid; params: PutAdminReportsRestaurantsIdParams },
+    TContext
+  >;
+  axios?: AxiosRequestConfig;
+}): UseMutationReturnType<
+  Awaited<ReturnType<typeof putAdminReportsRestaurantsId>>,
+  TError,
+  { id: Uuid; params: PutAdminReportsRestaurantsIdParams },
+  TContext
+> => {
+  const mutationOptions = getPutAdminReportsRestaurantsIdMutationOptions(options);
+
+  return useMutation(mutationOptions);
 };

@@ -4,8 +4,15 @@
  * Sumatywny
  * OpenAPI spec version: 1.0.0
  */
-import type { RestaurantStatus } from './restaurantStatus';
+import type { Uuid } from './uuid';
 
 export type GetAdminReportsRestaurantsParams = {
-  status: RestaurantStatus;
+  /**
+   * Optional
+   */
+  userId?: Uuid;
+  /**
+   * Optional
+   */
+  restaurantId?: Uuid;
 };

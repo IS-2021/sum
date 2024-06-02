@@ -8,7 +8,7 @@ import type { Uuid } from './uuid';
 
 export type GetReportsRestaurantsParams = {
   /**
-   * Optional
+   * Optional - returns reports associated with passed restaurantId
    */
   restaurantId?: Uuid;
 };
