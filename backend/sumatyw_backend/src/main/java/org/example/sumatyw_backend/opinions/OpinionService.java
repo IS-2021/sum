@@ -60,6 +60,16 @@ public class OpinionService {
         }
     }
 
+    public Opinion deleteOpinion(UUID opinionId) {
+        Optional<Opinion> opinion = opinionRepository.findById(opinionId);
+        if (opinion.isPresent()) {
+            opinionRepository.delete(opinion.get());
+            return opinion.get();
+        } else {
+            throw new ObjectNotFoundException("Opinion with id: " + opinionId + " not found");
+        }
+    }
+
     public List<Opinion> getOpinions(){
         return opinionRepository.findAll();
     }

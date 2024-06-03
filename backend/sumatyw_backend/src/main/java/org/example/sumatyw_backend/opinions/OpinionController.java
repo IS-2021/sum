@@ -28,8 +28,8 @@ public class OpinionController {
     }
 
     @GetMapping()
-    public ResponseEntity<OpinionDTO> getOpinionById(@RequestParam() UUID userId,
-                                                        @RequestParam UUID restaurantId) {
+    public ResponseEntity<OpinionDTO> getOpinionById(@RequestParam("userId") UUID userId,
+                                                        @RequestParam("restaurantId") UUID restaurantId) {
 
         return new ResponseEntity<>(OpinionDTOMapper.mapOpinionToOpinionDTO(opinionService.getOpinionByUserIdRestaurantId(userId,restaurantId)), HttpStatus.OK);
     }
@@ -42,5 +42,11 @@ public class OpinionController {
             OpinionDTOMapper.mapOpinionToOpinionDTO(opinion),
             HttpStatus.OK
         );
+    }
+
+    @DeleteMapping()
+    public ResponseEntity<OpinionDTO> deleteOpinionById(@RequestParam("opinionId") UUID opinionId) {
+
+        return new ResponseEntity<>(OpinionDTOMapper.mapOpinionToOpinionDTO(opinionService.deleteOpinion(opinionId)),HttpStatus.OK);
     }
 }
