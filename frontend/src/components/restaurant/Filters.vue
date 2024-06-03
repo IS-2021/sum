@@ -49,7 +49,7 @@ watch(unwantedIngredients.value, (x) => {
 
 <template>
   <TagsInput :unwantedIngredients="unwantedIngredients" />
-  <Popover v-model:open="open">
+  <Popover v-model:open="open" class="w-full">
     <PopoverTrigger as-child>
       <Button
         variant="outline"
@@ -62,9 +62,8 @@ watch(unwantedIngredients.value, (x) => {
         <ChevronsUpDown class="ml-2 h-4 w-4 shrink-0 opacity-50" />
       </Button>
     </PopoverTrigger>
-    <PopoverContent class="w-full p-0">
+    <PopoverContent class="p-0">
       <Command>
-        <CommandInput placeholder="Search ingredients..." />
         <CommandEmpty>No ingredients found.</CommandEmpty>
         <CommandList>
           <CommandGroup>

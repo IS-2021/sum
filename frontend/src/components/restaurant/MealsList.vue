@@ -43,9 +43,9 @@ function updateFilters(list: IngredientDTO[]) {
     <p>Loading...</p>
   </template>
   <div v-else-if="filteredMeals">
-    <h1 class="text-2xl mt-16 font-bold">Available packages</h1>
-    <div class="flex flex-col lg:flex-row gap-8 mt-4">
-      <div class="space-y-3 p-4 bg-neutral-200 rounded h-fit">
+    <h1 class="mt-16 text-2xl font-bold">Available packages</h1>
+    <div class="mt-4 flex flex-col gap-8 lg:flex-row">
+      <div class="h-fit space-y-3 rounded bg-neutral-200 p-4 lg:sticky lg:top-20">
         <p>Excluding dishes that contain:</p>
         <Filters
           :restaurantId="restaurantId"
@@ -53,21 +53,21 @@ function updateFilters(list: IngredientDTO[]) {
           @filter-change="updateFilters"
         />
       </div>
-      <div class="flex-grow space-y-3 mb-10">
+
+      <div class="mb-10 flex-grow space-y-3">
         <p v-if="filteredMeals.length === 0">No meals found</p>
         <div
           v-else
           v-for="meal in filteredMeals"
           v-bind:key="meal.mealId"
-          class="bg-neutral-200 rounded p-4 space-y-3"
+          class="space-y-3 rounded bg-neutral-200 p-4"
         >
-          <div class="flex justify-between">
-            <h1 class="font-semibold text-xl">{{ meal.name }}</h1>
-            <p class="text-xs">Available amount: {{ amount }}</p>
+          <div>
+            <h1 class="text-xl font-semibold">{{ meal.name }}</h1>
           </div>
           <p class="text-neutral-950">{{ meal.description }}</p>
           <div class="flex flex-wrap">
-            <p class="text-neutral-800 pr-1">
+            <p class="pr-1 text-neutral-700">
               Ingredients: {{ meal.ingredients?.map((ingredient) => ingredient.name).join(', ') }}
             </p>
           </div>
