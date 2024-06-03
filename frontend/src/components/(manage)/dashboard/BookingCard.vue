@@ -23,6 +23,7 @@ import {
 } from '@/components/ui/dialog';
 import ReportUserComponent from '@/components/(manage)/bookings/ReportUserComponent.vue';
 import { useUser } from '@/composables/useUser';
+import BookingStatusIcon from '@/components/bookings/BookingStatusIcon.vue';
 
 interface BookingCardProps {
   booking: BookingDTO;
@@ -53,28 +54,25 @@ const { isPending, remainingTime } = useBookingCard(
   <div
     :class="
       cn(
-        'transition-opacity px-6 py-4 bg-white rounded border border-neutral-300',
+        'rounded border border-neutral-300 bg-white px-6 py-4 transition-opacity',
         (isPending || booking.status !== 'Active') && 'opacity-50',
       )
     "
   >
-    <div class="flex items-center justify-between mb-4">
+    <div class="mb-4 flex items-center justify-between">
       <p class="flex items-center gap-5">
         <Dialog>
           <DialogTrigger as-child>
             <Button size="icon" variant="ghost" :disabled="booking.status !== 'Active'">
               <CircleDashedIcon v-if="isPending" />
-              <CircleCheckBigIcon v-else-if="booking.status === 'PickedUp'" />
-              <CircleXIcon v-else-if="booking.status === 'Cancelled'" />
-              <CircleIcon v-else-if="booking.status === 'Active'" />
-              <CircleSlash2Icon v-else-if="booking.status === 'OutOfDate'" />
+              <BookingStatusIcon :status="booking.status" />
             </Button>
           </DialogTrigger>
           <DialogContent class="sm:max-w-[425px]">
             <DialogHeader>
               <DialogTitle>Do you want to mark this meal as picked up?</DialogTitle>
             </DialogHeader>
-            <DialogFooter class="w-full flex sm:justify-start">
+            <DialogFooter class="flex w-full sm:justify-start">
               <Button @click="emits('onBookingAccept', booking)"> Submit </Button>
             </DialogFooter>
           </DialogContent>
