@@ -1,69 +1,94 @@
 import { useUser } from '@/composables/useUser';
-import { watchEffect } from 'vue';
+import { computed, watch, watchEffect } from 'vue';
 import { useRouter } from 'vue-router/auto';
 import type { AppRouteNames } from '@/lib/router';
+import { Role } from '@/lib/api-model';
 
-interface UseAuthRedirectorProps {
-  /**
-   * Routes that will require an authenticated user.
-   */
-  protectedRoutes: AppRouteNames[];
-  /**
-   * A callback executed on redirect of unauthenticated user.
-   */
-  onGuestRedirect?: () => void;
-  /**
-   * Routes that will require a non-authenticated user.
-   */
-  guestRoutes?: AppRouteNames[];
-  /**
-   * A callback executed on redirect of non-authenticated user.
-   */
-  onAuthenticatedRedirect?: () => void;
-}
+const defaultRoutesByRole: Record<Role | 'GUEST', AppRouteNames> = {
+  GUEST: '/sign-in/',
+  ROLE_USER: '/',
+  ROLE_RESTAURANT: '/manage/',
+  ROLE_ADMIN: '/admin/',
+};
+
+const roleBasedRoutes: Record<Role | 'GUEST', AppRouteNames[]> = {
+  GUEST: ['/sign-in/', '/sign-up/'],
+  ROLE_USER: [
+    '/',
+    '/onboarding/',
+    '/favourites/',
+    '/restaurants/',
+    '/restaurant/[id]',
+    '/restaurant/[...]',
+    '/bookings/',
+    '/activeBooking/',
+    '/settings/',
+  ],
+  ROLE_RESTAURANT: [
+    '/manage/',
+    '/manage/bookings/',
+    '/manage/meals/',
+    '/manage/meals/add',
+    '/manage/meals/edit/[id]',
+    '/manage/onboarding/',
+    '/manage/reports/',
+    '/manage/settings/',
+  ],
+  ROLE_ADMIN: [
+    '/admin/',
+    '/admin/restaurants/',
+    '/admin/users/',
+    '/admin/restaurants/[id]',
+    '/admin/users/[id]',
+  ],
+};
 
 /**
  * Redirects user based on their authentication status.
  * Regular users without a complete profile will be redirected to the onboarding page.
  * Guest
  */
-export function useAuthRedirect({
-  protectedRoutes,
-  guestRoutes,
-  onGuestRedirect,
-  onAuthenticatedRedirect,
-}: UseAuthRedirectorProps) {
+export function useAuthRedirect() {
   const router = useRouter();
-  const { isLoaded, isSignedIn, isProfileComplete } = useUser();
+  const { user, isLoaded, isSignedIn, isProfileComplete } = useUser();
 
-  watchEffect(async () => {
-    if (!isLoaded.value) {
+  const userRole = computed(() => user.value?.role ?? 'GUEST');
+
+  const currentRoute = computed(() => router.currentRoute.value.name);
+  const allowedRoutes = computed(() => roleBasedRoutes[user.value?.role ?? 'GUEST']);
+  const isCurrentRouteAllowed = computed(() => allowedRoutes.value.includes(currentRoute.value));
+  const defaultRoute = computed(() => defaultRoutesByRole[user.value?.role ?? 'GUEST']);
+
+  async function profileCompletionGuard() {
+    if (!isLoaded.value || !isSignedIn.value || userRole.value === 'GUEST') {
       return;
     }
 
-    const currentRoute = router.currentRoute.value.name;
-    const isAuthRouteMatching = protectedRoutes.includes(currentRoute);
-    const isGuestRouteMatching = guestRoutes?.includes(currentRoute);
-    const isOnboardingRouteMatching = currentRoute === '/onboarding/';
+    switch (currentRoute.value) {
+      case '/onboarding/':
+        if (isProfileComplete.value) {
+          await router.push('/');
+        }
+        break;
+      default:
+        if (!isProfileComplete.value) {
+          await router.push('/onboarding/');
+        }
+        break;
+    }
+  }
 
-    if (!isProfileComplete.value && !isOnboardingRouteMatching) {
-      await router.push('/onboarding/');
-    } else if (isProfileComplete.value && isOnboardingRouteMatching) {
-      await router.push('/');
+  watch([isLoaded, currentRoute, isProfileComplete], profileCompletionGuard);
+
+  watchEffect(async () => {
+    if (!isLoaded.value || !currentRoute.value) {
+      return;
     }
 
-    if (isAuthRouteMatching && !isSignedIn.value) {
-      await router.push('/sign-in');
-
-      if (onGuestRedirect) {
-        onGuestRedirect();
-      }
-    } else if (isGuestRouteMatching && isSignedIn.value) {
-      await router.push('/');
-
-      if (onAuthenticatedRedirect) {
-        onAuthenticatedRedirect();
-      }
+    if (isSignedIn.value && !isCurrentRouteAllowed.value) {
+      await router.replace(defaultRoute.value);
+    } else if (!isSignedIn.value && !isCurrentRouteAllowed.value) {
+      await router.replace('/sign-in');
     }
   });
 }
