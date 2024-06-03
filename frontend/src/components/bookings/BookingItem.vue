@@ -14,7 +14,7 @@ import type { BookingDTO, Uuid } from '@/lib/api-model';
 
 import ReportComponent from '@/components/bookings/ReportComponent.vue';
 import CancelBooking from '@/components/bookings/CancelBooking.vue';
-import LikeItems from '../LikeItems.vue';
+import LikeItems from '@/components/LikeItems.vue';
 
 const props = defineProps<{
   booking: BookingDTO;

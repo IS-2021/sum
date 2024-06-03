@@ -15,12 +15,12 @@ import * as axios from 'axios';
 import type { AxiosError, AxiosRequestConfig, AxiosResponse } from 'axios';
 import { unref } from 'vue';
 import type { MaybeRef } from 'vue';
-import type { GetOpinionsParams } from '../../api-model';
+import type { GetOpinionsParams, NotFound404Response, OpinionDTO } from '../../api-model';
 
 export const getOpinions = (
-  params?: MaybeRef<GetOpinionsParams>,
+  params: MaybeRef<GetOpinionsParams>,
   options?: AxiosRequestConfig,
-): Promise<AxiosResponse<boolean>> => {
+): Promise<AxiosResponse<OpinionDTO>> => {
   params = unref(params);
   return axios.default.get(`http://localhost:9090/opinions`, {
     ...options,
@@ -28,15 +28,15 @@ export const getOpinions = (
   });
 };
 
-export const getGetOpinionsQueryKey = (params?: MaybeRef<GetOpinionsParams>) => {
+export const getGetOpinionsQueryKey = (params: MaybeRef<GetOpinionsParams>) => {
   return ['http:', 'localhost:9090', 'opinions', ...(params ? [params] : [])] as const;
 };
 
 export const getGetOpinionsQueryOptions = <
   TData = Awaited<ReturnType<typeof getOpinions>>,
-  TError = AxiosError<unknown>,
+  TError = AxiosError<NotFound404Response>,
 >(
-  params?: MaybeRef<GetOpinionsParams>,
+  params: MaybeRef<GetOpinionsParams>,
   options?: {
     query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getOpinions>>, TError, TData>>;
     axios?: AxiosRequestConfig;
@@ -57,13 +57,13 @@ export const getGetOpinionsQueryOptions = <
 };
 
 export type GetOpinionsQueryResult = NonNullable<Awaited<ReturnType<typeof getOpinions>>>;
-export type GetOpinionsQueryError = AxiosError<unknown>;
+export type GetOpinionsQueryError = AxiosError<NotFound404Response>;
 
 export const useGetOpinions = <
   TData = Awaited<ReturnType<typeof getOpinions>>,
-  TError = AxiosError<unknown>,
+  TError = AxiosError<NotFound404Response>,
 >(
-  params?: MaybeRef<GetOpinionsParams>,
+  params: MaybeRef<GetOpinionsParams>,
   options?: {
     query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getOpinions>>, TError, TData>>;
     axios?: AxiosRequestConfig;

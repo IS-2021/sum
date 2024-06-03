@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import type { Uuid } from '@/lib/api-model';
 import { useGetOpinions } from '@/lib/api/default/default';
-import { postOpinions } from '@/lib/api/opinions/opinions';
+import { postOpinions, putOpinionsId } from '@/lib/api/opinions/opinions';
 import { ThumbsUp } from 'lucide-vue-next';
 import { ThumbsDown } from 'lucide-vue-next';
-import { computed, ref, unref, type Ref } from 'vue';
+import { computed, unref } from 'vue';
 
 const props = defineProps<{
   userId: Uuid;
@@ -15,20 +15,23 @@ const { data, refetch } = useGetOpinions({
   userId: props.userId,
   restaurantId: props.restaurantId,
 });
-const isRestaurantLiked = computed(() => unref(data)?.data);
-
-const isLiked = ref(isRestaurantLiked);
-
-const emit = defineEmits<{
-  (e: 'isLikedChange', isLiked: Boolean | undefined): void;
-}>();
+const opinion = computed(() => unref(data));
 
 const toggleLike = async () => {
-  // !isLiked.value || isLiked.value === null ? (isLiked.value = true) : (isLiked.value = undefined);
-  // emit('isLikedChange', isLiked.value);
-  if (!isLiked.value) {
+  if (opinion.value?.status === 404) {
     const res = await postOpinions({
       isPositive: true,
+      restaurantId: props.restaurantId,
+      userId: props.userId,
+    });
+
+    if (res.status === 200) {
+      refetch();
+    }
+  } else if (opinion.value?.data.isPositive === false) {
+    const res = await putOpinionsId(opinion.value.data.opinionId, {
+      isPositive: true,
+      opinionId: opinion.value.data.opinionId,
       restaurantId: props.restaurantId,
       userId: props.userId,
     });
@@ -39,30 +42,66 @@ const toggleLike = async () => {
   }
 };
 
-const toggleDislike = () => {
-  isLiked.value || isLiked.value === null ? (isLiked.value = false) : (isLiked.value = undefined);
-  emit('isLikedChange', isLiked.value);
+const toggleDislike = async () => {
+  if (opinion.value?.status === 404) {
+    const res = await postOpinions({
+      isPositive: false,
+      restaurantId: props.restaurantId,
+      userId: props.userId,
+    });
+
+    if (res.status === 200) {
+      refetch();
+    }
+  } else if (opinion.value?.data.isPositive === true) {
+    const res = await putOpinionsId(opinion.value.data.opinionId, {
+      isPositive: false,
+      opinionId: opinion.value.data.opinionId,
+      restaurantId: props.restaurantId,
+      userId: props.userId,
+    });
+
+    if (res.status === 200) {
+      refetch();
+    }
+  }
 };
 
-console.log(isRestaurantLiked.value);
+console.log(opinion.value?.data);
 </script>
 
 <template>
   <div class="flex flex-col items-end">
     <div class="w-40 h-10 border-gray-50 flex flex-row mt-3.5 rounded-lg bg-neutral-200">
       <div class="flex items-center justify-center w-20">
-        <ThumbsUp v-if="isLiked === null" class="cursor-pointer" @click="toggleLike" />
-        <ThumbsUp v-else-if="isLiked" class="cursor-pointer stroke-primary" @click="toggleLike" />
-        <ThumbsUp v-else-if="!isLiked" class="cursor-pointer" @click="toggleLike" />
+        <ThumbsUp
+          v-if="opinion && opinion?.status === 404"
+          class="cursor-pointer"
+          @click="toggleLike"
+        />
+        <ThumbsUp
+          v-else-if="opinion && opinion.data.isPositive"
+          class="cursor-pointer stroke-primary"
+          @click="toggleLike"
+        />
+        <ThumbsUp
+          v-else-if="opinion && !opinion.data.isPositive"
+          class="cursor-pointer"
+          @click="toggleLike"
+        />
       </div>
       <div class="flex items-center justify-center w-20">
-        <ThumbsDown v-if="isLiked === null" class="cursor-pointer" @click="toggleDislike" />
+        <ThumbsDown v-if="opinion?.status === 404" class="cursor-pointer" @click="toggleDislike" />
         <ThumbsDown
-          v-else-if="!isLiked"
+          v-else-if="opinion && !opinion.data.isPositive"
           class="cursor-pointer stroke-red-500"
           @click="toggleDislike"
         />
-        <ThumbsDown v-else-if="isLiked" class="cursor-pointer" @click="toggleDislike" />
+        <ThumbsDown
+          v-else-if="opinion && opinion.data.isPositive"
+          class="cursor-pointer"
+          @click="toggleDislike"
+        />
       </div>
     </div>
   </div>

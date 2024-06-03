@@ -7,6 +7,6 @@
 import type { Uuid } from './uuid';
 
 export type GetOpinionsParams = {
-  userId?: Uuid;
-  restaurantId?: Uuid;
+  userId: Uuid;
+  restaurantId: Uuid;
 };
