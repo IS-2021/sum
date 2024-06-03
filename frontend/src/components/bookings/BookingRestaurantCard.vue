@@ -24,7 +24,7 @@ const props = defineProps<{
         )
       "
     >
-      <div class="w-28 flex-shrink-0 sm:w-40">
+      <div class="w-36 flex-shrink-0 sm:w-40">
         <AspectRatio
           :ratio="16 / 9"
           :class="
@@ -42,19 +42,11 @@ const props = defineProps<{
         </AspectRatio>
       </div>
       <div class="flex flex-col justify-between">
-        <div class="space-y-1">
+        <div class="mb-1 space-y-1">
           <p class="font-bold">{{ restaurant.name }}</p>
           <p class="text-sm">{{ formatAddress(restaurant.address) }}</p>
-          <p>Tel: {{ restaurant.phoneNumber }}</p>
+          <p class="text-sm">Tel: {{ restaurant.phoneNumber }}</p>
         </div>
-        <RestaurantStatus
-          :status="restaurant.status"
-          :class="
-            cn('text-sm text-neutral-500', {
-              'text-yellow-500': restaurant.status === 'Inactive',
-            })
-          "
-        />
       </div>
     </div>
   </RouterLink>

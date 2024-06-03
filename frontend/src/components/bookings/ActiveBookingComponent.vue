@@ -17,16 +17,17 @@ const activeBooking = computed(() => unref(data)?.data);
 </script>
 
 <template>
-  <div class="w-full sm:max-w-screen-sm md:max-w-screen-md lg:max-w-screen-xl mx-auto px-4">
-    <div class="flex justify-between items-center mb-8">
-      <h1 class="font-bold text-2xl tracking-tight">Active Booking</h1>
+  <div class="mx-auto w-full px-4 sm:max-w-screen-sm md:max-w-screen-md lg:max-w-screen-xl">
+    <div class="mb-8 flex items-center justify-between">
+      <h1 class="text-2xl font-bold tracking-tight">Active Booking</h1>
       <CancelBooking v-if="activeBooking" :booking="activeBooking" />
     </div>
-    <div class="space-y-5 p-4 bg-neutral-100 border border-neutral-200 w-full">
-      <h2 class="font-semibold">Booking details</h2>
+    <div class="w-full border border-neutral-200 bg-neutral-100 p-4">
+      <h2 class="mb-4 font-semibold">Booking details</h2>
       <p v-if="!activeBooking?.bookingId">
         You don't have any active bookings. Press the button below to view your recent bookings.
       </p>
+
       <ActiveBookingBody v-if="activeBooking?.bookingId" :activeBooking="activeBooking" />
     </div>
     <Button class="mt-8" as-child>

@@ -54,15 +54,15 @@ const restaurant = props.booking.restaurant;
             <!-- Like/dislike button -->
             <CancelBooking :booking="props.booking" />
           </div>
-
-          <ReportComponent
-            v-if="restaurant"
-            :restaurantId="restaurant.id"
-            :userId="props.userId"
-            :buttonMessage="buttonMessage"
-            :bookingStatus="booking.status"
-          />
         </div>
+
+        <ReportComponent
+          v-if="restaurant"
+          :restaurantId="restaurant.id"
+          :userId="props.userId"
+          :buttonMessage="buttonMessage"
+          :bookingStatus="booking.status"
+        />
       </div>
     </AccordionContent>
   </AccordionItem>
