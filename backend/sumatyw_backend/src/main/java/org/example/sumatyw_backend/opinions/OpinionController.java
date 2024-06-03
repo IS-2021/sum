@@ -28,14 +28,10 @@ public class OpinionController {
     }
 
     @GetMapping()
-    public ResponseEntity<?> getOpinions(@RequestParam(required = false) UUID userId,
-                                                        @RequestParam(required = false) UUID restaurantId) {
+    public ResponseEntity<OpinionDTO> getOpinionById(@RequestParam() UUID userId,
+                                                        @RequestParam UUID restaurantId) {
 
-        if(userId != null && restaurantId != null) {
-            return new ResponseEntity<>(opinionService.isRestaurantLikedByUser(userId,restaurantId),HttpStatus.OK);
-        }
-        List<Opinion> opinions = opinionService.getOpinions();
-        return new ResponseEntity<>(opinions.stream().map(OpinionDTOMapper::mapOpinionToOpinionDTO).toList(), HttpStatus.OK);
+        return new ResponseEntity<>(OpinionDTOMapper.mapOpinionToOpinionDTO(opinionService.getOpinionByUserIdRestaurantId(userId,restaurantId)), HttpStatus.OK);
     }
 
     @PutMapping("/{id}")
