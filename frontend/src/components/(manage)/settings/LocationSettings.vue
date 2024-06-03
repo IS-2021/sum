@@ -25,7 +25,7 @@ const {
   isGeolocationSupported,
   setPlaceId,
   resumeGeolocation,
-} = useAddressSettings({});
+} = useAddressSettings({ latitude: props.address.latitude, longitude: props.address.longitude });
 
 const { value: address, isOverridden } = useRefOverrideWithStatus(
   toRef(props.address),
