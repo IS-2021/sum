@@ -1,16 +1,21 @@
 <script setup lang="ts">
 import NavLink from '@/components/(manage)/common/NavLink.vue';
 import Logo from '@/components/Logo.vue';
-import { UsersRoundIcon, ChefHatIcon } from 'lucide-vue-next';
+import { ChefHatIcon, LogOutIcon, UsersRoundIcon } from 'lucide-vue-next';
+import { Button } from '@/components/ui/button';
+import { Separator } from '@/components/ui/separator';
+import { useUser } from '@/composables/useUser';
+
+const { signOut } = useUser();
 </script>
 
 <template>
-  <aside class="w-full max-h-svh h-full px-6 py-5 sticky top-0 flex flex-col">
+  <aside class="sticky top-0 flex h-full max-h-svh w-full flex-col px-6 py-5">
     <RouterLink to="/admin/restaurants">
       <Logo class="mb-8" />
     </RouterLink>
 
-    <div class="flex flex-col justify-between flex-grow">
+    <div class="flex flex-grow flex-col justify-between">
       <nav>
         <ul class="space-y-2">
           <li>
@@ -27,6 +32,14 @@ import { UsersRoundIcon, ChefHatIcon } from 'lucide-vue-next';
           </li>
         </ul>
       </nav>
+
+      <div class="flex flex-col gap-2">
+        <Separator />
+        <Button @click="signOut" variant="outline" class="flex w-full items-center gap-2">
+          <LogOutIcon class="size-5" />
+          Sign out
+        </Button>
+      </div>
     </div>
   </aside>
 </template>
