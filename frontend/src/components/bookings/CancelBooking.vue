@@ -33,13 +33,13 @@ async function cancelBooking() {
 <template>
   <Dialog v-if="booking.status === 'Active'">
     <DialogTrigger as-child>
-      <Button variant="ghost"> Cancel Booking </Button>
+      <Button variant="outline-destructive"> Cancel Booking </Button>
     </DialogTrigger>
     <DialogContent class="sm:max-w-[425px]">
       <DialogHeader>
         <DialogTitle>Do you want to cancel this booking?</DialogTitle>
       </DialogHeader>
-      <DialogFooter class="w-full flex sm:justify-start">
+      <DialogFooter class="flex w-full sm:justify-start">
         <Button v-if="props.booking.status === 'Active'" @click="cancelBooking" class="mt-4"
           >Confirm</Button
         >
