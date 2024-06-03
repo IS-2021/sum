@@ -535,20 +535,22 @@ paths:
           schema:
             $ref: "#/components/schemas/UUID"
           in: query
+          required: true
         - name: restaurantId
           description: ""
           schema:
             $ref: "#/components/schemas/UUID"
           in: query
+          required: true
       responses:
         "200":
           content:
-            text/xml:
+            application/json:
               schema:
-                type: boolean
-          description: |-
-            If params does not exists, returns Array of OpinionDTO
-            If params exists, returns true/false/null
+                $ref: "#/components/schemas/OpinionDTO"
+          description: .
+        "404":
+          $ref: "#/components/responses/NotFound_404"
     post:
       requestBody:
         content:
