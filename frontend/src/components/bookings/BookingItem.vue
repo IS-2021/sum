@@ -49,7 +49,7 @@ const restaurant = props.booking.restaurant;
       <div>
         <BookingRestaurantCard :restaurant="restaurant" :show-status="false" />
 
-        <div class="mt-4 flex justify-between">
+        <div class="mb-2 mt-4 flex justify-between">
           <div>
             <!-- Like/dislike button -->
             <CancelBooking :booking="props.booking" />
