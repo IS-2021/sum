@@ -14,6 +14,7 @@ import type { BookingDTO, Uuid } from '@/lib/api-model';
 
 import ReportComponent from '@/components/bookings/ReportComponent.vue';
 import CancelBooking from '@/components/bookings/CancelBooking.vue';
+import LikeItems from '../LikeItems.vue';
 
 const props = defineProps<{
   booking: BookingDTO;
@@ -76,15 +77,18 @@ function isOpen() {
             {{ formatDate(props.booking.pickedUpTimestamp) }}
           </p>
           <p>Contact: {{ restaurant.phoneNumber }}</p>
-          <div class="mt-4">
-            <ReportComponent
-              v-if="restaurant"
-              :restaurantId="restaurant.id"
-              :userId="props.userId"
-              :buttonMessage="buttonMessage"
-              :bookingStatus="booking.status"
-            />
-            <CancelBooking :booking="props.booking" />
+          <div class="w-full flex justify-between">
+            <LikeItems :userId="userId" :restaurantId="restaurant.id" />
+            <div class="mt-4">
+              <ReportComponent
+                v-if="restaurant"
+                :restaurantId="restaurant.id"
+                :userId="props.userId"
+                :buttonMessage="buttonMessage"
+                :bookingStatus="booking.status"
+              />
+              <CancelBooking :booking="props.booking" />
+            </div>
           </div>
         </div>
       </AccordionContent>
