@@ -15,6 +15,7 @@ export * from './bookingStatus';
 export * from './cityDTO';
 export * from './credentialsDTO';
 export * from './deleteFavouriteRestaurantsDTO';
+export * from './deleteOpinionsParams';
 export * from './geoLatLngDTO';
 export * from './getAdminReportsRestaurantsIdParams';
 export * from './getAdminReportsRestaurantsParams';

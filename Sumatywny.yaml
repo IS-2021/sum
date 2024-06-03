@@ -576,6 +576,23 @@ paths:
           description: Created
         "422":
           $ref: "#/components/responses/ValidationFailed_422"
+    delete:
+      parameters:
+        - name: opinionId
+          description: ""
+          schema:
+            $ref: "#/components/schemas/UUID"
+          in: query
+          required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OpinionDTO"
+          description: .
+        "404":
+          $ref: "#/components/responses/NotFound_404"
   /reports/users:
     get:
       tags:

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { Uuid } from '@/lib/api-model';
-import { useGetOpinions } from '@/lib/api/default/default';
+import { deleteOpinions, useGetOpinions } from '@/lib/api/default/default';
 import { postOpinions, putOpinionsId } from '@/lib/api/opinions/opinions';
 import { ThumbsUp } from 'lucide-vue-next';
 import { ThumbsDown } from 'lucide-vue-next';
@@ -39,6 +39,12 @@ const toggleLike = async () => {
     if (res.status === 200) {
       refetch();
     }
+  } else if (opinion.value?.data.isPositive === true) {
+    const res = await deleteOpinions({ opinionId: opinion.value.data.opinionId });
+
+    if (res.status === 200) {
+      refetch();
+    }
   }
 };
 
@@ -64,6 +70,12 @@ const toggleDislike = async () => {
     if (res.status === 200) {
       refetch();
     }
+  } else if (opinion.value?.data.isPositive === false) {
+    const res = await deleteOpinions({ opinionId: opinion.value.data.opinionId });
+
+    if (res.status === 200) {
+      refetch();
+    }
   }
 };
 
@@ -72,7 +84,7 @@ console.log(opinion.value?.data);
 
 <template>
   <div class="flex flex-col items-end">
-    <div class="w-40 h-10 border-gray-50 flex flex-row mt-3.5 rounded-lg bg-neutral-200">
+    <div class="w-40 h-10 border-gray-50 flex flex-row rounded-lg bg-neutral-200">
       <div class="flex items-center justify-center w-20">
         <ThumbsUp
           v-if="opinion && opinion?.status === 404"

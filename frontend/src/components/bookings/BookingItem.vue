@@ -9,12 +9,12 @@ import type { BookingDTO, Uuid } from '@/lib/api-model';
 
 import ReportComponent from '@/components/bookings/ReportComponent.vue';
 import CancelBooking from '@/components/bookings/CancelBooking.vue';
-import LikeItems from '@/components/LikeItems.vue';
 import { cn } from '@/lib/utils';
 import BookingStatusIcon from '@/components/bookings/BookingStatusIcon.vue';
 import RestaurantCard from '@/components/(admin)/restaurants/RestaurantCard.vue';
 import { Separator } from '@/components/ui/separator';
 import BookingRestaurantCard from '@/components/bookings/BookingRestaurantCard.vue';
+import LikeItems from '@/components/LikeItems.vue';
 
 const props = defineProps<{
   booking: BookingDTO;
@@ -51,19 +51,18 @@ const restaurant = props.booking.restaurant;
         <BookingRestaurantCard :restaurant="restaurant" :show-status="false" />
 
         <div class="mb-2 mt-4 flex justify-between">
-          <div>
-            <!-- Like/dislike button -->
+          <LikeItems :user-id="userId" :restaurant-id="restaurant.id" />
+          <div class="flex items-center gap-2">
+            <ReportComponent
+              v-if="restaurant"
+              :restaurantId="restaurant.id"
+              :userId="props.userId"
+              :buttonMessage="buttonMessage"
+              :bookingStatus="booking.status"
+            />
             <CancelBooking :booking="props.booking" />
           </div>
         </div>
-
-        <ReportComponent
-          v-if="restaurant"
-          :restaurantId="restaurant.id"
-          :userId="props.userId"
-          :buttonMessage="buttonMessage"
-          :bookingStatus="booking.status"
-        />
       </div>
     </AccordionContent>
   </AccordionItem>
