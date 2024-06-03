@@ -14,6 +14,7 @@ import BookingStatusIcon from '@/components/bookings/BookingStatusIcon.vue';
 import RestaurantCard from '@/components/(admin)/restaurants/RestaurantCard.vue';
 import { Separator } from '@/components/ui/separator';
 import BookingRestaurantCard from '@/components/bookings/BookingRestaurantCard.vue';
+import LikeItems from '@/components/LikeItems.vue';
 
 const props = defineProps<{
   booking: BookingDTO;
@@ -50,12 +51,10 @@ const restaurant = props.booking.restaurant;
         <BookingRestaurantCard :restaurant="restaurant" :show-status="false" />
 
         <div class="mb-2 mt-4 flex justify-between">
-          <div>
-            <!-- Like/dislike button -->
-            <CancelBooking :booking="props.booking" />
-          </div>
-        </div>
+          <LikeItems :user-id="userId" :restaurant-id="restaurant.id" />
 
+          <CancelBooking :booking="props.booking" />
+        </div>
         <ReportComponent
           v-if="restaurant"
           :restaurantId="restaurant.id"
