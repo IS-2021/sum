@@ -6,9 +6,9 @@ const props = defineProps<{
   dislikes: number;
 }>();
 
-const likesPercentage = useUserRating(props.likes, props.dislikes);
+const { ratingPercentage } = useUserRating(props.likes, props.dislikes);
 </script>
 
 <template>
-  <span>{{ likesPercentage }} ({{ likes + dislikes }})</span>
+  <span>{{ ratingPercentage }} ({{ likes + dislikes }})</span>
 </template>
