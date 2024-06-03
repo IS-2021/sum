@@ -78,8 +78,6 @@ const toggleDislike = async () => {
     }
   }
 };
-
-console.log(opinion.value?.data);
 </script>
 
 <template>
