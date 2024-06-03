@@ -13,7 +13,7 @@ const emit = defineEmits<{
 }>();
 
 const { coords, handleMapsClick, address, isGeolocationSupported, setPlaceId, resumeGeolocation } =
-  useAddressSettings();
+  useAddressSettings({});
 
 function onSaveClick() {
   if (!address.value) {

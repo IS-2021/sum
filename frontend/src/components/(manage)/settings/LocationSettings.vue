@@ -6,7 +6,7 @@ import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import GoogleMaps from '@/components/maps/GoogleMaps.vue';
 import { useAddressSettings } from '@/components/maps/useAddressSettings';
 import type { AddressDTO } from '@/lib/api-model';
-import { useRefOverride } from '@/composables/maps/useRefOverride';
+import { useRefOverrideWithStatus } from '@/composables/maps/useRefOverride';
 import { toRef, watchEffect } from 'vue';
 import { Button } from '@/components/ui/button';
 
@@ -25,12 +25,15 @@ const {
   isGeolocationSupported,
   setPlaceId,
   resumeGeolocation,
-} = useAddressSettings();
+} = useAddressSettings({});
 
-const address = useRefOverride(toRef(props.address), settingsAddress);
+const { value: address, isOverridden } = useRefOverrideWithStatus(
+  toRef(props.address),
+  settingsAddress,
+);
 
 watchEffect(() => {
-  if (address.value) {
+  if (address.value && isOverridden.value) {
     emit('save:address', address.value);
   }
 });

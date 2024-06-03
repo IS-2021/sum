@@ -2,10 +2,16 @@ import { useAddress } from '@/composables/maps/useAddress';
 import { ref, watch, watchEffect } from 'vue';
 import { useGeolocation } from '@vueuse/core';
 
-export function useAddressSettings() {
+export function useAddressSettings({
+  latitude,
+  longitude,
+}: {
+  latitude?: number;
+  longitude?: number;
+}) {
   const coords = ref({
-    latitude: 51.7484822,
-    longitude: 19.4499251,
+    latitude: latitude ?? 51.1078836,
+    longitude: longitude ?? 19.4499251,
   });
 
   const {

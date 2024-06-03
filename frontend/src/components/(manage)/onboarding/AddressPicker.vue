@@ -14,7 +14,7 @@ const emit = defineEmits<{
 }>();
 
 const { coords, handleMapsClick, address, isGeolocationSupported, setPlaceId, resumeGeolocation } =
-  useAddressSettings();
+  useAddressSettings({});
 
 watchEffect(() => {
   if (address.value) {
