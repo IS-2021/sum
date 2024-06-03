@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @RestController
@@ -27,11 +28,15 @@ public class OpinionController {
     }
 
     @GetMapping()
-    public ResponseEntity<List<OpinionDTO>> getOpinions() {
+    public ResponseEntity<?> getOpinions(@RequestParam(required = false) UUID userId,
+                                                        @RequestParam(required = false) UUID restaurantId) {
+
+        if(userId != null && restaurantId != null) {
+            return new ResponseEntity<>(opinionService.isRestaurantLikedByUser(userId,restaurantId),HttpStatus.OK);
+        }
         List<Opinion> opinions = opinionService.getOpinions();
         return new ResponseEntity<>(opinions.stream().map(OpinionDTOMapper::mapOpinionToOpinionDTO).toList(), HttpStatus.OK);
     }
-
 
     @PutMapping("/{id}")
     public ResponseEntity<OpinionDTO> updateOpinion(@PathVariable("id") UUID id, @RequestBody @Valid OpinionInputDTO opinionInputDTO) {

@@ -26,7 +26,7 @@ export function useRestaurantUser() {
   });
 
   const isProfileComplete = computed(() => {
-    return !!restaurant.value;
+    return !!restaurant.value?.id;
   });
 
   const restaurant = computed(() => data.value?.data);
