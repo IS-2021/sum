@@ -11,7 +11,7 @@ const { user } = useUser();
 </script>
 
 <template>
-  <div class="w-full sm:max-w-screen-sm md:max-w-screen-md lg:max-w-screen-xl mx-auto px-4">
+  <div class="mx-auto w-full px-4 sm:max-w-screen-sm md:max-w-screen-md lg:max-w-screen-lg">
     <FavouritesPage v-if="user" :user="user" />
   </div>
 </template>
