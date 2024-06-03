@@ -13,12 +13,11 @@ import {
 import { useForm } from 'vee-validate';
 import type { AddressDTO, RestaurantDTO } from '@/lib/api-model';
 import HoursFormTip from '@/components/(manage)/common/HoursFormTip.vue';
-import { useAddress } from '@/composables/maps/useAddress';
 import { Separator } from '@/components/ui/separator';
 import SettingsSection from '@/components/(manage)/settings/SettingsSection.vue';
 import { Button } from '@/components/ui/button';
 import { SaveIcon } from 'lucide-vue-next';
-import { computed, toRef, watchEffect } from 'vue';
+import { computed, toRef } from 'vue';
 import { putRestaurantsDeactivateId, putRestaurantsId } from '@/lib/api/restaurants/restaurants';
 import { toast } from 'vue-sonner';
 import { useImage } from '@/components/(manage)/common/image/useImage';
@@ -42,7 +41,6 @@ const form = useForm({
   initialValues: mapDTOToRestaurantData(props.initialRestaurantData),
 });
 
-const { address, setPlaceId } = useAddress();
 const { image, setImage } = useImage();
 
 const imageUrl = computed(() => {
@@ -54,15 +52,6 @@ const imageUrl = computed(() => {
 });
 
 const isFormDirty = computed(() => form.meta.value.dirty || image.value.file !== null);
-
-watchEffect(() => {
-  if (address.value) {
-    form.setValues({
-      ...form.values,
-      address: address.value,
-    });
-  }
-});
 
 async function deactivateRestaurant() {
   const res = await putRestaurantsDeactivateId(restaurant.value.id);
@@ -77,8 +66,9 @@ async function deactivateRestaurant() {
 }
 
 function setRestaurantAddress(address: AddressDTO) {
+  if (!address) return;
+
   form.setValues({
-    ...form.values,
     address,
   });
 }
