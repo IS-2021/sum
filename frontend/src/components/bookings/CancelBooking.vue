@@ -12,17 +12,20 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
+import { useQueryClient } from '@tanstack/vue-query';
 
 const props = defineProps<{
   booking: BookingDTO;
 }>();
+
+const queryClient = useQueryClient();
 
 async function cancelBooking() {
   const res = await deleteBookingsId(props.booking.bookingId);
 
   if (res.status === 200) {
     toast.success('Booking cancelled successfully!');
-    location.reload();
+    await queryClient.invalidateQueries();
   }
 }
 </script>
