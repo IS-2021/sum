@@ -52,17 +52,16 @@ const restaurant = props.booking.restaurant;
 
         <div class="mb-2 mt-4 flex justify-between">
           <LikeItems :user-id="userId" :restaurant-id="restaurant.id" />
-          <div class="flex items-center gap-2">
-            <ReportComponent
-              v-if="restaurant"
-              :restaurantId="restaurant.id"
-              :userId="props.userId"
-              :buttonMessage="buttonMessage"
-              :bookingStatus="booking.status"
-            />
-            <CancelBooking :booking="props.booking" />
-          </div>
+
+          <CancelBooking :booking="props.booking" />
         </div>
+        <ReportComponent
+          v-if="restaurant"
+          :restaurantId="restaurant.id"
+          :userId="props.userId"
+          :buttonMessage="buttonMessage"
+          :bookingStatus="booking.status"
+        />
       </div>
     </AccordionContent>
   </AccordionItem>
