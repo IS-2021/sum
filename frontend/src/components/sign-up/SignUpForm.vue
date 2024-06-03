@@ -30,7 +30,13 @@ const formSchema = toTypedSchema(
     email: z.string().email(),
     username: z.string().min(3),
     phoneNumber: z.string().min(1),
-    password: z.string().min(6),
+    password: z
+      .string()
+      .max(30)
+      .regex(
+        /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$ %^&*-]).{8,}$/,
+        'Password doesnt meet the requirements',
+      ),
   }),
 );
 
@@ -152,7 +158,18 @@ const isValid = form.meta.value.valid;
         <FormControl>
           <Input type="password" placeholder="Password" v-bind="componentField" />
         </FormControl>
-        <FormDescription class="sr-only">Your password</FormDescription>
+        <FormDescription>
+          <div class="text-sm text-neutral-500">
+            <p>Password must have at least:</p>
+            <ul class="mt-1 list-disc ml-4">
+              <li>least 8 characters,</li>
+              <li>one uppercase letter,</li>
+              <li>one lowercase letter,</li>
+              <li>one digit,</li>
+              <li>one special character.</li>
+            </ul>
+          </div>
+        </FormDescription>
         <FormMessage />
       </FormItem>
     </FormField>

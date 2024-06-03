@@ -38,7 +38,7 @@ public class UserService {
         }
 
         if (this.userRepository.findByEmail(user.getEmail()).isPresent()) {
-            throw new ResourceAlreadyExistsException("Email: '" + user.getPhoneNumber() + "' already exists.");
+            throw new ResourceAlreadyExistsException("Email: '" + user.getEmail() + "' already exists.");
         }
 
         user.setPassword(passwordEncoder.encode(user.getPassword()));
@@ -50,13 +50,20 @@ public class UserService {
         return userRepository.findAll();
     }
 
-    public List<User> getNotBannedUsers() {
-        return userRepository.findByBlockedFalse();
+    public List<User> getUsersByBlockedStatus(boolean blocked) {
+        return userRepository.findAllByBlocked(blocked);
     }
 
     public User getUserById(UUID id) {
         return userRepository.findById(id)
             .orElseThrow(() -> new UserNotFoundException("User not found with ID: " + id));
+    }
+
+    public void unbanUser(UUID userId) {
+        User user = userRepository.findById(userId)
+            .orElseThrow(() -> new UserNotFoundException("User not found with ID: " + userId));
+        user.setBlocked(false);
+        userRepository.save(user);
     }
 
     public User getUserByEmail(String email) {
@@ -90,7 +97,7 @@ public class UserService {
     }
 
     public void banUserById(UUID id) {
-        User user = userRepository.findById(id).orElseThrow();
+        User user = userRepository.findById(id).orElseThrow(() -> new UserNotFoundException("User not found with ID: " + id));
         user.setBlocked(true);
         userRepository.save(user);
     }

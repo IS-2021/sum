@@ -41,6 +41,10 @@ public class RestaurantReportsService {
         }
     }
 
+    public List<RestaurantReport> getAllReportsByUserId(UUID userId) {
+        return restaurantReportRepository.findAllByUserUserIdAndIsOpenTrue(userId);
+    }
+
     public ReportDTO closeRestaurantReport(UUID restaurantReportId) {
 
         Optional<RestaurantReport> restaurantReport = restaurantReportRepository.findById(restaurantReportId);
@@ -55,27 +59,21 @@ public class RestaurantReportsService {
 
     public RestaurantReport getRestaurantReportById(UUID id) {
 
-        if(restaurantReportRepository.findById(id).isPresent()) {
-            return restaurantReportRepository.findById(id).get();
-        } else {
-            throw new ObjectNotFoundException("Restaurant report not found.");
-        }
+            return restaurantReportRepository.findById(id).
+                orElseThrow(() -> new ObjectNotFoundException("This restaurant report does not exist."));
 
     }
 
-    public List<ReportDTO> getAllOpenedRestaurantReports() {
+    public List<RestaurantReport> getRestaurantReportsByUserIdRestaurantId(UUID userId,UUID restaurantId) {
+        return restaurantReportRepository.findAllByUserUserIdAndRestaurantRestaurantIdAndIsOpenTrue(userId,restaurantId);
+    }
 
-        if(!restaurantReportRepository.findByIsOpenIsTrue().isEmpty()) {
-        List<ReportDTO> mappedList = new ArrayList<>();
-        List<RestaurantReport> restaurantReports = restaurantReportRepository.findByIsOpenIsTrue();
+    public List<RestaurantReport> getRestaurantReportsByRestaurantId(UUID restaurantId) {
+        return restaurantReportRepository.findAllByRestaurantRestaurantIdAndIsOpenTrue(restaurantId);
+    }
 
-        for(RestaurantReport r: restaurantReports) {
-            mappedList.add(ReportsDTOMapper.mapRestaurantReportToReportDTO(r));
-        }
+    public List<RestaurantReport> getAllOpenedRestaurantReports() {
 
-        return mappedList;
-        } else {
-        throw new ObjectNotFoundException("No opened reports present in database.");
-        }
+        return restaurantReportRepository.findByIsOpenIsTrue();
     }
 }

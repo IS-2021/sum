@@ -70,9 +70,9 @@ watch(unwantedIngredients.value, (x) => {
           <CommandGroup>
             <CommandItem
               v-for="ingredient in ingredients"
-              :key="ingredient.id"
+              :key="ingredient.ingredientId"
               :value="ingredient"
-              :id="ingredient.id"
+              :id="ingredient.ingredientId"
               @select="open = true"
               @click="updateFilter(ingredient)"
             >

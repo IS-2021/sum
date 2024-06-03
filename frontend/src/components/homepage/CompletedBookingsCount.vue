@@ -1,0 +1,15 @@
+<script setup lang="ts">
+import type { BookingDTO } from '@/lib/api-model';
+
+const props = defineProps<{
+  bookings: BookingDTO[];
+}>();
+
+const completedBookingsCount = props.bookings.filter(
+  (booking) => booking.status === 'PickedUp',
+).length;
+</script>
+
+<template>
+  <p class="text-lg text-center">You saved {{ completedBookingsCount }} meals so far!</p>
+</template>

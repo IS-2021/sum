@@ -12,7 +12,7 @@ public class OpinionDTOMapper {
             .isPositive(opinionInputDTO.isPositive())
             .user(User.builder().userId(opinionInputDTO.userId()).build())
             .restaurant(Restaurant.builder().restaurantId(opinionInputDTO.restaurantId()).build())
-            .timestamp(LocalDateTime.now().toString())
+            .timestamp(LocalDateTime.now())
             .build();
     }
 
@@ -21,8 +21,7 @@ public class OpinionDTOMapper {
             opinion.getOpinionId(),
             opinion.isPositive(),
             opinion.getUser().getUserId(),
-            opinion.getRestaurant().getRestaurantId(),
-            opinion.getTimestamp()
+            opinion.getRestaurant().getRestaurantId()
         );
     }
 }

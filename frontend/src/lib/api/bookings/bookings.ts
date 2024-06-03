@@ -160,7 +160,7 @@ export const usePutBookingsId = <
 export const deleteBookingsId = (
   id: MaybeRef<Uuid>,
   options?: AxiosRequestConfig,
-): Promise<AxiosResponse<void>> => {
+): Promise<AxiosResponse<BookingDTO>> => {
   id = unref(id);
   return axios.default.delete(`http://localhost:9090/bookings/${id}`, options);
 };

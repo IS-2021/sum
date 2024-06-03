@@ -7,7 +7,7 @@
 
 export type PutAdminReportsRestaurantsIdParams = {
   /**
- * true = ban restaurant and close report
+ * true = ban user associated with reportId (path variable) and close report
 false = close report
  */
   ban: boolean;

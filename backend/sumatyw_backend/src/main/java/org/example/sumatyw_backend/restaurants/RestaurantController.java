@@ -1,6 +1,7 @@
 package org.example.sumatyw_backend.restaurants;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.google.maps.errors.ApiException;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.example.sumatyw_backend.exceptions.InvalidDataException;
@@ -9,7 +10,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.xml.crypto.dsig.TransformException;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -42,7 +42,7 @@ public class RestaurantController {
 
     @GetMapping
     public ResponseEntity<List<RestaurantDTO>> getRestaurants() {
-        List<Restaurant> restaurants = restaurantService.getAllRestaurants();
+        List<Restaurant> restaurants = restaurantService.getAllActiveRestaurants();
 
         return new ResponseEntity<>(
             restaurants.stream().map(RestaurantDTOMapper::mapRestaurantToRestaurantDTO).toList(),
@@ -98,7 +98,7 @@ public class RestaurantController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<RestaurantDTO> updateRestaurantById(@PathVariable("id") UUID id, @RequestBody @Valid RestaurantInputDTO restaurantInputDTO) {
+    public ResponseEntity<RestaurantDTO> updateRestaurantById(@PathVariable("id") UUID id, @RequestBody @Valid RestaurantInputDTO restaurantInputDTO) throws IOException, InterruptedException, ApiException {
 
         try {
             Restaurant restaurant = restaurantService.updateRestaurantById(
@@ -129,7 +129,7 @@ public class RestaurantController {
                 oldImageFile.delete();
             }
 
-            restaurant.setImageUUID(imageName);
+            restaurant.setImageUUID(imageName + ".jpg");
 
             restaurantService.updateRestaurantImageUUID(restaurant);
 

@@ -30,6 +30,10 @@ export function useUser() {
     return isUserProfileComplete(user.value);
   });
 
+  async function invalidateCache() {
+    await refetch();
+  }
+
   const signOut = async () => {
     await postLogout();
     await refetch();
@@ -42,6 +46,7 @@ export function useUser() {
     isProfileComplete,
     user,
     signOut,
+    invalidateCache,
   };
 }
 

@@ -13,6 +13,7 @@ public record RestaurantDTO(
     Hours hours,
     String imageUrl,
     int likesCount,
-    int dislikesCount
+    int dislikesCount,
+    RestaurantStatus status
 ) {
 }

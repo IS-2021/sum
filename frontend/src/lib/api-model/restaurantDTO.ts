@@ -7,9 +7,9 @@
 import type { AddressDTO } from './addressDTO';
 import type { HoursDTO } from './hoursDTO';
 import type { Uuid } from './uuid';
+import type { RestaurantStatus } from './restaurantStatus';
 
 export interface RestaurantDTO {
-  active: boolean;
   address: AddressDTO;
   dislikesCount: number;
   hours: HoursDTO;
@@ -18,5 +18,6 @@ export interface RestaurantDTO {
   likesCount: number;
   name: string;
   phoneNumber: string;
+  status: RestaurantStatus;
   userId: Uuid;
 }
