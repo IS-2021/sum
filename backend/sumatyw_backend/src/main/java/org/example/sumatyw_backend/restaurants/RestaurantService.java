@@ -1,6 +1,9 @@
 package org.example.sumatyw_backend.restaurants;
 
+import com.google.maps.errors.ApiException;
 import lombok.AllArgsConstructor;
+import org.example.sumatyw_backend.addresses.Address;
+import org.example.sumatyw_backend.addresses.AddressService;
 import org.example.sumatyw_backend.exceptions.ObjectNotFoundException;
 import org.example.sumatyw_backend.exceptions.ResourceAlreadyExistsException;
 import org.example.sumatyw_backend.exceptions.UserNotFoundException;
@@ -12,6 +15,7 @@ import org.locationtech.jts.geom.Point;
 import org.locationtech.jts.operation.distance.DistanceOp;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
 
@@ -21,6 +25,7 @@ public class RestaurantService {
 
     private final RestaurantRepository restaurantRepository;
     private final UserRepository userRepository;
+    private final AddressService addressService;
 
     public Restaurant addRestaurant(Restaurant restaurant) {
         User userDB = userRepository.findById(restaurant.getUser().getUserId())
@@ -95,7 +100,7 @@ public class RestaurantService {
         restaurantRepository.deleteById(id);
     }
 
-    public Restaurant updateRestaurantById(UUID id, Restaurant restaurant) {
+    public Restaurant updateRestaurantById(UUID id, Restaurant restaurant) throws IOException, InterruptedException, ApiException {
         Restaurant existingRestaurant = restaurantRepository.findById(id).orElseThrow(
             () -> new ObjectNotFoundException("Restaurant not found with ID: " + id));
 
@@ -104,9 +109,11 @@ public class RestaurantService {
                 existingRestaurant.setPhoneNumber(restaurant.getPhoneNumber());
         }
 
+        Address addressDB = addressService.getAddress(restaurant.getAddress().getAddressId());
+
         existingRestaurant.setName(restaurant.getName());
         existingRestaurant.setHours(restaurant.getHours());
-        existingRestaurant.setAddress(restaurant.getAddress());
+        existingRestaurant.setAddress(addressDB);
 
         return restaurantRepository.save(existingRestaurant);
     }
