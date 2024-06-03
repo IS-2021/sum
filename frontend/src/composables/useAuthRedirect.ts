@@ -3,6 +3,7 @@ import { computed, watch, watchEffect } from 'vue';
 import { useRouter } from 'vue-router/auto';
 import type { AppRouteNames } from '@/lib/router';
 import { Role } from '@/lib/api-model';
+import { useRestaurantUser } from '@/composables/useRestaurantUser';
 
 const defaultRoutesByRole: Record<Role | 'GUEST', AppRouteNames> = {
   GUEST: '/sign-in/',
@@ -51,6 +52,7 @@ const roleBasedRoutes: Record<Role | 'GUEST', AppRouteNames[]> = {
 export function useAuthRedirect() {
   const router = useRouter();
   const { user, isLoaded, isSignedIn, isProfileComplete } = useUser();
+  const { isProfileComplete: isRestaurantProfileComplete } = useRestaurantUser();
 
   const userRole = computed(() => user.value?.role ?? 'GUEST');
 
@@ -64,17 +66,36 @@ export function useAuthRedirect() {
       return;
     }
 
-    switch (currentRoute.value) {
-      case '/onboarding/':
-        if (isProfileComplete.value) {
-          await router.push('/');
-        }
-        break;
-      default:
-        if (!isProfileComplete.value) {
-          await router.push('/onboarding/');
-        }
-        break;
+    if (userRole.value === 'ROLE_USER') {
+      switch (currentRoute.value) {
+        case '/onboarding/':
+          if (isProfileComplete.value) {
+            await router.push('/');
+          }
+          break;
+        default:
+          if (!isProfileComplete.value) {
+            await router.push('/onboarding/');
+          }
+          break;
+      }
+    }
+
+    if (userRole.value === 'ROLE_RESTAURANT') {
+      switch (currentRoute.value) {
+        case '/manage/onboarding/':
+          if (isRestaurantProfileComplete.value) {
+            await router.push('/manage/');
+            console.log('redirected', isRestaurantProfileComplete.value);
+          }
+          break;
+        default:
+          if (!isRestaurantProfileComplete.value) {
+            await router.push('/manage/onboarding/');
+            console.log('redirected - onboarding', isRestaurantProfileComplete.value);
+          }
+          break;
+      }
     }
   }
 
