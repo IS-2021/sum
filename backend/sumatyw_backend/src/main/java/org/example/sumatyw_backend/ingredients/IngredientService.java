@@ -1,6 +1,9 @@
 package org.example.sumatyw_backend.ingredients;
 
 import lombok.AllArgsConstructor;
+import org.example.sumatyw_backend.bookings.Booking;
+import org.example.sumatyw_backend.bookings.BookingRepository;
+import org.example.sumatyw_backend.bookings.Status;
 import org.example.sumatyw_backend.exceptions.ObjectNotFoundException;
 import org.example.sumatyw_backend.exceptions.ResourceAlreadyExistsException;
 import org.example.sumatyw_backend.meals.Meal;
@@ -21,6 +24,7 @@ public class IngredientService {
     IngredientRepository ingredientRepository;
     MealRepository mealRepository;
     RestaurantRepository restaurantRepository;
+    BookingRepository bookingRepository;
 
     public List<Ingredient> getAllIngredients() {
         return ingredientRepository.findAll();
@@ -64,7 +68,17 @@ public class IngredientService {
         List<Ingredient> ingredients = new ArrayList<>();
 
         for (Meal meal : meals) {
-            ingredients.addAll(meal.getIngredients());
+            List<Booking> bookingsDB = bookingRepository.findAllByMealMealId(meal.getMealId());
+
+            if (bookingsDB.isEmpty()) {
+                ingredients.addAll(meal.getIngredients());
+            } else {
+                for (Booking b : bookingsDB) {
+                    if (b.getStatus() == Status.Cancelled || b.getStatus() == Status.OutOfDate) {
+                        ingredients.addAll(meal.getIngredients());
+                    }
+                }
+            }
         }
 
         return ingredients.stream().distinct().toList();
