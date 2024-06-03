@@ -65,7 +65,7 @@ const { isPending, remainingTime } = useBookingCard(
           <DialogTrigger as-child>
             <Button size="icon" variant="ghost" :disabled="booking.status !== 'Active'">
               <CircleDashedIcon v-if="isPending" />
-              <BookingStatusIcon :status="booking.status" />
+              <BookingStatusIcon v-else :status="booking.status" />
             </Button>
           </DialogTrigger>
           <DialogContent class="sm:max-w-[425px]">
