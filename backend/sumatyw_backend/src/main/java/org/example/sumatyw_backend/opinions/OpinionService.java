@@ -49,16 +49,14 @@ public class OpinionService {
         return opinionRepository.save(opinion);
     }
 
-    public Optional<Boolean> isRestaurantLikedByUser(UUID userId,UUID restaurantId) {
+    public Opinion getOpinionByUserIdRestaurantId(UUID userId,UUID restaurantId) {
+
         Optional<Opinion> opinion = opinionRepository.findByUserUserIdAndRestaurantRestaurantId(userId,restaurantId);
+
         if (opinion.isPresent()) {
-            if(opinion.get().isPositive()) {
-                return Optional.of(true);
-            } else {
-                return Optional.of(false);
-            }
+            return opinion.get();
         } else {
-            return Optional.empty();
+            throw new ObjectNotFoundException("Opinion with user id: " + userId + " and restaurantId: "+ restaurantId + " not found");
         }
     }
 
