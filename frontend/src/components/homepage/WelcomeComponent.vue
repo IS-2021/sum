@@ -23,16 +23,12 @@ const completedBookingsCount = computed(
     <div class="mb-2.5 flex flex-col items-start justify-center rounded-md">
       <p v-if="user" class="text-2xl font-bold">Welcome, {{ props.user.firstName }}!</p>
     </div>
-    <div
-      :class="
-        cn(
-          'flex flex-wrap items-center gap-3',
-          completedBookingsCount > 0 ? 'justify-between' : 'justify-end',
-        )
-      "
-    >
-      <p class="text-lg" v-if="completedBookingsCount > 0">
-        You saved {{ completedBookingsCount }} meals so far!
+    <div :class="cn('flex flex-wrap items-center justify-between gap-3')">
+      <p class="text-lg">
+        <span v-if="completedBookingsCount > 0">
+          You saved {{ completedBookingsCount }} meals so far!
+        </span>
+        <span v-else> Your bookings and favourites will appear here as you use the app.</span>
       </p>
 
       <div class="flex items-center gap-2 self-end">
