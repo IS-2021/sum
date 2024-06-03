@@ -60,25 +60,27 @@ public class IngredientService {
     }
 
     public List<Ingredient> getIngredientsByRestaurant(UUID restaurantId) {
-
         Restaurant restaurant = restaurantRepository.findById(restaurantId)
             .orElseThrow(() -> new ObjectNotFoundException("Restaurant not found with ID: " + restaurantId));
 
         List<Meal> meals = restaurant.getMeals();
         List<Ingredient> ingredients = new ArrayList<>();
 
-        for (Meal meal : meals) {
-            List<Booking> bookingsDB = bookingRepository.findAllByMealMealId(meal.getMealId());
-
-            if (bookingsDB.isEmpty()) {
-                ingredients.addAll(meal.getIngredients());
-            } else {
-                for (Booking b : bookingsDB) {
-                    if (b.getStatus() == Status.Cancelled || b.getStatus() == Status.OutOfDate) {
-                        ingredients.addAll(meal.getIngredients());
-                    }
-                }
+        for (int i = 0; i < meals.size(); i++) {
+            boolean hasBooking = false;
+            for (Booking booking : meals.get(i).getBookings()) {
+                if (booking.getStatus() == Status.Active || booking.getStatus() == Status.PickedUp)
+                    hasBooking = true;
             }
+
+            if (hasBooking) {
+                meals.remove(i);
+                i--;
+            }
+        }
+
+        for (Meal meal : meals) {
+            ingredients.addAll(meal.getIngredients());
         }
 
         return ingredients.stream().distinct().toList();
