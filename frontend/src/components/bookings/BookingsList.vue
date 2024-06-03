@@ -2,6 +2,7 @@
 import type { BookingDTO, Uuid } from '@/lib/api-model';
 
 import BookingItem from '@/components/bookings/BookingItem.vue';
+import { Accordion } from '@/components/ui/accordion';
 
 const props = defineProps<{
   bookings: BookingDTO[];
@@ -16,11 +17,13 @@ const props = defineProps<{
     appear here.
   </p>
 
-  <BookingItem
-    v-for="booking in bookings"
-    v-bind:key="booking.bookingId"
-    :booking="booking"
-    :username="props.username"
-    :userId="props.userId"
-  />
+  <Accordion type="single" class="w-full border p-4" collapsible>
+    <BookingItem
+      v-for="booking in bookings"
+      :key="booking.bookingId"
+      :booking="booking"
+      :username="props.username"
+      :userId="props.userId"
+    />
+  </Accordion>
 </template>
