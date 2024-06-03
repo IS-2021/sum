@@ -13,7 +13,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
-import Button from '@/components/ui/button/Button.vue';
+import { Button } from '@/components/ui/button';
 import { postReportsUsers } from '@/lib/api/reports-users/reports-users';
 import DialogClose from '../ui/dialog/DialogClose.vue';
 import { toast } from 'vue-sonner';
@@ -52,7 +52,7 @@ async function sendReport() {
 <template>
   <Button
     :disabled="props.bookingStatus !== 'PickedUp'"
-    variant="ghost"
+    variant="outline"
     @click="toggleReportRestaurant()"
     >{{ props.buttonMessage }}</Button
   >
