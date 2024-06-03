@@ -49,6 +49,19 @@ public class OpinionService {
         return opinionRepository.save(opinion);
     }
 
+    public Optional<Boolean> isRestaurantLikedByUser(UUID userId,UUID restaurantId) {
+        Optional<Opinion> opinion = opinionRepository.findByUserUserIdAndRestaurantRestaurantId(userId,restaurantId);
+        if (opinion.isPresent()) {
+            if(opinion.get().isPositive()) {
+                return Optional.of(true);
+            } else {
+                return Optional.of(false);
+            }
+        } else {
+            return Optional.empty();
+        }
+    }
+
     public List<Opinion> getOpinions(){
         return opinionRepository.findAll();
     }
