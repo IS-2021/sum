@@ -1,15 +1,14 @@
 import { useUser } from '@/composables/useUser';
 import { computed, watch, watchEffect } from 'vue';
 import { useRouter } from 'vue-router/auto';
-import type { AppRouteNames, AppRoutes } from '@/lib/router';
+import type { AppRouteNames } from '@/lib/router';
 import { Role } from '@/lib/api-model';
 
-// TODO: change default for admin after adding admin route
 const defaultRoutesByRole: Record<Role | 'GUEST', AppRouteNames> = {
   GUEST: '/sign-in/',
   ROLE_USER: '/',
   ROLE_RESTAURANT: '/manage/',
-  ROLE_ADMIN: '/',
+  ROLE_ADMIN: '/admin/',
 };
 
 const roleBasedRoutes: Record<Role | 'GUEST', AppRouteNames[]> = {
@@ -29,10 +28,19 @@ const roleBasedRoutes: Record<Role | 'GUEST', AppRouteNames[]> = {
     '/manage/',
     '/manage/bookings/',
     '/manage/meals/',
+    '/manage/meals/add',
+    '/manage/meals/edit/[id]',
+    '/manage/onboarding/',
     '/manage/reports/',
     '/manage/settings/',
   ],
-  ROLE_ADMIN: [],
+  ROLE_ADMIN: [
+    '/admin/',
+    '/admin/restaurants/',
+    '/admin/users/',
+    '/admin/restaurants/[id]',
+    '/admin/users/[id]',
+  ],
 };
 
 /**
