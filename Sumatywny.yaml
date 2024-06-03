@@ -445,14 +445,6 @@ paths:
                 items:
                   $ref: "#/components/schemas/ReportDTO"
           description: Get list of restaurant reports
-        "204":
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: "#/components/schemas/ReportDTO"
-          description: If nothing to return
     post:
       requestBody:
         content:
@@ -536,6 +528,27 @@ paths:
         in: path
         required: true
   /opinions:
+    get:
+      parameters:
+        - name: userId
+          description: ""
+          schema:
+            $ref: "#/components/schemas/UUID"
+          in: query
+        - name: restaurantId
+          description: ""
+          schema:
+            $ref: "#/components/schemas/UUID"
+          in: query
+      responses:
+        "200":
+          content:
+            text/xml:
+              schema:
+                type: boolean
+          description: |-
+            If params does not exists, returns Array of OpinionDTO
+            If params exists, returns true/false/null
     post:
       requestBody:
         content:

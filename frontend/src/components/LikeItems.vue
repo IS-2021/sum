@@ -1,29 +1,50 @@
 <script setup lang="ts">
 import type { Uuid } from '@/lib/api-model';
+import { useGetOpinions } from '@/lib/api/default/default';
+import { postOpinions } from '@/lib/api/opinions/opinions';
 import { ThumbsUp } from 'lucide-vue-next';
 import { ThumbsDown } from 'lucide-vue-next';
-import { ref, type Ref } from 'vue';
+import { computed, ref, unref, type Ref } from 'vue';
 
 const props = defineProps<{
   userId: Uuid;
   restaurantId: Uuid;
 }>();
 
-const isLiked: Ref<boolean | null> = ref(null);
+const { data, refetch } = useGetOpinions({
+  userId: props.userId,
+  restaurantId: props.restaurantId,
+});
+const isRestaurantLiked = computed(() => unref(data)?.data);
+
+const isLiked = ref(isRestaurantLiked);
 
 const emit = defineEmits<{
-  (e: 'isLikedChange', isLiked: Boolean | null): void;
+  (e: 'isLikedChange', isLiked: Boolean | undefined): void;
 }>();
 
-const toggleLike = () => {
-  !isLiked.value || isLiked.value === null ? (isLiked.value = true) : (isLiked.value = null);
-  emit('isLikedChange', isLiked.value);
+const toggleLike = async () => {
+  // !isLiked.value || isLiked.value === null ? (isLiked.value = true) : (isLiked.value = undefined);
+  // emit('isLikedChange', isLiked.value);
+  if (!isLiked.value) {
+    const res = await postOpinions({
+      isPositive: true,
+      restaurantId: props.restaurantId,
+      userId: props.userId,
+    });
+
+    if (res.status === 200) {
+      refetch();
+    }
+  }
 };
 
 const toggleDislike = () => {
-  isLiked.value || isLiked.value === null ? (isLiked.value = false) : (isLiked.value = null);
+  isLiked.value || isLiked.value === null ? (isLiked.value = false) : (isLiked.value = undefined);
   emit('isLikedChange', isLiked.value);
 };
+
+console.log(isRestaurantLiked.value);
 </script>
 
 <template>

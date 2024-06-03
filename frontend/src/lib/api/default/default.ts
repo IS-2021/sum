@@ -15,63 +15,61 @@ import * as axios from 'axios';
 import type { AxiosError, AxiosRequestConfig, AxiosResponse } from 'axios';
 import { unref } from 'vue';
 import type { MaybeRef } from 'vue';
-import type { BookingDTO, GetBookingsActiveParams, NotFound404Response } from '../../api-model';
+import type { GetOpinionsParams } from '../../api-model';
 
-export const getBookingsActive = (
-  params: MaybeRef<GetBookingsActiveParams>,
+export const getOpinions = (
+  params?: MaybeRef<GetOpinionsParams>,
   options?: AxiosRequestConfig,
-): Promise<AxiosResponse<BookingDTO>> => {
+): Promise<AxiosResponse<boolean>> => {
   params = unref(params);
-  return axios.default.get(`http://localhost:9090/bookings/active`, {
+  return axios.default.get(`http://localhost:9090/opinions`, {
     ...options,
     params: { ...unref(params), ...options?.params },
   });
 };
 
-export const getGetBookingsActiveQueryKey = (params: MaybeRef<GetBookingsActiveParams>) => {
-  return ['http:', 'localhost:9090', 'bookings', 'active', ...(params ? [params] : [])] as const;
+export const getGetOpinionsQueryKey = (params?: MaybeRef<GetOpinionsParams>) => {
+  return ['http:', 'localhost:9090', 'opinions', ...(params ? [params] : [])] as const;
 };
 
-export const getGetBookingsActiveQueryOptions = <
-  TData = Awaited<ReturnType<typeof getBookingsActive>>,
-  TError = AxiosError<NotFound404Response>,
+export const getGetOpinionsQueryOptions = <
+  TData = Awaited<ReturnType<typeof getOpinions>>,
+  TError = AxiosError<unknown>,
 >(
-  params: MaybeRef<GetBookingsActiveParams>,
+  params?: MaybeRef<GetOpinionsParams>,
   options?: {
-    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getBookingsActive>>, TError, TData>>;
+    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getOpinions>>, TError, TData>>;
     axios?: AxiosRequestConfig;
   },
 ) => {
   const { query: queryOptions, axios: axiosOptions } = options ?? {};
 
-  const queryKey = getGetBookingsActiveQueryKey(params);
+  const queryKey = getGetOpinionsQueryKey(params);
 
-  const queryFn: QueryFunction<Awaited<ReturnType<typeof getBookingsActive>>> = ({ signal }) =>
-    getBookingsActive(params, { signal, ...axiosOptions });
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof getOpinions>>> = ({ signal }) =>
+    getOpinions(params, { signal, ...axiosOptions });
 
   return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
-    Awaited<ReturnType<typeof getBookingsActive>>,
+    Awaited<ReturnType<typeof getOpinions>>,
     TError,
     TData
   >;
 };
 
-export type GetBookingsActiveQueryResult = NonNullable<
-  Awaited<ReturnType<typeof getBookingsActive>>
->;
-export type GetBookingsActiveQueryError = AxiosError<NotFound404Response>;
+export type GetOpinionsQueryResult = NonNullable<Awaited<ReturnType<typeof getOpinions>>>;
+export type GetOpinionsQueryError = AxiosError<unknown>;
 
-export const useGetBookingsActive = <
-  TData = Awaited<ReturnType<typeof getBookingsActive>>,
-  TError = AxiosError<NotFound404Response>,
+export const useGetOpinions = <
+  TData = Awaited<ReturnType<typeof getOpinions>>,
+  TError = AxiosError<unknown>,
 >(
-  params: MaybeRef<GetBookingsActiveParams>,
+  params?: MaybeRef<GetOpinionsParams>,
   options?: {
-    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getBookingsActive>>, TError, TData>>;
+    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getOpinions>>, TError, TData>>;
     axios?: AxiosRequestConfig;
   },
 ): UseQueryReturnType<TData, TError> & { queryKey: QueryKey } => {
-  const queryOptions = getGetBookingsActiveQueryOptions(params, options);
+  const queryOptions = getGetOpinionsQueryOptions(params, options);
 
   const query = useQuery(queryOptions) as UseQueryReturnType<TData, TError> & {
     queryKey: QueryKey;

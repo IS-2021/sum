@@ -29,6 +29,7 @@ export * from './getGeoPlacesParams';
 export * from './getGeoReverseGeocodeParams';
 export * from './getIngredientsParams';
 export * from './getMealsParams';
+export * from './getOpinionsParams';
 export * from './getReportsRestaurantsParams';
 export * from './getRestaurantsParams';
 export * from './hoursDTO';
