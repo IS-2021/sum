@@ -16,7 +16,7 @@ const reports = computed(() => unref(data)?.data);
 <template>
   <div
     v-if="reports"
-    class="max-w-screen-md flex-shrink space-y-5 border border-neutral-200 bg-neutral-100 p-4"
+    class="max-w-screen-md flex-grow space-y-5 border border-neutral-200 bg-neutral-100 p-4"
   >
     <h2 class="font-semibold">Reports ({{ reports.length }})</h2>
     <p class="mt-4" v-if="reports.length === 0">No reports found</p>
