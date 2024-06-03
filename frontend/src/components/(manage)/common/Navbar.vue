@@ -7,16 +7,22 @@ import {
   MessageCircleWarningIcon,
   SettingsIcon,
   TicketCheckIcon,
+  LogOutIcon,
 } from 'lucide-vue-next';
+import { Separator } from '@/components/ui/separator';
+import { Button } from '@/components/ui/button';
+import { useRestaurantUser } from '@/composables/useRestaurantUser';
+
+const { signOut } = useRestaurantUser();
 </script>
 
 <template>
-  <aside class="w-full max-h-svh h-full px-6 py-5 sticky top-0 flex flex-col">
+  <aside class="sticky top-0 flex h-full max-h-svh w-full flex-col px-6 py-5">
     <RouterLink to="/manage">
       <Logo class="mb-8" />
     </RouterLink>
 
-    <div class="flex flex-col justify-between flex-grow">
+    <div class="flex flex-grow flex-col justify-between">
       <nav>
         <ul class="space-y-2">
           <li>
@@ -46,10 +52,17 @@ import {
         </ul>
       </nav>
 
-      <NavLink to="/manage/settings">
-        <SettingsIcon />
-        Restaurant settings
-      </NavLink>
+      <div class="flex flex-col gap-2">
+        <NavLink to="/manage/settings">
+          <SettingsIcon />
+          Restaurant settings
+        </NavLink>
+        <Separator />
+        <Button @click="signOut" variant="outline" class="flex w-full items-center gap-2">
+          <LogOutIcon class="size-5" />
+          Sign out
+        </Button>
+      </div>
     </div>
   </aside>
 </template>
