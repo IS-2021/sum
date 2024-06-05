@@ -1,145 +1,125 @@
-//package org.example.sumatyw_backend.meals;
-//
-//import org.example.sumatyw_backend.restaurants.Restaurant;
-//import org.example.sumatyw_backend.restaurants.RestaurantRepository;
-//import org.junit.jupiter.api.BeforeEach;
-//import org.junit.jupiter.api.Test;
-//import org.junit.jupiter.api.extension.ExtendWith;
-//import org.mockito.ArgumentCaptor;
-//import org.mockito.Mock;
-//import org.mockito.junit.jupiter.MockitoExtension;
-//import java.util.ArrayList;
-//import java.util.List;
-//import java.util.Optional;
-//import java.util.UUID;
-//import static org.assertj.core.api.Assertions.assertThat;
-//import static org.assertj.core.api.Assertions.assertThatThrownBy;
-//import static org.mockito.BDDMockito.given;
-//import static org.mockito.Mockito.verify;
-//import static org.mockito.Mockito.when;
-//
-//@ExtendWith(MockitoExtension.class)
-//class MealServiceTest {
-//
-//    private MealService mealService;
-//    @Mock
-//    private MealRepository mealRepository;
-//    @Mock
-//    private RestaurantRepository restaurantRepository;
-//
-//
-//    @BeforeEach
-//    void setUp() {
-//        mealService = new MealService(mealRepository, restaurantRepository);
-//    }
-//
-//    @Test
-//    void addMeal_Success() {
-//        // given
-//        UUID restaurantId = UUID.randomUUID();
-//        Restaurant restaurant = new Restaurant();
-//        restaurant.setRestaurantId(restaurantId);
-//        Meal meal = Meal.builder()
-//            .mealId(UUID.randomUUID())
-//            .name("Test Meal")
-//            .description("Test Description")
-//            .restaurant(restaurant)
-//            .build();
-//
-//        given(mealRepository.save(meal)).willReturn(meal);
-//
-//        // when
-//        Meal savedMeal = mealService.addMeal(meal);
-//
-//        // then
-//        ArgumentCaptor<Meal> mealCaptor = ArgumentCaptor.forClass(Meal.class);
-//        verify(mealRepository).save(mealCaptor.capture());
-//        Meal capturedMeal = mealCaptor.getValue();
-//
-//        assertThat(capturedMeal).isEqualTo(savedMeal);
-//    }
-//
-//    @Test
-//    void getMealById_Success() {
-//        // given
-//        UUID mealId = UUID.randomUUID();
-//        Meal meal = Meal.builder().mealId(mealId).name("Test Meal").description("Test Description").build();
-//
-//        given(mealRepository.findById(mealId)).willReturn(Optional.of(meal));
-//
-//        // when
-//        Meal foundMeal = mealService.getMealById(mealId);
-//
-//        // then
-//        assertThat(foundMeal).isEqualTo(meal);
-//    }
-//
-//    @Test
-//    void getMealById_ThrowsException_WhenMealNotFound() {
-//        // given
-//        UUID mealId = UUID.randomUUID();
-//        given(mealRepository.findById(mealId)).willReturn(Optional.empty());
-//
-//        // when / then
-//        assertThatThrownBy(() -> mealService.getMealById(mealId))
-//            .isInstanceOf(RuntimeException.class);
-//    }
-//
-//    @Test
-//    void getAllMealsByRestaurantId_ReturnsEmptyList_WhenNoActiveBookings() {
-//        // given
-//        UUID restaurantId = UUID.randomUUID();
-//        List<Meal> meals = new ArrayList<>();
-//        when(mealRepository.findAllByRestaurantRestaurantId(restaurantId)).thenReturn(meals);
-//
-//        // when
-//        List<Meal> result = mealService.getAllMealsByRestaurantId(restaurantId);
-//
-//        // then
-//        assertThat(result).isEmpty();
-//    }
-//
-//    @Test
-//    void updateMealById_Success() {
-//        // given
-//        UUID mealId = UUID.randomUUID();
-//        Meal existingMeal = Meal.builder().mealId(mealId).name("Old Name").description("Old Description").build();
-//        Meal updateRequest = Meal.builder().name("New Name").description("New Description").build();
-//
-//        given(mealRepository.findById(mealId)).willReturn(Optional.of(existingMeal));
-//        given(mealRepository.save(existingMeal)).willReturn(existingMeal);
-//
-//        // when
-//        Meal updatedMeal = mealService.updateMealById(mealId, updateRequest);
-//
-//        // then
-//        assertThat(existingMeal.getName()).isEqualTo(updateRequest.getName());
-//        assertThat(existingMeal.getDescription()).isEqualTo(updateRequest.getDescription());
-//        assertThat(updatedMeal).isEqualTo(existingMeal);
-//    }
-//
-//    @Test
-//    void updateMealById_ThrowsException_WhenMealNotFound() {
-//        // given
-//        UUID mealId = UUID.randomUUID();
-//        Meal updateRequest = Meal.builder().name("New Name").description("New Description").build();
-//
-//        given(mealRepository.findById(mealId)).willReturn(Optional.empty());
-//
-//        // when / then
-//        assertThatThrownBy(() -> mealService.updateMealById(mealId, updateRequest))
-//            .isInstanceOf(RuntimeException.class);
-//    }
-//
-//    @Test
-//    void removeMeal_Success() {
-//        // given
-//        UUID mealId = UUID.randomUUID();
-//
-//        // when
-//        mealService.removeMeal(mealId);
-//
-//        // then
-//        verify(mealRepository).deleteById(mealId);
-//    }
-//}
+package org.example.sumatyw_backend.meals;
+
+import org.example.sumatyw_backend.bookings.Booking;
+import org.example.sumatyw_backend.bookings.BookingRepository;
+import org.example.sumatyw_backend.bookings.Status;
+import org.example.sumatyw_backend.exceptions.ObjectNotFoundException;
+import org.example.sumatyw_backend.restaurants.Restaurant;
+import org.example.sumatyw_backend.restaurants.RestaurantRepository;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.util.*;
+
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.AdditionalAnswers.returnsFirstArg;
+import static org.mockito.Mockito.*;
+
+@ExtendWith(MockitoExtension.class)
+public class MealServiceTest {
+
+    @Mock
+    private MealRepository mealRepository;
+
+    @Mock
+    private RestaurantRepository restaurantRepository;
+
+    @Mock
+    private BookingRepository bookingRepository;
+
+    @InjectMocks
+    private MealService mealService;
+
+    @Test
+    public void testAddMeal() {
+        UUID mealId = UUID.randomUUID();
+        UUID restaurantId = UUID.randomUUID();
+        Meal meal = new Meal();
+        meal.setMealId(mealId);
+        Restaurant restaurant = new Restaurant();
+        restaurant.setRestaurantId(restaurantId);
+        meal.setRestaurant(restaurant);
+        when(restaurantRepository.findById(restaurantId)).thenReturn(java.util.Optional.of(restaurant));
+        when(mealRepository.save(meal)).thenReturn(meal);
+        mealService.addMeal(meal);
+        verify(mealRepository, times(1)).save(meal);
+    }
+
+    @Test
+    public void testGetMealById() {
+        UUID mealId = UUID.randomUUID();
+        Meal meal = new Meal();
+        meal.setMealId(mealId);
+        when(mealRepository.findById(mealId)).thenReturn(java.util.Optional.of(meal));
+        Meal result = mealService.getMealById(mealId);
+        assertEquals(mealId, result.getMealId());
+    }
+
+    @Test
+    public void testGetAllMealsByRestaurantId() {
+        UUID restaurantId = UUID.randomUUID();
+        Meal meal1 = new Meal();
+        Meal meal2 = new Meal();
+        meal1.setMealId(UUID.randomUUID());
+        meal2.setMealId(UUID.randomUUID());
+        Booking booking1 = new Booking();
+        Booking booking2 = new Booking();
+        booking1.setStatus(Status.OutOfDate);
+        booking2.setStatus(Status.OutOfDate);
+        meal1.setBookings(List.of(booking1));
+        meal2.setBookings(List.of(booking2));
+        List<Meal> meals = new ArrayList<>();
+        meals.add(meal1);
+        meals.add(meal2);
+        when(mealRepository.findAllByRestaurantRestaurantId(restaurantId)).thenReturn(meals);
+
+        List<Meal> result = mealService.getAllMealsByRestaurantId(restaurantId);
+
+        assertEquals(2, result.size());
+        assertEquals(meal2.getMealId(), result.get(1).getMealId());
+    }
+
+    @Test
+    public void testRemoveMeal() {
+        // Create test data
+        UUID mealId = UUID.randomUUID();
+
+        // Mock behavior of repositories
+        when(mealRepository.findById(mealId)).thenReturn(Optional.empty());
+
+        // Call the method to test and verify exception
+        ObjectNotFoundException exception = assertThrows(ObjectNotFoundException.class, () -> mealService.removeMeal(mealId));
+        assertEquals("Meal with ID: " + mealId + " not found", exception.getMessage());
+
+        // Verify repository interactions
+        verify(mealRepository).findById(mealId);
+        verifyNoInteractions(bookingRepository);
+        verifyNoMoreInteractions(mealRepository);
+    }
+    @Test
+    public void testUpdateMealById() {
+        UUID mealId = UUID.randomUUID();
+        Meal existingMeal = new Meal();
+        existingMeal.setMealId(mealId);
+        existingMeal.setName("Existing Meal");
+        existingMeal.setDescription("Old Description");
+        Meal updatedMeal = new Meal();
+        updatedMeal.setName("Updated Meal");
+        updatedMeal.setDescription("New Description");
+
+        when(mealRepository.findById(mealId)).thenReturn(Optional.of(existingMeal));
+        when(mealRepository.save(any())).then(returnsFirstArg());
+
+        Meal result = mealService.updateMealById(mealId, updatedMeal);
+
+        // Verify repository interactions
+        verify(mealRepository).findById(mealId);
+        verify(mealRepository).save(any());
+        assertEquals("Updated Meal", result.getName());
+        assertEquals("New Description", result.getDescription());
+    }
+}
