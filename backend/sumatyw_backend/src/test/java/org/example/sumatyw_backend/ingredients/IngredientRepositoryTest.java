@@ -43,6 +43,7 @@ class IngredientRepositoryTest {
         // given
         Ingredient ingr = Ingredient.builder().name("beer").type("drinks").build();
         ingr = ingredientRepository.save(ingr);
+        ingredientRepository.save(Ingredient.builder().name("beer").type("alcohol").build());
 
         // when
         Optional<Ingredient> foundIngredient = ingredientRepository.findByNameAndType(ingr.getName(), ingr.getType());
@@ -58,9 +59,10 @@ class IngredientRepositoryTest {
         // given
         Ingredient ingr = Ingredient.builder().name("beer").type("drinks").build();
         ingr = ingredientRepository.save(ingr);
+        ingredientRepository.save(Ingredient.builder().name("beer").type("alcohol").build());
 
         // when
-        Optional<Ingredient> foundIngredient = ingredientRepository.findByNameAndType("dirt", ingr.getType());
+        Optional<Ingredient> foundIngredient = ingredientRepository.findByNameAndType(ingr.getName(), "soda");
 
         // then
         assertThat(foundIngredient.isPresent()).isFalse();

@@ -121,4 +121,22 @@ class FavouriteRepositoryTest {
         // then
         assertThat(userFavourite.isPresent()).isFalse();
     }
+
+    @Test
+    void findByUserUserIdAndRestaurantRestaurantId_ReturnsEmptyOptional_IfGivenUserDoesNotExist() {
+        // given
+        User u1 = userRepository.save(User.builder().build());
+
+        Restaurant r1 = restaurantRepository.save(Restaurant.builder().restaurantId(UUID.randomUUID()).build());
+
+        Favourite favourite = Favourite.builder().user(u1).restaurant(r1).build();
+        favouriteRepository.save(favourite);
+
+        // when
+        Optional<Favourite> userFavourite = favouriteRepository
+            .findByUserUserIdAndRestaurantRestaurantId(u1.getUserId(), UUID.randomUUID());
+
+        // then
+        assertThat(userFavourite.isPresent()).isFalse();
+    }
 }
