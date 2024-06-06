@@ -115,9 +115,12 @@ class RestaurantReportRepositoryTest {
         Restaurant r1 = Restaurant.builder().restaurantId(UUID.randomUUID()).build();
         r1 = restaurantRepository.save(r1);
 
+        Restaurant r2 = Restaurant.builder().restaurantId(UUID.randomUUID()).build();
+        r2 = restaurantRepository.save(r2);
+
         List<RestaurantReport> restaurantReports = Arrays.asList(
             RestaurantReport.builder().restaurant(r1).user(u1).isOpen(true).build(),
-            RestaurantReport.builder().restaurant(r1).user(u1).isOpen(true).build(),
+            RestaurantReport.builder().restaurant(r2).user(u1).isOpen(true).build(),
             RestaurantReport.builder().restaurant(r1).user(u1).isOpen(false).build()
         );
         restaurantReportRepository.saveAll(restaurantReports);
@@ -130,6 +133,98 @@ class RestaurantReportRepositoryTest {
 
         for (RestaurantReport rr : openedReports) {
             assertThat(rr.isOpen()).isTrue();
+        }
+    }
+
+    @Test
+    void findAllByRestaurantRestaurantIdAndIsOpenTrue_ReturnsAllRestaurantOpenedReports() {
+        // given
+        User u1 = userRepository.save(User.builder().build());
+
+        Restaurant r1 = Restaurant.builder().restaurantId(UUID.randomUUID()).build();
+        r1 = restaurantRepository.save(r1);
+
+        List<RestaurantReport> restaurantReports = Arrays.asList(
+            RestaurantReport.builder().restaurant(r1).user(u1).isOpen(true).build(),
+            RestaurantReport.builder().restaurant(r1).user(u1).isOpen(true).build(),
+            RestaurantReport.builder().restaurant(r1).user(u1).isOpen(false).build()
+        );
+        restaurantReportRepository.saveAll(restaurantReports);
+
+        // when
+        List<RestaurantReport> restaurantOpenedReports = restaurantReportRepository.findAllByRestaurantRestaurantIdAndIsOpenTrue(r1.getRestaurantId());
+
+        // then
+        assertThat(restaurantOpenedReports.size()).isEqualTo(2);
+
+        for (RestaurantReport rr : restaurantOpenedReports) {
+            assertThat(rr.getRestaurant()).isEqualTo(r1);
+            assertThat(rr.isOpen()).isTrue();
+        }
+    }
+
+    @Test
+    void findAllByUserUserIdAndIsOpenTrue_ReturnsAllUserOpenedReports() {
+        // given
+        User u1 = userRepository.save(User.builder().build());
+        User u2 = userRepository.save(User.builder().build());
+
+        Restaurant r1 = Restaurant.builder().restaurantId(UUID.randomUUID()).build();
+        r1 = restaurantRepository.save(r1);
+
+        Restaurant r2 = Restaurant.builder().restaurantId(UUID.randomUUID()).build();
+        r2 = restaurantRepository.save(r2);
+
+        List<RestaurantReport> restaurantReports = Arrays.asList(
+            RestaurantReport.builder().restaurant(r1).user(u1).isOpen(true).build(),
+            RestaurantReport.builder().restaurant(r2).user(u1).isOpen(true).build(),
+            RestaurantReport.builder().restaurant(r1).user(u1).isOpen(false).build(),
+            RestaurantReport.builder().restaurant(r2).user(u2).isOpen(true).build()
+        );
+        restaurantReportRepository.saveAll(restaurantReports);
+
+        // when
+        List<RestaurantReport> restaurantOpenedReports = restaurantReportRepository.findAllByUserUserIdAndIsOpenTrue(u1.getUserId());
+
+        // then
+        assertThat(restaurantOpenedReports.size()).isEqualTo(2);
+
+        for (RestaurantReport rr : restaurantOpenedReports) {
+            assertThat(rr.getUser()).isEqualTo(u1);
+            assertThat(rr.isOpen()).isTrue();
+        }
+    }
+
+    @Test
+    void findAllByUserUserIdAndRestaurantRestaurantIdAndIsOpenTrue_ReturnsUserReportForRestaurant() {
+        // given
+        User u1 = userRepository.save(User.builder().build());
+        User u2 = userRepository.save(User.builder().build());
+
+        Restaurant r1 = Restaurant.builder().restaurantId(UUID.randomUUID()).build();
+        r1 = restaurantRepository.save(r1);
+
+        Restaurant r2 = Restaurant.builder().restaurantId(UUID.randomUUID()).build();
+        r2 = restaurantRepository.save(r2);
+
+        List<RestaurantReport> restaurantReports = Arrays.asList(
+            RestaurantReport.builder().restaurant(r1).user(u1).isOpen(true).build(),
+            RestaurantReport.builder().restaurant(r2).user(u1).isOpen(true).build(),
+            RestaurantReport.builder().restaurant(r1).user(u1).isOpen(false).build(),
+            RestaurantReport.builder().restaurant(r2).user(u2).isOpen(true).build()
+        );
+        restaurantReportRepository.saveAll(restaurantReports);
+
+        // when
+        List<RestaurantReport> restaurantOpenedReports = restaurantReportRepository.findAllByUserUserIdAndRestaurantRestaurantIdAndIsOpenTrue(u1.getUserId(), r1.getRestaurantId());
+
+        // then
+        assertThat(restaurantOpenedReports.size()).isEqualTo(1);
+
+        for (RestaurantReport rr : restaurantOpenedReports) {
+            assertThat(rr.isOpen()).isTrue();
+            assertThat(rr.getUser()).isEqualTo(u1);
+            assertThat(rr.getRestaurant()).isEqualTo(r1);
         }
     }
 }
