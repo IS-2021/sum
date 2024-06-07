@@ -38,17 +38,42 @@ public class RestaurantReportServiceTest {
 
     @InjectMocks
     private RestaurantReportsService restaurantReportsService;
+    private UUID userId;
+    private UUID restaurantId;
+    private UUID reportId;
+    private ReportInputDTO reportInputDTO;
+    private User user;
+    private Restaurant restaurant;
+    private RestaurantReport restaurantReport;
+    private List<RestaurantReport> restaurantReports;
 
     @BeforeEach
     void setUp() {
-        restaurantReportsService = new RestaurantReportsService(restaurantReportRepository,
-            userService, restaurantService);
+        restaurantReportsService = new RestaurantReportsService(restaurantReportRepository, userService, restaurantService);
+        userId = UUID.randomUUID();
+        restaurantId = UUID.randomUUID();
+        reportId = UUID.randomUUID();
+        reportInputDTO = new ReportInputDTO(userId, restaurantId, "cause");
+        user = new User();
+        restaurant = new Restaurant();
+        restaurantReport = new RestaurantReport();
+        restaurantReport.setUser(user);
+        restaurantReport.setRestaurant(restaurant);
+        restaurantReport.setOpen(true);
+        RestaurantReport report1 = new RestaurantReport();
+        report1.setUser(user);
+        report1.setRestaurant(restaurant);
+        report1.setOpen(true);
+        RestaurantReport report2 = new RestaurantReport();
+        report2.setRestaurant(restaurant);
+        report2.setUser(user);
+        report2.setOpen(true);
+        restaurantReports = Arrays.asList(report1, report2);
     }
 
     @Test
     void addRestaurantReport_ShouldThrowResourceAlreadyExistsException_IfUserAlreadyReportedTheRestaurant() {
         // given
-        ReportInputDTO reportInputDTO = new ReportInputDTO(UUID.randomUUID(), UUID.randomUUID(), "cause");
         given(restaurantReportRepository.existsByUserIdAndRestaurantId(reportInputDTO.userId(), reportInputDTO.restaurantId())).willReturn(true);
 
         // then
@@ -59,9 +84,6 @@ public class RestaurantReportServiceTest {
     @Test
     void addRestaurantReport_ShouldAddNewReport_IfUserHasNotReportedTheRestaurant() {
         // given
-        UUID userId = UUID.randomUUID();
-        UUID restaurantId = UUID.randomUUID();
-        ReportInputDTO reportInputDTO = new ReportInputDTO(userId, restaurantId, "cause");
         given(restaurantReportRepository.existsByUserIdAndRestaurantId(userId, restaurantId)).willReturn(false);
 
         // when
@@ -76,13 +98,6 @@ public class RestaurantReportServiceTest {
     @Test
     void closeRestaurantReport_ShouldCloseReport_IfExists() {
         // given
-        UUID reportId = UUID.randomUUID();
-        User user = new User();
-        Restaurant restaurant = new Restaurant();
-        RestaurantReport restaurantReport = new RestaurantReport();
-        restaurantReport.setUser(user);
-        restaurantReport.setRestaurant(restaurant);
-        restaurantReport.setOpen(true);
         given(restaurantReportRepository.findById(reportId)).willReturn(Optional.of(restaurantReport));
 
         // when
@@ -96,7 +111,6 @@ public class RestaurantReportServiceTest {
     @Test
     void closeRestaurantReport_ShouldThrowObjectNotFoundException_IfReportDoesNotExist() {
         // given
-        UUID reportId = UUID.randomUUID();
         given(restaurantReportRepository.findById(reportId)).willReturn(Optional.empty());
 
         // then
@@ -107,8 +121,6 @@ public class RestaurantReportServiceTest {
     @Test
     void getRestaurantReportById_ShouldReturnReport_IfExists() {
         // given
-        UUID reportId = UUID.randomUUID();
-        RestaurantReport restaurantReport = new RestaurantReport();
         given(restaurantReportRepository.findById(reportId)).willReturn(Optional.of(restaurantReport));
 
         // when
@@ -121,7 +133,6 @@ public class RestaurantReportServiceTest {
     @Test
     void getRestaurantReportById_ShouldThrowObjectNotFoundException_IfReportDoesNotExist() {
         // given
-        UUID reportId = UUID.randomUUID();
         given(restaurantReportRepository.findById(reportId)).willReturn(Optional.empty());
 
         // then
@@ -132,17 +143,6 @@ public class RestaurantReportServiceTest {
     @Test
     void getAllOpenedRestaurantReports_ShouldReturnListOfReports_IfExist() {
         // given
-        User user = new User();
-        Restaurant restaurant = new Restaurant();
-        RestaurantReport report1 = new RestaurantReport();
-        report1.setUser(user);
-        report1.setRestaurant(restaurant);
-        report1.setOpen(true);
-        RestaurantReport report2 = new RestaurantReport();
-        report2.setRestaurant(restaurant);
-        report2.setUser(user);
-        report2.setOpen(true);
-        List<RestaurantReport> restaurantReports = Arrays.asList(report1, report2);
         given(restaurantReportRepository.findByIsOpenIsTrue()).willReturn(restaurantReports);
 
         // when
@@ -153,12 +153,14 @@ public class RestaurantReportServiceTest {
     }
 
     @Test
-    void getAllOpenedRestaurantReports_ShouldThrowObjectNotFoundException_IfNoReportsExist() {
+    void getAllOpenedRestaurantReports_ShouldReturnEmptyList_IfNoReportsExist() {
         // given
-        given(restaurantReportRepository.findByIsOpenIsTrue()).willReturn(new ArrayList<>());
+        given(restaurantReportRepository.findByIsOpenIsTrue()).willReturn(Collections.emptyList());
+
+        // when
+        List<RestaurantReport> result = restaurantReportsService.getAllOpenedRestaurantReports();
 
         // then
-        assertThatThrownBy(() -> restaurantReportsService.getAllOpenedRestaurantReports())
-            .isInstanceOf(ObjectNotFoundException.class);
+        assertThat(result).isEmpty();
     }
 }
