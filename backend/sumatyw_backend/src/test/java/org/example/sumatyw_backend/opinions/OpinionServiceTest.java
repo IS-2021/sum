@@ -88,22 +88,28 @@ class OpinionServiceTest {
         assertEquals(opinion, savedOpinion);
         assertEquals(1, restaurant.getLikesCount());
     }
-
     @Test
     void testAddOpinion_UserNotFound() {
-        Opinion opinion = new Opinion(UUID.randomUUID(), new User(), new Restaurant(), true, LocalDateTime.now());
+        UUID nonExistentUserId = UUID.randomUUID();
 
-        when(userRepository.findById(any(UUID.class))).thenReturn(Optional.empty());
+        Opinion opinion = new Opinion(UUID.randomUUID(), User.builder().userId(nonExistentUserId).build(), restaurant, true, LocalDateTime.now());
+
+        when(userRepository.findById(nonExistentUserId)).thenReturn(Optional.empty());
 
         assertThrows(ObjectNotFoundException.class, () -> opinionService.addOpinion(opinion));
     }
 
+
     @Test
     void testAddOpinion_RestaurantNotFound() {
-        Opinion opinion = new Opinion(UUID.randomUUID(), new User(), new Restaurant(), true, LocalDateTime.now());
+        UUID nonExistentRestaurantId = UUID.randomUUID();
+        User user = new User();
+        user.setUserId(UUID.randomUUID());
 
-        when(userRepository.findById(any(UUID.class))).thenReturn(Optional.of(new User()));
-        when(restaurantRepository.findById(any(UUID.class))).thenReturn(Optional.empty());
+        Opinion opinion = new Opinion(UUID.randomUUID(), user, Restaurant.builder().restaurantId(nonExistentRestaurantId).build(), true, LocalDateTime.now());
+
+        when(userRepository.findById(user.getUserId())).thenReturn(Optional.of(user));
+        when(restaurantRepository.findById(nonExistentRestaurantId)).thenReturn(Optional.empty());
 
         assertThrows(ObjectNotFoundException.class, () -> opinionService.addOpinion(opinion));
     }

@@ -17,6 +17,7 @@ import org.example.sumatyw_backend.meals.Meal;
 import org.example.sumatyw_backend.meals.MealRepository;
 import org.example.sumatyw_backend.restaurants.Restaurant;
 import org.example.sumatyw_backend.restaurants.RestaurantRepository;
+import org.example.sumatyw_backend.restaurants.RestaurantStatus;
 import org.example.sumatyw_backend.users.User;
 import org.example.sumatyw_backend.users.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -63,11 +64,11 @@ class BookingServiceTest {
         bookingId = UUID.randomUUID();
         restaurantId = UUID.randomUUID();
 
-        restaurant = Restaurant.builder().restaurantId(restaurantId).build();
+        restaurant = Restaurant.builder().restaurantId(restaurantId).status(RestaurantStatus.Active).build();
 
 
         user = User.builder().userId(userId).build();
-        meal = Meal.builder().mealId(mealId).build();
+        meal = Meal.builder().mealId(mealId).restaurant(restaurant).build();
         booking = Booking.builder()
             .bookedId(bookingId)
             .user(user)
@@ -82,6 +83,7 @@ class BookingServiceTest {
         when(userRepository.findById(userId)).thenReturn(Optional.of(user));
         when(mealRepository.findById(mealId)).thenReturn(Optional.of(meal));
         when(bookingRepository.save(any(Booking.class))).thenReturn(booking);
+        when(restaurantRepository.findById(restaurantId)).thenReturn(Optional.of(restaurant));
 
         Booking result = bookingService.createBooking(booking);
 
@@ -261,7 +263,6 @@ class BookingServiceTest {
         verify(restaurantRepository).findById(restaurantId);
         verify(bookingRepository).findBookingByMeal_RestaurantRestaurantId(restaurantId,sort);
     }
-
     @Test
     void testGetBookingsByRestaurantID_RestaurantNotFound() {
         when(restaurantRepository.findById(restaurantId)).thenReturn(Optional.empty());
@@ -271,7 +272,7 @@ class BookingServiceTest {
         });
 
         verify(restaurantRepository).findById(restaurantId);
-        verify(bookingRepository, never()).findBookingByMeal_RestaurantRestaurantId(any(UUID.class),sort);
+        verify(bookingRepository, never()).findBookingByMeal_RestaurantRestaurantId(any(UUID.class), any(Sort.class));
     }
 
     @Test
@@ -307,20 +308,21 @@ class BookingServiceTest {
         });
 
         verify(restaurantRepository).findById(restaurantId);
-        verify(bookingRepository, never()).findBookingByMeal_RestaurantRestaurantId(any(UUID.class),sort);
+        verify(bookingRepository, never()).findBookingByMeal_RestaurantRestaurantId(any(UUID.class),any(Sort.class));
     }
     @Test
     void testCreateBooking_MealAlreadyBooked() {
         when(userRepository.findById(userId)).thenReturn(Optional.of(user));
         when(bookingRepository.findByUserUserIdAndStatus(userId, Status.Active)).thenReturn(Optional.empty());
         when(mealRepository.findById(mealId)).thenReturn(Optional.of(meal));
+        when(restaurantRepository.findById(restaurantId)).thenReturn(Optional.of(restaurant));
         when(bookingRepository.findByMealMealIdAndStatus(mealId, Status.Active)).thenReturn(Optional.of(booking));
 
         ResourceAlreadyExistsException exception = assertThrows(ResourceAlreadyExistsException.class, () -> {
             bookingService.createBooking(booking);
         });
 
-        assertEquals("This meal is already booked", exception.getMessage());
+        assertEquals("This meal is already booked or picked up", exception.getMessage());
         verify(userRepository).findById(userId);
         verify(bookingRepository).findByUserUserIdAndStatus(userId, Status.Active);
         verify(mealRepository).findById(mealId);
