@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import org.example.sumatyw_backend.exceptions.InvalidDataException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -25,6 +26,7 @@ public class RestaurantController {
     private static final String IMAGE_UPLOAD_DIR = "src/main/resources/static/images/";
 
     @PostMapping
+    @PreAuthorize("hasRole('RESTAURANT')")
     public ResponseEntity<RestaurantDTO> addRestaurant(@RequestBody @Valid RestaurantInputDTO restaurantInputDTO) {
 
         try {
@@ -41,6 +43,7 @@ public class RestaurantController {
     }
 
     @GetMapping
+    @PreAuthorize("hasRole('USER')")
     public ResponseEntity<List<RestaurantDTO>> getRestaurants() {
         List<Restaurant> restaurants = restaurantService.getAllActiveRestaurants();
 
@@ -51,6 +54,7 @@ public class RestaurantController {
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasAnyRole('USER','RESTAURANT')")
     public ResponseEntity<RestaurantDTO> getRestaurantById(@PathVariable("id") UUID id) {
         Restaurant restaurant = restaurantService.getRestaurantById(id);
 
@@ -61,11 +65,13 @@ public class RestaurantController {
     }
 
     @PutMapping("/deactivate/{id}")
+    @PreAuthorize("hasAnyRole('RESTAURANT')")
     public ResponseEntity<RestaurantDTO> deactivateRestaurantById(@PathVariable("id") UUID id) {
         return new ResponseEntity<>(restaurantService.deactivateRestaurant(id), HttpStatus.OK);
     }
 
     @GetMapping("/city/{cityName}")
+    @PreAuthorize("hasRole('USER')")
     public ResponseEntity<List<RestaurantDTO>> getRestaurantsByCity(@PathVariable("cityName") String city) {
         List<Restaurant> restaurants = restaurantService.getRestaurantsByCity(city);
 
@@ -76,6 +82,7 @@ public class RestaurantController {
     }
     
     @GetMapping(params = {"lat", "lon", "radius"})
+    @PreAuthorize("hasRole('USER')")
     public ResponseEntity<List<RestaurantDTO>> getLocalRestaurants(@RequestParam("lat") double lat,
                                                                    @RequestParam("lon") double lon,
                                                                    @RequestParam("radius") double radius) {
@@ -89,6 +96,7 @@ public class RestaurantController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAnyRole('RESTAURANT','ADMIN')")
     public ResponseEntity<Void> deleteRestaurantById(@PathVariable("id") UUID id) {
         restaurantService.removeRestaurantById(id);
 
@@ -98,6 +106,7 @@ public class RestaurantController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('RESTAURANT')")
     public ResponseEntity<RestaurantDTO> updateRestaurantById(@PathVariable("id") UUID id, @RequestBody @Valid RestaurantInputDTO restaurantInputDTO) throws IOException, InterruptedException, ApiException {
 
         try {
@@ -115,6 +124,7 @@ public class RestaurantController {
     }
 
     @PostMapping("/images/{id}")
+    @PreAuthorize("hasRole('RESTAURANT')")
     public ResponseEntity<String> addImage(@PathVariable("id") UUID restaurantId, @RequestParam("image") MultipartFile image) {
         Restaurant restaurant = restaurantService.getRestaurantById(restaurantId);
 

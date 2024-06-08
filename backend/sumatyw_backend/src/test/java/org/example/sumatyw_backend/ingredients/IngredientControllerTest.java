@@ -8,6 +8,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
@@ -43,6 +44,7 @@ public class IngredientControllerTest {
     }
 
     @Test
+    @WithMockUser(roles = {"RESTAURANT"})
     public void testAddIngredient() throws Exception {
         // given
         UUID mealId = UUID.randomUUID();
@@ -66,7 +68,8 @@ public class IngredientControllerTest {
     }
 
     @Test
-    public void testGetIngredientsByMealId() throws Exception {
+    @WithMockUser(roles = {"RESTAURANT"})
+    public void testGetIngredientsByMealIdAsRestaurant() throws Exception {
         // given
         UUID mealId = UUID.randomUUID();
         Ingredient ingredient = new Ingredient();
@@ -87,7 +90,30 @@ public class IngredientControllerTest {
     }
 
     @Test
-    public void testGetIngredientsByRestaurantId() throws Exception {
+    @WithMockUser()
+    public void testGetIngredientsByMealIdAsUser() throws Exception {
+        // given
+        UUID mealId = UUID.randomUUID();
+        Ingredient ingredient = new Ingredient();
+        ingredient.setIngredientId(UUID.randomUUID());
+        List<Ingredient> ingredients = Arrays.asList(ingredient);
+
+        when(ingredientService.getIngredientsByMealId(mealId)).thenReturn(ingredients);
+
+        // when
+        mockMvc.perform(get("/ingredients")
+                .param("mealId", mealId.toString()))
+            // then
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+            .andExpect(jsonPath("$.length()").value(ingredients.size()));
+
+        verify(ingredientService, times(1)).getIngredientsByMealId(mealId);
+    }
+
+    @Test
+    @WithMockUser(roles = {"RESTAURANT"})
+    public void testGetIngredientsByRestaurantIdAsRestaurant() throws Exception {
         // given
         UUID restaurantId = UUID.randomUUID();
         Ingredient ingredient = new Ingredient();
@@ -108,7 +134,30 @@ public class IngredientControllerTest {
     }
 
     @Test
-    public void testGetIngredientById() throws Exception {
+    @WithMockUser()
+    public void testGetIngredientsByRestaurantIdAsUser() throws Exception {
+        // given
+        UUID restaurantId = UUID.randomUUID();
+        Ingredient ingredient = new Ingredient();
+        ingredient.setIngredientId(UUID.randomUUID());
+        List<Ingredient> ingredients = Arrays.asList(ingredient);
+
+        when(ingredientService.getIngredientsByRestaurant(restaurantId)).thenReturn(ingredients);
+
+        // when
+        mockMvc.perform(get("/ingredients")
+                .param("restaurantId", restaurantId.toString()))
+            // then
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+            .andExpect(jsonPath("$.length()").value(ingredients.size()));
+
+        verify(ingredientService, times(1)).getIngredientsByRestaurant(restaurantId);
+    }
+
+    @Test
+    @WithMockUser(roles = {"RESTAURANT"})
+    public void testGetIngredientByIdAsRestaurant() throws Exception {
         // given
         UUID ingredientId = UUID.randomUUID();
         Ingredient ingredient = new Ingredient();
@@ -127,6 +176,27 @@ public class IngredientControllerTest {
     }
 
     @Test
+    @WithMockUser()
+    public void testGetIngredientByIdAsUser() throws Exception {
+        // given
+        UUID ingredientId = UUID.randomUUID();
+        Ingredient ingredient = new Ingredient();
+        ingredient.setIngredientId(ingredientId);
+
+        when(ingredientService.getIngredientById(ingredientId)).thenReturn(ingredient);
+
+        // when
+        mockMvc.perform(get("/ingredients/{id}", ingredientId))
+            // then
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+            .andExpect(jsonPath("$.ingredientId").value(ingredientId.toString()));
+
+        verify(ingredientService, times(1)).getIngredientById(ingredientId);
+    }
+
+    @Test
+    @WithMockUser(roles = {"RESTAURANT"})
     public void testUpdateIngredient() throws Exception {
         // given
         UUID ingredientId = UUID.randomUUID();

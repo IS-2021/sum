@@ -13,6 +13,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
@@ -46,6 +47,7 @@ class BookingControllerTest {
     }
 
     @Test
+    @WithMockUser(roles = {"USER"})
     void createBooking_AddsNewBooking() throws Exception{
         // given
         UUID userId = UUID.randomUUID();
@@ -78,6 +80,7 @@ class BookingControllerTest {
     }
 
     @Test
+    @WithMockUser(roles = {"ADMIN"})
     void getAllBookings_ReturnsAllActiveBookings() throws Exception {
         //given
         UUID userId = UUID.randomUUID();
@@ -119,6 +122,7 @@ class BookingControllerTest {
     }
 
     @Test
+    @WithMockUser()
     void getBookingById_ReturnsBookingWithGivenId() throws Exception {
         //given
         UUID userId = UUID.randomUUID();
@@ -149,6 +153,38 @@ class BookingControllerTest {
     }
 
     @Test
+    @WithMockUser(roles = {"RESTAURANT"})
+    void getBookingById_ReturnsBookingWithGivenIdAsRestaurant() throws Exception {
+        //given
+        UUID userId = UUID.randomUUID();
+        Address a = Address.builder().addressId("asdfasdfadfads").city("Lodz").build();
+        Restaurant r = Restaurant.builder()
+            .restaurantId(UUID.randomUUID())
+            .user(User.builder().userId(userId).build())
+            .hours("null").address(a)
+            .status(RestaurantStatus.Active)
+            .build();
+        Meal m1 = Meal.builder().mealId(UUID.randomUUID()).restaurant(r).build();
+        Booking b1 = Booking.builder()
+            .bookedId(UUID.randomUUID())
+            .user(User.builder().userId(userId).build())
+            .meal(m1)
+            .timestamp(LocalDateTime.now())
+            .build();
+
+        given(bookingService.getBookingById(b1.getBookedId())).willReturn(b1);
+
+        // when
+        mockMvc.perform(get("/bookings/{id}", b1.getBookedId()))
+            // then
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.bookingId").value(b1.getBookedId().toString()));
+
+        verify(bookingService).getBookingById(b1.getBookedId());
+    }
+
+    @Test
+    @WithMockUser()
     void getBookingByUserId_ReturnsActiveBookingOfGivenUser() throws Exception {
         //given
         UUID userId = UUID.randomUUID();
@@ -181,6 +217,7 @@ class BookingControllerTest {
     }
 
     @Test
+    @WithMockUser()
     void getAllBookingsByUserId_ReturnsAllUserBookings() throws Exception {
         //given
         UUID userId = UUID.randomUUID();
@@ -224,6 +261,7 @@ class BookingControllerTest {
     }
 
     @Test
+    @WithMockUser(roles = {"RESTAURANT"})
     void getBookingsByRestaurantId_ReturnsAllRestaurantBookings() throws Exception {
         //given
         UUID userId = UUID.randomUUID();
@@ -267,6 +305,7 @@ class BookingControllerTest {
     }
 
     @Test
+    @WithMockUser(roles = {"RESTAURANT"})
     void getActiveBookingsByRestaurantId_ReturnsAllActiveRestaurantBooking_IfActiveParamIsTrue() throws Exception {
         //given
         UUID userId = UUID.randomUUID();
@@ -312,6 +351,7 @@ class BookingControllerTest {
     }
 
     @Test
+    @WithMockUser(roles = {"RESTAURANT"})
     void getActiveBookingsByRestaurantId_ReturnsAllNonActiveRestaurantBooking_IfActiveParamIsFalse() throws Exception {
         //given
         UUID userId = UUID.randomUUID();
@@ -357,6 +397,7 @@ class BookingControllerTest {
     }
 
     @Test
+    @WithMockUser(roles = {"RESTAURANT"})
     void markBookingAsPickedUp_UpdatesBookingStatusToPickedUp() throws Exception {
         //given
         UUID userId = UUID.randomUUID();
@@ -392,6 +433,7 @@ class BookingControllerTest {
     }
 
     @Test
+    @WithMockUser()
     void cancelBookingById_UpdatesBookingStatusToCancelled() throws Exception {
         //given
         UUID userId = UUID.randomUUID();

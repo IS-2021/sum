@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import org.example.sumatyw_backend.users.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
@@ -27,7 +28,7 @@ public class AuthController {
     }
 
 
-
+    @PreAuthorize("hasAnyRole('RESTAURANT','USER')")
     @PutMapping("/{id}/change-password")
     private ResponseEntity<Void> changePassword(@PathVariable("id") UUID id, @RequestBody PasswordDTO passwordDTO) {
         userService.changePassword(id, passwordDTO.getPassword());
@@ -36,15 +37,4 @@ public class AuthController {
             HttpStatus.OK
         );
     }
-
-
-//    public static boolean isValidPassword(String password) {
-//        String regex = "^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$ %^&*-]).{8,}$";
-//
-//        Pattern pattern = Pattern.compile(regex);
-//
-//        Matcher matcher = pattern.matcher(password);
-//
-//        return matcher.matches();
-//    }
 }

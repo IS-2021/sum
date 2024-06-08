@@ -4,6 +4,7 @@ import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -17,6 +18,7 @@ public class OpinionController {
 
     private OpinionService opinionService;
 
+    @PreAuthorize("hasRole('USER')")
     @PostMapping()
     public ResponseEntity<OpinionDTO> addOpinion(@RequestBody @Valid OpinionInputDTO opinionInputDTO) {
             Opinion opinion = opinionService.addOpinion(OpinionDTOMapper.mapOpinionInputDTOToOpinion(opinionInputDTO));
@@ -27,6 +29,7 @@ public class OpinionController {
             );
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping()
     public ResponseEntity<OpinionDTO> getOpinionById(@RequestParam("userId") UUID userId,
                                                         @RequestParam("restaurantId") UUID restaurantId) {
@@ -34,6 +37,8 @@ public class OpinionController {
         return new ResponseEntity<>(OpinionDTOMapper.mapOpinionToOpinionDTO(opinionService.getOpinionByUserIdRestaurantId(userId,restaurantId)), HttpStatus.OK);
     }
 
+
+    @PreAuthorize("hasRole('USER')")
     @PutMapping("/{id}")
     public ResponseEntity<OpinionDTO> updateOpinion(@PathVariable("id") UUID id, @RequestBody @Valid OpinionInputDTO opinionInputDTO) {
         Opinion opinion = opinionService.updateOpinionById(id, OpinionDTOMapper.mapOpinionInputDTOToOpinion(opinionInputDTO));
@@ -44,6 +49,7 @@ public class OpinionController {
         );
     }
 
+    @PreAuthorize("hasRole('USER')")
     @DeleteMapping()
     public ResponseEntity<OpinionDTO> deleteOpinionById(@RequestParam("opinionId") UUID opinionId) {
 

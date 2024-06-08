@@ -18,6 +18,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
@@ -57,6 +58,7 @@ class AdminControllerTest {
     }
 
     @Test
+    @WithMockUser(roles = {"ADMIN"})
     void getUsers_ReturnsAllUsersWithGivenBlockedValue() throws Exception {
         // given
         List<User> users = Arrays.asList(
@@ -82,6 +84,7 @@ class AdminControllerTest {
     }
 
     @Test
+    @WithMockUser(roles = {"ADMIN"})
     void getUsers_ReturnsAllUsers() throws Exception {
         // given
         List<User> users = Arrays.asList(
@@ -106,6 +109,7 @@ class AdminControllerTest {
     }
 
     @Test
+    @WithMockUser(roles = {"ADMIN"})
     void getUserByID_ReturnsUserWithGivenId() throws Exception {
         // given
         UUID userId = UUID.randomUUID();
@@ -124,6 +128,7 @@ class AdminControllerTest {
     }
 
     @Test
+    @WithMockUser(roles = {"ADMIN"})
     void updateUser_BansGivenUser() throws Exception {
         // given
         UUID userId = UUID.randomUUID();
@@ -146,6 +151,7 @@ class AdminControllerTest {
     }
 
     @Test
+    @WithMockUser(roles = {"ADMIN"})
     void updateUser_UnbansGivenUser() throws Exception {
         // given
         UUID userId = UUID.randomUUID();
@@ -168,6 +174,7 @@ class AdminControllerTest {
     }
 
     @Test
+    @WithMockUser(roles = {"ADMIN"})
     void getAllRestaurants_ReturnsAllRestaurants() throws Exception {
         // given
         User u1 = User.builder().userId(UUID.randomUUID()).role(Role.ROLE_RESTAURANT).blocked(false).build();
@@ -198,6 +205,7 @@ class AdminControllerTest {
     }
 
     @Test
+    @WithMockUser(roles = {"ADMIN"})
     void getAllRestaurants_ReturnsRestaurantsWithGivenStatus() throws Exception {
         // given
         User u1 = User.builder().userId(UUID.randomUUID()).role(Role.ROLE_RESTAURANT).blocked(false).build();
@@ -228,6 +236,7 @@ class AdminControllerTest {
     }
 
     @Test
+    @WithMockUser(roles = {"ADMIN"})
     void getRestaurantById_ReturnsRestaurantWithGivenId() throws Exception {
         // given
         User u1 = User.builder().userId(UUID.randomUUID()).role(Role.ROLE_RESTAURANT).blocked(false).build();
@@ -249,6 +258,7 @@ class AdminControllerTest {
     }
 
     @Test
+    @WithMockUser(roles = {"ADMIN"})
     void getAllUserReportsByUserId_ReturnsAllOpenedUserReports() throws Exception {
         // given
         List<UserReport> userReports = Arrays.asList(
@@ -276,6 +286,7 @@ class AdminControllerTest {
     }
 
     @Test
+    @WithMockUser(roles = {"ADMIN"})
     void getAllUserReportsByUserId_ReturnsAllOpenedUserReportsForGivenRestaurant() throws Exception {
         // given
         UUID userId = UUID.randomUUID();
@@ -315,6 +326,7 @@ class AdminControllerTest {
     }
 
     @Test
+    @WithMockUser(roles = {"ADMIN"})
     void getAllUserReportsByUserId_ReturnsAllOpenedGivenUserReports() throws Exception {
         // given
         UUID userId = UUID.randomUUID();
@@ -350,6 +362,7 @@ class AdminControllerTest {
     }
 
     @Test
+    @WithMockUser(roles = {"ADMIN"})
     void getAllUserReportsByUserId_ReturnsAllOpenedUsersReportsForGivenRestaurant() throws Exception {
         // given
         UUID userId = UUID.randomUUID();
@@ -385,6 +398,7 @@ class AdminControllerTest {
     }
 
     @Test
+    @WithMockUser(roles = {"ADMIN"})
     void changeRestaurantStatus_changesStatusOfGivenRestaurant() throws Exception {
         // given
         User u1 = User.builder().userId(UUID.randomUUID()).role(Role.ROLE_RESTAURANT).blocked(false).build();
@@ -406,6 +420,7 @@ class AdminControllerTest {
     }
 
     @Test
+    @WithMockUser(roles = {"ADMIN"})
     void getAllOpenedRestaurantReports_ReturnsAllOpenedRestaurantReports() throws Exception {
         // given
         List<RestaurantReport> restaurantReports = Arrays.asList(
@@ -433,6 +448,7 @@ class AdminControllerTest {
     }
 
     @Test
+    @WithMockUser(roles = {"ADMIN"})
     void getAllOpenedRestaurantReports_ReturnsAllOpenedRestaurantReportsForGivenUser() throws Exception {
         // given
         UUID userId = UUID.randomUUID();
@@ -472,6 +488,7 @@ class AdminControllerTest {
     }
 
     @Test
+    @WithMockUser(roles = {"ADMIN"})
     void getAllOpenedRestaurantReports_ReturnsAllOpenedRestaurantsReportsForGivenUser() throws Exception {
         // given
         UUID userId = UUID.randomUUID();
@@ -507,6 +524,7 @@ class AdminControllerTest {
     }
 
     @Test
+    @WithMockUser(roles = {"ADMIN"})
     void getAllOpenedRestaurantReports_ReturnsAllOpenedReportsOfGovenRestaurant() throws Exception {
         // given
         UUID userId = UUID.randomUUID();
@@ -542,6 +560,7 @@ class AdminControllerTest {
     }
 
     @Test
+    @WithMockUser(roles = {"ADMIN"})
     void getRestaurantReportById_ReturnsRestaurantReportWithGivenId() throws Exception {
         // given
         RestaurantReport rr = RestaurantReport.builder().restaurantReportId(UUID.randomUUID()).isOpen(true).restaurant(Restaurant.builder().restaurantId(UUID.randomUUID()).build()).user(User.builder().userId(UUID.randomUUID()).build()).build();
@@ -559,6 +578,7 @@ class AdminControllerTest {
     }
 
     @Test
+    @WithMockUser(roles = {"ADMIN"})
     void getUserReportById_ReturnsUserReportWithGivenId() throws Exception {
         // given
         UserReport ur = UserReport.builder().userReportId(UUID.randomUUID()).isOpen(true).restaurant(Restaurant.builder().restaurantId(UUID.randomUUID()).build()).user(User.builder().userId(UUID.randomUUID()).build()).build();
@@ -576,6 +596,7 @@ class AdminControllerTest {
     }
 
     @Test
+    @WithMockUser(roles = {"ADMIN"})
     void handleRestaurantReport_BansReportedByRestaurantUser() throws Exception {
         // given
         RestaurantReport rr = RestaurantReport.builder().restaurantReportId(UUID.randomUUID()).isOpen(true).restaurant(Restaurant.builder().restaurantId(UUID.randomUUID()).build()).user(User.builder().userId(UUID.randomUUID()).build()).build();
@@ -594,6 +615,7 @@ class AdminControllerTest {
     }
 
     @Test
+    @WithMockUser(roles = {"ADMIN"})
     void handleRestaurantReport_ReturnsNotFound_IfGivenRestaurantReportDoesNotExist() throws Exception {
         // given
         RestaurantReport rr = RestaurantReport.builder().restaurantReportId(UUID.randomUUID()).isOpen(true).restaurant(Restaurant.builder().restaurantId(UUID.randomUUID()).build()).user(User.builder().userId(UUID.randomUUID()).build()).build();
@@ -612,6 +634,7 @@ class AdminControllerTest {
     }
 
     @Test
+    @WithMockUser(roles = {"ADMIN"})
     void handleRestaurantReport_ClosesRestaurantReport_IfBanParamIsFalse() throws Exception {
         // given
         RestaurantReport rr = RestaurantReport.builder().restaurantReportId(UUID.randomUUID()).isOpen(true).restaurant(Restaurant.builder().restaurantId(UUID.randomUUID()).build()).user(User.builder().userId(UUID.randomUUID()).build()).build();
@@ -628,6 +651,7 @@ class AdminControllerTest {
     }
 
     @Test
+    @WithMockUser(roles = {"ADMIN"})
     void handleRestaurantReport_ReturnsNotFound_IfGivenRestaurantReportDoesNotExistAndBanParamIsFalse() throws Exception {
         // given
         RestaurantReport rr = RestaurantReport.builder().restaurantReportId(UUID.randomUUID()).isOpen(true).restaurant(Restaurant.builder().restaurantId(UUID.randomUUID()).build()).user(User.builder().userId(UUID.randomUUID()).build()).build();
@@ -645,6 +669,7 @@ class AdminControllerTest {
     }
 
     @Test
+    @WithMockUser(roles = {"ADMIN"})
     void handleUserReport_BansReportedByUserRestaurant() throws Exception {
         // given
         UserReport ur = UserReport.builder().userReportId(UUID.randomUUID()).isOpen(true).restaurant(Restaurant.builder().restaurantId(UUID.randomUUID()).build()).user(User.builder().userId(UUID.randomUUID()).build()).build();
@@ -663,6 +688,7 @@ class AdminControllerTest {
     }
 
     @Test
+    @WithMockUser(roles = {"ADMIN"})
     void handleUserReport_ReturnsNotFound_IfGivenUserReportDoesNotExist() throws Exception {
         // given
         UserReport ur = UserReport.builder().userReportId(UUID.randomUUID()).isOpen(true).restaurant(Restaurant.builder().restaurantId(UUID.randomUUID()).build()).user(User.builder().userId(UUID.randomUUID()).build()).build();
@@ -681,6 +707,7 @@ class AdminControllerTest {
     }
 
     @Test
+    @WithMockUser(roles = {"ADMIN"})
     void handleUserReport_ClosesUserReport_IfBanParamIsFalse() throws Exception {
         // given
         UserReport ur = UserReport.builder().userReportId(UUID.randomUUID()).isOpen(true).restaurant(Restaurant.builder().restaurantId(UUID.randomUUID()).build()).user(User.builder().userId(UUID.randomUUID()).build()).build();
@@ -697,6 +724,7 @@ class AdminControllerTest {
     }
 
     @Test
+    @WithMockUser(roles = {"ADMIN"})
     void handleUserReport_ReturnsNotFound_IfGivenUserReportDoesNotExistAndBanParamIsFalse() throws Exception {
         // given
         UserReport ur = UserReport.builder().userReportId(UUID.randomUUID()).isOpen(true).restaurant(Restaurant.builder().restaurantId(UUID.randomUUID()).build()).user(User.builder().userId(UUID.randomUUID()).build()).build();

@@ -49,6 +49,7 @@ public class UserControllerTest {
     }
 
     @Test
+    @WithMockUser(roles = {"ADMIN"})
     public void testGetUsers() throws Exception {
         User user1 = new User();
         user1.setUserId(UUID.randomUUID());
@@ -66,6 +67,7 @@ public class UserControllerTest {
     }
 
     @Test
+    @WithMockUser()
     public void testGetUserById() throws Exception {
         UUID userId = UUID.randomUUID();
         User user = new User(); // Mocked user
@@ -81,6 +83,7 @@ public class UserControllerTest {
     }
 
     @Test
+    @WithMockUser(roles = {"RESTAURANT"})
     public void testGetMe() throws Exception {
         User user = new User(); // Mocked user
         user.setUserId(UUID.randomUUID());
@@ -95,6 +98,7 @@ public class UserControllerTest {
     }
 
     @Test
+    @WithMockUser()
     public void testDeleteUserById() throws Exception {
         UUID userId = UUID.randomUUID();
         doNothing().when(userService).removeUserById(userId);
@@ -106,6 +110,7 @@ public class UserControllerTest {
     }
 
     @Test
+    @WithMockUser()
     public void testUpdateUserById() throws Exception {
         UUID userId = UUID.randomUUID();
         UserInputDTO userInputDTO = new UserInputDTO("firstName", "secondName", "username", "email@example.com", "P@ssw0rd123", "1234567890", Role.ROLE_USER);
@@ -125,6 +130,7 @@ public class UserControllerTest {
     }
 
     @Test
+    @WithMockUser()
     public void testUpdateUserCity() throws Exception {
         UUID userId = UUID.randomUUID();
         String placeId = "somePlaceId";

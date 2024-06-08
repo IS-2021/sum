@@ -15,6 +15,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
@@ -40,6 +41,7 @@ public class OpinionControllerTest {
     }
 
     @Test
+    @WithMockUser()
     public void testAddOpinion() throws Exception {
         OpinionInputDTO opinionInputDTO = new OpinionInputDTO(true, UUID.randomUUID(), UUID.randomUUID());
 
@@ -64,6 +66,7 @@ public class OpinionControllerTest {
     }
 
     @Test
+    @WithMockUser()
     public void testUpdateOpinion() throws Exception {
         UUID opinionId = UUID.randomUUID();
         OpinionInputDTO opinionInputDTO = new OpinionInputDTO(true, UUID.randomUUID(), UUID.randomUUID());

@@ -9,6 +9,7 @@ import org.example.sumatyw_backend.user_reports.UserReport;
 import org.example.sumatyw_backend.user_reports.UserReportsService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -25,6 +26,7 @@ public class ReportsController {
 
     private final RestaurantReportsService restaurantReportsService;
 
+    @PreAuthorize("hasRole('USER')")
     @PostMapping("/restaurants")
     public ResponseEntity<ReportDTO> addRestaurantReport(@RequestBody @Valid ReportInputDTO reportInputDTO) {
         RestaurantReport restaurantReport = restaurantReportsService.addRestaurantReport(reportInputDTO);
@@ -35,6 +37,7 @@ public class ReportsController {
             );
     }
 
+    @PreAuthorize("hasRole('RESTAURANT')")
     @GetMapping( value = "/restaurants", params = {"restaurantId"})
     public ResponseEntity<List<ReportDTO>> getAllRestaurantReports(@RequestParam("restaurantId") UUID restaurantId) {
 
@@ -50,6 +53,7 @@ public class ReportsController {
         return new ResponseEntity<>(reports,HttpStatus.OK);
     }
 
+    @PreAuthorize("hasRole('RESTAURANT')")
     @PostMapping("/users")
     public ResponseEntity<ReportDTO> addUserReport(@RequestBody @Valid ReportInputDTO reportInputDTO) {
         UserReport userReport = userReportsService.addUserReport(reportInputDTO);

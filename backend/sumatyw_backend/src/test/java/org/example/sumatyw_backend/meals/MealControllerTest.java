@@ -8,7 +8,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
@@ -45,6 +47,7 @@ public class MealControllerTest {
     }
 
     @Test
+    @WithMockUser(roles = {"RESTAURANT"})
     public void testAddMeal() throws Exception {
         // given
         UUID restaurantId = UUID.randomUUID();
@@ -67,7 +70,8 @@ public class MealControllerTest {
     }
 
     @Test
-    public void testGetMealsByRestaurantId() throws Exception {
+    @WithMockUser(roles = {"RESTAURANT"})
+    public void testGetMealsByRestaurantIdAsRestaurant() throws Exception {
         // given
         UUID restaurantId = UUID.randomUUID();
         Meal meal = new Meal();
@@ -91,7 +95,58 @@ public class MealControllerTest {
     }
 
     @Test
-    public void testGetMealById() throws Exception {
+    @WithMockUser()
+    public void testGetMealsByRestaurantIdAsUser() throws Exception {
+        // given
+        UUID restaurantId = UUID.randomUUID();
+        Meal meal = new Meal();
+        Restaurant restaurant = new Restaurant();
+        restaurant.setRestaurantId(UUID.randomUUID());
+        meal.setMealId(UUID.randomUUID());
+        meal.setRestaurant(restaurant);
+        List<Meal> meals = Arrays.asList(meal);
+
+        when(mealService.getAllMealsByRestaurantId(restaurantId)).thenReturn(meals);
+
+        // when
+        mockMvc.perform(get("/meals")
+                .param("restaurantId", restaurantId.toString()))
+            // then
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+            .andExpect(jsonPath("$.length()").value(meals.size()));
+
+        verify(mealService, times(1)).getAllMealsByRestaurantId(restaurantId);
+    }
+
+    @Test
+    @WithMockUser(roles = {"RESTAURANT"})
+    public void testGetMealByIdAsRestaurant() throws Exception {
+        // given
+        UUID mealId = UUID.randomUUID();
+        UUID restaurantId = UUID.randomUUID();
+        Meal meal = new Meal();
+        meal.setMealId(mealId);
+        Restaurant restaurant = new Restaurant();
+        restaurant.setRestaurantId(restaurantId);
+        meal.setRestaurant(restaurant);
+
+        when(mealService.getMealById(mealId)).thenReturn(meal);
+
+        // when
+        mockMvc.perform(get("/meals/{id}", mealId))
+            // then
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+            .andExpect(jsonPath("$.mealId").value(mealId.toString()))
+            .andExpect(jsonPath("$.restaurantId").value(restaurantId.toString()));
+
+        verify(mealService, times(1)).getMealById(mealId);
+    }
+
+    @Test
+    @WithMockUser()
+    public void testGetMealByIdAsUser() throws Exception {
         // given
         UUID mealId = UUID.randomUUID();
         UUID restaurantId = UUID.randomUUID();
@@ -116,6 +171,7 @@ public class MealControllerTest {
 
 
     @Test
+    @WithMockUser(roles = {"RESTAURANT"})
     public void testUpdateMealById() throws Exception {
         // given
         UUID mealId = UUID.randomUUID();
@@ -138,6 +194,7 @@ public class MealControllerTest {
     }
 
     @Test
+    @WithMockUser(roles = {"RESTAURANT"})
     public void testDeleteMealById() throws Exception {
         // given
         UUID mealId = UUID.randomUUID();

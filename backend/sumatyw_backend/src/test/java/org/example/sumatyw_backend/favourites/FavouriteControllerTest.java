@@ -12,6 +12,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
@@ -45,6 +46,7 @@ class FavouriteControllerTest {
     }
 
     @Test
+    @WithMockUser()
     void addFavourite_AddNewUserFavouriteRestaurant() throws Exception {
         // given
         UUID userId = UUID.randomUUID();
@@ -69,6 +71,7 @@ class FavouriteControllerTest {
     }
 
     @Test
+    @WithMockUser()
     void getFavourites_ReturnsAllUserFavouriteRestaurants() throws Exception {
         // given
         UUID userId = UUID.randomUUID();
@@ -98,6 +101,7 @@ class FavouriteControllerTest {
     }
 
     @Test
+    @WithMockUser()
     void updateFavouritesOrder_UpdatesUserFavouriteRestaurantsOrder() throws Exception {
         // given
         UUID userId = UUID.randomUUID();
@@ -119,6 +123,7 @@ class FavouriteControllerTest {
     }
 
     @Test
+    @WithMockUser()
     void deleteFavourite_RemovesGivenRestaurantsFromUserFavourites() throws Exception {
         // given
         UUID userId = UUID.randomUUID();

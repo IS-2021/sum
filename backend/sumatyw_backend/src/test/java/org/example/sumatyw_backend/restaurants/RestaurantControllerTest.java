@@ -16,6 +16,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
@@ -43,6 +44,7 @@ public class RestaurantControllerTest {
     }
 
     @Test
+    @WithMockUser(roles = {"RESTAURANT"})
     public void testGetRestaurants() throws Exception {
         // given
         Restaurant restaurant1 = new Restaurant();
@@ -75,6 +77,7 @@ public class RestaurantControllerTest {
     }
 
     @Test
+    @WithMockUser()
     public void testGetRestaurantById() throws Exception {
         // given
         UUID restaurantId = UUID.randomUUID();
@@ -98,7 +101,8 @@ public class RestaurantControllerTest {
     }
 
     @Test
-    public void testDeleteRestaurantById() throws Exception {
+    @WithMockUser(roles = {"ADMIN"})
+    public void testDeleteRestaurantByIdAsAdmin() throws Exception {
         // given
         UUID restaurantId = UUID.randomUUID();
         doNothing().when(restaurantService).removeRestaurantById(restaurantId);
@@ -111,6 +115,21 @@ public class RestaurantControllerTest {
     }
 
     @Test
+    @WithMockUser(roles = {"RESTAURANT"})
+    public void testDeleteRestaurantByIdAsRestaurant() throws Exception {
+        // given
+        UUID restaurantId = UUID.randomUUID();
+        doNothing().when(restaurantService).removeRestaurantById(restaurantId);
+
+        // when // then
+        mockMvc.perform(delete("/restaurants/{id}", restaurantId))
+            .andExpect(status().isNoContent());
+
+        verify(restaurantService, times(1)).removeRestaurantById(restaurantId);
+    }
+
+    @Test
+    @WithMockUser(roles = {"RESTAURANT"})
     public void testUpdateRestaurantById() throws Exception {
         // given
         UUID restaurantId = UUID.randomUUID();
@@ -132,6 +151,7 @@ public class RestaurantControllerTest {
     }
 
     @Test
+    @WithMockUser(roles = {"RESTAURANT"})
     public void testAddRestaurant() throws Exception {
         // given
         RestaurantInputDTO restaurantInputDTO = new RestaurantInputDTO(
@@ -162,6 +182,7 @@ public class RestaurantControllerTest {
 
 
     @Test
+    @WithMockUser()
     public void testGetRestaurantsByCity() throws Exception {
         // given
         String city = "TestCity";
@@ -186,6 +207,7 @@ public class RestaurantControllerTest {
     }
 
     @Test
+    @WithMockUser(roles = {"RESTAURANT"})
     public void testDeactivateRestaurantById() throws Exception {
         // given
         UUID restaurantId = UUID.randomUUID();
@@ -202,6 +224,7 @@ public class RestaurantControllerTest {
     }
 
     @Test
+    @WithMockUser()
     public void testGetLocalRestaurants() throws Exception {
         // given
         double lat = 12.34;

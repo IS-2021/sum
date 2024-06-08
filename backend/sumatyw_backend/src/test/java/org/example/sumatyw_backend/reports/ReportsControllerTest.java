@@ -20,6 +20,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
@@ -47,6 +48,7 @@ public class ReportsControllerTest {
     }
 
     @Test
+    @WithMockUser()
     public void testAddRestaurantReport() throws Exception {
         UUID userId = UUID.randomUUID();
         UUID restaurantId = UUID.randomUUID();
@@ -76,6 +78,7 @@ public class ReportsControllerTest {
     }
 
     @Test
+    @WithMockUser(roles = {"RESTAURANT"})
     public void testAddUserReport() throws Exception {
         UUID userId = UUID.randomUUID();
         UUID restaurantId = UUID.randomUUID();
@@ -104,6 +107,7 @@ public class ReportsControllerTest {
     }
 
     @Test
+    @WithMockUser()
     public void testAddRestaurantReportValidationError() throws Exception {
         ReportInputDTO reportInputDTO = new ReportInputDTO(null, null, "Test cause");
 
@@ -115,6 +119,7 @@ public class ReportsControllerTest {
     }
 
     @Test
+    @WithMockUser(roles = {"RESTAURANT"})
     public void testAddUserReportValidationError() throws Exception {
         ReportInputDTO reportInputDTO = new ReportInputDTO(null, null, "Test cause");
 
