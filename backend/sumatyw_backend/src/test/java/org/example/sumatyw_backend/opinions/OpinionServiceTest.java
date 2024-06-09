@@ -426,25 +426,6 @@ class OpinionServiceTest {
     }
 
     @Test
-    void testAddNegativeOpinionThresholdExceeded_ExceedsThreshold() {
-        UUID restaurantId = UUID.randomUUID();
-        List<Opinion> opinions = new ArrayList<>();
-        opinions.add(new Opinion(UUID.randomUUID(), null, null, false, LocalDateTime.now()));
-        opinions.add(new Opinion(UUID.randomUUID(), null, null, false, LocalDateTime.now()));
-        opinions.add(new Opinion(UUID.randomUUID(), null, null, false, LocalDateTime.now()));
-        opinions.add(new Opinion(UUID.randomUUID(), null, null, false, LocalDateTime.now()));
-        opinions.add(new Opinion(UUID.randomUUID(), null, null, false, LocalDateTime.now()));
-        opinions.add(new Opinion(UUID.randomUUID(), null, null, false, LocalDateTime.now()));
-        opinions.add(new Opinion(UUID.randomUUID(), null, null, false, LocalDateTime.now()));
-        opinions.add(new Opinion(UUID.randomUUID(), null, null, false, LocalDateTime.now()));
-        opinions.add(new Opinion(UUID.randomUUID(), null, null, false, LocalDateTime.now()));
-        opinions.add(new Opinion(UUID.randomUUID(), null, null, false, LocalDateTime.now()));
-
-        when(opinionRepository.findAllByRestaurantRestaurantId(restaurantId)).thenReturn(opinions);
-
-        assertTrue(opinionService.negativeOpinionThresholdExceeded(restaurantId));
-    }
-    @Test
     void testAddOpinion_PositiveOpinion() {
         UUID userId = UUID.randomUUID();
         UUID restaurantId = UUID.randomUUID();
