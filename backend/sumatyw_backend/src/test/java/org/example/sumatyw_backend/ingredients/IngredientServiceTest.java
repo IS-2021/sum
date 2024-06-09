@@ -4,6 +4,7 @@ import org.example.sumatyw_backend.bookings.Booking;
 import org.example.sumatyw_backend.bookings.BookingRepository;
 import org.example.sumatyw_backend.bookings.Status;
 import org.example.sumatyw_backend.exceptions.ObjectNotFoundException;
+import org.example.sumatyw_backend.exceptions.ResourceAlreadyExistsException;
 import org.example.sumatyw_backend.meals.Meal;
 import org.example.sumatyw_backend.meals.MealRepository;
 import org.example.sumatyw_backend.restaurants.Restaurant;
@@ -257,4 +258,88 @@ class IngredientServiceTest {
             .isInstanceOf(ObjectNotFoundException.class)
             .hasMessageContaining("Restaurant not found with ID: " + restaurantId);
     }
+
+    @Test
+    void addIngredient_ThrowsResourceAlreadyExistsException() {
+        // given
+        UUID mealId = UUID.randomUUID();
+        Meal meal = Meal.builder().mealId(mealId).build();
+        List<Meal> meals = new ArrayList<>();
+        meals.add(meal);
+
+        Ingredient existingIngredient = Ingredient.builder().ingredientId(UUID.randomUUID()).name("Tomato").type("Vegetable").meals(meals).build();
+        Ingredient newIngredient = Ingredient.builder().name("Tomato").type("Vegetable").meals(meals).build();
+
+        given(ingredientRepository.findByNameAndType("Tomato", "Vegetable")).willReturn(Optional.of(existingIngredient));
+
+        // when // then
+        assertThatThrownBy(() -> ingredientService.addIngredient(newIngredient))
+            .isInstanceOf(ResourceAlreadyExistsException.class)
+            .hasMessageContaining("Given meal already has that ingredient");
+    }
+
+    @Test
+    void getIngredientsByRestaurant_RemovesMealsWithActiveOrPickedUpBookings() {
+        // given
+        UUID restaurantId = UUID.randomUUID();
+        Restaurant restaurant = Restaurant.builder().restaurantId(restaurantId).meals(new ArrayList<>()).build();
+
+        Meal meal1 = Meal.builder().mealId(UUID.randomUUID()).ingredients(new ArrayList<>()).build();
+        Meal meal2 = Meal.builder().mealId(UUID.randomUUID()).ingredients(new ArrayList<>()).build();
+
+        Ingredient ingredient1 = Ingredient.builder().ingredientId(UUID.randomUUID()).name("Tomato").type("Vegetable").build();
+        Ingredient ingredient2 = Ingredient.builder().ingredientId(UUID.randomUUID()).name("Cucumber").type("Vegetable").build();
+
+        Booking booking1 = new Booking();
+        Booking booking2 = new Booking();
+        booking1.setStatus(Status.Active);
+        booking2.setStatus(Status.PickedUp);
+        meal1.setBookings(List.of(booking1));
+        meal2.setBookings(List.of(booking2));
+        meal1.getIngredients().add(ingredient1);
+        meal2.getIngredients().add(ingredient2);
+        restaurant.getMeals().add(meal1);
+        restaurant.getMeals().add(meal2);
+
+        given(restaurantRepository.findById(restaurantId)).willReturn(Optional.of(restaurant));
+
+        // when
+        List<Ingredient> result = ingredientService.getIngredientsByRestaurant(restaurantId);
+
+        // then
+        verify(restaurantRepository).findById(restaurantId);
+        assertThat(result).isEmpty();
+    }
+
+    @Test
+    void getIngredientsByRestaurant_ReturnsDistinctIngredients() {
+        // given
+        UUID restaurantId = UUID.randomUUID();
+        Restaurant restaurant = Restaurant.builder().restaurantId(restaurantId).meals(new ArrayList<>()).build();
+
+        Meal meal1 = Meal.builder().mealId(UUID.randomUUID()).ingredients(new ArrayList<>()).build();
+        Meal meal2 = Meal.builder().mealId(UUID.randomUUID()).ingredients(new ArrayList<>()).build();
+
+        Ingredient ingredient = Ingredient.builder().ingredientId(UUID.randomUUID()).name("Tomato").type("Vegetable").build();
+        Booking booking = new Booking();
+        booking.setStatus(Status.OutOfDate);
+
+        meal1.setBookings(List.of(booking));
+        meal2.setBookings(List.of(booking));
+        meal1.getIngredients().add(ingredient);
+        meal2.getIngredients().add(ingredient);
+        restaurant.getMeals().add(meal1);
+        restaurant.getMeals().add(meal2);
+
+        given(restaurantRepository.findById(restaurantId)).willReturn(Optional.of(restaurant));
+
+        // when
+        List<Ingredient> result = ingredientService.getIngredientsByRestaurant(restaurantId);
+
+        // then
+        verify(restaurantRepository).findById(restaurantId);
+        assertThat(result).hasSize(1);
+        assertThat(result).containsExactly(ingredient);
+    }
+
 }

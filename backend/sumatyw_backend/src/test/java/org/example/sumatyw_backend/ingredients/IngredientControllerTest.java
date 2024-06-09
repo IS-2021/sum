@@ -217,4 +217,29 @@ public class IngredientControllerTest {
 
         verify(ingredientService, times(1)).updateIngredientById(eq(ingredientId), any(Ingredient.class));
     }
+    @Test
+    @WithMockUser(roles = {"RESTAURANT"})
+    public void testGetAllIngredients() throws Exception {
+        // given
+        Ingredient ingredient1 = new Ingredient();
+        ingredient1.setIngredientId(UUID.randomUUID());
+        Ingredient ingredient2 = new Ingredient();
+        ingredient2.setIngredientId(UUID.randomUUID());
+        List<Ingredient> ingredients = Arrays.asList(ingredient1, ingredient2);
+
+        when(ingredientService.getAllIngredients()).thenReturn(ingredients);
+
+        // when
+        mockMvc.perform(get("/ingredients"))
+            // then
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+            .andExpect(jsonPath("$.length()").value(ingredients.size()))
+            .andExpect(jsonPath("$[0].ingredientId").value(ingredient1.getIngredientId().toString()))
+            .andExpect(jsonPath("$[1].ingredientId").value(ingredient2.getIngredientId().toString()));
+
+        verify(ingredientService, times(1)).getAllIngredients();
+    }
+
+
 }

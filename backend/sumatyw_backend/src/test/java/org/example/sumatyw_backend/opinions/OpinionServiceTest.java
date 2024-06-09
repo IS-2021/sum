@@ -24,8 +24,8 @@ import java.util.UUID;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.hibernate.validator.internal.util.Contracts.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
@@ -65,7 +65,7 @@ class OpinionServiceTest {
             .name("Test Restaurant")
             .phoneNumber("123456789")
             .hours("{ \"monday\": [ \"10:00\", \"21:00\" ], \"tuesday\": [ \"08:00\", \"20:00\" ], \"wednesday\": [ \"10:00\", \"18:00\" ], \"thursday\": [ \"10:00\", \"20:00\" ], \"friday\": [ \"08:00\", \"23:00\" ], \"saturday\": [], \"sunday\": [ \"09:00\", \"22:00\" ] }")
-            .status(RestaurantStatus.Inactive)
+            .status(RestaurantStatus.Active)
             .address(Address.builder().city("Test City").build())
             .build();
 
@@ -327,4 +327,156 @@ class OpinionServiceTest {
         assertThat(capturedUserId).isEqualTo(opinionDB.getUser().getUserId());
         assertThat(capturedRestaurantId).isEqualTo(opinionDB.getRestaurant().getRestaurantId());
     }
+
+    @Test
+    void getOpinionByUserIdRestaurantId_Found() {
+        UUID opinionId = UUID.randomUUID();
+        Opinion opinion = new Opinion(opinionId, user, restaurant, true, LocalDateTime.now());
+
+        when(opinionRepository.findByUserUserIdAndRestaurantRestaurantId(userId, restaurantId)).thenReturn(Optional.of(opinion));
+
+        Opinion foundOpinion = opinionService.getOpinionByUserIdRestaurantId(userId, restaurantId);
+
+        assertNotNull(foundOpinion);
+        assertEquals(opinion, foundOpinion);
+        assertEquals(userId, foundOpinion.getUser().getUserId());
+        assertEquals(restaurantId, foundOpinion.getRestaurant().getRestaurantId());
+    }
+
+    @Test
+    void getOpinionByUserIdRestaurantId_NotFound() {
+        when(opinionRepository.findByUserUserIdAndRestaurantRestaurantId(userId, restaurantId)).thenReturn(Optional.empty());
+
+        assertThrows(ObjectNotFoundException.class, () -> opinionService.getOpinionByUserIdRestaurantId(userId, restaurantId));
+    }
+
+    @Test
+    void deleteOpinion_Found() {
+        UUID opinionId = UUID.randomUUID();
+        Opinion opinion = new Opinion(opinionId, user, restaurant, true, LocalDateTime.now());
+
+        when(opinionRepository.findById(opinionId)).thenReturn(Optional.of(opinion));
+
+        Opinion deletedOpinion = opinionService.deleteOpinion(opinionId);
+
+        assertNotNull(deletedOpinion);
+        assertEquals(opinion, deletedOpinion);
+
+        verify(opinionRepository).delete(opinion);
+    }
+
+    @Test
+    void deleteOpinion_NotFound() {
+        UUID opinionId = UUID.randomUUID();
+
+        when(opinionRepository.findById(opinionId)).thenReturn(Optional.empty());
+
+        assertThrows(ObjectNotFoundException.class, () -> opinionService.deleteOpinion(opinionId));
+    }
+
+    @Test
+    void testNegativeOpinionThresholdExceeded_WhenLastWeekOpinionsCountLessThanTen() {
+        UUID restaurantId = UUID.randomUUID();
+        List<Opinion> lastWeekRestaurantOpinions = new ArrayList<>();
+        when(opinionRepository.findAllByRestaurantRestaurantId(restaurantId)).thenReturn(lastWeekRestaurantOpinions);
+
+        assertFalse(opinionService.negativeOpinionThresholdExceeded(restaurantId));
+    }
+
+    @Test
+    void testNegativeOpinionThresholdExceeded_NoOpinionsInLastWeek() {
+        UUID restaurantId = UUID.randomUUID();
+
+        when(opinionRepository.findAllByRestaurantRestaurantId(restaurantId)).thenReturn(new ArrayList<>());
+
+        assertFalse(opinionService.negativeOpinionThresholdExceeded(restaurantId));
+    }
+
+    @Test
+    void testNegativeOpinionThresholdExceeded_LessThanThreshold() {
+        UUID restaurantId = UUID.randomUUID();
+        List<Opinion> opinions = new ArrayList<>();
+        opinions.add(new Opinion(UUID.randomUUID(), null, null, false, LocalDateTime.now()));
+        opinions.add(new Opinion(UUID.randomUUID(), null, null, false, LocalDateTime.now()));
+        opinions.add(new Opinion(UUID.randomUUID(), null, null, true, LocalDateTime.now()));
+
+        when(opinionRepository.findAllByRestaurantRestaurantId(restaurantId)).thenReturn(opinions);
+
+        assertFalse(opinionService.negativeOpinionThresholdExceeded(restaurantId));
+    }
+
+    @Test
+    void testNegativeOpinionThresholdExceeded_ExceedsThreshold() {
+        UUID restaurantId = UUID.randomUUID();
+        List<Opinion> opinions = new ArrayList<>();
+        opinions.add(new Opinion(UUID.randomUUID(), null, null, false, LocalDateTime.now()));
+        opinions.add(new Opinion(UUID.randomUUID(), null, null, false, LocalDateTime.now()));
+        opinions.add(new Opinion(UUID.randomUUID(), null, null, false, LocalDateTime.now()));
+        opinions.add(new Opinion(UUID.randomUUID(), null, null, false, LocalDateTime.now()));
+        opinions.add(new Opinion(UUID.randomUUID(), null, null, false, LocalDateTime.now()));
+        opinions.add(new Opinion(UUID.randomUUID(), null, null, false, LocalDateTime.now()));
+        opinions.add(new Opinion(UUID.randomUUID(), null, null, false, LocalDateTime.now()));
+        opinions.add(new Opinion(UUID.randomUUID(), null, null, false, LocalDateTime.now()));
+        opinions.add(new Opinion(UUID.randomUUID(), null, null, false, LocalDateTime.now()));
+        opinions.add(new Opinion(UUID.randomUUID(), null, null, false, LocalDateTime.now()));
+
+        when(opinionRepository.findAllByRestaurantRestaurantId(restaurantId)).thenReturn(opinions);
+
+        assertTrue(opinionService.negativeOpinionThresholdExceeded(restaurantId));
+    }
+
+    @Test
+    void testAddOpinion_PositiveOpinion() {
+        UUID userId = UUID.randomUUID();
+        UUID restaurantId = UUID.randomUUID();
+        User user = new User();
+        user.setUserId(userId);
+        Restaurant restaurant = new Restaurant();
+        restaurant.setRestaurantId(restaurantId);
+        Opinion opinion = new Opinion(UUID.randomUUID(), user, restaurant, true, LocalDateTime.now());
+
+        when(opinionRepository.findByUserUserIdAndRestaurantRestaurantId(userId, restaurantId)).thenReturn(Optional.empty());
+        when(userRepository.findById(userId)).thenReturn(Optional.of(user));
+        when(restaurantRepository.findById(restaurantId)).thenReturn(Optional.of(restaurant));
+        when(restaurantRepository.save(restaurant)).thenReturn(restaurant);
+        when(opinionRepository.save(opinion)).thenReturn(opinion);
+
+        Opinion savedOpinion = opinionService.addOpinion(opinion);
+
+        assertNotNull(savedOpinion);
+        assertEquals(opinion, savedOpinion);
+        assertEquals(1, restaurant.getLikesCount());
+    }
+
+
+    @Test
+    void testAddOpinion_PositiveAfterExceedingThreshold() {
+        restaurant.setStatus(RestaurantStatus.Banned);
+        when(restaurantRepository.findById(restaurantId)).thenReturn(Optional.of(restaurant));
+        when(userRepository.findById(userId)).thenReturn(Optional.of(user));
+
+        Opinion positiveOpinion = new Opinion(UUID.randomUUID(), user, restaurant, true, LocalDateTime.now());
+
+        Opinion savedPositiveOpinion = opinionService.addOpinion(positiveOpinion);
+
+        assertEquals(null, savedPositiveOpinion);
+        assertEquals(RestaurantStatus.Banned, restaurant.getStatus());
+    }
+
+    @Test
+    void testAddOpinion_UserAlreadyLeftAnOpinion() {
+        Opinion existingOpinion = new Opinion(UUID.randomUUID(), user, restaurant, true, LocalDateTime.now());
+        Opinion newOpinion = new Opinion(UUID.randomUUID(), user, restaurant, false, LocalDateTime.now());
+
+        when(opinionRepository.findByUserUserIdAndRestaurantRestaurantId(userId, restaurantId)).thenReturn(Optional.of(existingOpinion));
+        when(userRepository.findById(userId)).thenReturn(Optional.of(user));
+        when(restaurantRepository.findById(restaurantId)).thenReturn(Optional.of(restaurant));
+
+        Exception exception = assertThrows(ResourceAlreadyExistsException.class, () -> opinionService.addOpinion(newOpinion));
+        String expectedMessage = "User can only leave one opinion for a given restaurant";
+        String actualMessage = exception.getMessage();
+
+        assertTrue(actualMessage.contains(expectedMessage));
+    }
+
 }

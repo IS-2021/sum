@@ -16,6 +16,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -252,4 +253,28 @@ public class RestaurantControllerTest {
 
         verify(restaurantService, times(1)).getLocalRestaurants(lat, lon, radius);
     }
+    @Test
+    @WithMockUser(roles = {"RESTAURANT"})
+    public void testAddImage() throws Exception {
+        // given
+        UUID restaurantId = UUID.randomUUID();
+        Restaurant restaurant = new Restaurant();
+        restaurant.setRestaurantId(restaurantId);
+        restaurant.setImageUUID("default.jpg");
+
+        when(restaurantService.getRestaurantById(restaurantId)).thenReturn(restaurant);
+        doNothing().when(restaurantService).updateRestaurantImageUUID(any(Restaurant.class));
+
+        MockMultipartFile image = new MockMultipartFile("image", "test.jpg", "image/jpeg", "test image content".getBytes());
+
+        // when // then
+        mockMvc.perform(multipart("/restaurants/images/{id}", restaurantId)
+                .file(image))
+            .andExpect(status().isOk())
+            .andExpect(content().string("Restaurant image added successfully"));
+
+        verify(restaurantService, times(1)).getRestaurantById(restaurantId);
+        verify(restaurantService, times(1)).updateRestaurantImageUUID(any(Restaurant.class));
+    }
+
 }

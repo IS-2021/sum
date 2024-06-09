@@ -163,4 +163,76 @@ public class RestaurantReportServiceTest {
         // then
         assertThat(result).isEmpty();
     }
+
+    @Test
+    void getAllReportsByUserId_ShouldReturnListOfReports_IfExist() {
+        // given
+        given(restaurantReportRepository.findAllByUserUserIdAndIsOpenTrue(userId)).willReturn(restaurantReports);
+
+        // when
+        List<RestaurantReport> retrievedReports = restaurantReportsService.getAllReportsByUserId(userId);
+
+        // then
+        assertThat(retrievedReports).isEqualTo(restaurantReports);
+    }
+
+    @Test
+    void getAllReportsByUserId_ShouldReturnEmptyList_IfNoReportsExist() {
+        // given
+        given(restaurantReportRepository.findAllByUserUserIdAndIsOpenTrue(userId)).willReturn(Collections.emptyList());
+
+        // when
+        List<RestaurantReport> result = restaurantReportsService.getAllReportsByUserId(userId);
+
+        // then
+        assertThat(result).isEmpty();
+    }
+
+    @Test
+    void getRestaurantReportsByUserIdRestaurantId_ShouldReturnListOfReports_IfExist() {
+        // given
+        given(restaurantReportRepository.findAllByUserUserIdAndRestaurantRestaurantIdAndIsOpenTrue(userId, restaurantId)).willReturn(restaurantReports);
+
+        // when
+        List<RestaurantReport> retrievedReports = restaurantReportsService.getRestaurantReportsByUserIdRestaurantId(userId, restaurantId);
+
+        // then
+        assertThat(retrievedReports).isEqualTo(restaurantReports);
+    }
+
+    @Test
+    void getRestaurantReportsByUserIdRestaurantId_ShouldReturnEmptyList_IfNoReportsExist() {
+        // given
+        given(restaurantReportRepository.findAllByUserUserIdAndRestaurantRestaurantIdAndIsOpenTrue(userId, restaurantId)).willReturn(Collections.emptyList());
+
+        // when
+        List<RestaurantReport> result = restaurantReportsService.getRestaurantReportsByUserIdRestaurantId(userId, restaurantId);
+
+        // then
+        assertThat(result).isEmpty();
+    }
+
+    @Test
+    void getRestaurantReportsByRestaurantId_ShouldReturnListOfReports_IfExist() {
+        // given
+        given(restaurantReportRepository.findAllByRestaurantRestaurantIdAndIsOpenTrue(restaurantId)).willReturn(restaurantReports);
+
+        // when
+        List<RestaurantReport> retrievedReports = restaurantReportsService.getRestaurantReportsByRestaurantId(restaurantId);
+
+        // then
+        assertThat(retrievedReports).isEqualTo(restaurantReports);
+    }
+
+    @Test
+    void getRestaurantReportsByRestaurantId_ShouldReturnEmptyList_IfNoReportsExist() {
+        // given
+        given(restaurantReportRepository.findAllByRestaurantRestaurantIdAndIsOpenTrue(restaurantId)).willReturn(Collections.emptyList());
+
+        // when
+        List<RestaurantReport> result = restaurantReportsService.getRestaurantReportsByRestaurantId(restaurantId);
+
+        // then
+        assertThat(result).isEmpty();
+    }
 }
