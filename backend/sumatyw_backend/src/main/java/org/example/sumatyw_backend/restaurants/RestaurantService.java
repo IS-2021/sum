@@ -132,7 +132,7 @@ public class RestaurantService {
         return restaurants.stream().filter(r -> getDistance(userLat, userLon, r.getAddress().getLatitude(), r.getAddress().getLongitude()) <= radius).toList();
     }
 
-    private double getDistance(double lat1, double lon1, double lat2, double lon2) {
+    double getDistance(double lat1, double lon1, double lat2, double lon2) {
 
         GeometryFactory geometryFactory = new GeometryFactory();
         Point point1 = geometryFactory.createPoint(new Coordinate(lon1, lat1));

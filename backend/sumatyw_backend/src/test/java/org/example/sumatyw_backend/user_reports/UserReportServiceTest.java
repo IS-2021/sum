@@ -17,6 +17,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -186,5 +187,15 @@ public class UserReportServiceTest {
         assertNotNull(result);
         assertEquals(1, result.size());
         assertEquals(userReport.getUserReportId(), result.get(0).getUserReportId());
+    }
+    @Test
+    void testGetAllReportsUser_EmptyList() {
+        UUID restaurantId = restaurant.getRestaurantId();
+        when(userReportsRepository.findAllByRestaurantRestaurantIdAndIsOpenTrue(restaurantId)).thenReturn(new ArrayList<>());
+
+        List<UserReport> result = userReportsService.getAllReportsUser(restaurantId);
+
+        assertNotNull(result);
+        assertTrue(result.isEmpty());
     }
 }

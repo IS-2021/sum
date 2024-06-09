@@ -94,6 +94,7 @@ class BookingServiceTest {
         verify(bookingRepository).save(booking);
     }
 
+
     @Test
     void testCreateBooking_UserNotFound() {
         when(userRepository.findById(userId)).thenReturn(Optional.empty());
@@ -344,5 +345,37 @@ class BookingServiceTest {
         assertEquals(2, result.size());
         verify(bookingRepository).findAllByUserUserId(userId,sort);
     }
+
+    @Test
+    void testCreateBooking_RestaurantInactive() {
+        restaurant.setStatus(RestaurantStatus.Inactive);
+        when(userRepository.findById(userId)).thenReturn(Optional.of(user));
+        when(mealRepository.findById(mealId)).thenReturn(Optional.of(meal));
+        when(restaurantRepository.findById(restaurantId)).thenReturn(Optional.of(restaurant));
+
+        InvalidDataException exception = assertThrows(InvalidDataException.class, () -> {
+            bookingService.createBooking(booking);
+        });
+
+        assertEquals("Booking can be made in Active restaurant", exception.getMessage());
+        verify(userRepository).findById(userId);
+        verify(mealRepository).findById(mealId);
+        verify(bookingRepository, never()).save(any(Booking.class));
+    }
+
+    @Test
+    void testMarkBookingAsPickedUp_InvalidState() {
+        booking.setStatus(Status.PickedUp);
+        when(bookingRepository.findById(bookingId)).thenReturn(Optional.of(booking));
+
+        assertThrows(InvalidDataException.class, () -> {
+            bookingService.markBookingAsPickedUp(bookingId, booking);
+        });
+
+        verify(bookingRepository).findById(bookingId);
+        verify(bookingRepository, never()).save(any(Booking.class));
+    }
+
+
 }
 

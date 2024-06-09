@@ -2,6 +2,7 @@ package org.example.sumatyw_backend.reports;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -24,6 +25,8 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @ExtendWith(MockitoExtension.class)
@@ -127,6 +130,47 @@ public class ReportsControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(reportInputDTO)))
             .andExpect(status().isBadRequest());
+    }
+    @Test
+    @WithMockUser(roles = {"RESTAURANT"})
+    public void testGetAllRestaurantReports() throws Exception {
+        UUID restaurantId = UUID.randomUUID();
+        List<UserReport> userReports = new ArrayList<>();
+        UserReport userReport1 = UserReport.builder()
+            .userReportId(UUID.randomUUID())
+            .user(new User())
+            .restaurant(new Restaurant())
+            .cause("Cause 1")
+            .timestamp("2023-01-01T00:00:00Z")
+            .isOpen(true)
+            .build();
+        userReports.add(userReport1);
+
+        when(userReportsService.getAllReportsUser(restaurantId)).thenReturn(userReports);
+
+        mockMvc.perform(get("/reports/restaurants")
+                .param("restaurantId", restaurantId.toString()))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+            .andExpect(jsonPath("$[0].cause").value("Cause 1"));
+
+        verify(userReportsService, times(1)).getAllReportsUser(restaurantId);
+    }
+
+    @Test
+    @WithMockUser(roles = {"RESTAURANT"})
+    public void testGetAllRestaurantReportsEmpty() throws Exception {
+        UUID restaurantId = UUID.randomUUID();
+
+        when(userReportsService.getAllReportsUser(restaurantId)).thenReturn(new ArrayList<>());
+
+        mockMvc.perform(get("/reports/restaurants")
+                .param("restaurantId", restaurantId.toString()))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+            .andExpect(jsonPath("$").isEmpty());
+
+        verify(userReportsService, times(1)).getAllReportsUser(restaurantId);
     }
 }
 

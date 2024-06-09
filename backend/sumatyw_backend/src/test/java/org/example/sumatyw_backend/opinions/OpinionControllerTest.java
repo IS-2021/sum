@@ -90,6 +90,55 @@ public class OpinionControllerTest {
 
         verify(opinionService, times(1)).updateOpinionById(any(UUID.class), any(Opinion.class));
     }
+
+    @Test
+    @WithMockUser(roles = "ADMIN")
+    public void testGetOpinionById() throws Exception {
+        UUID userId = UUID.randomUUID();
+        UUID restaurantId = UUID.randomUUID();
+        Opinion opinion = Opinion.builder()
+            .opinionId(UUID.randomUUID())
+            .isPositive(true)
+            .user(User.builder().userId(userId).build())
+            .restaurant(Restaurant.builder().restaurantId(restaurantId).build())
+            .timestamp(null)
+            .build();
+
+        when(opinionService.getOpinionByUserIdRestaurantId(userId, restaurantId)).thenReturn(opinion);
+
+        mockMvc.perform(get("/opinions")
+                .param("userId", userId.toString())
+                .param("restaurantId", restaurantId.toString()))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.opinionId").value(opinion.getOpinionId().toString()))
+            .andExpect(jsonPath("$.isPositive").value(opinion.isPositive()));
+
+        verify(opinionService, times(1)).getOpinionByUserIdRestaurantId(userId, restaurantId);
+    }
+
+    @Test
+    @WithMockUser(roles = "USER")
+    public void testDeleteOpinionById() throws Exception {
+        UUID opinionId = UUID.randomUUID();
+        Opinion opinion = Opinion.builder()
+            .opinionId(opinionId)
+            .isPositive(true)
+            .user(User.builder().userId(UUID.randomUUID()).build())
+            .restaurant(Restaurant.builder().restaurantId(UUID.randomUUID()).build())
+            .timestamp(null)
+            .build();
+
+        when(opinionService.deleteOpinion(opinionId)).thenReturn(opinion);
+
+        mockMvc.perform(delete("/opinions")
+                .param("opinionId", opinionId.toString()))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.opinionId").value(opinionId.toString()))
+            .andExpect(jsonPath("$.isPositive").value(opinion.isPositive()));
+
+        verify(opinionService, times(1)).deleteOpinion(opinionId);
+    }
+
 }
 
 

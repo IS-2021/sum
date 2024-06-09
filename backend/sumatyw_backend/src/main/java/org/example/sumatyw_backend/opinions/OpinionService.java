@@ -102,7 +102,7 @@ public class OpinionService {
         return opinionRepository.save(existingOpinion);
     }
 
-    private boolean negativeOpinionThresholdExceeded(UUID restaurantId) {
+    boolean negativeOpinionThresholdExceeded(UUID restaurantId) {
         List<Opinion> lastWeekRestaurantOpinions = opinionRepository.findAllByRestaurantRestaurantId(restaurantId)
             .stream().filter(o -> o.getTimestamp().isAfter(LocalDateTime.now().minusWeeks(1))).toList();
 

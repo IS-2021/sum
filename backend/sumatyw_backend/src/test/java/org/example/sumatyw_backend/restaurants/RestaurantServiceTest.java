@@ -289,4 +289,90 @@ public class RestaurantServiceTest {
         assertEquals(activeRestaurants.size(), fetchedRestaurants.size());
         assertEquals(activeRestaurants, fetchedRestaurants);
     }
+    @Test
+    public void testUpdateRestaurantById() throws IOException, InterruptedException, ApiException {
+        when(restaurantRepository.findById(restaurantId)).thenReturn(Optional.of(restaurant));
+        when(addressService.getAddress(any(String.class))).thenReturn(address);
+        when(restaurantRepository.save(any(Restaurant.class))).thenReturn(restaurant);
+
+        Restaurant updatedRestaurant = restaurantService.updateRestaurantById(restaurantId, restaurant);
+
+        assertEquals(restaurant, updatedRestaurant);
+        verify(restaurantRepository).findById(restaurantId);
+        verify(addressService).getAddress(any(String.class));
+        verify(restaurantRepository).save(any(Restaurant.class));
+    }
+
+    @Test
+    public void testUpdateRestaurantByIdThrowsObjectNotFoundException() {
+        when(restaurantRepository.findById(restaurantId)).thenReturn(Optional.empty());
+
+        assertThrows(ObjectNotFoundException.class, () -> {
+            restaurantService.updateRestaurantById(restaurantId, restaurant);
+        });
+        verify(restaurantRepository).findById(restaurantId);
+    }
+    @Test
+    void testGetDistance() {
+        double lat1 = 40.7128;
+        double lon1 = -74.0060;
+        double lat2 = 34.0522;
+        double lon2 = -118.2437;
+
+        double distance = restaurantService.getDistance(lat1, lon1, lat2, lon2);
+
+        assertEquals(4980.046354221854, distance, 0.01);
+    }
+
+    @Test
+    void testGetLocalRestaurants() {
+        double userLat = 40.7128;
+        double userLon = -74.0060;
+        double radius = 1.0;
+
+        Address address1 = new Address();
+        address1.setLatitude(40.7158);
+        address1.setLongitude(-74.0050);
+
+        Address address2 = new Address();
+        address2.setLatitude(40.7308);
+        address2.setLongitude(-73.9970);
+
+        Address address3 = new Address();
+        address3.setLatitude(40.7138);
+        address3.setLongitude(-74.0020);
+
+        Restaurant restaurant1 = Restaurant.builder()
+            .restaurantId(UUID.randomUUID())
+            .address(address1)
+            .status(RestaurantStatus.Active)
+            .build();
+
+        Restaurant restaurant2 = Restaurant.builder()
+            .restaurantId(UUID.randomUUID())
+            .address(address2)
+            .status(RestaurantStatus.Active)
+            .build();
+
+        Restaurant restaurant3 = Restaurant.builder()
+            .restaurantId(UUID.randomUUID())
+            .address(address3)
+            .status(RestaurantStatus.Active)
+            .build();
+
+        List<Restaurant> allRestaurants = List.of(restaurant1, restaurant2, restaurant3);
+
+        when(restaurantRepository.findAllByStatus(RestaurantStatus.Active)).thenReturn(allRestaurants);
+
+        List<Restaurant> result = restaurantService.getLocalRestaurants(userLat, userLon, radius);
+
+        assertNotNull(result);
+        assertEquals(2, result.size());
+        assertTrue(result.contains(restaurant1));
+        assertFalse(result.contains(restaurant2));
+        assertTrue(result.contains(restaurant3));
+    }
+
+
+
 }
