@@ -43,7 +43,6 @@ public class UserController {
     }
 
     @GetMapping("/me")
-    @PreAuthorize("hasAnyRole('USER', 'RESTAURANT')")
     public ResponseEntity<UserMeDTO> getMe() {
         return new ResponseEntity<>(
             UserDTOMapper.mapUserToUserMeDTO(userService.getMeUser()),
