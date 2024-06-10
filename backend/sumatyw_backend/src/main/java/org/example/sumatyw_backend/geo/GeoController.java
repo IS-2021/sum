@@ -15,6 +15,7 @@ import org.example.sumatyw_backend.geo.geocoding.GeocodingMapper;
 import org.example.sumatyw_backend.geo.geocoding.GeocodingService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -35,6 +36,7 @@ public class GeoController {
     private final GeocodingService geocodingService;
 
     @GetMapping("/autocomplete")
+    @PreAuthorize("hasAnyRole('USER', 'RESTAURANT')")
     public ResponseEntity<List<AutocompleteDTO>> autocompleteAddress(@RequestParam String query, @RequestParam UUID sessionToken) throws IOException, InterruptedException, ApiException {
         if (query.isBlank()) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -48,6 +50,7 @@ public class GeoController {
     }
 
     @GetMapping("/places")
+    @PreAuthorize("hasAnyRole('USER', 'RESTAURANT')")
     public ResponseEntity<AddressDTO> getPlaceDetails(@RequestParam String placeId) throws IOException, InterruptedException, ApiException {
         Address address = addressService.getAddress(placeId);
 
@@ -57,11 +60,14 @@ public class GeoController {
     }
 
     @GetMapping("/reverse-geocode")
+    @PreAuthorize("hasAnyRole('USER', 'RESTAURANT')")
     public ResponseEntity<AddressDTO> reverseGeocode(@RequestParam double lat, @RequestParam double lng) throws IOException, InterruptedException, ApiException {
         GeocodingResult result = geocodingService.reverseGeocode(lat, lng);
 
-        AddressDTO dtos = GeocodingMapper.mapReverseGeocodeToAddressDTO(result);
+        Address address = addressService.getAddress(result.placeId);
 
-        return new ResponseEntity<>(dtos, HttpStatus.OK);
+        AddressDTO dto = AddressDTOMapper.mapAddressToAddressDTO(address);
+
+        return new ResponseEntity<>(dto, HttpStatus.OK);
     }
 }
