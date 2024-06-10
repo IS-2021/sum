@@ -40,7 +40,7 @@ public class IngredientController {
     }
 
     @GetMapping(params = {"mealId"})
-    @PreAuthorize("hasAnyRole('USER, RESTAURANT')")
+    @PreAuthorize("hasAnyRole('USER', 'RESTAURANT')")
     public ResponseEntity<List<IngredientDTO>> getIngredientsByMealId(@RequestParam("mealId") UUID mealId) {
         List<Ingredient> ingredientsByMeal = ingredientService.getIngredientsByMealId(mealId);
         return new ResponseEntity<>(ingredientsByMeal.stream().map(IngredientDTOMapper::mapIngredientToIngredientDTO).toList(), HttpStatus.OK);
@@ -48,7 +48,7 @@ public class IngredientController {
     }
 
     @GetMapping(params = {"restaurantId"})
-    @PreAuthorize("hasAnyRole('USER, RESTAURANT')")
+    @PreAuthorize("hasAnyRole('USER', 'RESTAURANT')")
     public ResponseEntity<List<IngredientDTO>> getIngredientsByRestaurantId(@RequestParam("restaurantId") UUID restaurandId) {
         List<Ingredient> ingredients = ingredientService.getIngredientsByRestaurant(restaurandId);
 
@@ -56,7 +56,7 @@ public class IngredientController {
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasAnyRole('USER, RESTAURANT')")
+    @PreAuthorize("hasAnyRole('USER', 'RESTAURANT')")
     public ResponseEntity<IngredientDTO> getIngredientById(@PathVariable UUID id) {
 
         Ingredient ingredient = ingredientService.getIngredientById(id);

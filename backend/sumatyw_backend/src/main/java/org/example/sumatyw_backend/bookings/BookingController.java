@@ -35,7 +35,7 @@ public class BookingController {
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasAnyRole('USER, RESTAURANT')")
+    @PreAuthorize("hasAnyRole('USER', 'RESTAURANT')")
     public ResponseEntity<BookingDTO> getBookingById(@PathVariable("id") UUID id) {
         Booking booking = bookingService.getBookingById(id);
         return new ResponseEntity<>(BookingDTOMapper.mapBookingToBookingDTO(booking), HttpStatus.OK);

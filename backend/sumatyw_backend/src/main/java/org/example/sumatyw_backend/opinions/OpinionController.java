@@ -29,7 +29,7 @@ public class OpinionController {
             );
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER', 'RESTAURANT')")
     @GetMapping()
     public ResponseEntity<OpinionDTO> getOpinionById(@RequestParam("userId") UUID userId,
                                                         @RequestParam("restaurantId") UUID restaurantId) {
