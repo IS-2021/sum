@@ -26,7 +26,7 @@ public class ReportsController {
 
     private final RestaurantReportsService restaurantReportsService;
 
-    @PreAuthorize("hasRole('USER')")
+    @PreAuthorize("hasAnyRole('USER', 'RESTAURANT')")
     @PostMapping("/restaurants")
     public ResponseEntity<ReportDTO> addRestaurantReport(@RequestBody @Valid ReportInputDTO reportInputDTO) {
         RestaurantReport restaurantReport = restaurantReportsService.addRestaurantReport(reportInputDTO);
@@ -53,7 +53,7 @@ public class ReportsController {
         return new ResponseEntity<>(reports,HttpStatus.OK);
     }
 
-    @PreAuthorize("hasRole('RESTAURANT')")
+    @PreAuthorize("hasAnyRole('USER', 'RESTAURANT')")
     @PostMapping("/users")
     public ResponseEntity<ReportDTO> addUserReport(@RequestBody @Valid ReportInputDTO reportInputDTO) {
         UserReport userReport = userReportsService.addUserReport(reportInputDTO);
